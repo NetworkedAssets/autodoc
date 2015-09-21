@@ -1,8 +1,11 @@
-package com.networkedassets.autodoc.event;
+package com.networkedassets.autodoc.transformer.event;
+
+import java.util.List;
 
 /**
  * POJO representing event coming from Stash
  */
+@SuppressWarnings("unused")
 public class Event
 {
     private String repositorySlug;
@@ -17,7 +20,7 @@ public class Event
 
     private String projectKey;
 
-    private Change[] changes;
+    private List<Change> changes;
 
     public String getRepositorySlug ()
     {
@@ -79,12 +82,12 @@ public class Event
         this.projectKey = projectKey;
     }
 
-    public Change[] getChanges ()
+    public List<Change> getChanges()
     {
         return changes;
     }
 
-    public void setChanges (Change[] changes)
+    public void setChanges (List<Change> changes)
     {
         this.changes = changes;
     }

@@ -1,6 +1,6 @@
-package com.networkedassets.autodoc.services;
+package com.networkedassets.autodoc.transformer.services;
 
-import com.networkedassets.autodoc.Settings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

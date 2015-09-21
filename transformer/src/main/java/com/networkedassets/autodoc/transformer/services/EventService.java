@@ -1,7 +1,7 @@
-package com.networkedassets.autodoc.services;
+package com.networkedassets.autodoc.transformer.services;
 
-import com.networkedassets.autodoc.EventHandler;
-import com.networkedassets.autodoc.event.Event;
+import com.networkedassets.autodoc.transformer.EventHandler;
+import com.networkedassets.autodoc.transformer.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

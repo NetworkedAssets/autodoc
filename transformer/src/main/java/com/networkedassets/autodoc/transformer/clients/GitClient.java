@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.clients;
+package com.networkedassets.autodoc.transformer.clients;
 
 /**
  * Gets code from the GIT repository

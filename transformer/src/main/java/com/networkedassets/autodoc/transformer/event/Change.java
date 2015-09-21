@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.event;
+package com.networkedassets.autodoc.transformer.event;
 
 /**
  * Created by kamil on 21.09.2015.
