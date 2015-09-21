@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<atlassian-plugin key="${project.groupId}.${project.artifactId}"
+	name="${project.name}" plugins-version="2">
+	<plugin-info>
+		<description>${project.description}</description>
+		<version>${project.version}</version>
+		<vendor name="${project.organization.name}" url="${project.organization.url}" />
+		<param name="plugin-icon">images/pluginIcon.png</param>
+		<param name="plugin-logo">images/pluginLogo.png</param>
+	</plugin-info>
+	<!-- add our i18n resource -->
+	<resource type="i18n" name="i18n" location="autodoc_confluence" />
+	<!-- add our web resources -->
+	<web-resource key="autodoc_confluence-resources" name="autodoc_confluence Web Resources">
+		<dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-select</dependency>
+		<resource type="download" name="images/" location="/images" />
+        <resource type="download" name="configureScreen.js" location="/js/configureScreen.js" />
+		<resource type="download" name="autodoc-style.css" location="/css/autodoc-style.css" />
+		<context>autodoc_confluence</context>
+	</web-resource>
+
+	<web-resource key="soy-templates">
+		<dependency>com.atlassian.soy.soy-template-plugin:soy-deps
+		</dependency>
+
+		<!-- Available to the server-side only -->
+		<!--<resource type="soy" name="projectRow" location="/templates/projectRow.soy" />-->
+        <resource type="soy" name="configureScreen" location="/templates/configureScreen.soy" />
+		<!-- Make available to the client-side in JS as well... -->
+		<transformation extension="soy">
+			<transformer key="soyTransformer" />
+		</transformation>
+		<!--<resource type="download" name="projectRow.soy.js" location="/templates/projectRow.soy" />-->
+        <resource type="download" name="configureScreen.soy.js" location="/templates/configureScreen.soy" />
+		<context>autodoc_confluence</context>
+	</web-resource>
+
+	<!-- imports -->
+	<component-import key="applicationProperties"
+		interface="com.atlassian.sal.api.ApplicationProperties" />
+	<component-import key="pluginSettingsFactory"
+		interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
+	<component-import key="applicationLinkService"
+		interface="com.atlassian.applinks.api.ApplicationLinkService" />
+	<component-import key="soyTemplateRenderer"
+		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
+
+	<!-- Link to the configuration screen -->
+	<web-item name="Autodoc Configuration Link" i18n-name-key="autodoc-configuration-link.name"
+		key="autodoc-configuration-link" section="system.space.tools/addons"
+		weight="1000">
+		<description key="autodoc-configuration-link.description">The Autodoc Configuration Link Plugin
+		</description>
+		<label key="autodoc-configuration-link.label" />
+		<link linkId="autodoc-configuration-link-id">/plugins/servlet/${project.artifactId}/configure-autodoc?key=$generalUtil.urlEncode($helper.spaceKey)
+		</link>
+		<condition
+			class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
+			<param name="permission">administer</param>
+		</condition>
+	</web-item>
+
+    <servlet name="Autodoc Configure Screen" key="autodocConf" class="com.networkedassets.autodoc.configureGui.ConfigureServlet">
+        <url-pattern>/${project.artifactId}/configure-autodoc</url-pattern>
+    </servlet>
+
+</atlassian-plugin>

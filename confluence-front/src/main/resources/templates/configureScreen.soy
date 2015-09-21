@@ -1,0 +1,177 @@
+{namespace com.networkedassets.autodoc.configureGui}
+
+/**
+ * Renders the configure screen
+ * @param allProjects
+ * @param allProjectsJSON
+ * @param pages
+ * @param pagesJSON
+ * @param spaceKey
+ * @param resources
+ */
+{template .configureScreen}
+<html>
+<head>
+    {$resources |noAutoescape}
+    <title>Configure Autodoc</title>
+    <meta name="decorator" content="main"/>
+    <script type="text/javascript">
+        projects = {$allProjectsJSON |noAutoescape};
+        pages = {$pagesJSON |noAutoescape};
+        spaceKey = "{$spaceKey}";
+    </script>
+</head>
+
+<body>
+<div class="pagecontent">
+    <h2>Select events to watch for</h2>
+
+    <div class="projects">
+        {foreach $project in $allProjects}
+            {call .project data="$project"}
+                {param pages: $pages/}
+            {/call}
+        {/foreach}
+    </div>
+</div>
+</body>
+</html>
+{/template}
+
+/**
+ * Renders the project panel
+ * @param pages
+ * @param name
+ * @param key
+ * @param repos
+ */
+{template .project}
+<div class="project container" id="project-{$key}">
+    <div class="expandable-header">
+        <h3><span class="aui-icon aui-icon-small aui-iconfont-arrows-down expand-arrow">Expand</span>{$name}</h3>
+    </div>
+    <div class="expandable-contents">
+        {foreach $repo in $repos}
+            {call .repo data="$repo"}
+                {param pages: $pages/}
+            {/call}
+        {/foreach}
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders the repo panel
+ * @param pages
+ * @param name
+ * @param slug
+ * @param branches
+ */
+{template .repo}
+<div class="repo container" id="repo-{$slug}">
+    <div class="expandable-header">
+        <h3><span class="aui-icon aui-icon-small aui-iconfont-arrows-down expand-arrow">Expand</span>{$name}</h3>
+    </div>
+    <div class="expandable-contents">
+        {foreach $branch in $branches}
+            {call .branch data="$branch"}
+                {param pages: $pages/}
+            {/call}
+        {/foreach}
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders the branch panel
+ * @param pages
+ * @param displayId
+ * @param id
+ * @param javadocPageId
+ * @param umlPageId
+ * @param listenedEvents
+ * @param scheduledEvents
+ */
+{template .branch}
+<div class="branch container" id="branch-{$id}">
+    <div class="expandable-header">
+        <h3><span class="aui-icon aui-icon-small aui-iconfont-arrows-down expand-arrow">Expand</span>{$displayId}</h3>
+    </div>
+    <div class="expandable-contents">
+        <form class="aui" action="javascript:void(0);">
+            {call .pageSelector}
+                {param selectName: 'javadoc_where'/}
+                {param labelName: 'Javadoc location'/}
+                {param pages: $pages/}
+                {param selectedPageId: $javadocPageId/}
+            {/call}
+
+            {call .pageSelector}
+                {param selectName: 'uml_where'/}
+                {param labelName: 'UML location'/}
+                {param pages: $pages/}
+                {param selectedPageId: $umlPageId/}
+            {/call}
+
+            <fieldset class="group">
+                <legend><span>Git events</span></legend>
+                {foreach $gitEvent in keys($listenedEvents)}
+                    <div class="checkbox">
+                        <label for="branch-{$id}-event-{$gitEvent}">{$gitEvent}</label>
+                        <input class="checkbox" type="checkbox" name="event-{$gitEvent}" id="branch-{$id}-event-{$gitEvent}"
+                               {if $listenedEvents[$gitEvent]}
+                               checked="checked"
+                               {/if}
+                        >
+                    </div>
+                {/foreach}
+            </fieldset>
+
+            <div class="scheduled-events">
+                {foreach $scheduledEvent in $scheduledEvents}
+                    {call .scheduledEventDetails data="$scheduledEvent"/}
+                {/foreach}
+                <button class="aui-button add-scheduled-event-button">Add event</button>
+            </div>
+        </form>
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders scheduled event details
+ * @param scheduleStart
+ * @param period
+ */
+{template .scheduledEventDetails}
+<div class="field-group scheduled-event">
+    <div class="schedule-start">
+        <label>{$labelName}</label>
+        <input class="text" type="text" name="schedule-start" value="{$scheduleStart}">
+    </div>
+</div>
+{/template}
+
+/**
+ * Renders page selector
+ * @param selectName
+ * @param labelName
+ * @param pages
+ * @param selectedPageId
+ */
+{template .pageSelector}
+<div class="field-group">
+    <label for="{$selectName}">{$labelName}</label>
+    <select name="{$selectName}" id="{$selectName}">
+        <option value=-1>--Select page--</option>
+        {foreach $page in $pages}
+            <option value="{$page.id}"
+                {if $page.id== $selectedPageId}
+                    selected="selected"
+                {/if}
+            >{$page.title}</option>
+        {/foreach}
+    </select>
+    <button class="aui-button add-page-btn">+</button>
+</div>
+{/template}

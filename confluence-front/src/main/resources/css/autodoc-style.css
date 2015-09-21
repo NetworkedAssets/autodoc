@@ -1,0 +1,23 @@
+.container {
+     border: 1px solid #B7B7B7;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.expand-arrow {
+    display: inline-block;
+    margin-top: 3px;
+}
+
+.expandable-header {
+    cursor: pointer;
+    /*background-color: #B7B7B7;*/
+    border-bottom: 1px solid #B7B7B7;
+}
+
+.add-page-btn {
+    margin-left: 5px;
+}

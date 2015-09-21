@@ -1,0 +1,113 @@
+{namespace com.networkedassets.autodoc.configureGui}
+
+/**
+ * Renders project row for autodoc configuration screen
+ * @param project
+ * @param pages 
+ */
+{template .projectRow}
+	<tr class="odd hoverDarken">
+		<td headers="name" id="{$project.key}"><span class="expander"></span>{$project.name}</td>
+		<td class="action" headers="action">
+			<ul class="menu">
+				<li>
+					<a id="delete-proj" href="javascript:void(0)">Delete</a>
+				</li>
+			</ul>
+		</td>
+	</tr>
+	<tr class="details">
+		<td colspan="2">
+			<table class="aui fixed" id="{$project.key}-branches">
+				<thead>
+					<tr>
+	    				<th id="watch_header">Triggering events</th>
+	    				<th id="repo_header">Repository</th>
+	    				<th id="branch_header">Branch</th>
+	    				<th id="javadoc_where_header">Javadoc location</th>
+	    				<th id="uml_where_header">UML location</th>
+	   				</tr>
+				</thead>
+				<tbody>
+					{foreach $branch in $project.branches}
+						{call .projectBranches data="$branch"}
+							{param projKey: $project.key/}
+							{param pages: $pages/}
+						{/call}
+					{/foreach}
+				</tbody>	  
+			</table>  					
+		</td>
+	</tr>
+{/template}
+
+
+/**
+ * Renders given branches
+ **** branch params
+ * @param key
+ * @param name
+ * @param repoId
+ * @param repo
+ * @param location
+ * @param umlLocation
+ * @param events
+ **** other params
+ * @param projKey
+ * @param pages
+ */
+{template .projectBranches}
+	<tr id="branch-{$projKey}-{$repoId}-{$key}">
+		<td headers="watch_header">
+			<form class="aui event-selector">
+				<select name="events" multiple="multiple">
+					{foreach $event in $events}
+						<option value="{$event.id}"
+							{if $event.watched}
+								selected="selected"
+							{/if}
+						>{$event.name}</option>
+					{/foreach}
+				</select>
+			</form>
+		</td>
+		<td headers="repo_header">{$repo}</td>
+		<td headers="branch_header">{$name}</td>
+		<td headers="javadoc_where_header">
+			{call .pageSelector}
+				{param selectName: 'javadoc_where'/}
+				{param pages: $pages/}
+				{param selectedPageId: $location/}
+			{/call}
+		</td>
+		<td headers="uml_where_header">
+			{call .pageSelector}
+				{param selectName: 'uml_where'/}
+				{param pages: $pages/}
+				{param selectedPageId: $umlLocation/}
+			{/call}
+		</td>
+	</tr>
+{/template}
+
+/**
+ * Renders page selector
+ * @param selectName
+ * @param pages
+ * @param selectedPageId
+ */
+{template .pageSelector}
+	<form class="aui page-selector">
+		<select name="{$selectName}">
+			<option value=-1>--Select page--</option>
+			{foreach $page in $pages}
+				<option value="{$page.id}"
+				{if $page.id == $selectedPageId}
+					selected="selected"
+				{/if}
+				>{$page.title}</option>
+			{/foreach}
+		</select>
+	</form>
+	<button class="aui-button add-page-btn">+</button>
+{/template}
