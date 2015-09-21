@@ -1,6 +1,5 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import com.atlassian.fugue.Pair;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.ArrayList;
@@ -50,5 +49,23 @@ public class Branch {
         return this.listenedEvents.entrySet().stream()
                 .map(e -> new Pair<>(e.getKey().eventName, e.getValue()))
                 .collect(Collectors.toMap(Pair::left, Pair::right));
+    }
+
+    private class Pair<LEFT, RIGHT> {
+        LEFT leftMember;
+        RIGHT rightMember;
+
+        public Pair(LEFT leftMember, RIGHT rightMember) {
+            this.leftMember = leftMember;
+            this.rightMember = rightMember;
+        }
+
+        public LEFT left() {
+            return leftMember;
+        }
+
+        public RIGHT right() {
+            return rightMember;
+        }
     }
 }

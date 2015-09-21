@@ -2,15 +2,19 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.networkedassets.autodoc</groupId>
-    <artifactId>configureGui</artifactId>
+    <artifactId>confluence-front</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <parent>
+        <groupId>com.networkedassets.autodoc</groupId>
+        <artifactId>autodoc-parent</artifactId>
+        <version>1.0</version>
+    </parent>
     <organization>
         <name>Example Company</name>
         <url>http://www.example.com/</url>
     </organization>
-    <name>autodoc_confluence</name>
-    <description>This is the org.networkedassets.naatlas.autodoc.confluence:autodoc_confluence plugin for Atlassian Confluence.</description>
+    <name>NA Autodoc Confluence Configure GUI</name>
+    <description>This is the configuration GUI for NA Autodocumentation plugin</description>
     <packaging>atlassian-plugin</packaging>
     <dependencies>
         <dependency>
@@ -67,7 +71,12 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.2.5</version>
 		</dependency>
-		
+        <dependency>
+            <groupId>com.networkedassets.autodoc</groupId>
+            <artifactId>settings-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
