@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.services;
+package com.networkedassets.autodoc.transformer.services;
 
 /**
  * Created by kamil on 17.09.2015.

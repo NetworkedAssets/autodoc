@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.configuration;
+package com.networkedassets.autodoc.transformer.configuration;
 
 import org.glassfish.jersey.server.ResourceConfig;
 

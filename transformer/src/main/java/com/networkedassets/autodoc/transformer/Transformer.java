@@ -1,7 +1,7 @@
-package com.networkedassets.autodoc;
+package com.networkedassets.autodoc.transformer;
 
-import com.networkedassets.autodoc.services.EventService;
-import com.networkedassets.autodoc.services.SettingsService;
+import com.networkedassets.autodoc.transformer.services.EventService;
+import com.networkedassets.autodoc.transformer.services.SettingsService;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -38,7 +38,7 @@ public class Transformer {
 
         jerseyServlet.setInitParameter(
                 "javax.ws.rs.Application",
-                "com.networkedassets.autodoc.configuration.Application"
+                "com.networkedassets.autodoc.transformer.configuration.Application"
         );
         jerseyServlet.setInitParameter(
                 "jersey.config.server.provider.classnames",

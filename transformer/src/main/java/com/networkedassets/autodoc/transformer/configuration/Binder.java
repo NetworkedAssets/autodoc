@@ -1,9 +1,9 @@
-package com.networkedassets.autodoc.configuration;
+package com.networkedassets.autodoc.transformer.configuration;
 
-import com.networkedassets.autodoc.EventHandler;
-import com.networkedassets.autodoc.JavaDocGenerator;
-import com.networkedassets.autodoc.Scheduler;
-import com.networkedassets.autodoc.SettingsManager;
+import com.networkedassets.autodoc.transformer.EventHandler;
+import com.networkedassets.autodoc.transformer.JavaDocGenerator;
+import com.networkedassets.autodoc.transformer.Scheduler;
+import com.networkedassets.autodoc.transformer.SettingsManager;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 /**

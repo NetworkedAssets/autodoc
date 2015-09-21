@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc;
+package com.networkedassets.autodoc.transformer;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Resource;
