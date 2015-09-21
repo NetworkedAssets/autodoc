@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.services;
 
 import com.networkedassets.autodoc.EventHandler;
+import com.networkedassets.autodoc.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +26,10 @@ public class EventService extends RestService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public String addEvent(String json) {
-        log.info("New event information received");
-        return SUCCESS + "\n" + eventHandler.test();
+    public String addEvent(Event event) {
+        log.info("New event information received: " + event.toString());
+
+        return SUCCESS;
     }
 
 }

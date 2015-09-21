@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.services;
 
+import com.networkedassets.autodoc.Settings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,16 +19,16 @@ public class SettingsService extends RestService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public static String getSettings() {
+    public static Settings getSettings() {
         log.info("GET request for settings handled");
         //TODO return settings as json
-        return "settings will be there as JSON";
+        return new Settings();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public static String setSettings() {
-        log.info("POST request for settings handled");
+    public static String setSettings(Settings settings) {
+        log.info("POST request for settings handled: " + settings.toString());
         //TODO set received settings
         return SUCCESS;
     }

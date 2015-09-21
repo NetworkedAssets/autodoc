@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc;
 
+import com.networkedassets.autodoc.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,8 @@ public class EventHandler {
 
     public static Logger log = LoggerFactory.getLogger(EventHandler.class);
 
-    public String test(){
-        log.debug("IM AN EVENT HANDLER!!!!!!!!!!!!!!!!");
-        return "EVENT HANDLER :D";
+    public void handleEvent(Event event){
+        //TODO: check if event is watched
+        //TODO: if yes - send to javadoc generator
     }
 }
