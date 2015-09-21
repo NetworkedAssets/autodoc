@@ -14,17 +14,6 @@
         });
     }
 
-    AJS.toInit(function() {
-        console.log("test");
-        $(".expandable-contents").hide();
-        expandImportant(0);
-    });
-
-    $(document).on('click', '.expandable-header', function (e) {
-        var $el = $(this).parent();
-        toggleExpanded($el);
-    });
-
     function collapseAll() {
         toggleExpanded($(".expandable-contents:visible").parent());
     }
@@ -42,6 +31,29 @@
         toggleExpanded($activeRepos, time);
         toggleExpanded($activeBranches, time);
     }
+
+    AJS.toInit(function() {
+        console.log("test");
+        $(".expandable-contents").hide();
+        expandImportant(0);
+    });
+
+    $(document).on('click', '.expandable-header', function (e) {
+        var $el = $(this).parent();
+        toggleExpanded($el);
+    });
+
+    $(document).on('click', '.add-scheduled-event-button', function (e) {
+        $button = $(this);
+        $(com.networkedassets.autodoc.configureGui.scheduledEventDetails({
+            "scheduleStart": "",
+            "period": ""
+        })).insertBefore($button);
+    });
+
+    $(document).on('click', '.remove-scheduled-event-button', function (e) {
+        $(this).parent().parent().remove();
+    });
 
 
 })(AJS.$);

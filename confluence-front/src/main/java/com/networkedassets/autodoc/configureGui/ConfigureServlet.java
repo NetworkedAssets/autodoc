@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 public class ConfigureServlet extends HttpServlet {
 
-    public static final String TEMPLATES_RESOURCE = "com.networkedassets.autodoc.configureGui:soy-templates";
+    public static final String TEMPLATES_RESOURCE = "com.networkedassets.autodoc.confluence-front:soy-templates";
     public static final String TEMPLATE_NAME = "com.networkedassets.autodoc.configureGui.configureScreen";
     private static final Gson GSON = new Gson();
     private static final Type LIST_BRANCHES_JSON_TYPE = new TypeToken<List<Project>>(){}.getType();

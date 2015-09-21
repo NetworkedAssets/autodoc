@@ -127,11 +127,14 @@
                 {/foreach}
             </fieldset>
 
-            <div class="scheduled-events">
-                {foreach $scheduledEvent in $scheduledEvents}
-                    {call .scheduledEventDetails data="$scheduledEvent"/}
-                {/foreach}
-                <button class="aui-button add-scheduled-event-button">Add event</button>
+            <div class="field-group scheduled-events">
+                <label>Scheduled events</label>
+                <div>
+                    {foreach $scheduledEvent in $scheduledEvents}
+                        {call .scheduledEventDetails data="$scheduledEvent"/}
+                    {/foreach}
+                    <button class="aui-button add-scheduled-event-button">Add event</button>
+                </div>
             </div>
         </form>
     </div>
@@ -144,10 +147,17 @@
  * @param period
  */
 {template .scheduledEventDetails}
-<div class="field-group scheduled-event">
-    <div class="schedule-start">
-        <label>{$labelName}</label>
-        <input class="text" type="text" name="schedule-start" value="{$scheduleStart}">
+<div class="aui scheduled-event">
+    <div class="field-group schedule-start">
+        <label>Schedule start</label>
+        <input class="text" type="text" name="schedule-start" value="{$scheduleStart}" title="Schedule start">
+    </div>
+    <div class="field-group period">
+        <label>Period</label>
+        <input class="text" type="text" name="schedule-period" value="{$period}" title="Period">
+    </div>
+    <div class="field-group">
+        <button class="aui-button remove-scheduled-event-button">Remove event</button>
     </div>
 </div>
 {/template}

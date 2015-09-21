@@ -1,8 +1,8 @@
 .container {
-     border: 1px solid #B7B7B7;
+    border: 1px solid #B7B7B7;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
-    border-radius: 5px;;
+    border-radius: 5px;
     padding: 10px;
     margin-top: 10px;
 }
@@ -20,4 +20,16 @@
 
 .add-page-btn {
     margin-left: 5px;
+}
+
+.scheduled-event {
+    border: 1px solid #B7B7B7;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin: 5px 0 5px 0;
+}
+
+.schedule-start {
+    display: inline-block;
 }

@@ -71,6 +71,7 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.2.5</version>
 		</dependency>
+
         <dependency>
             <groupId>com.networkedassets.autodoc</groupId>
             <artifactId>settings-api</artifactId>
