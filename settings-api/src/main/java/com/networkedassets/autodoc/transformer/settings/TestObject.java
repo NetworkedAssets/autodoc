@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by kamil on 21.09.2015.
+ * POJO made for testing purposes only
  */
 public class TestObject {
     private String noSetterString = "";
@@ -37,6 +37,10 @@ public class TestObject {
 
     public void setList(List<String> list) {
         this.list = list;
+    }
+
+    public String getNoSetterString() {
+        return noSetterString;
     }
 
 

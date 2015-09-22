@@ -3,11 +3,16 @@ package com.networkedassets.autodoc.transformer.configuration;
 import org.glassfish.jersey.server.ResourceConfig;
 
 /**
- * Created by kamil on 18.09.2015.
+ * Jersey application configuration
  */
+@SuppressWarnings("unused")
 public class Application extends ResourceConfig {
     public Application() {
-        register(new Binder());
+        //scan for classes providing REST services
         packages(true, "com.networkedassets.autodoc.transformer");
+
+        //register binder for dependency injection
+        register(new Binder());
+
     }
 }

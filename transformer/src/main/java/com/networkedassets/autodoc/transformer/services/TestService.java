@@ -18,8 +18,8 @@ import javax.ws.rs.core.MediaType;
 public class TestService extends RestService {
 
     static final Logger log = LoggerFactory.getLogger(TestService.class);
-    @Inject
-    TestManager testManager;
+
+    @Inject private TestManager testManager;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
