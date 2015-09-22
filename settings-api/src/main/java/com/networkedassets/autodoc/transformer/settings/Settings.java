@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  */
 public class Settings implements TransformerSettings {
 
-    List<Project> projects;
+    private List<Project> projects = new ArrayList<>();
 
     @Override
     public List<Project> getProjectsStateForSpace(String spaceKey) {
@@ -17,5 +18,13 @@ public class Settings implements TransformerSettings {
     @Override
     public void setProjectsStateForSpace(List<Project> projects, String spaceKey) {
 
+    }
+
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 }

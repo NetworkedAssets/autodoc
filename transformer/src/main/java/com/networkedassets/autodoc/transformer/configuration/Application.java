@@ -8,6 +8,6 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class Application extends ResourceConfig {
     public Application() {
         register(new Binder());
-        packages(true, "com.networkedassets.autodoc");
+        packages(true, "com.networkedassets.autodoc.transformer");
     }
 }
