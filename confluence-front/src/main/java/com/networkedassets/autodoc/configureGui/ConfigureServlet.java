@@ -30,7 +30,7 @@ public class ConfigureServlet extends HttpServlet {
     public static final String TEMPLATES_RESOURCE = "com.networkedassets.autodoc.confluence-front:soy-templates";
     public static final String TEMPLATE_NAME = "com.networkedassets.autodoc.configureGui.configureScreen";
     private static final Gson GSON = new Gson();
-    private static final Type LIST_BRANCHES_JSON_TYPE = new TypeToken<List<Project>>(){}.getType();
+    private static final Type LIST_PROJECTS_JSON_TYPE = new TypeToken<List<Project>>(){}.getType();
     private final WebResourceManager webResourceManager;
 
     private SoyTemplateRenderer soyTemplateRenderer;
@@ -63,24 +63,26 @@ public class ConfigureServlet extends HttpServlet {
         }
     }
 
-    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, TransformerSettings settings)
+    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, TransformerSettings settings,
+                                       String message)
             throws IOException, ServletException {
 
         List<Project> allProjects = settings.getProjectsStateForSpace(getSpaceKey(req));
         List<SimplePage> pages = getPages(req);
         String spaceKey = getSpaceKey(req);
 
-        webResourceManager.requireResource("com.networkedassets.autodoc.confluence-front:autodoc_confluence-resources");
-        webResourceManager.requireResource("com.networkedassets.autodoc.confluence-front:soy-templates");
+        String resources = webResourceManager.getResourceTags("com.networkedassets.autodoc.confluence-front:autodoc_confluence-resources", UrlMode.AUTO)
+                + webResourceManager.getResourceTags("com.networkedassets.autodoc.confluence-front:soy-templates", UrlMode.AUTO);
 
         List<Map<String, ?>> allProjectsSoy = allProjects.stream().map(Project::toSoyData).collect(Collectors.toList());
         renderConfigureTemplateWithParams(resp, ImmutableMap.<String, Object>builder()
-                        .put("resources", webResourceManager.getRequiredResources(UrlMode.AUTO))
+                        .put("resources", resources)
                         .put("allProjects", allProjectsSoy)
                         .put("allProjectsJSON", GSON.toJson(allProjectsSoy))
                         .put("pages", pages)
                         .put("pagesJSON", GSON.toJson(pages))
                         .put("spaceKey", spaceKey)
+                        .put("message", message)
                         .build()
         );
     }
@@ -88,7 +90,7 @@ public class ConfigureServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TransformerSettings settings = transformerServer.getSettings();
-        renderConfigureScreen(req, resp, settings);
+        renderConfigureScreen(req, resp, settings, "");
     }
 
     private String getSpaceKey(HttpServletRequest req) {
@@ -105,13 +107,13 @@ public class ConfigureServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String projectsJSON = req.getParameter("projectsJson");
-        List<Project> projects = GSON.fromJson(projectsJSON, LIST_BRANCHES_JSON_TYPE);
+        String newSettings = req.getParameter("newSettings");
+        List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
         TransformerSettings settings = transformerServer.getSettings();
         settings.setProjectsStateForSpace(projects, getSpaceKey(req));
 
         transformerServer.saveSettings(settings);
 
-        renderConfigureScreen(req, resp, settings);
+        renderConfigureScreen(req, resp, settings, newSettings);
     }
 }

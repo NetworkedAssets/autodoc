@@ -1,7 +1,29 @@
 /**
  * Created by mrobakowski on 9/18/2015.
  */
-(function ($) {
+(function ($, undefined) {
+
+    function post(path, params, method) {
+        method = method || "post";
+
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+
+        for ( var key in params ) {
+            if (params.hasOwnProperty(key)) {
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", key);
+                hiddenField.setAttribute("value", params[key]);
+
+                form.appendChild(hiddenField);
+            }
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
 
     function toggleExpanded($div, time) {
         time = time || 200;
@@ -32,6 +54,82 @@
         toggleExpanded($activeBranches, time);
     }
 
+    function saveScheduledEvents($branch) {
+        var scheduledEvents = [];
+        var $newScheduledEvents = $branch.find(".scheduled-event");
+        var $scheduledEvent;
+        for(var i = 0; $scheduledEvent = $($newScheduledEvents[i]), i < $newScheduledEvents.length; i++) {
+            scheduledEvents[i] = {
+                "scheduleStart": $scheduledEvent.find(".schedule-start input").val(),
+                "period": $scheduledEvent.find(".period input").val()
+            }
+        }
+        return scheduledEvents;
+    }
+
+    function saveListenedEvents($branch) {
+        var listenedEvents = {};
+        var $gitEvents = $branch.find(".git-events input.checkbox");
+        var $gitEvent;
+        for(var i = 0; $gitEvent = $($gitEvents[i]), i < $gitEvents.length; i++) {
+            listenedEvents[$gitEvent.data("event-type")] = $gitEvent.is(":checked");
+        }
+        return listenedEvents;
+    }
+
+    function saveBranches($repo) {
+        var branches = [];
+        var $newBranches = $repo.find(".branch");
+        var $branch;
+        for (var i = 0; $branch = $($newBranches[i]), i < $newBranches.length; i++) {
+
+            branches[i] = {
+                "displayId": $branch.data("branch-displayId"),
+                "id": $branch.data("branch-id"),
+                "javadocPageId": $branch.find("select[name=javadoc]").val(),
+                "umlPageId": $branch.find("select[name=uml]").val(),
+                "listenedEvents": saveListenedEvents($branch),
+                "scheduledEvents": saveScheduledEvents($branch)
+            }
+        }
+        return branches;
+    }
+
+    function saveRepos($project) {
+        var repos = [];
+        var $newRepos = $project.find(".repo");
+        var $repo;
+        for (var i = 0; $repo = $($newRepos[i]), i < $newRepos.length; i++) {
+            var branches = saveBranches($repo);
+            repos[i] = {
+                "name": $repo.data("repo-name"),
+                "slug": $repo.data("repo-slug"),
+                "branches": branches
+            }
+        }
+        return repos;
+    }
+
+    function saveSettings() {
+        var newSettings = [];
+        var $projects = $(".project");
+        var $project;
+        for(var i = 0; $project = $($projects[i]), i < $projects.length; i++) {
+            var repos = saveRepos($project);
+
+            newSettings[i] = {
+                "name": $project.data("project-name"),
+                "key": $project.data("project-key"),
+                "repos": repos
+            }
+        }
+        var settingsJSON = JSON.stringify(newSettings);
+        console.log(settingsJSON);
+        post('', {
+            newSettings: settingsJSON
+        });
+    }
+
     AJS.toInit(function() {
         console.log("test");
         $(".expandable-contents").hide();
@@ -55,5 +153,10 @@
         $(this).parent().parent().remove();
     });
 
+    $(document).on('click', "#save-button",function() {
+        console.log("clicked save");
+        saveSettings();
+        console.log("after save");
+    });
 
 })(AJS.$);

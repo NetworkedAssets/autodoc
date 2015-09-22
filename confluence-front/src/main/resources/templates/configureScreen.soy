@@ -8,6 +8,7 @@
  * @param pagesJSON
  * @param spaceKey
  * @param resources
+ * @param message
  */
 {template .configureScreen}
 <html>
@@ -25,7 +26,7 @@
 <body>
 <div class="pagecontent">
     <h2>Select events to watch for</h2>
-
+    {$message}
     <div class="projects">
         {foreach $project in $allProjects}
             {call .project data="$project"}
@@ -33,6 +34,7 @@
             {/call}
         {/foreach}
     </div>
+    <button class="aui-button aui-button-primary" id="save-button">Save</button>
 </div>
 </body>
 </html>
@@ -46,7 +48,7 @@
  * @param repos
  */
 {template .project}
-<div class="project container" id="project-{$key}">
+<div class="project container" data-project-key="{$key}" data-project-name="{$name}">
     <div class="expandable-header">
         <h3><span class="aui-icon aui-icon-small aui-iconfont-arrows-down expand-arrow">Expand</span>{$name}</h3>
     </div>
@@ -68,7 +70,7 @@
  * @param branches
  */
 {template .repo}
-<div class="repo container" id="repo-{$slug}">
+<div class="repo container" data-repo-slug="{$slug}" data-repo-name="{$name}">
     <div class="expandable-header">
         <h3><span class="aui-icon aui-icon-small aui-iconfont-arrows-down expand-arrow">Expand</span>{$name}</h3>
     </div>
@@ -93,32 +95,32 @@
  * @param scheduledEvents
  */
 {template .branch}
-<div class="branch container" id="branch-{$id}">
+<div class="branch container" data-branch-id="{$id}" data-branch-displayId="{$displayId}">
     <div class="expandable-header">
         <h3><span class="aui-icon aui-icon-small aui-iconfont-arrows-down expand-arrow">Expand</span>{$displayId}</h3>
     </div>
     <div class="expandable-contents">
         <form class="aui" action="javascript:void(0);">
             {call .pageSelector}
-                {param selectName: 'javadoc_where'/}
+                {param selectName: 'javadoc'/}
                 {param labelName: 'Javadoc location'/}
                 {param pages: $pages/}
                 {param selectedPageId: $javadocPageId/}
             {/call}
 
             {call .pageSelector}
-                {param selectName: 'uml_where'/}
+                {param selectName: 'uml'/}
                 {param labelName: 'UML location'/}
                 {param pages: $pages/}
                 {param selectedPageId: $umlPageId/}
             {/call}
 
-            <fieldset class="group">
+            <fieldset class="group git-events">
                 <legend><span>Git events</span></legend>
                 {foreach $gitEvent in keys($listenedEvents)}
                     <div class="checkbox">
-                        <label for="branch-{$id}-event-{$gitEvent}">{$gitEvent}</label>
-                        <input class="checkbox" type="checkbox" name="event-{$gitEvent}" id="branch-{$id}-event-{$gitEvent}"
+                        <label>{$gitEvent}</label>
+                        <input class="checkbox" type="checkbox" title="{$gitEvent}" data-event-type="{$gitEvent}"
                                {if $listenedEvents[$gitEvent]}
                                checked="checked"
                                {/if}
@@ -170,9 +172,9 @@
  * @param selectedPageId
  */
 {template .pageSelector}
-<div class="field-group">
-    <label for="{$selectName}">{$labelName}</label>
-    <select name="{$selectName}" id="{$selectName}" class="select">
+<div class="field-group page-selector">
+    <label>{$labelName}</label>
+    <select name="{$selectName}" data-selector-name="{$selectName}" class="select" title="{$selectName}">
         <option value=-1>--Select page--</option>
         {foreach $page in $pages}
             <option value="{$page.id}"
