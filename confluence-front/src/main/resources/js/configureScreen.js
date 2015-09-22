@@ -1,7 +1,7 @@
 /**
  * Created by mrobakowski on 9/18/2015.
  */
-(function ($, undefined) {
+(function ($) {
 
     function toggleExpanded($div, time) {
         time = time || 200;
@@ -23,7 +23,7 @@
     }
 
     function expandImportant(time) {
-        var $activeBranches = $(".branch input.checkbox:checked").parents(".branch");
+        var $activeBranches = $(".branch input.checkbox:checked, .branch .scheduled-event").parents(".branch");
         var $activeRepos = $activeBranches.parents(".repo");
         var $activeProjects = $activeRepos.parents(".project");
 

@@ -13,8 +13,8 @@
 	<resource type="i18n" name="i18n" location="autodoc_confluence" />
 	<!-- add our web resources -->
 	<web-resource key="autodoc_confluence-resources" name="autodoc_confluence Web Resources">
-		<dependency>com.atlassian.auiplugin:ajs</dependency>
-        <dependency>com.atlassian.auiplugin:aui-select</dependency>
+		<!--<dependency>com.atlassian.auiplugin:ajs</dependency>-->
+        <!--<dependency>com.atlassian.auiplugin:aui-select</dependency>-->
 		<resource type="download" name="images/" location="/images" />
         <resource type="download" name="configureScreen.js" location="/js/configureScreen.js" />
 		<resource type="download" name="autodoc-style.css" location="/css/autodoc-style.css" />
@@ -22,8 +22,7 @@
 	</web-resource>
 
 	<web-resource key="soy-templates">
-		<dependency>com.atlassian.soy.soy-template-plugin:soy-deps
-		</dependency>
+		<dependency>com.atlassian.soy.soy-template-plugin:soy-deps</dependency>
 
 		<!-- Available to the server-side only -->
 		<!--<resource type="soy" name="projectRow" location="/templates/projectRow.soy" />-->
