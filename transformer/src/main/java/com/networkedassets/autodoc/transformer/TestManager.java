@@ -4,14 +4,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.networkedassets.autodoc.transformer.settings.TestObject;
 
-import javax.annotation.ManagedBean;
-import javax.annotation.Resource;
+import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Created by kamil on 22.09.2015.
+ * Manager made for testing purposes only
  */
-@Resource
-@ManagedBean
 public class TestManager {
 
     public static int counter = 0;
@@ -21,7 +20,11 @@ public class TestManager {
     public TestManager(){
         counter++;
         testObject.setString("COUNTER: " + counter);
-        testObject.setMap(ImmutableMap.<String, String>of("he", "ha", "hi", "ho"));
+        Map<String, String> map = new HashMap<>();
+        map.put("jeden", "1");
+        map.put("dwa", "2");
+        map.put("trzy", "3");
+        testObject.setMap(map);
         testObject.setList(ImmutableList.<String>of("uno", "dos", "tres"));
     }
 

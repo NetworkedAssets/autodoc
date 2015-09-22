@@ -6,12 +6,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.ManagedBean;
 import javax.annotation.Resource;
+import javax.inject.Singleton;
 
 /**
  * Handles incoming events
  */
-@Resource
-@ManagedBean
 public class EventHandler {
 
     public static Logger log = LoggerFactory.getLogger(EventHandler.class);

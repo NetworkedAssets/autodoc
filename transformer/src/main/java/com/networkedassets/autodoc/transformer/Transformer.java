@@ -20,11 +20,6 @@ public class Transformer {
     static final Logger log = LoggerFactory.getLogger(Transformer.class);
 
     private static final List<String> classnames = new ArrayList<String>();
-    static{
-        classnames.add(SettingsService.class.getCanonicalName());
-        classnames.add(EventService.class.getCanonicalName());
-        classnames.add(TestService.class.getCanonicalName());
-    }
 
     public static void main(String[] args) throws Exception {
         Server jettyServer = new Server(8050);
@@ -42,10 +37,7 @@ public class Transformer {
                 "javax.ws.rs.Application",
                 "com.networkedassets.autodoc.transformer.configuration.Application"
         );
-        jerseyServlet.setInitParameter(
-                "jersey.config.server.provider.classnames",
-                classnames.stream().collect(Collectors.joining(", "))
-        );
+
 
         try {
             jettyServer.start();
