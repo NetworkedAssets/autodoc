@@ -2,6 +2,7 @@ package com.networkedassets.autodoc.transformer;
 
 import com.networkedassets.autodoc.transformer.services.EventService;
 import com.networkedassets.autodoc.transformer.services.SettingsService;
+import com.networkedassets.autodoc.transformer.services.TestService;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -22,6 +23,7 @@ public class Transformer {
     static{
         classnames.add(SettingsService.class.getCanonicalName());
         classnames.add(EventService.class.getCanonicalName());
+        classnames.add(TestService.class.getCanonicalName());
     }
 
     public static void main(String[] args) throws Exception {
