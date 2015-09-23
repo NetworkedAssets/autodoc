@@ -58,4 +58,9 @@
     display: inline-block;
     margin-right: 5px;
     vertical-align: top;
+    width: 460px;
+}
+
+#save-button {
+    margin-top: 5px;
 }
