@@ -1,8 +1,6 @@
 package com.networkedassets.autodoc.transformer;
 
-import com.networkedassets.autodoc.transformer.services.EventService;
-import com.networkedassets.autodoc.transformer.services.SettingsService;
-import com.networkedassets.autodoc.transformer.services.TestService;
+import com.networkedassets.autodoc.transformer.configuration.Application;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -10,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Hello world!
@@ -36,8 +34,8 @@ public class Transformer {
         jerseyServlet.setInitOrder(0);
 
         jerseyServlet.setInitParameter(
-                "javax.ws.rs.Application",
-                "com.networkedassets.autodoc.transformer.configuration.Application"
+                "jersey.config.server.provider.classnames",
+                Application.class.getCanonicalName()
         );
 //        jerseyServlet.setInitParameter(
 //                "com.sun.jersey.api.json.POJOMappingFeature",

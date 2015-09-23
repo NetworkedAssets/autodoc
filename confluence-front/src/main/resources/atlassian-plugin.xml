@@ -25,13 +25,11 @@
 		<dependency>com.atlassian.soy.soy-template-plugin:soy-deps</dependency>
 
 		<!-- Available to the server-side only -->
-		<!--<resource type="soy" name="projectRow" location="/templates/projectRow.soy" />-->
         <resource type="soy" name="configureScreen" location="/templates/configureScreen.soy" />
 		<!-- Make available to the client-side in JS as well... -->
 		<transformation extension="soy">
 			<transformer key="soyTransformer" />
 		</transformation>
-		<!--<resource type="download" name="projectRow.soy.js" location="/templates/projectRow.soy" />-->
         <resource type="download" name="configureScreen.soy.js" location="/templates/configureScreen.soy" />
 		<context>autodoc_confluence</context>
 	</web-resource>
@@ -47,7 +45,7 @@
 		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
 
 	<!-- Link to the configuration screen -->
-	<web-item name="Autodoc Configuration Link" i18n-name-key="autodoc-configuration-link.name"
+	<web-item name="Autodoc" i18n-name-key="autodoc-configuration-link.name"
 		key="autodoc-configuration-link" section="system.space.tools/addons"
 		weight="1000">
 		<description key="autodoc-configuration-link.description">The Autodoc Configuration Link Plugin

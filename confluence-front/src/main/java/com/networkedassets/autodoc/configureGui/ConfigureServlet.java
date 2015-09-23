@@ -1,12 +1,13 @@
 package com.networkedassets.autodoc.configureGui;
 
 import com.atlassian.confluence.pages.PageManager;
+import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
-import com.atlassian.plugin.webresource.UrlMode;
-import com.atlassian.plugin.webresource.WebResourceManager;
-import com.atlassian.soy.renderer.SoyException;
+import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
+import com.atlassian.confluence.util.velocity.VelocityUtils;
 import com.atlassian.soy.renderer.SoyTemplateRenderer;
+import com.atlassian.spring.container.ContainerManager;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -14,6 +15,7 @@ import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.TransformerServerMock;
 import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
+import org.apache.velocity.context.Context;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -31,7 +33,6 @@ public class ConfigureServlet extends HttpServlet {
     public static final String TEMPLATE_NAME = "com.networkedassets.autodoc.configureGui.configureScreen";
     private static final Gson GSON = new Gson();
     private static final Type LIST_PROJECTS_JSON_TYPE = new TypeToken<List<Project>>(){}.getType();
-    private final WebResourceManager webResourceManager;
 
     private SoyTemplateRenderer soyTemplateRenderer;
     private PageManager pageManager;
@@ -40,21 +41,31 @@ public class ConfigureServlet extends HttpServlet {
     private TransformerServer transformerServer;
 
     public ConfigureServlet(SoyTemplateRenderer soyTemplateRenderer, PageManager pageManager,
-                            SpaceManager spaceManager, WebResourceManager webResourceManager) {
+                            SpaceManager spaceManager) {
         this.soyTemplateRenderer = soyTemplateRenderer;
         this.pageManager = pageManager;
         this.spaceManager = spaceManager;
-        this.webResourceManager = webResourceManager;
         transformerServer = new TransformerServerMock("localhost:8099");
     }
 
-    private void renderConfigureTemplateWithParams(HttpServletResponse resp, Map<String, Object> templateParams)
+    private void renderConfigureTemplateWithParams(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> templateParams)
             throws IOException, ServletException {
         resp.setContentType("text/html;charset=UTF-8");
         try {
-            soyTemplateRenderer.render(resp.getWriter(), TEMPLATES_RESOURCE,
-                    TEMPLATE_NAME, templateParams);
-        } catch (SoyException e) {
+            Context context = MacroUtils.createDefaultVelocityContext();
+            context.put("soyRenderer", soyTemplateRenderer);
+            context.put("soyParams", templateParams);
+            context.put("soyResource", TEMPLATES_RESOURCE);
+            context.put("pageContent", TEMPLATE_NAME);
+            Space space = getSpace(req);
+            context.put("space", space);
+            SpaceAdminAction action = new SpaceAdminAction();
+            ContainerManager.autowireComponent(action);
+            action.setSpace(space);
+            context.put("action", action);
+            VelocityUtils.renderTemplateWithoutSwallowingErrors("templates/space-admin-decorator.vm", context,
+                    resp.getWriter());
+        } catch (Exception e) {
             Throwable cause = e.getCause();
             if (cause instanceof IOException) {
                 throw (IOException) cause;
@@ -69,19 +80,11 @@ public class ConfigureServlet extends HttpServlet {
 
         List<Project> allProjects = settings.getProjectsStateForSpace(getSpaceKey(req));
         List<SimplePage> pages = getPages(req);
-        String spaceKey = getSpaceKey(req);
-
-        String resources = webResourceManager.getResourceTags("com.networkedassets.autodoc.confluence-front:autodoc_confluence-resources", UrlMode.AUTO)
-                + webResourceManager.getResourceTags("com.networkedassets.autodoc.confluence-front:soy-templates", UrlMode.AUTO);
 
         List<Map<String, ?>> allProjectsSoy = allProjects.stream().map(Project::toSoyData).collect(Collectors.toList());
-        renderConfigureTemplateWithParams(resp, ImmutableMap.<String, Object>builder()
-                        .put("resources", resources)
+        renderConfigureTemplateWithParams(req, resp, ImmutableMap.<String, Object>builder()
                         .put("allProjects", allProjectsSoy)
-                        .put("allProjectsJSON", GSON.toJson(allProjectsSoy))
                         .put("pages", pages)
-                        .put("pagesJSON", GSON.toJson(pages))
-                        .put("spaceKey", spaceKey)
                         .put("message", message)
                         .build()
         );
@@ -108,9 +111,9 @@ public class ConfigureServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String newSettings = req.getParameter("newSettings");
-        List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
+//        List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
         TransformerSettings settings = transformerServer.getSettings();
-        settings.setProjectsStateForSpace(projects, getSpaceKey(req));
+//        settings.setProjectsStateForSpace(projects, getSpaceKey(req));
 
         transformerServer.saveSettings(settings);
 

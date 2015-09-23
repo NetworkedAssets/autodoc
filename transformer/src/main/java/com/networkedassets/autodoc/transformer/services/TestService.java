@@ -1,7 +1,5 @@
 package com.networkedassets.autodoc.transformer.services;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.networkedassets.autodoc.transformer.TestManager;
 import com.networkedassets.autodoc.transformer.settings.TestObject;
 import org.slf4j.Logger;

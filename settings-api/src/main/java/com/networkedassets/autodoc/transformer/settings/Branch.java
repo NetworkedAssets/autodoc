@@ -45,9 +45,9 @@ public class Branch {
     }
 
 
-    private Map<String, Boolean> listenedEventsAsSoy() {
+    private Map<String, Map<String, Object>> listenedEventsAsSoy() {
         return this.listenedEvents.entrySet().stream()
-                .map(e -> new Pair<>(e.getKey().eventName, e.getValue()))
+                .map(e -> new Pair<>(e.getKey().eventName, ImmutableMap.<String, Object>of("val", e.getValue(), "enum", e.getKey().name())))
                 .collect(Collectors.toMap(Pair::left, Pair::right));
     }
 
@@ -67,5 +67,6 @@ public class Branch {
         public RIGHT right() {
             return rightMember;
         }
+
     }
 }
