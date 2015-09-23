@@ -18,13 +18,13 @@ public class StashClient extends HttpClient {
 		super(config);
 	}
 
-	public HttpResponse<HookSettings> getHookSettings(@Nonnull final String projectKey, @Nonnull final String repositorySlug,
-			final String hookKey) throws UnirestException {
-	  
-	  Preconditions.checkNotNull(projectKey);
-    Preconditions.checkNotNull(repositorySlug);
-    Preconditions.checkNotNull(hookKey);
-  
+	public HttpResponse<HookSettings> getHookSettings(@Nonnull final String projectKey,
+			@Nonnull final String repositorySlug, final String hookKey) throws UnirestException {
+
+		Preconditions.checkNotNull(projectKey);
+		Preconditions.checkNotNull(repositorySlug);
+		Preconditions.checkNotNull(hookKey);
+
 		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings", projectKey,
 				repositorySlug, hookKey);
 		HttpResponse<HookSettings> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
@@ -64,7 +64,6 @@ public class StashClient extends HttpClient {
 		Preconditions.checkNotNull(repositorySlug);
 		Preconditions.checkNotNull(hookKey);
 
-
 		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled", projectKey,
 				repositorySlug, hookKey);
 		HttpResponse<HookConfirm> jsonResponse = Unirest.put(this.getBaseUrl().toString() + requestUrl)
@@ -73,15 +72,13 @@ public class StashClient extends HttpClient {
 
 		return jsonResponse;
 	}
-	
-	
+
 	public HttpResponse<HookConfirm> setHookSettingsDisabled(@Nonnull final String projectKey,
 			@Nonnull final String repositorySlug, @Nonnull final String hookKey) throws UnirestException {
 
 		Preconditions.checkNotNull(projectKey);
 		Preconditions.checkNotNull(repositorySlug);
 		Preconditions.checkNotNull(hookKey);
-
 
 		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled", projectKey,
 				repositorySlug, hookKey);
@@ -91,7 +88,5 @@ public class StashClient extends HttpClient {
 
 		return jsonResponse;
 	}
-	
-	
 
 }
