@@ -6,8 +6,6 @@ import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
 import com.atlassian.confluence.util.velocity.VelocityUtils;
-import com.atlassian.plugin.webresource.UrlMode;
-import com.atlassian.plugin.webresource.WebResourceManager;
 import com.atlassian.soy.renderer.SoyTemplateRenderer;
 import com.atlassian.spring.container.ContainerManager;
 import com.google.common.collect.ImmutableMap;
@@ -35,7 +33,6 @@ public class ConfigureServlet extends HttpServlet {
     public static final String TEMPLATE_NAME = "com.networkedassets.autodoc.configureGui.configureScreen";
     private static final Gson GSON = new Gson();
     private static final Type LIST_PROJECTS_JSON_TYPE = new TypeToken<List<Project>>(){}.getType();
-    private final WebResourceManager webResourceManager;
 
     private SoyTemplateRenderer soyTemplateRenderer;
     private PageManager pageManager;
@@ -44,11 +41,10 @@ public class ConfigureServlet extends HttpServlet {
     private TransformerServer transformerServer;
 
     public ConfigureServlet(SoyTemplateRenderer soyTemplateRenderer, PageManager pageManager,
-                            SpaceManager spaceManager, WebResourceManager webResourceManager) {
+                            SpaceManager spaceManager) {
         this.soyTemplateRenderer = soyTemplateRenderer;
         this.pageManager = pageManager;
         this.spaceManager = spaceManager;
-        this.webResourceManager = webResourceManager;
         transformerServer = new TransformerServerMock("localhost:8099");
     }
 
@@ -69,7 +65,6 @@ public class ConfigureServlet extends HttpServlet {
             context.put("action", action);
             VelocityUtils.renderTemplateWithoutSwallowingErrors("templates/space-admin-decorator.vm", context,
                     resp.getWriter());
-//            soyTemplateRenderer.render(resp.getWriter(), TEMPLATES_RESOURCE, TEMPLATE_NAME, templateParams);
         } catch (Exception e) {
             Throwable cause = e.getCause();
             if (cause instanceof IOException) {
@@ -85,17 +80,11 @@ public class ConfigureServlet extends HttpServlet {
 
         List<Project> allProjects = settings.getProjectsStateForSpace(getSpaceKey(req));
         List<SimplePage> pages = getPages(req);
-        String spaceKey = getSpaceKey(req);
-
-        String resources = webResourceManager.getResourceTags("com.networkedassets.autodoc.confluence-front:autodoc_confluence-resources", UrlMode.AUTO)
-                + webResourceManager.getResourceTags("com.networkedassets.autodoc.confluence-front:soy-templates", UrlMode.AUTO);
 
         List<Map<String, ?>> allProjectsSoy = allProjects.stream().map(Project::toSoyData).collect(Collectors.toList());
         renderConfigureTemplateWithParams(req, resp, ImmutableMap.<String, Object>builder()
-                        .put("resources", resources)
                         .put("allProjects", allProjectsSoy)
                         .put("pages", pages)
-                        .put("spaceKey", spaceKey)
                         .put("message", message)
                         .build()
         );
