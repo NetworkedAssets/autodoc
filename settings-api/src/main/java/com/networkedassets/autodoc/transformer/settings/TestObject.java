@@ -8,6 +8,7 @@ import java.util.Map;
 /**
  * POJO made for testing purposes only
  */
+
 public class TestObject {
     private String noSetterString = "";
     private String string = "";

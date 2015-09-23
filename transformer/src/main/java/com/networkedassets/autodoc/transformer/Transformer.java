@@ -6,6 +6,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class Transformer {
     private static final List<String> classnames = new ArrayList<String>();
 
     public static void main(String[] args) throws Exception {
+
         Server jettyServer = new Server(8050);
 
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -35,6 +37,10 @@ public class Transformer {
                 "jersey.config.server.provider.classnames",
                 Application.class.getCanonicalName()
         );
+//        jerseyServlet.setInitParameter(
+//                "com.sun.jersey.api.json.POJOMappingFeature",
+//                "true"
+//        );
 
 
         try {
