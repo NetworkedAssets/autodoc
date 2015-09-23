@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Contains settings of the application
  */
-public class Settings implements TransformerSettings {
+public class SettingsForSpace implements TransformerSettings {
 
     private List<Project> projects = new ArrayList<>();
 

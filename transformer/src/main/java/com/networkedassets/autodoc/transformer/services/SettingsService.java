@@ -1,10 +1,12 @@
 package com.networkedassets.autodoc.transformer.services;
 
 
-import com.networkedassets.autodoc.transformer.settings.Settings;
+import com.networkedassets.autodoc.transformer.SettingsManager;
+import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -16,23 +18,20 @@ import javax.ws.rs.core.MediaType;
 public class SettingsService extends RestService {
 
     static final Logger log = LoggerFactory.getLogger(SettingsService.class);
-    private Settings settings = new Settings();
+    @Inject private SettingsManager settingsManager;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Settings getSettings() {
+    public SettingsForSpace getSettings() {
         log.info("GET request for settings handled");
-        //TODO return settings as json
-        return settings;
-
+        return settingsManager.getSettingsForSpace();
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public String setSettings(Settings settings) {
-        log.info("POST request for settings handled: " + settings.toString());
-        //TODO set received settings
-        this.settings = settings;
+    public String setSettings(SettingsForSpace settingsForSpace) {
+        log.info("POST request for settings handled: " + settingsForSpace.toString());
+        settingsManager.setSettingsForSpace(settingsForSpace);
         return SUCCESS;
     }
 
