@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Contains settings of the application
+ * Contains settings for one space
  */
 public class SettingsForSpace implements TransformerSettings {
 
     private List<Project> projects = new ArrayList<>();
+    private String spaceKey;
+    private String confluenceUrl;
 
     public List<Project> getProjects() {
         return projects;
@@ -16,5 +18,21 @@ public class SettingsForSpace implements TransformerSettings {
 
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    public String getSpaceKey() {
+        return spaceKey;
+    }
+
+    public void setSpaceKey(String spaceKey) {
+        this.spaceKey = spaceKey;
+    }
+
+    public String getConfluenceUrl() {
+        return confluenceUrl;
+    }
+
+    public void setConfluenceUrl(String confluenceUrl) {
+        this.confluenceUrl = confluenceUrl;
     }
 }
