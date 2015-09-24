@@ -21,6 +21,7 @@ public class SettingsManager {
     }
 
     public SettingsForSpace getSettingsForSpace(String spaceKey, String confluenceUrl) {
+        updateSettings();
         SettingsForSpace settingsForSpace;
         try{
             settingsForSpace = settings.getSettingsForSpaces().stream().filter(s ->
@@ -32,22 +33,19 @@ public class SettingsManager {
     }
 
     public void setSettingsForSpace(SettingsForSpace settingsForSpace, String spaceKey, String confluenceUrl) {
+        updateSettings();
         settings.getSettingsForSpaces()
                 .removeIf(s -> (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)));
         settings.getSettingsForSpaces().add(settingsForSpace);
     }
 
     private void updateSettings() {
-        for (final ListIterator<SettingsForSpace> i = settings.getSettingsForSpaces().listIterator(); i.hasNext();){
-            SettingsForSpace settingsForSpace = i.next();
-            settingsForSpace = updateProjectsFromStash(settingsForSpace);
-            i.set(settingsForSpace);
-        }
+        settings.getSettingsForSpaces().stream().forEach(this::updateProjectsFromStash);
     }
 
     private SettingsForSpace getDefaultSettingsForSpace(){
         SettingsForSpace defaultSettingsForSpace = new SettingsForSpace();
-        defaultSettingsForSpace = updateProjectsFromStash(defaultSettingsForSpace);
+        updateProjectsFromStash(defaultSettingsForSpace);
         return defaultSettingsForSpace;
     }
 
@@ -58,9 +56,7 @@ public class SettingsManager {
         return defaultSettingsForSpace;
     }
 
-    private SettingsForSpace updateProjectsFromStash(SettingsForSpace settingsForSpace){
-        SettingsForSpace updatedSettings = settingsForSpace;
+    private void updateProjectsFromStash(SettingsForSpace settingsForSpace){
         //TODO add projects, repos and branches from Stash, remove nonexistent
-        return updatedSettings;
     }
 }
