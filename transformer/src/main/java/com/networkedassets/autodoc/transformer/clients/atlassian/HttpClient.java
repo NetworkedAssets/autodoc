@@ -1,7 +1,9 @@
 package com.networkedassets.autodoc.transformer.clients.atlassian;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,6 +62,20 @@ public class HttpClient {
 	@Nullable
 	public String getPassword() {
 		return password;
+	}
+
+	public static String encode(String queryString) {
+		String result;
+		try {
+			result = URLEncoder.encode(queryString, "UTF-8");
+		} catch (UnsupportedEncodingException ex) {
+			throw new RuntimeException("UTF-8 not supported", ex);
+		}
+		return result;
+	}
+
+	public static boolean isBlank(@Nullable String s) {
+		return s == null || s.isEmpty() || s.trim().isEmpty();
 	}
 
 }

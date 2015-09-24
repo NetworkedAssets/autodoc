@@ -10,8 +10,8 @@ import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
 import com.atlassian.confluence.util.velocity.VelocityUtils;
 import com.atlassian.soy.renderer.SoyTemplateRenderer;
 import com.atlassian.spring.container.ContainerManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.TransformerServerMock;
@@ -35,7 +35,7 @@ public class ConfigureServlet extends HttpServlet {
 
     public static final String TEMPLATES_RESOURCE = "com.networkedassets.autodoc.confluence-front:soy-templates";
     public static final String TEMPLATE_NAME = "com.networkedassets.autodoc.configureGui.configureScreen";
-    private static final Gson GSON = new Gson();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final Type LIST_PROJECTS_JSON_TYPE = new TypeToken<List<Project>>(){}.getType();
 
     private SoyTemplateRenderer soyTemplateRenderer;
@@ -135,7 +135,8 @@ public class ConfigureServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String newSettings = req.getParameter("newSettings");
-        List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
+//        List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
+        List<Project> projects = OBJECT_MAPPER.readValue(newSettings, OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, Project.class));
         String spaceKey = getSpaceKey(req);
 
         SettingsForSpace settings = new SettingsForSpace();
