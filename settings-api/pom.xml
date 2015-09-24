@@ -16,10 +16,17 @@
             <artifactId>guava</artifactId>
             <version>11.0.2</version>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.5.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.networkedassets.autodoc</groupId>
+            <artifactId>functional-utils</artifactId>
+            <version>1.0</version>
         </dependency>
 
     </dependencies>

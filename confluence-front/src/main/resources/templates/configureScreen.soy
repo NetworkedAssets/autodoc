@@ -141,18 +141,18 @@
 
 /**
  * Renders scheduled event details
- * @param scheduleStart
- * @param period
+ * @param scheduleStartIso
+ * @param periodIso
  */
 {template .scheduledEventDetails}
 <div class="aui scheduled-event">
     <div class="schedule-start">
         <label>Schedule start</label>
-        <input class="text" type="text" name="schedule-start" value="{$scheduleStart}" title="Schedule start">
+        <input class="text" type="text" name="schedule-start" value="{$scheduleStartIso}" title="Schedule start">
     </div>
     <div class="period">
         <label>Period</label>
-        <input class="text" type="text" name="schedule-period" value="{$period}" title="Period">
+        <input class="text" type="text" name="schedule-period" value="{$periodIso}" title="Period">
     </div>
     <div>
         <button class="aui-button remove-scheduled-event-button">Remove event</button>

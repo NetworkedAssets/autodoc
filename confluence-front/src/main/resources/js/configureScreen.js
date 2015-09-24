@@ -60,8 +60,8 @@
         var $scheduledEvent;
         for(var i = 0; $scheduledEvent = $($newScheduledEvents[i]), i < $newScheduledEvents.length; i++) {
             scheduledEvents[i] = {
-                "scheduleStart": $scheduledEvent.find(".schedule-start input").val(),
-                "period": $scheduledEvent.find(".period input").val()
+                "scheduleStartIso": $scheduledEvent.find(".schedule-start input").val(),
+                "periodIso": $scheduledEvent.find(".period input").val()
             }
         }
         return scheduledEvents;

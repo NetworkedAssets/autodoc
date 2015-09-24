@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.configureGui;
 
+import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
 import com.atlassian.confluence.spaces.Space;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ConfigureServlet extends HttpServlet {
@@ -79,6 +81,10 @@ public class ConfigureServlet extends HttpServlet {
             throws IOException, ServletException {
 
         List<Project> allProjects = settings.getProjectsStateForSpace(getSpaceKey(req));
+        Optional<Long> defaultJavadocLocation = findDefaultJavadocLocation(req);
+        Optional<Long> defaultUmlLocation = findDefaultUmlLocation(req);
+        defaultJavadocLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
+        defaultUmlLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultUmlLocation(pageId)));
         List<SimplePage> pages = getPages(req);
 
         List<Map<String, ?>> allProjectsSoy = allProjects.stream().map(Project::toSoyData).collect(Collectors.toList());
@@ -88,6 +94,14 @@ public class ConfigureServlet extends HttpServlet {
                         .put("message", message)
                         .build()
         );
+    }
+
+    private Optional<Long> findDefaultUmlLocation(HttpServletRequest req) {
+        return Optional.ofNullable(pageManager.getPage(getSpaceKey(req), "5. Building Block View")).map(Page::getId);
+    }
+
+    private Optional<Long> findDefaultJavadocLocation(HttpServletRequest req) {
+        return Optional.ofNullable(pageManager.getPage(getSpaceKey(req), "5. Building Block View")).map(Page::getId);
     }
 
     @Override
