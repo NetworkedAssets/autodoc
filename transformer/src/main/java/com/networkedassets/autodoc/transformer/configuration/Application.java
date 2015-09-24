@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class Application extends ResourceConfig {
     public Application() {
 
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!IMA AN APPLICATION LOL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         //scan for classes providing REST services
         packages(true, "com.networkedassets.autodoc.transformer");
 

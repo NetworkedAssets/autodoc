@@ -34,13 +34,9 @@ public class Transformer {
         jerseyServlet.setInitOrder(0);
 
         jerseyServlet.setInitParameter(
-                "jersey.config.server.provider.classnames",
+                "javax.ws.rs.Application",
                 Application.class.getCanonicalName()
         );
-//        jerseyServlet.setInitParameter(
-//                "com.sun.jersey.api.json.POJOMappingFeature",
-//                "true"
-//        );
 
 
         try {

@@ -68,7 +68,7 @@ public class TransformerServerImpl implements TransformerServer {
             if (confluenceUrl != null) {
                 response = Unirest.post(url + SETTINGS)
                         .queryString("spaceKey", spaceKey)
-                        .queryString("confluenceUrl", confluenceUrl)
+                        .queryString("confluenceBaseUrl", confluenceUrl)
                         .body(settings)
                         .asString();
             } else {
