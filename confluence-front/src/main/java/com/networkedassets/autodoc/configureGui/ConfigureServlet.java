@@ -3,6 +3,7 @@ package com.networkedassets.autodoc.configureGui;
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
+import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
@@ -15,7 +16,8 @@ import com.google.gson.reflect.TypeToken;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.TransformerServerMock;
 import com.networkedassets.autodoc.transformer.settings.Project;
-import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
+import com.networkedassets.autodoc.transformer.settings.SettingsException;
+import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 import org.apache.velocity.context.Context;
 
 import javax.servlet.ServletException;
@@ -41,12 +43,14 @@ public class ConfigureServlet extends HttpServlet {
     private SpaceManager spaceManager;
 
     private TransformerServer transformerServer;
+    private SettingsManager settingsManager;
 
     public ConfigureServlet(SoyTemplateRenderer soyTemplateRenderer, PageManager pageManager,
-                            SpaceManager spaceManager) {
+                            SpaceManager spaceManager, SettingsManager settingsManager) {
         this.soyTemplateRenderer = soyTemplateRenderer;
         this.pageManager = pageManager;
         this.spaceManager = spaceManager;
+        this.settingsManager = settingsManager;
         transformerServer = new TransformerServerMock("localhost:8099");
     }
 
@@ -76,7 +80,7 @@ public class ConfigureServlet extends HttpServlet {
         }
     }
 
-    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, TransformerSettings settings,
+    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, SettingsForSpace settings,
                                        String message)
             throws IOException, ServletException {
 
@@ -106,8 +110,14 @@ public class ConfigureServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        TransformerSettings settings = transformerServer.getSettingsForSpace(getSpaceKey(req));
-        renderConfigureScreen(req, resp, settings, "");
+        String message = "";
+        SettingsForSpace settings = null;
+        try {
+            settings = transformerServer.getSettingsForSpace(getSpaceKey(req));
+        } catch (SettingsException e) {
+            message = e.getMessage();
+        }
+        renderConfigureScreen(req, resp, settings, message);
     }
 
     private String getSpaceKey(HttpServletRequest req) {
@@ -127,11 +137,19 @@ public class ConfigureServlet extends HttpServlet {
         String newSettings = req.getParameter("newSettings");
         List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
         String spaceKey = getSpaceKey(req);
-        TransformerSettings settings = transformerServer.getSettingsForSpace(spaceKey);
+
+        SettingsForSpace settings = new SettingsForSpace();
         settings.setProjects(projects);
+        settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
+        settings.setSpaceKey(spaceKey);
 
-        transformerServer.saveSettingsForSpace(settings, spaceKey);
+        String message = "Settings set succesfully!";
+        try {
+            transformerServer.saveSettingsForSpace(settings, spaceKey);
+        } catch (SettingsException e) {
+            message = e.getMessage();
+        }
 
-        renderConfigureScreen(req, resp, settings, newSettings);
+        renderConfigureScreen(req, resp, settings, message);
     }
 }

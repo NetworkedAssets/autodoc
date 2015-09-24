@@ -8,7 +8,7 @@ import java.time.Period;
 import java.util.List;
 
 public class TransformerServerMock implements TransformerServer {
-    public static final TransformerSettings settings = new TransformerSettings() {
+    public static final SettingsForSpace settings = new SettingsForSpace() {
         @Override
         public List<Project> getProjects() {
             return ImmutableList.<Project>builder()
@@ -47,12 +47,12 @@ public class TransformerServerMock implements TransformerServer {
     }
 
     @Override
-    public TransformerSettings getSettingsForSpace(String spaceKey) {
+    public SettingsForSpace getSettingsForSpace(String spaceKey) {
         return settings;
     }
 
     @Override
-    public void saveSettingsForSpace(TransformerSettings settings, String spaceKey) {
+    public void saveSettingsForSpace(SettingsForSpace settings, String spaceKey) {
 
     }
 }

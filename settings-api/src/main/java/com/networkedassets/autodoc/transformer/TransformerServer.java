@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.transformer;
 
-import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
+import com.networkedassets.autodoc.transformer.settings.SettingsException;
+import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 
 /**
  * This interface is implemented for all the backends for Autodoc configuration screen. It provides means to get the
@@ -9,6 +10,6 @@ import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
  * @author mrobakowski
  */
 public interface TransformerServer {
-    TransformerSettings getSettingsForSpace(String spaceKey);
-    void saveSettingsForSpace(TransformerSettings settings, String spaceKey);
+    SettingsForSpace getSettingsForSpace(String spaceKey) throws SettingsException;
+    void saveSettingsForSpace(SettingsForSpace settings, String spaceKey) throws SettingsException;
 }
