@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface TransformerSettings {
 
-    List<Project> getProjectsStateForSpace(String spaceKey);
+    List<Project> getProjects();
 
-    void setProjectsStateForSpace(List<Project> projects, String spaceKey);
+    void setProjects(List<Project> projects);
 }

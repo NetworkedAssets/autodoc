@@ -80,7 +80,7 @@ public class ConfigureServlet extends HttpServlet {
                                        String message)
             throws IOException, ServletException {
 
-        List<Project> allProjects = settings.getProjectsStateForSpace(getSpaceKey(req));
+        List<Project> allProjects = settings.getProjects();
         Optional<Long> defaultJavadocLocation = findDefaultJavadocLocation(req);
         Optional<Long> defaultUmlLocation = findDefaultUmlLocation(req);
         defaultJavadocLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
@@ -106,7 +106,7 @@ public class ConfigureServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        TransformerSettings settings = transformerServer.getSettings();
+        TransformerSettings settings = transformerServer.getSettingsForSpace(getSpaceKey(req));
         renderConfigureScreen(req, resp, settings, "");
     }
 
@@ -125,11 +125,12 @@ public class ConfigureServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String newSettings = req.getParameter("newSettings");
-//        List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
-        TransformerSettings settings = transformerServer.getSettings();
-//        settings.setProjectsStateForSpace(projects, getSpaceKey(req));
+        List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
+        String spaceKey = getSpaceKey(req);
+        TransformerSettings settings = transformerServer.getSettingsForSpace(spaceKey);
+        settings.setProjects(projects);
 
-        transformerServer.saveSettings(settings);
+        transformerServer.saveSettingsForSpace(settings, spaceKey);
 
         renderConfigureScreen(req, resp, settings, newSettings);
     }

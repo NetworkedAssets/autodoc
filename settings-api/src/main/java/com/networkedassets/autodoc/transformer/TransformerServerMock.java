@@ -10,7 +10,7 @@ import java.util.List;
 public class TransformerServerMock implements TransformerServer {
     public static final TransformerSettings settings = new TransformerSettings() {
         @Override
-        public List<Project> getProjectsStateForSpace(String spaceKey) {
+        public List<Project> getProjects() {
             return ImmutableList.<Project>builder()
                     .add(new Project("Project the first", "PRJ1") {{
                         repos.add(new Repo("Repo 1", "R1") {{
@@ -38,7 +38,7 @@ public class TransformerServerMock implements TransformerServer {
         }
 
         @Override
-        public void setProjectsStateForSpace(List<Project> projects, String spaceKey) {
+        public void setProjects(List<Project> projects) {
 
         }
     };
@@ -47,12 +47,12 @@ public class TransformerServerMock implements TransformerServer {
     }
 
     @Override
-    public TransformerSettings getSettings() {
+    public TransformerSettings getSettingsForSpace(String spaceKey) {
         return settings;
     }
 
     @Override
-    public void saveSettings(TransformerSettings settings) {
+    public void saveSettingsForSpace(TransformerSettings settings, String spaceKey) {
 
     }
 }

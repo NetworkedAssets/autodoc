@@ -10,16 +10,6 @@ public class SettingsForSpace implements TransformerSettings {
 
     private List<Project> projects = new ArrayList<>();
 
-    @Override
-    public List<Project> getProjectsStateForSpace(String spaceKey) {
-        return null;
-    }
-
-    @Override
-    public void setProjectsStateForSpace(List<Project> projects, String spaceKey) {
-
-    }
-
     public List<Project> getProjects() {
         return projects;
     }

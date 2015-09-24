@@ -9,6 +9,6 @@ import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
  * @author mrobakowski
  */
 public interface TransformerServer {
-    TransformerSettings getSettings();
-    void saveSettings(TransformerSettings settings);
+    TransformerSettings getSettingsForSpace(String spaceKey);
+    void saveSettingsForSpace(TransformerSettings settings, String spaceKey);
 }
