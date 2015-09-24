@@ -84,7 +84,7 @@
         for (var i = 0; $branch = $($newBranches[i]), i < $newBranches.length; i++) {
 
             branches[i] = {
-                "displayId": $branch.data("branch-displayId"),
+                "displayId": $branch.data("branch-display-id"),
                 "id": $branch.data("branch-id"),
                 "javadocPageId": $branch.find("select[name=javadoc]").val(),
                 "umlPageId": $branch.find("select[name=uml]").val(),

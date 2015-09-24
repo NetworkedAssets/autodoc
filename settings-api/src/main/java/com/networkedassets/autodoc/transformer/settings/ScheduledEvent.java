@@ -50,12 +50,16 @@ public class ScheduledEvent {
 
     public Map<String, String> toSoyData() {
         return ImmutableMap.of(
-                "scheduleStartIso", scheduleStart.toString(),
-                "periodIso", period.toString()
+                "scheduleStartIso", getScheduleStartIso(),
+                "periodIso", getPeriodIso()
         );
     }
 
     public String getScheduleStartIso() {
+        if (scheduleStartIso == null) {
+            if (scheduleStart == null) return "ERROR";
+            scheduleStartIso = scheduleStart.toString();
+        }
         return scheduleStartIso;
     }
 
@@ -65,6 +69,10 @@ public class ScheduledEvent {
     }
 
     public String getPeriodIso() {
+        if (periodIso == null) {
+            if (period == null) return "ERROR";
+            periodIso = period.toString();
+        }
         return periodIso;
     }
 
