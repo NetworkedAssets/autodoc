@@ -12,6 +12,11 @@ import java.util.stream.Stream;
 
 import com.networkedassets.autodoc.transformer.utils.data.HtmlFile;
 
+
+/**
+ * Read only javaDoc file with class description
+ */
+
 public class HtmlFileReader {
 
 	public static List<HtmlFile> read(final String path, final String extension, final HtmlFileConventer converter) {
