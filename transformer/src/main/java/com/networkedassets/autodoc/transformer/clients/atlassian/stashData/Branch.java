@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer.clients.atlassian.data;
+package com.networkedassets.autodoc.transformer.clients.atlassian.stashData;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.MoreObjects;
