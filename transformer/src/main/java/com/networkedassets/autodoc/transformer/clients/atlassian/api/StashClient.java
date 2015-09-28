@@ -7,9 +7,13 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClient;
 import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig;
 import com.networkedassets.autodoc.transformer.clients.atlassian.data.*;
+import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.HookConfirm;
+import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.HookSettings;
+import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Page;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 
 public class StashClient extends HttpClient {
 
@@ -88,7 +92,7 @@ public class StashClient extends HttpClient {
 		return jsonResponse;
 	}
 
-	public HttpResponse<RepositoriesPage> getRepositories(@Nullable final String projectKey, @Nullable final String query,
+	public HttpResponse<Page> getRepositories(@Nullable final String projectKey, @Nullable final String query,
 			@Nonnull final long start, @Nonnull final long limit) throws UnirestException {
 
 		Preconditions.checkNotNull(start);
@@ -104,14 +108,14 @@ public class StashClient extends HttpClient {
 			requestUrl += "&name=" + encode(query);
 		}
 
-		HttpResponse<RepositoriesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
+		HttpResponse<Page> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
 				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(RepositoriesPage.class);
+				.asObject(Page.class);
 
 		return jsonResponse;
 	}
 
-	public HttpResponse<BranchesPage> getRepositoryBranches(@Nonnull final String projectKey,
+	public HttpResponse<Page> getRepositoryBranches(@Nonnull final String projectKey,
 			@Nonnull final String repositorySlug, @Nullable final String query, final long start, final long limit)
 					throws UnirestException {
 
@@ -127,9 +131,9 @@ public class StashClient extends HttpClient {
 			requestUrl += "&filterText=" + encode(query);
 		}
 
-		HttpResponse<BranchesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
+		HttpResponse<Page> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
 				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(BranchesPage.class);
+				.asObject(Page.class);
 
 		return jsonResponse;
 	}

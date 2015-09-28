@@ -11,8 +11,8 @@ import com.atlassian.confluence.util.velocity.VelocityUtils;
 import com.atlassian.soy.renderer.SoyTemplateRenderer;
 import com.atlassian.spring.container.ContainerManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.reflect.TypeToken;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.TransformerServerMock;
 import com.networkedassets.autodoc.transformer.settings.Project;
@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +35,8 @@ public class ConfigureServlet extends HttpServlet {
     public static final String TEMPLATES_RESOURCE = "com.networkedassets.autodoc.confluence-front:soy-templates";
     public static final String TEMPLATE_NAME = "com.networkedassets.autodoc.configureGui.configureScreen";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final Type LIST_PROJECTS_JSON_TYPE = new TypeToken<List<Project>>(){}.getType();
+    private static final CollectionType LIST_PROJECTS_JSON_TYPE = OBJECT_MAPPER.getTypeFactory()
+            .constructCollectionType(List.class, Project.class);
 
     private SoyTemplateRenderer soyTemplateRenderer;
     private PageManager pageManager;
@@ -135,8 +135,7 @@ public class ConfigureServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String newSettings = req.getParameter("newSettings");
-//        List<Project> projects = GSON.fromJson(newSettings, LIST_PROJECTS_JSON_TYPE);
-        List<Project> projects = OBJECT_MAPPER.readValue(newSettings, OBJECT_MAPPER.getTypeFactory().constructCollectionType(List.class, Project.class));
+        List<Project> projects = OBJECT_MAPPER.readValue(newSettings, LIST_PROJECTS_JSON_TYPE);
         String spaceKey = getSpaceKey(req);
 
         SettingsForSpace settings = new SettingsForSpace();
