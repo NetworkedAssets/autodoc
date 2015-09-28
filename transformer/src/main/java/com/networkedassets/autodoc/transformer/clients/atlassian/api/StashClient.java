@@ -1,17 +1,15 @@
 package com.networkedassets.autodoc.transformer.clients.atlassian.api;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.base.Preconditions;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClient;
 import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig;
-import com.networkedassets.autodoc.transformer.clients.atlassian.data.HookConfirm;
-import com.networkedassets.autodoc.transformer.clients.atlassian.data.HookSettings;
-import com.networkedassets.autodoc.transformer.clients.atlassian.data.Page;
+import com.networkedassets.autodoc.transformer.clients.atlassian.data.*;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class StashClient extends HttpClient {
 
@@ -90,7 +88,7 @@ public class StashClient extends HttpClient {
 		return jsonResponse;
 	}
 
-	public HttpResponse<Page> getRepositories(@Nullable final String projectKey, @Nullable final String query,
+	public HttpResponse<RepositoriesPage> getRepositories(@Nullable final String projectKey, @Nullable final String query,
 			@Nonnull final long start, @Nonnull final long limit) throws UnirestException {
 
 		Preconditions.checkNotNull(start);
@@ -106,14 +104,14 @@ public class StashClient extends HttpClient {
 			requestUrl += "&name=" + encode(query);
 		}
 
-		HttpResponse<Page> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
+		HttpResponse<RepositoriesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
 				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(Page.class);
+				.asObject(RepositoriesPage.class);
 
 		return jsonResponse;
 	}
 
-	public HttpResponse<Page> getRepositoryBranches(@Nonnull final String projectKey,
+	public HttpResponse<BranchesPage> getRepositoryBranches(@Nonnull final String projectKey,
 			@Nonnull final String repositorySlug, @Nullable final String query, final long start, final long limit)
 					throws UnirestException {
 
@@ -129,9 +127,9 @@ public class StashClient extends HttpClient {
 			requestUrl += "&filterText=" + encode(query);
 		}
 
-		HttpResponse<Page> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
+		HttpResponse<BranchesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
 				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(Page.class);
+				.asObject(BranchesPage.class);
 
 		return jsonResponse;
 	}
