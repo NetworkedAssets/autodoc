@@ -1,17 +1,17 @@
 package com.networkedassets.autodoc.transformer.clients.atlassian.api;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.base.Preconditions;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClient;
 import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig;
-import com.networkedassets.autodoc.transformer.clients.atlassian.data.HookConfirm;
-import com.networkedassets.autodoc.transformer.clients.atlassian.data.HookSettings;
-import com.networkedassets.autodoc.transformer.clients.atlassian.data.Page;
+import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.HookConfirm;
+import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.HookSettings;
+import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Page;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class StashClient extends HttpClient {
 
