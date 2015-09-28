@@ -9,8 +9,8 @@ import java.util.List;
 public class SettingsForSpace {
 
     private List<Project> projects = new ArrayList<>();
-    private String spaceKey;
-    private String confluenceUrl;
+    private String spaceKey = "";
+    private String confluenceUrl = "";
 
     public List<Project> getProjects() {
         return projects;

@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer.clients.javadoc;
+package com.networkedassets.autodoc.transformer.javadoc;
 
 import com.google.common.base.Joiner;
 import com.networkedassets.autodoc.transformer.clients.git.api.SCM;

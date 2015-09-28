@@ -13,8 +13,8 @@ import java.util.Map;
  * Created by mrobakowski on 9/17/2015.
  */
 public class ScheduledEvent {
-    private transient Instant scheduleStart;
-    private transient Period period;
+    private transient Instant scheduleStart = Instant.EPOCH;
+    private transient Period period = Period.ZERO;
 
     private String scheduleStartIso;
     private String periodIso;
