@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Class representing a stash project
+ */
 public class Project {
     public String name = "!!NO_NAME!!";
     public String key = "!!NO_NAME!!";

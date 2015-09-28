@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by mrobakowski on 9/17/2015.
+ * Class representing a repo in a stash project
  */
 public class Repo {
     public String name = "!!NO_NAME!!";

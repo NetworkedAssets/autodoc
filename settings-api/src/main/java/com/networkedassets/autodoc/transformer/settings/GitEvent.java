@@ -1,7 +1,7 @@
 package com.networkedassets.autodoc.transformer.settings;
 
 /**
- * Created by mrobakowski on 9/17/2015.
+ * Enum representing a git event type
  */
 public enum GitEvent {
     PUSH("Push"),

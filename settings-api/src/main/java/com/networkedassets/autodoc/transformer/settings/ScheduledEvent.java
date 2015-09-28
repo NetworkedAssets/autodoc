@@ -10,7 +10,7 @@ import java.util.Map;
 
 
 /**
- * Created by mrobakowski on 9/17/2015.
+ * Class representing a scheduled event - an event fired at particular times
  */
 public class ScheduledEvent {
     private transient Instant scheduleStart = Instant.EPOCH;

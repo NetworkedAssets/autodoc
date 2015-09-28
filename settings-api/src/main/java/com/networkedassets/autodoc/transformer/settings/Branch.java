@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by mrobakowski on 9/17/2015.
+ * Class representing a branch in a repo
  */
 public class Branch {
     public String displayId = "!!NO_NAME!!";
@@ -40,14 +40,16 @@ public class Branch {
                 .put("javadocPageId", this.javadocPageId)
                 .put("umlPageId", this.umlPageId)
                 .put("listenedEvents", listenedEventsAsSoy())
-                .put("scheduledEvents", scheduledEvents.stream().map(ScheduledEvent::toSoyData).collect(Collectors.toList()))
+                .put("scheduledEvents", scheduledEvents.stream()
+                        .map(ScheduledEvent::toSoyData).collect(Collectors.toList()))
                 .build();
     }
 
 
     private Map<String, Map<String, Object>> listenedEventsAsSoy() {
         return this.listenedEvents.entrySet().stream()
-                .map(e -> new Pair<>(e.getKey().eventName, ImmutableMap.<String, Object>of("val",  e.getValue(),"enum", e.getKey().name())))
+                .map(e -> new Pair<>(e.getKey().eventName,
+                        ImmutableMap.<String, Object>of("val", e.getValue(), "enum", e.getKey().name())))
                 .collect(Collectors.toMap(Pair::left, Pair::right));
     }
 
