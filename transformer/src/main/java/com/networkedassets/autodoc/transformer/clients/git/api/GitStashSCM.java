@@ -1,19 +1,17 @@
 package com.networkedassets.autodoc.transformer.clients.git.api;
 
-import java.io.File;
-import java.net.URL;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.google.common.base.Preconditions;
+import com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
-import com.google.common.base.Preconditions;
-import com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.File;
+import java.net.URL;
 
 public class GitStashSCM implements SCM {
 
@@ -42,8 +40,8 @@ public class GitStashSCM implements SCM {
 		Preconditions.checkNotNull(branchName);
 
 		StringBuffer uriTemplate = new StringBuffer();
-		uriTemplate.append(this.baseUrl.getProtocol()).append("://%s@").append(this.baseUrl.getHost())
-				.append(this.baseUrl.getPath()).append("/scm/%s/%s.git");
+		uriTemplate.append(this.baseUrl.getProtocol()).append("://%s@").append(this.baseUrl.getHost()).append(':')
+				.append(this.baseUrl.getPort()).append(this.baseUrl.getPath()).append("/scm/%s/%s.git");
 
 		String URI = String.format(uriTemplate.toString(), this.username, projectKey, repositorySlug);
 
