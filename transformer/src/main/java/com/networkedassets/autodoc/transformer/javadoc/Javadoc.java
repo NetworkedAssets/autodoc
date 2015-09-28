@@ -84,7 +84,7 @@ public class Javadoc {
     public static List<File> searchJavaFiles(@Nonnull File localDirectory) throws JavadocException {
         try {
             return Files.walk(localDirectory.toPath(), FileVisitOption.FOLLOW_LINKS)
-                    .filter(p -> p.toString().endsWith(".java"))
+                    .filter(p -> p.endsWith(".java"))
                     .map(Path::toFile)
                     .collect(Collectors.toList());
         } catch (IOException e) {
