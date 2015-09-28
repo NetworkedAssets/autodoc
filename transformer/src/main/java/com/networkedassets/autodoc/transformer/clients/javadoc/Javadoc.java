@@ -5,9 +5,13 @@ import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
 
 import javax.annotation.Nonnull;
 import java.io.*;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -77,23 +81,15 @@ public class Javadoc {
     }
 
     @Nonnull
-    private static List<File> searchJavaFiles(@Nonnull File localDirectory) {
-        List<File> res = new ArrayList<>();
-        return searchJavaFiles(localDirectory, res);
-    }
-
-    @Nonnull
-    private static List<File> searchJavaFiles(@Nonnull File localDirectory, @Nonnull List<File> res) {
-        //noinspection ConstantConditions // local directory is always directory
-        for (File f : localDirectory.listFiles()) {
-            if (f.isDirectory()) {
-                searchJavaFiles(f, res);
-            } else if (f.getName().endsWith(".java")) {
-                res.add(f);
-            }
+    public static List<File> searchJavaFiles(@Nonnull File localDirectory) throws JavadocException {
+        try {
+            return Files.walk(localDirectory.toPath(), FileVisitOption.FOLLOW_LINKS)
+                    .filter(p -> p.toString().endsWith(".java"))
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new JavadocException("Could not search files", e);
         }
-
-        return res;
     }
 
     private static void cloneTheRepo(@Nonnull SCM scmServer, @Nonnull String projectKey, @Nonnull String repositorySlug,
