@@ -1,7 +1,7 @@
 package com.networkedassets.autodoc.transformer.settings;
 
 import com.google.common.collect.ImmutableMap;
-import com.networkedassets.util.functional.Options;
+import com.networkedassets.util.functional.Optionals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class Project {
 
     public void setDefaultJavadocLocation(Long pageId) {
         repos.stream().flatMap(r -> r.branches.stream()).forEach(b -> {
-            Optional<Long> currentJavadocPageId = Options.ofThrowing(() -> Long.parseLong(b.javadocPageId));
+            Optional<Long> currentJavadocPageId = Optionals.ofThrowing(() -> Long.parseLong(b.javadocPageId));
             if (!currentJavadocPageId.isPresent() || currentJavadocPageId.get().equals(-1L)) {
                 b.javadocPageId = pageId.toString();
             }
@@ -46,7 +46,7 @@ public class Project {
 
     public void setDefaultUmlLocation(Long pageId) {
         repos.stream().flatMap(r -> r.branches.stream()).forEach(b -> {
-            Optional<Long> currentUmlPageId = Options.ofThrowing(() -> Long.parseLong(b.umlPageId));
+            Optional<Long> currentUmlPageId = Optionals.ofThrowing(() -> Long.parseLong(b.umlPageId));
             if (!currentUmlPageId.isPresent() || currentUmlPageId.get().equals(-1L)) {
                 b.umlPageId = pageId.toString();
             }

@@ -2,12 +2,16 @@ package com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * Created by mrobakowski on 9/28/2015.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Ancestor {
     private String id;
+
+    public Ancestor(String id) {
+        this.id = id;
+    }
+
+    public Ancestor() {
+    }
 
     public String getId() {
         return id;

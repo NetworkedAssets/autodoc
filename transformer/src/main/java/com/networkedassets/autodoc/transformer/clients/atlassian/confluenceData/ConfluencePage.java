@@ -5,20 +5,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
-/**
- * Created by mrobakowski on 9/28/2015.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfluencePage {
-    public String id;
-    public Body body;
-    public String title;
-    public List<Ancestor> ancestors;
-    public Space space;
-    public String type;
-    public Version version;
-    public Metadata metadata;
-    public Children children;
+
+    private String id;
+    private Body body;
+    private String title;
+    private List<Ancestor> ancestors;
+    private Space space;
+    private String type;
+    private Version version;
+    private Metadata metadata;
+    private Children children;
 
     public ConfluencePage() {
     }

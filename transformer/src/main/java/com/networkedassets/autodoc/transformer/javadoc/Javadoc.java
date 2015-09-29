@@ -133,7 +133,8 @@ public class Javadoc {
                         "-d", javadocDirectory.getAbsolutePath()),  // -d ./javadoc/
                 sourceFiles.stream().map(File::getAbsolutePath)); // ./src/com/example/File1.java ./src/com/example/File2.java
 
-        ProcessBuilder javadocProcessBuilder = new ProcessBuilder(args.toArray(String[]::new)).redirectErrorStream(true);
+        ProcessBuilder javadocProcessBuilder = new ProcessBuilder(args.toArray(String[]::new))
+                .redirectErrorStream(true);
 
         System.out.println("Generating javadoc...");
         StreamGobbler gobbler;
