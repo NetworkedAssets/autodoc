@@ -100,7 +100,9 @@ public class ConfluenceClient extends HttpClient {
         String pageTitle = getJavadocPageName(projectKey, repoSlug, branchId, fullClassName);
         String rootId = getJavadocRootId(spaceKey, projectKey, repoSlug, branchId, javadocRootParentId);
 
-        return createPage(pageTitle, spaceKey, contents, rootId);
+        ConfluencePage page = createPage(pageTitle, spaceKey, contents, rootId);
+        putLabel(page.getId(), String.format("%s-%s-%s", projectKey, repoSlug, branchId));
+        return page;
     }
 
     /**
@@ -162,7 +164,11 @@ public class ConfluenceClient extends HttpClient {
         Optional<ConfluencePage> javadocRoot = findPage(spaceKey, javadocTitle);
 
         return Optionals.orElseGetThrowing(javadocRoot,
-                () -> createPage(javadocTitle, spaceKey, "JAVADOC ROOT", javadocRootParentId)).getId();
+                () -> {
+                    ConfluencePage page = createPage(javadocTitle, spaceKey, "JAVADOC ROOT", javadocRootParentId);
+                    putLabel(page.getId(), String.format("%s-%s-%s", projectKey, repoSlug, branchId));
+                    return page;
+                }).getId();
     }
 
     /**
