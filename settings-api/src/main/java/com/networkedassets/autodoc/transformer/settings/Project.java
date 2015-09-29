@@ -27,6 +27,19 @@ public class Project {
         repos = new ArrayList<>();
     }
 
+    public Project(Project otherProject){
+        this(otherProject.name, otherProject.key);
+        repos = new ArrayList<>(otherProject.repos );
+    }
+
+    public Repo getRepoBySlug(String slug){
+        try {
+            return repos.stream().filter(repo -> repo.slug.equals(slug)).collect(Collectors.toList()).get(0);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+    }
+
     public Map<String, ?> toSoyData() {
         return ImmutableMap.of(
                 "name", this.name,

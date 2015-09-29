@@ -33,6 +33,14 @@ public class Branch {
         this.id = id;
     }
 
+    public Branch(Branch otherBranch) {
+        this(otherBranch.displayId, otherBranch.id);
+        this.javadocPageId = otherBranch.javadocPageId;
+        this.umlPageId = otherBranch.umlPageId;
+        this.listenedEvents = new EnumMap<>(otherBranch.listenedEvents);
+        this.scheduledEvents = new ArrayList<>(otherBranch.scheduledEvents);
+    }
+
     public Map<String, ?> toSoyData() {
         return ImmutableMap.<String, Object>builder()
                 .put("displayId", this.displayId)

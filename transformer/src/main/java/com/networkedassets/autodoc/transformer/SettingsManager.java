@@ -7,6 +7,7 @@ import com.networkedassets.autodoc.transformer.clients.atlassian.api.StashClient
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Branch;
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Project;
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Repository;
+import com.networkedassets.autodoc.transformer.settings.Repo;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 import org.slf4j.Logger;
@@ -34,29 +35,6 @@ public class SettingsManager {
     public SettingsManager() {
         //load settings from file if exist
         updateSettings();
-    }
-
-    public SettingsForSpace getSettingsForSpace(String spaceKey, String confluenceUrl) {
-        updateSettings();
-        SettingsForSpace settingsForSpace;
-        try {
-            settingsForSpace = settings.getSettingsForSpaces().stream().filter(s ->
-                    (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl))).collect(Collectors.toList()).get(0);
-        } catch (IndexOutOfBoundsException e) {
-            settingsForSpace = getDefaultSettingsForSpace(spaceKey, confluenceUrl);
-        }
-        return settingsForSpace;
-    }
-
-    public void setSettingsForSpace(SettingsForSpace settingsForSpace, String spaceKey, String confluenceUrl) {
-        updateSettings();
-        settings.getSettingsForSpaces()
-                .removeIf(s -> (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)));
-        settings.getSettingsForSpaces().add(settingsForSpace);
-    }
-
-    private void updateSettings() {
-        settings.getSettingsForSpaces().stream().forEach(SettingsManager::updateProjectsFromStash);
     }
 
     private static SettingsForSpace getDefaultSettingsForSpace() {
@@ -88,9 +66,8 @@ public class SettingsManager {
         log.debug("Stash client created");
 
 
-
         List<Repository> stashRepositories;
-        Map<Repository, List<Branch>> branchesMap = new HashMap<>();
+        Map<String, List<Branch>> branchesMap = new HashMap<>();
         try {
             stashRepositories = stashClient.getRepositories(null, null, 0, 9999).getBody().getValues();
             log.debug("REST repositories retrieved");
@@ -100,42 +77,142 @@ public class SettingsManager {
                         = stashClient.getRepositoryBranches(repository.getProject()
                         .getKey(), repository.getSlug(), null, 0, 9999).getBody().getValues();
                 log.debug("REST branches for {} retrieved", repository.getId());
-                branchesMap.put(repository, branches);
+                branchesMap.put(repository.getSlug(), branches);
             }
         } catch (UnirestException e) {
             log.error("REST request ERROR:", e);
             return;
         }
-        log.debug("REST request by StashClient handled successfully");
-
         Set<Project> stashProjects =
                 stashRepositories.stream().map(Repository::getProject)
-                        .filter(distinctByProjectKey(p -> p.getKey())).collect(Collectors.toSet());
+                        .filter(distinctByProjectKey(Project::getKey)).collect(Collectors.toSet());
+        log.debug("REST request by StashClient handled successfully");
 
-        stashProjects.stream().forEach(project -> log.debug("Stash Project name: {}, Key: {}", project.getName(), project.getKey()));
-        settingsForSpace.getProjects().stream().forEach(project -> log.debug("Settings Project name: {}, Key: {}", project.name, project.key));
 
         //Delete projects, repos and branches in settings, that don't exist in stash (anymore)
         settingsForSpace.getProjects().removeIf(settingsProject ->
                 !stashProjects.stream().map(Project::getKey).anyMatch(key -> key.equals(settingsProject.key)));
 
+        settingsForSpace.getProjects().forEach(project -> project.repos.removeIf(repo ->
+                !stashRepositories.stream().map(Repository::getSlug).anyMatch(slug -> slug.equals(repo.slug))));
 
-        settingsForSpace.getProjects().forEach(project -> {
-            project.repos.removeIf(repo ->
-                    !stashRepositories.stream().map(stashRepo -> stashRepo.getSlug()).anyMatch(slug -> slug.equals(repo.slug)));
-        });
+        settingsForSpace.getProjects().forEach(project ->
+                project.repos.stream().forEach(repo ->
+                        repo.branches.removeIf(branch -> !branchesMap.get(repo.slug).stream().map(Branch::getId)
+                                .anyMatch(stashId -> stashId.equals(branch.id)))));
 
-//        settingsForSpace.getProjects().forEach(project -> {
-//            project.repos.stream().forEach(repo -> {
-//                repo.branches.removeIf(branch ->
-//                        !branchesMap.get(repo).stream().map(Branch::getId).anyMatch(id -> id.equals(branch.id)));
-//            });
-//        });
+        //Add new projects, repos, branches from stash
+        for (Project stashProject : stashProjects) {
+            com.networkedassets.autodoc.transformer.settings.Project settingsProject =
+                    settingsForSpace.getProjectByKey(stashProject.getKey());
+            if (settingsProject ==null) {
+                com.networkedassets.autodoc.transformer.settings.Project newProject =
+                        new com.networkedassets.autodoc.transformer.settings.Project();
+                mergeProjectSettings(stashProject, newProject);
+                settingsForSpace.getProjects().add(newProject);
+            }
+            else{
+                mergeProjectSettings(stashProject, settingsProject);
+            }
+            //repos belonging to project
+            List<Repository> projectRepositories =
+                    stashRepositories.stream().filter(r -> r.getProject()
+                            .getKey().equals(stashProject.getKey())).collect(Collectors.toList());
+
+            for (Repository stashRepository : projectRepositories) {
+                Repo settingsRepository = settingsForSpace.getProjectByKey(stashProject.getKey()).getRepoBySlug(stashRepository.getSlug());
+                if (settingsRepository ==null) {
+                    Repo newRepo = new Repo();
+                    mergeRepositorySettings(stashRepository, newRepo);
+                    settingsForSpace.getProjectByKey(stashProject.getKey()).repos.add(newRepo);
+                }
+                else{
+                    mergeRepositorySettings(stashRepository, settingsRepository);
+                }
+                List<Branch> repositoryBranches = branchesMap.get(stashRepository.getSlug());
+                for (Branch stashBranch : repositoryBranches){
+                    com.networkedassets.autodoc.transformer.settings.Branch settingsBranch =
+                            settingsForSpace.getProjectByKey(stashProject.getKey()).
+                                    getRepoBySlug(stashRepository.getSlug())
+                            .getBranchById(stashBranch.getId());
+                    if(settingsBranch ==null){
+                        com.networkedassets.autodoc.transformer.settings.Branch newBranch =
+                                new com.networkedassets.autodoc.transformer.settings.Branch();
+                        mergeBranchSettings(stashBranch, newBranch);
+                        settingsForSpace.getProjectByKey(stashProject.getKey())
+                                .getRepoBySlug(stashRepository.getSlug()).branches.add(newBranch);
+                    }
+                    else{
+                        mergeBranchSettings(stashBranch, settingsBranch);
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    /**
+     * Merges stash branch into the settings branch
+     *
+     * @param stashBranch    This branch's attributes will be merged into settings branch
+     * @param settingsBranch This branch will be changed, by inserting some of the stash branch attributes into it
+     */
+    public static void mergeBranchSettings(
+            Branch stashBranch, com.networkedassets.autodoc.transformer.settings.Branch settingsBranch) {
+        settingsBranch.displayId = stashBranch.getDisplayId();
+        settingsBranch.id = stashBranch.getId();
+    }
+
+    /**
+     * Merges stash repository into the settings repository
+     *
+     * @param stashRepository    This repository's attributes will be merged into settings repository
+     * @param settingsRepository This repository will be changed, by inserting some of the stash repository attributes into it
+     */
+    public static void mergeRepositorySettings(Repository stashRepository, Repo settingsRepository) {
+        settingsRepository.name = stashRepository.getName();
+        settingsRepository.slug = stashRepository.getSlug();
+    }
+
+    /**
+     * Merges stash project into the settings project
+     *
+     * @param stashProject    This project's attributes will be merged into settings project
+     * @param settingsProject This project will be changed, by inserting some of the stash project attributes into it
+     */
+    public static void mergeProjectSettings(
+            Project stashProject, com.networkedassets.autodoc.transformer.settings.Project settingsProject) {
+        settingsProject.name = stashProject.getName();
+        settingsProject.key = stashProject.getKey();
     }
 
     public static <T> Predicate<T> distinctByProjectKey(Function<? super T, Object> keyExtractor) {
         Map<Object, Boolean> seen = new ConcurrentHashMap<>();
         return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
+    }
+
+    public SettingsForSpace getSettingsForSpace(String spaceKey, String confluenceUrl) {
+        updateSettings();
+        SettingsForSpace settingsForSpace;
+        try {
+            settingsForSpace = settings.getSettingsForSpaces().stream().filter(s ->
+                    (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl))).collect(Collectors.toList()).get(0);
+        } catch (IndexOutOfBoundsException e) {
+            settingsForSpace = getDefaultSettingsForSpace(spaceKey, confluenceUrl);
+        }
+        return settingsForSpace;
+    }
+
+    public void setSettingsForSpace(SettingsForSpace settingsForSpace, String spaceKey, String confluenceUrl) {
+        settings.getSettingsForSpaces()
+                .removeIf(s -> (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)));
+        settings.getSettingsForSpaces().add(settingsForSpace);
+        updateSettings();
+    }
+
+    private void updateSettings() {
+        settings.getSettingsForSpaces().stream().forEach(SettingsManager::updateProjectsFromStash);
     }
 
 
