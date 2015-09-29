@@ -25,11 +25,24 @@ public class Repo {
         this.slug = slug;
     }
 
+    public Repo(Repo otherRepo){
+        this(otherRepo.name, otherRepo.slug);
+        this.branches = new ArrayList<>(otherRepo.branches);
+    }
+
     public Map<String, ?> toSoyData() {
         return ImmutableMap.of(
                 "name", this.name,
                 "slug", this.slug,
                 "branches", this.branches.stream().map(Branch::toSoyData).collect(Collectors.toList())
         );
+    }
+
+    public Branch getBranchById(String id){
+        try{
+            return branches.stream().filter(b -> b.id.equals(id)).collect(Collectors.toList()).get(0);
+        }catch (IndexOutOfBoundsException e){
+            return null;
+        }
     }
 }
