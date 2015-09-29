@@ -52,7 +52,7 @@ public class HtmlFileReader {
 			htmlFile.setFileContent(converter.convert(content));
 			pages.add(htmlFile);
 		} catch (final IOException e) {
-			e.printStackTrace();
+			log.error("General I/O exception:", e);
 		}
 	}
 
