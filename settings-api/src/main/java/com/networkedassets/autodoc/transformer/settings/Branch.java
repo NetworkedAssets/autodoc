@@ -2,6 +2,7 @@ package com.networkedassets.autodoc.transformer.settings;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Class representing a branch in a repo
  */
-public class Branch {
+public class Branch implements Serializable{
     public String displayId = "!!NO_NAME!!";
     public String id = "!!NO_NAME!!";
     public String javadocPageId = "!!NO_NAME!!";
