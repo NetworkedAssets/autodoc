@@ -13,7 +13,6 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Preconditions;
 import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
-import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
