@@ -10,8 +10,8 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
 import java.net.URL;
+import java.nio.file.Path;
 
 public class GitStashSCM implements SCM {
 
@@ -30,8 +30,8 @@ public class GitStashSCM implements SCM {
 
 	}
 
-	public void cloneRepository(@Nonnull File localRepoDirectory, @Nonnull String projectKey,
-			@Nonnull String repositorySlug, @Nonnull String branchName)
+	public void cloneRepository(@Nonnull Path localRepoDirectory, @Nonnull String projectKey,
+								@Nonnull String repositorySlug, @Nonnull String branchName)
 					throws InvalidRemoteException, TransportException, GitAPIException {
 
 		Preconditions.checkNotNull(localRepoDirectory);
@@ -46,7 +46,7 @@ public class GitStashSCM implements SCM {
 		String URI = String.format(uriTemplate.toString(), this.username, projectKey, repositorySlug);
 
 		System.out.println(URI);
-		Git.cloneRepository().setURI(URI).setDirectory(localRepoDirectory).setBranch(branchName)
+		Git.cloneRepository().setURI(URI).setDirectory(localRepoDirectory.toFile()).setBranch(branchName)
 				.setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.username, this.password)).call();
 
 	}

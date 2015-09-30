@@ -1,9 +1,9 @@
 package com.networkedassets.autodoc.transformer.clients.git.api;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public interface SCM {
 
-  public void cloneRepository(File localRepoDirectory, String projectKey, String repositorySlug,
-      String branchName) throws Exception;
+  public void cloneRepository(Path localRepoDirectory, String projectKey, String repositorySlug,
+                              String branchName) throws Exception;
 }
