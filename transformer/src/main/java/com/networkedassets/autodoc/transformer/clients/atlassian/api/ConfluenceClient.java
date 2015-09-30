@@ -11,6 +11,7 @@ import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfi
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.Ancestor;
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage;
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ContentSearchPage;
+import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.Version;
 import com.networkedassets.util.functional.Optionals;
 
 import javax.annotation.Nonnull;
@@ -119,6 +120,7 @@ public class ConfluenceClient extends HttpClient {
 
         return Unirest.post(String.format("%s/rest/api/content/%s/label", getBaseUrl(), pageId))
                 .header("Content-Type", "application/json")
+                .basicAuth(getUsername(), getPassword())
                 .body(String.format("[{\"name\": \"%s\"}]", labelName))
                 .asJson().getStatus() == 200;
     }
@@ -182,7 +184,9 @@ public class ConfluenceClient extends HttpClient {
     @Nonnull
     public Optional<ConfluencePage> findPage(String spaceKey, String pageTitle) throws UnirestException {
         return Unirest.get(getBaseUrl() + "/rest/api/content/search")
+                .basicAuth(getUsername(), getPassword())
                 .queryString("cql", String.format("space='%s' AND title='%s'", spaceKey, pageTitle))
+                .queryString("expand", "version")
                 .asObject(ContentSearchPage.class).getBody().getResults().stream().findFirst();
     }
 
@@ -262,6 +266,59 @@ public class ConfluenceClient extends HttpClient {
         }
 
         return pages;
+    }
+
+    /**
+     * Moves the page to a new parent.
+     * @param page the page to move; has to have title, id, and version set
+     * @param newParentId id of the new parent of <code>page</code>
+     * @return a representation of the moved page
+     * @throws UnirestException
+     * @throws com.google.common.base.VerifyException when the given page could not be moved
+     */
+    @Nonnull
+    public ConfluencePage movePage(@Nonnull ConfluencePage page, @Nonnull String newParentId) throws UnirestException {
+        Preconditions.checkNotNull(page);
+        Preconditions.checkNotNull(newParentId);
+        Preconditions.checkNotNull(page.getTitle());
+        Preconditions.checkNotNull(page.getId());
+        Preconditions.checkNotNull(page.getVersion());
+
+        ConfluencePage pageMoveJson = new ConfluencePage();
+        pageMoveJson.setId(page.getId());
+        pageMoveJson.setTitle(page.getTitle());
+        pageMoveJson.setType("page");
+        pageMoveJson.setAncestors(ImmutableList.of(new Ancestor(newParentId)));
+        pageMoveJson.setVersion(new Version(page.getVersionInt() + 1));
+
+
+        ConfluencePage movedPage = Unirest.put(String.format("%s/rest/api/content/%s", getBaseUrl(), page.getId()))
+                .header("Content-Type", "application/json")
+                .basicAuth(getUsername(), getPassword())
+                .body(pageMoveJson)
+                .asObject(ConfluencePage.class)
+                .getBody();
+
+        Verify.verifyNotNull(movedPage.getId(), "Could not move the page");
+
+        return movedPage;
+    }
+
+    /**
+     * Searches for page and moves it to the new parent
+     * @param spaceKey page's space's key
+     * @param title page's title
+     * @param newParentId is of the new parent
+     * @return a representation of the moved page or {@link Optional#empty()}
+     * @throws UnirestException
+     */
+    @Nonnull
+    public Optional<ConfluencePage> movePage(@Nonnull String spaceKey, @Nonnull String title, @Nonnull String newParentId) throws UnirestException {
+        Preconditions.checkNotNull(title);
+        Preconditions.checkNotNull(spaceKey);
+        Preconditions.checkNotNull(newParentId);
+
+        return Optionals.mapThrowing(findPage(spaceKey, title), page -> movePage(page, newParentId));
     }
 
 }
