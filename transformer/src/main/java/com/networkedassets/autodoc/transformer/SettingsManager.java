@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -29,11 +30,12 @@ import java.util.stream.Collectors;
  * Handles the settings of the application
  */
 public class SettingsManager {
+    public static final String settingsFilename = "transformerSettings.ser";
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
     private Settings settings = new Settings();
 
     public SettingsManager() {
-        //load settings from file if exist
+        loadSettingFromFile(settingsFilename);
         updateSettings();
     }
 
@@ -105,13 +107,12 @@ public class SettingsManager {
         for (Project stashProject : stashProjects) {
             com.networkedassets.autodoc.transformer.settings.Project settingsProject =
                     settingsForSpace.getProjectByKey(stashProject.getKey());
-            if (settingsProject ==null) {
+            if (settingsProject == null) {
                 com.networkedassets.autodoc.transformer.settings.Project newProject =
                         new com.networkedassets.autodoc.transformer.settings.Project();
                 mergeProjectSettings(stashProject, newProject);
                 settingsForSpace.getProjects().add(newProject);
-            }
-            else{
+            } else {
                 mergeProjectSettings(stashProject, settingsProject);
             }
             //repos belonging to project
@@ -121,28 +122,26 @@ public class SettingsManager {
 
             for (Repository stashRepository : projectRepositories) {
                 Repo settingsRepository = settingsForSpace.getProjectByKey(stashProject.getKey()).getRepoBySlug(stashRepository.getSlug());
-                if (settingsRepository ==null) {
+                if (settingsRepository == null) {
                     Repo newRepo = new Repo();
                     mergeRepositorySettings(stashRepository, newRepo);
                     settingsForSpace.getProjectByKey(stashProject.getKey()).repos.add(newRepo);
-                }
-                else{
+                } else {
                     mergeRepositorySettings(stashRepository, settingsRepository);
                 }
                 List<Branch> repositoryBranches = branchesMap.get(stashRepository.getSlug());
-                for (Branch stashBranch : repositoryBranches){
+                for (Branch stashBranch : repositoryBranches) {
                     com.networkedassets.autodoc.transformer.settings.Branch settingsBranch =
                             settingsForSpace.getProjectByKey(stashProject.getKey()).
                                     getRepoBySlug(stashRepository.getSlug())
-                            .getBranchById(stashBranch.getId());
-                    if(settingsBranch ==null){
+                                    .getBranchById(stashBranch.getId());
+                    if (settingsBranch == null) {
                         com.networkedassets.autodoc.transformer.settings.Branch newBranch =
                                 new com.networkedassets.autodoc.transformer.settings.Branch();
                         mergeBranchSettings(stashBranch, newBranch);
                         settingsForSpace.getProjectByKey(stashProject.getKey())
                                 .getRepoBySlug(stashRepository.getSlug()).branches.add(newBranch);
-                    }
-                    else{
+                    } else {
                         mergeBranchSettings(stashBranch, settingsBranch);
                     }
                 }
@@ -195,12 +194,10 @@ public class SettingsManager {
     public SettingsForSpace getSettingsForSpace(String spaceKey, String confluenceUrl) {
         updateSettings();
         SettingsForSpace settingsForSpace;
-        try {
-            settingsForSpace = settings.getSettingsForSpaces().stream().filter(s ->
-                    (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl))).collect(Collectors.toList()).get(0);
-        } catch (IndexOutOfBoundsException e) {
-            settingsForSpace = getDefaultSettingsForSpace(spaceKey, confluenceUrl);
-        }
+        settingsForSpace = settings.getSettingsForSpaces().stream().filter(s ->
+                (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)))
+                .findFirst().orElse(getDefaultSettingsForSpace(spaceKey, confluenceUrl));
+
         return settingsForSpace;
     }
 
@@ -209,10 +206,44 @@ public class SettingsManager {
                 .removeIf(s -> (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)));
         settings.getSettingsForSpaces().add(settingsForSpace);
         updateSettings();
+        saveSettingsToFile(settingsFilename);
     }
 
     private void updateSettings() {
         settings.getSettingsForSpaces().stream().forEach(SettingsManager::updateProjectsFromStash);
+    }
+
+    private void saveSettingsToFile(String filename) {
+        File settingsFile = new File(filename);
+        try (
+                FileOutputStream fileOut = new FileOutputStream(settingsFile);
+                ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)
+        ) {
+            objectOut.writeObject(settings);
+            log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
+
+        } catch (FileNotFoundException e) {
+            log.debug("Can't save settings to {} because he file was not found: ", settingsFile.getAbsolutePath(), e);
+        } catch (IOException e) {
+            log.debug("Can't save settings to {} because it can't be accessed: ", settingsFile.getAbsolutePath(), e);
+        }
+    }
+
+    private void loadSettingFromFile(String filename) {
+        File settingsFile = new File(filename);
+        try (
+                FileInputStream fileIn = new FileInputStream(settingsFile);
+                ObjectInputStream objectIn = new ObjectInputStream(fileIn)
+        ) {
+            settings = ((Settings) objectIn.readObject());
+            log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
+        } catch (FileNotFoundException e) {
+            log.debug("Can't load settings from {} because he file was not found: ", settingsFile.getAbsolutePath(), e);
+        } catch (IOException e) {
+            log.debug("Can't load settings from {} because he file can't be accessed: ", settingsFile.getAbsolutePath(), e);
+        } catch (ClassNotFoundException e) {
+            log.debug("Can't load settings from {} because he file is corrupted or of incompatible version: ", settingsFile.getAbsolutePath(), e);
+        }
     }
 
 

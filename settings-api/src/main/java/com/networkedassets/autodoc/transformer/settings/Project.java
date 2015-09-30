@@ -3,6 +3,7 @@ package com.networkedassets.autodoc.transformer.settings;
 import com.google.common.collect.ImmutableMap;
 import com.networkedassets.util.functional.Optionals;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Class representing a stash project
  */
-public class Project {
+public class Project implements Serializable {
     public String name = "!!NO_NAME!!";
     public String key = "!!NO_NAME!!";
     public List<Repo> repos;
@@ -27,17 +28,13 @@ public class Project {
         repos = new ArrayList<>();
     }
 
-    public Project(Project otherProject){
+    public Project(Project otherProject) {
         this(otherProject.name, otherProject.key);
-        repos = new ArrayList<>(otherProject.repos );
+        repos = new ArrayList<>(otherProject.repos);
     }
 
-    public Repo getRepoBySlug(String slug){
-        try {
-            return repos.stream().filter(repo -> repo.slug.equals(slug)).collect(Collectors.toList()).get(0);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+    public Repo getRepoBySlug(String slug) {
+        return repos.stream().filter(repo -> repo.slug.equals(slug)).findFirst().orElse(null);
     }
 
     public Map<String, ?> toSoyData() {

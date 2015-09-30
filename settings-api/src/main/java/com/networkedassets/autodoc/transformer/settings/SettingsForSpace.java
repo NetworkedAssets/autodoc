@@ -1,13 +1,13 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Contains settings for one space
  */
-public class SettingsForSpace {
+public class SettingsForSpace implements Serializable {
 
     private List<Project> projects = new ArrayList<>();
     private String spaceKey = "";
@@ -21,12 +21,8 @@ public class SettingsForSpace {
         this.projects = projects;
     }
 
-    public Project getProjectByKey(String key){
-        try {
-            return projects.stream().filter(p -> p.key.equals(key)).collect(Collectors.toList()).get(0);
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
+    public Project getProjectByKey(String key) {
+        return projects.stream().filter(p -> p.key.equals(key)).findFirst().orElse(null);
     }
 
     public String getSpaceKey() {
