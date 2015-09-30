@@ -10,8 +10,7 @@ import java.util.List;
 public class SettingsForSpace implements Serializable {
 
     private List<Project> projects = new ArrayList<>();
-    private String spaceKey = "";
-    private String confluenceUrl = "";
+    private ConfluenceSpace confluenceSpace = new ConfluenceSpace();
 
     public List<Project> getProjects() {
         return projects;
@@ -26,18 +25,26 @@ public class SettingsForSpace implements Serializable {
     }
 
     public String getSpaceKey() {
-        return spaceKey;
+        return confluenceSpace.getSpaceKey();
     }
 
     public void setSpaceKey(String spaceKey) {
-        this.spaceKey = spaceKey;
+        confluenceSpace.setSpaceKey(spaceKey);
     }
 
     public String getConfluenceUrl() {
-        return confluenceUrl;
+        return confluenceSpace.getConfluenceUrl();
     }
 
     public void setConfluenceUrl(String confluenceUrl) {
-        this.confluenceUrl = confluenceUrl;
+        confluenceSpace.setConfluenceUrl(confluenceUrl);
+    }
+
+    public ConfluenceSpace getConfluenceSpace() {
+        return confluenceSpace;
+    }
+
+    public void setConfluenceSpace(ConfluenceSpace confluenceSpace) {
+        this.confluenceSpace = confluenceSpace;
     }
 }

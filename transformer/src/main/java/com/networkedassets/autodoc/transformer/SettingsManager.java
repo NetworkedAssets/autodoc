@@ -7,6 +7,7 @@ import com.networkedassets.autodoc.transformer.clients.atlassian.api.StashClient
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Branch;
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Project;
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Repository;
+import com.networkedassets.autodoc.transformer.settings.ConfluenceSpace;
 import com.networkedassets.autodoc.transformer.settings.Repo;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
