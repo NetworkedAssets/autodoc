@@ -70,4 +70,18 @@ public interface Throwing {
 
     @FunctionalInterface
     interface BiPredicate<T, U> extends Specific.BiPredicate<T, U, Throwable> {}
+
+    static <T, R, E extends Throwable> java.util.function.Function<T, R> rethrowAsRuntimeException(Specific.Function<T, R, E> throwingFunction) {
+        return t -> {
+            try {
+                return throwingFunction.apply(t);
+            } catch (Throwable e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                } else {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+    }
 }

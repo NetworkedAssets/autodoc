@@ -1,6 +1,7 @@
 package com.networkedassets.util.functional;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -37,16 +38,16 @@ public class Optionals {
         else return supplier.get();
     }
 
-    /** Throwing version of map */
+    /** Throwing version of {@link Optional#map(Function)} */
     public static <T, R, E extends Throwable> Optional<R> mapThrowing(Optional<T> opt, Throwing.Specific.Function<T, R, E> function) throws E {
         if (opt.isPresent()) {
-            return Optional.of(function.apply(opt.get()));
+            return Optional.ofNullable(function.apply(opt.get()));
         } else {
             return Optional.empty();
         }
     }
 
-    /** Throwing version of flatMap */
+    /** Throwing version of {@link Optional#flatMap(Function)} */
     public static <T, R, E extends Throwable> Optional<R> flatMapThrowing(Optional<T> opt, Throwing.Specific.Function<T, Optional<R>, E> function) throws E {
         if (opt.isPresent()) {
             return function.apply(opt.get());
