@@ -36,4 +36,22 @@ public class Optionals {
         if (opt.isPresent()) return opt.get();
         else return supplier.get();
     }
+
+    /** Throwing version of map */
+    public static <T, R, E extends Throwable> Optional<R> mapThrowing(Optional<T> opt, Throwing.Specific.Function<T, R, E> function) throws E {
+        if (opt.isPresent()) {
+            return Optional.of(function.apply(opt.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /** Throwing version of flatMap */
+    public static <T, R, E extends Throwable> Optional<R> flatMapThrowing(Optional<T> opt, Throwing.Specific.Function<T, Optional<R>, E> function) throws E {
+        if (opt.isPresent()) {
+            return function.apply(opt.get());
+        } else {
+            return Optional.empty();
+        }
+    }
 }
