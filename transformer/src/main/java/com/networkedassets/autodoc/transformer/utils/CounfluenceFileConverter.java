@@ -1,9 +1,13 @@
 package com.networkedassets.autodoc.transformer.utils;
 
+import javax.annotation.Nonnull;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Converts javaDoc files to Confluence storage format
@@ -23,7 +27,8 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 	 */
 
 	@Override
-	public String convert(String fileContent) {
+	public String convert(@Nonnull String fileContent) {
+		Preconditions.checkNotNull(fileContent);
 		Document doc = Jsoup.parse(fileContent);
 		doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
 		doc.outputSettings().charset("UTF-8");
@@ -33,35 +38,53 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		return doc.select("div.header~*").first().html();
 	}
 
-	public String getFileDescription(String fileContent) {
+	/**
+	 * Return package name from javaDoc html
+	 * 
+	 * @param fileContent
+	 *            text representing html javadoc to be converted
+	 * @return package name
+	 */
 
+	public String getFileDescription(@Nonnull String fileContent) {
+		Preconditions.checkNotNull(fileContent);
 		Document doc = Jsoup.parse(fileContent);
 		return doc.select("div.subTitle").first().text();
 
 	}
 
-	public String getFileName(String fileContent) {
+	/**
+	 * Return class name from javaDoc html
+	 * 
+	 * @param fileContent
+	 *            text representing html javadoc to be converted
+	 * @return class name
+	 */
+
+	public String getFileName(@Nonnull String fileContent) {
+		Preconditions.checkNotNull(fileContent);
 		Document doc = Jsoup.parse(fileContent);
 		return doc.select("title").first().text();
 	}
 
-	private void replaceInnerLinks(Document doc) {
-
+	private void replaceInnerLinks(@Nonnull Document doc) {
+		Preconditions.checkNotNull(doc);
 		Elements urls = doc.select("span.memberNameLink>a");
 
 		urls.stream().forEach(url -> url.after(String.format(innerLinkTemplate, url.text(), url.text())).remove());
 
 	}
 
-	private void replaceOuterLinks(Document doc) {
-
+	private void replaceOuterLinks(@Nonnull Document doc) {
+		Preconditions.checkNotNull(doc);
 		Elements urls = doc.select("a[href]");
 
 		urls.stream().forEach(url -> url.after(String.format(outerLinkTemplate, url.text(), url.text())).remove());
 
 	}
 
-	private void replaceListTag(Document doc) {
+	private void replaceListTag(@Nonnull Document doc) {
+		Preconditions.checkNotNull(doc);
 		doc.select("tt").tagName("code");
 		doc.select("dt").tagName("b").wrap("<p></p>");
 		doc.select("dd").tagName("code").wrap("<p></p>");
