@@ -28,7 +28,7 @@ public class TransformerServerMock implements TransformerServer {
                 .add(new Project("Project the first", "PRJ1") {{
                     repos.put("R1", new Repo("Repo 1", "R1") {{
                         branches.put("R1/master", new Branch("master", "R1/master") {{
-                            listenedEvents.put(GitEvent.PUSH, true);
+                            isListened=true;
                         }});
                         branches.put("R1/dev", new Branch("dev", "R1/dev") {{
                             scheduledEvents.add(new ScheduledEvent(Instant.now(), Period.ofDays(1)));
@@ -43,7 +43,7 @@ public class TransformerServerMock implements TransformerServer {
                 .add(new Project("Project the second", "PRJ2") {{
                     repos.put("R11", new Repo("Repo 11", "R11") {{
                         branches.put("R11/master", new Branch("master", "R11/master") {{
-                            listenedEvents.put(GitEvent.MERGE, true);
+                            isListened=true;
                         }});
                     }});
                 }})

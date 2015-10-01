@@ -17,14 +17,11 @@ public class Branch implements Serializable{
     public String id = "!!NO_NAME!!";
     public String javadocPageId = "!!NO_NAME!!";
     public String umlPageId = "!!NO_NAME!!";
-    public EnumMap<GitEvent, Boolean> listenedEvents;
+    public boolean isListened;
     public List<ScheduledEvent> scheduledEvents;
 
     public Branch() {
-        listenedEvents = new EnumMap<>(GitEvent.class);
-        for (GitEvent e : GitEvent.values()) {
-            listenedEvents.put(e, false);
-        }
+
         scheduledEvents = new ArrayList<>();
     }
 
@@ -38,7 +35,7 @@ public class Branch implements Serializable{
         this(otherBranch.displayId, otherBranch.id);
         this.javadocPageId = otherBranch.javadocPageId;
         this.umlPageId = otherBranch.umlPageId;
-        this.listenedEvents = new EnumMap<>(otherBranch.listenedEvents);
+        this.isListened = otherBranch.isListened;
         this.scheduledEvents = new ArrayList<>(otherBranch.scheduledEvents);
     }
 
@@ -48,18 +45,10 @@ public class Branch implements Serializable{
                 .put("id", this.id)
                 .put("javadocPageId", this.javadocPageId)
                 .put("umlPageId", this.umlPageId)
-                .put("listenedEvents", listenedEventsAsSoy())
+                .put("isListened", isListened)
                 .put("scheduledEvents", scheduledEvents.stream()
                         .map(ScheduledEvent::toSoyData).collect(Collectors.toList()))
                 .build();
-    }
-
-
-    private Map<String, Map<String, Object>> listenedEventsAsSoy() {
-        return this.listenedEvents.entrySet().stream()
-                .map(e -> new Pair<>(e.getKey().eventName,
-                        ImmutableMap.<String, Object>of("val", e.getValue(), "enum", e.getKey().name())))
-                .collect(Collectors.toMap(Pair::left, Pair::right));
     }
 
     private class Pair<LEFT, RIGHT> {
