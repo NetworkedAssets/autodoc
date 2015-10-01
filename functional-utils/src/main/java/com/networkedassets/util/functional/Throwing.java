@@ -84,4 +84,18 @@ public interface Throwing {
             }
         };
     }
+
+    /**
+     * Converts a throwing runnable to a optional with it's result value or none if it threw
+     * @param runnable action that might throw an exception
+     * @return weather the runnable threw anything
+     */
+    static boolean didThrow(Throwing.Runnable runnable) {
+        try {
+            runnable.run();
+            return false;
+        } catch (Throwable t) {
+            return true;
+        }
+    }
 }

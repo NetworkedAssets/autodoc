@@ -35,7 +35,7 @@ public class HtmlFileReader {
                 .filter(p -> !Files.isDirectory(p) &&
                         !p.getFileName().toString().contains("-") &&
                         !p.getFileName().toString().equals("index.html") &&
-                        p.endsWith(".html"))
+                        p.toString().endsWith(".html"))
                 .map(Throwing.rethrowAsRuntimeException(
                         p -> getTextContent(p, converter))
                 );
