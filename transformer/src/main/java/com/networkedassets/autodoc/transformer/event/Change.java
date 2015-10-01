@@ -3,7 +3,7 @@ package com.networkedassets.autodoc.transformer.event;
 import com.google.common.base.MoreObjects;
 
 /**
- * Created by kamil on 21.09.2015.
+ * Represents single change in the Stash event.
  */
 
 public class Change

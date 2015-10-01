@@ -206,6 +206,11 @@ public class SettingsManager {
         return settingsForSpace;
     }
 
+    public List<SettingsForSpace> getSettingsForSpaces() {
+        updateSettings();
+        return settings.getSettingsForSpaces();
+    }
+
     public void setSettingsForSpace(SettingsForSpace settingsForSpace, String spaceKey, String confluenceUrl) {
         settings.getSettingsForSpaces()
                 .removeIf(s -> (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)));

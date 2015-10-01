@@ -37,25 +37,19 @@ public class JavaDocGenerator {
 
     private Logger log = LoggerFactory.getLogger(JavaDocGenerator.class);
 
-    @Inject
-    private SettingsManager settings;
-
     public void generateFromStashAndPost(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
-                                         @Nonnull Collection<ConfluenceSpace> interestedSpaces)
+                                         @Nonnull Collection<SettingsForSpace> settingsForInterestedSpaces)
             throws JavadocException, IOException {
-        if (interestedSpaces.isEmpty()) return;
-
-        Map<ConfluenceSpace, SettingsForSpace> settingsForInterestedSpaces =
-                getSettingsForInterestedSpaces(interestedSpaces);
+        if (settingsForInterestedSpaces.isEmpty()) return;
 
         Path tmpDir = Files.createTempDirectory(null);
         SCM scmServer = getSCM();
         Path javadocDir = Javadoc.fromStashRepo(scmServer, tmpDir, projectKey, repoSlug, branchId);
 
-        removeOldJavadoc(projectKey, repoSlug, branchId, interestedSpaces);
+        removeOldJavadoc(projectKey, repoSlug, branchId, settingsForInterestedSpaces.stream().map(SettingsForSpace::getConfluenceSpace));
 
         try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(javadocDir, new CounfluenceFileConverter())) {
-            htmlFiles.forEach(htmlFile -> interestedSpaces.forEach(cs -> {
+            htmlFiles.forEach(htmlFile -> settingsForInterestedSpaces.forEach(cs -> {
                 ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
                 if (confluence != null) {
                     try {
@@ -67,10 +61,8 @@ public class JavaDocGenerator {
                                 htmlFile.getAdditionalProperties().get("packageName").toString()
                                         + htmlFile.getAdditionalProperties().get("className").toString(),
                                 htmlFile.getFileContent(),
-                                settingsForInterestedSpaces.get(cs)
-                                        .getProjectByKey(projectKey)
-                                        .getRepoBySlug(repoSlug)
-                                        .getBranchById(branchId).javadocPageId);
+                                cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug).getBranchById(branchId)
+                                        .javadocPageId);
                     } catch (UnirestException e) {
                         log.error("Could not create the page", e);
                     }
@@ -79,19 +71,12 @@ public class JavaDocGenerator {
         }
     }
 
-    private Map<ConfluenceSpace, SettingsForSpace> getSettingsForInterestedSpaces(Collection<ConfluenceSpace> interestedSpaces) {
-        return interestedSpaces.stream()
-                .map(cs -> settings.getSettingsForSpace(cs.getSpaceKey(), cs.getConfluenceUrl()))
-                .collect(Collectors.toMap(SettingsForSpace::getConfluenceSpace, sfs -> sfs));
-    }
-
-    private Set<Map.Entry<String, List<ConfluenceSpace>>> groupByUrl(
-            @Nonnull Collection<ConfluenceSpace> interestedSpaces) {
-        return interestedSpaces.stream().collect(Collectors.groupingBy(ConfluenceSpace::getConfluenceUrl)).entrySet();
+    private Set<Map.Entry<String, List<ConfluenceSpace>>> groupByUrl(Stream<ConfluenceSpace> interestedSpaces) {
+        return interestedSpaces.collect(Collectors.groupingBy(ConfluenceSpace::getConfluenceUrl)).entrySet();
     }
 
     private void removeOldJavadoc(String projectKey, String repoSlug, String branchId,
-                                  Collection<ConfluenceSpace> interestedSpaces) {
+                                  Stream<ConfluenceSpace> interestedSpaces) {
         groupByUrl(interestedSpaces).forEach(entry -> {
                     final String url = entry.getKey();
                     final ConfluenceClient client = getConfluenceForUrl(url);

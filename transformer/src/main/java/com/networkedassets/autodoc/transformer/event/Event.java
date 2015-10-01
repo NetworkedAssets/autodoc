@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import java.util.List;
 
 /**
- * POJO representing event coming from Stash
+ * Represents event coming from Stash
  */
 @SuppressWarnings("unused")
 public class Event {
