@@ -11,7 +11,7 @@ import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfi
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.Ancestor;
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage;
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ContentSearchPage;
-import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.Version;
+import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.PageVersion;
 import com.networkedassets.util.functional.Optionals;
 
 import javax.annotation.Nonnull;
@@ -282,14 +282,14 @@ public class ConfluenceClient extends HttpClient {
         Preconditions.checkNotNull(newParentId);
         Preconditions.checkNotNull(page.getTitle());
         Preconditions.checkNotNull(page.getId());
-        Preconditions.checkNotNull(page.getVersion());
+        Preconditions.checkNotNull(page.getPageVersion());
 
         ConfluencePage pageMoveJson = new ConfluencePage();
         pageMoveJson.setId(page.getId());
         pageMoveJson.setTitle(page.getTitle());
         pageMoveJson.setType("page");
         pageMoveJson.setAncestors(ImmutableList.of(new Ancestor(newParentId)));
-        pageMoveJson.setVersion(new Version(page.getVersionInt() + 1));
+        pageMoveJson.setPageVersion(new PageVersion(page.getVersionInt() + 1));
 
 
         ConfluencePage movedPage = Unirest.put(String.format("%s/rest/api/content/%s", getBaseUrl(), page.getId()))

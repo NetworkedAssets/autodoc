@@ -14,7 +14,7 @@ public class ConfluencePage {
     private List<Ancestor> ancestors;
     private Space space;
     private String type;
-    private Version version;
+    private PageVersion pageVersion;
     private Metadata metadata;
     private Children children;
 
@@ -84,22 +84,22 @@ public class ConfluencePage {
         this.type = type;
     }
 
-    public Version getVersion() {
-        return version;
+    public PageVersion getPageVersion() {
+        return pageVersion;
     }
 
-    public void setVersion(Version version) {
-        this.version = version;
+    public void setPageVersion(PageVersion pageVersion) {
+        this.pageVersion = pageVersion;
     }
 
     @JsonIgnore
     public int getVersionInt() {
-        return version.getNumber();
+        return pageVersion.getNumber();
     }
 
     @JsonIgnore
     public void setVersionInt(int ver) {
-        version = new Version(ver);
+        pageVersion = new PageVersion(ver);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class ConfluencePage {
                 ", ancestors=" + ancestors +
                 ", space=" + space +
                 ", type='" + type + '\'' +
-                ", version=" + version +
+                ", version=" + pageVersion +
                 ", metadata=" + metadata +
                 ", page=" + children +
                 '}';

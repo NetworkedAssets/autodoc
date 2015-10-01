@@ -6,14 +6,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * Created by mrobakowski on 9/28/2015.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Version {
+public class PageVersion {
     private int number;
 
-    public Version(int number) {
+    public PageVersion(int number) {
         this.number = number;
     }
 
-    public Version() {
+    public PageVersion() {
     }
 
     public int getNumber() {

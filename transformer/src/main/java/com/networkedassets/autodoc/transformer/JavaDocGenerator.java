@@ -92,9 +92,8 @@ public class JavaDocGenerator {
 
     private void removeOldJavadoc(String projectKey, String repoSlug, String branchId,
                                   Collection<ConfluenceSpace> interestedSpaces) {
-        groupByUrl(interestedSpaces)
-                .forEach(entry -> {
-                    String url = entry.getKey();
+        groupByUrl(interestedSpaces).forEach(entry -> {
+                    final String url = entry.getKey();
                     final ConfluenceClient client = getConfluenceForUrl(url);
 
                     if (client != null) {
