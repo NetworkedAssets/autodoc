@@ -13,6 +13,7 @@ import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ContentSearchPage;
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.PageVersion;
 import com.networkedassets.util.functional.Optionals;
+import com.networkedassets.util.functional.Throwing;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,7 +66,7 @@ public class ConfluenceClient extends HttpClient {
         Preconditions.checkNotNull(contents);
 
         ConfluencePage page = new ConfluencePage(title, spaceKey, contents);
-        if (parentId != null) {
+        if (parentId != null && !Throwing.didThrow(() -> Verify.verify(Long.parseLong(parentId) > 0))) {
             page.setAncestors(ImmutableList.of(new Ancestor(parentId)));
         }
 
