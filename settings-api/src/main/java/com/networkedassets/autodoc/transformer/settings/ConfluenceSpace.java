@@ -1,9 +1,12 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
- * Created by kamil on 30.09.2015.
+ * Represents a confluence space
  */
-public class ConfluenceSpace {
+public class ConfluenceSpace implements Serializable {
     private String spaceKey = "";
     private String confluenceUrl = "";
 
@@ -21,5 +24,19 @@ public class ConfluenceSpace {
 
     public void setConfluenceUrl(String confluenceUrl) {
         this.confluenceUrl = confluenceUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConfluenceSpace that = (ConfluenceSpace) o;
+        return Objects.equals(spaceKey, that.spaceKey) &&
+                Objects.equals(confluenceUrl, that.confluenceUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(spaceKey, confluenceUrl);
     }
 }
