@@ -23,6 +23,11 @@ public class EventHandler {
     @Inject
     private JavaDocGenerator javaDocGenerator;
 
+    public EventHandler(SettingsManager settingsManager, JavaDocGenerator javaDocGenerator) {
+        this.settingsManager = settingsManager;
+        this.javaDocGenerator = javaDocGenerator;
+    }
+
     public void handleEvent(Event event) throws IOException, JavadocException {
         String projectKey = event.getProjectKey();
         String repoSlug = event.getRepositorySlug();

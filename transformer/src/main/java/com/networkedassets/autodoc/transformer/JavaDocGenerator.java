@@ -58,7 +58,7 @@ public class JavaDocGenerator {
                                 projectKey,
                                 repoSlug,
                                 branchId,
-                                htmlFile.getAdditionalProperties().get("packageName").toString()
+                                htmlFile.getAdditionalProperties().get("packageName").toString() + "."
                                         + htmlFile.getAdditionalProperties().get("className").toString(),
                                 htmlFile.getFileContent(),
                                 cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug).getBranchById(branchId)

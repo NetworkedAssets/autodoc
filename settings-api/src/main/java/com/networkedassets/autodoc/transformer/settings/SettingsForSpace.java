@@ -1,5 +1,7 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,18 +37,22 @@ public class SettingsForSpace implements Serializable {
         return projects.get(key);
     }
 
+    @JsonIgnore
     public String getSpaceKey() {
         return confluenceSpace.getSpaceKey();
     }
 
+    @JsonIgnore
     public void setSpaceKey(String spaceKey) {
         confluenceSpace.setSpaceKey(spaceKey);
     }
 
+    @JsonIgnore
     public String getConfluenceUrl() {
         return confluenceSpace.getConfluenceUrl();
     }
 
+    @JsonIgnore
     public void setConfluenceUrl(String confluenceUrl) {
         confluenceSpace.setConfluenceUrl(confluenceUrl);
     }

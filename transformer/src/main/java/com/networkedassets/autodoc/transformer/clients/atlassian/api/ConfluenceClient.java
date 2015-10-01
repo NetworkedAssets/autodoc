@@ -14,14 +14,20 @@ import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.PageVersion;
 import com.networkedassets.util.functional.Optionals;
 import com.networkedassets.util.functional.Throwing;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class ConfluenceClient extends HttpClient {
+
+    private static final Logger log = LoggerFactory.getLogger(ConfluenceClient.class);
 
     public ConfluenceClient(HttpClientConfig config) {
         super(config);
@@ -38,11 +44,18 @@ public class ConfluenceClient extends HttpClient {
     public ConfluencePage createPage(ConfluencePage page) throws UnirestException {
         Preconditions.checkNotNull(page);
 
-        ConfluencePage res = Unirest.post(getBaseUrl() + "/rest/api/content")
+        HttpResponse<ConfluencePage> response = Unirest.post(getBaseUrl() + "/rest/api/content")
                 .header("Content-Type", "application/json")
                 .basicAuth(getUsername(), getPassword())
-                .body(page).asObject(ConfluencePage.class).getBody();
-        Verify.verifyNotNull(res.getId(), "Could not create the page");
+                .body(page).asObject(ConfluencePage.class);
+        ConfluencePage res = response.getBody();
+        if (res.getId() == null) {
+            try {
+                log.error("Got invalid response: {}", IOUtils.toString(response.getRawBody()));
+            } catch (IOException e) {
+                log.error("Herd u lik errorz");
+            }
+        }
         putLabel(res.getId(), "networkedassets-javadoc"); // we tag all of our pages with this
         return res;
     }
