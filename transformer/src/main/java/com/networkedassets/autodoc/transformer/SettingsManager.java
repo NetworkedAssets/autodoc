@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 public class SettingsManager {
     public static final String settingsFilename = "transformerSettings.ser";
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
+    private static final String stashUrl = "http://46.101.240.138:7990";
+    private static final String stashHookKey = "com.networkedassets.atlasian.plugins:stash-postReceive-hook-plugin";
     private Settings settings = new Settings();
 
     public SettingsManager() {
@@ -58,7 +60,7 @@ public class SettingsManager {
         //TODO get stash config from the settings
         URL stashUrl;
         try {
-            stashUrl = new URL("http://46.101.240.138:7990");
+            stashUrl = new URL(SettingsManager.stashUrl);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return;
@@ -210,7 +212,10 @@ public class SettingsManager {
     }
 
     private void updateSettings() {
-        settings.getSettingsForSpaces().stream().forEach(SettingsManager::updateProjectsFromStash);
+        settings.getSettingsForSpaces().stream().forEach((settingsForSpace) -> {
+            SettingsManager.updateProjectsFromStash(settingsForSpace);
+            enableAllHooks(settingsForSpace);
+        });
     }
 
     private void saveSettingsToFile(String filename) {
@@ -223,9 +228,9 @@ public class SettingsManager {
             log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
 
         } catch (FileNotFoundException e) {
-            log.debug("Can't save settings to {} because he file was not found: ", settingsFile.getAbsolutePath(), e);
+            log.error("Can't save settings to {} because he file was not found: ", settingsFile.getAbsolutePath(), e);
         } catch (IOException e) {
-            log.debug("Can't save settings to {} because it can't be accessed: ", settingsFile.getAbsolutePath(), e);
+            log.error("Can't save settings to {} because it can't be accessed: ", settingsFile.getAbsolutePath(), e);
         }
     }
 
@@ -236,14 +241,37 @@ public class SettingsManager {
                 ObjectInputStream objectIn = new ObjectInputStream(fileIn)
         ) {
             settings = ((Settings) objectIn.readObject());
-            log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
+            log.error("Settings loaded from {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
-            log.debug("Can't load settings from {} because he file was not found: ", settingsFile.getAbsolutePath(), e);
+            log.error("Can't load settings from {} because he file was not found: ", settingsFile.getAbsolutePath(), e);
         } catch (IOException e) {
-            log.debug("Can't load settings from {} because he file can't be accessed: ", settingsFile.getAbsolutePath(), e);
+            log.error("Can't load settings from {} because he file can't be accessed: ", settingsFile.getAbsolutePath(), e);
         } catch (ClassNotFoundException e) {
-            log.debug("Can't load settings from {} because he file is corrupted or of incompatible version: ", settingsFile.getAbsolutePath(), e);
+            log.error("Can't load settings from {} because he file is corrupted or of incompatible version: ", settingsFile.getAbsolutePath(), e);
         }
+    }
+
+    public void enableAllHooks(SettingsForSpace settingsForSpace){
+        URL stashUrl;
+        try {
+            stashUrl = new URL(SettingsManager.stashUrl);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return;
+        }
+        HttpClientConfig httpClientConfig = new HttpClientConfig(stashUrl, "kcala", "admin");
+        StashClient stashClient = new StashClient(httpClientConfig);
+        log.debug("Stash client created");
+
+        settingsForSpace.getProjects().stream().forEach(project -> {
+            project.repos.stream().forEach(repo -> {
+                try {
+                    stashClient.setHookSettingsEnabled(project.key, repo.slug, stashHookKey);
+                } catch (UnirestException e) {
+                    log.error("Error while activating hooks for {}/{}: ",project.name, repo.slug, e);
+                }
+            });
+        });
     }
 
 
