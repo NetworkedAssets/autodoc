@@ -1,5 +1,7 @@
 package com.networkedassets.autodoc.transformer.event;
 
+import com.google.common.base.MoreObjects;
+
 /**
  * Created by kamil on 21.09.2015.
  */
@@ -7,11 +9,8 @@ package com.networkedassets.autodoc.transformer.event;
 public class Change
 {
     private String fromHash;
-
     private String refId;
-
     private String type;
-
     private String toHash;
 
     public String getFromHash ()
@@ -57,6 +56,11 @@ public class Change
     @Override
     public String toString()
     {
-        return "ClassPojo [fromHash = "+fromHash+", refId = "+refId+", type = "+type+", toHash = "+toHash+"]";
+        return MoreObjects.toStringHelper(this.getClass())
+                .add("fromHash", fromHash)
+                .add("refId", refId)
+                .add("type", type)
+                .add("toHash", toHash)
+                .toString();
     }
 }

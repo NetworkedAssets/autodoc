@@ -27,8 +27,7 @@ public class EventService extends RestService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public String addEvent(Event event) {
-        log.info("New event information received: " + event.toString());
-
+        log.info("New EVENT information received: {}", event.toString());
         return SUCCESS;
     }
 
