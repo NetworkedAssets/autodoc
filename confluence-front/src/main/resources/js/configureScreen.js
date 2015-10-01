@@ -78,12 +78,12 @@
     }
 
     function saveBranches($repo) {
-        var branches = [];
+        var branches = {};
         var $newBranches = $repo.find(".branch");
         var $branch;
         for (var i = 0; $branch = $($newBranches[i]), i < $newBranches.length; i++) {
 
-            branches[i] = {
+            branches[$branch.data("branch-id")] = {
                 "displayId": $branch.data("branch-display-id"),
                 "id": $branch.data("branch-id"),
                 "javadocPageId": $branch.find("select[name=javadoc]").val(),
@@ -96,12 +96,12 @@
     }
 
     function saveRepos($project) {
-        var repos = [];
+        var repos = {};
         var $newRepos = $project.find(".repo");
         var $repo;
         for (var i = 0; $repo = $($newRepos[i]), i < $newRepos.length; i++) {
             var branches = saveBranches($repo);
-            repos[i] = {
+            repos[$repo.data("repo-slug")] = {
                 "name": $repo.data("repo-name"),
                 "slug": $repo.data("repo-slug"),
                 "branches": branches

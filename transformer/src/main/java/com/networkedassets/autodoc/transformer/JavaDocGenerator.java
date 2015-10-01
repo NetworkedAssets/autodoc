@@ -110,6 +110,7 @@ public class JavaDocGenerator {
                 });
     }
 
+    //TODO: make this configurable
     private ConfluenceClient getConfluenceForUrl(String url) {
         try {
             return new ConfluenceClient(new HttpClientConfig(new URL(url), "mrobakowski", "admin"));

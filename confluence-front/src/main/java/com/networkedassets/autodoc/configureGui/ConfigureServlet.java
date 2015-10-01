@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -84,7 +85,7 @@ public class ConfigureServlet extends HttpServlet {
                                        String message)
             throws IOException, ServletException {
 
-        List<Project> allProjects = settings.getProjects();
+        Collection<Project> allProjects = settings.getProjects();
         Optional<Long> defaultJavadocLocation = findDefaultJavadocLocation(req);
         Optional<Long> defaultUmlLocation = findDefaultUmlLocation(req);
         defaultJavadocLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
@@ -143,7 +144,7 @@ public class ConfigureServlet extends HttpServlet {
         settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
         settings.setSpaceKey(spaceKey);
 
-        String message = "Settings set succesfully!";
+        String message = OBJECT_MAPPER.writeValueAsString(projects);
         try {
             transformerServer.saveSettingsForSpace(settings, spaceKey);
         } catch (SettingsException e) {

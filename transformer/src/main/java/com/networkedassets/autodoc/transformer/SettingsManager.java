@@ -7,7 +7,6 @@ import com.networkedassets.autodoc.transformer.clients.atlassian.api.StashClient
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Branch;
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Project;
 import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Repository;
-import com.networkedassets.autodoc.transformer.settings.ConfluenceSpace;
 import com.networkedassets.autodoc.transformer.settings.Repo;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
@@ -96,13 +95,13 @@ public class SettingsManager {
         settingsForSpace.getProjects().removeIf(settingsProject ->
                 !stashProjects.stream().map(Project::getKey).anyMatch(key -> key.equals(settingsProject.key)));
 
-        settingsForSpace.getProjects().forEach(project -> project.repos.removeIf(repo ->
+        settingsForSpace.getProjects().forEach(project -> project.repos.values().removeIf(repo ->
                 !stashRepositories.stream().map(Repository::getSlug).anyMatch(slug -> slug.equals(repo.slug))));
 
         settingsForSpace.getProjects().forEach(project ->
-                project.repos.stream().forEach(repo ->
-                        repo.branches.removeIf(branch -> !branchesMap.get(repo.slug).stream().map(Branch::getId)
-                                .anyMatch(stashId -> stashId.equals(branch.id)))));
+                project.repos.values().stream().forEach(repo ->
+                        repo.branches.values().removeIf(branch -> !branchesMap.get(repo.slug).stream()
+                                .map(Branch::getId).anyMatch(stashId -> stashId.equals(branch.id)))));
 
         //Add new projects, repos, branches from stash
         for (Project stashProject : stashProjects) {
@@ -112,7 +111,7 @@ public class SettingsManager {
                 com.networkedassets.autodoc.transformer.settings.Project newProject =
                         new com.networkedassets.autodoc.transformer.settings.Project();
                 mergeProjectSettings(stashProject, newProject);
-                settingsForSpace.getProjects().add(newProject);
+                settingsForSpace.addProject(newProject);
             } else {
                 mergeProjectSettings(stashProject, settingsProject);
             }
@@ -126,7 +125,7 @@ public class SettingsManager {
                 if (settingsRepository == null) {
                     Repo newRepo = new Repo();
                     mergeRepositorySettings(stashRepository, newRepo);
-                    settingsForSpace.getProjectByKey(stashProject.getKey()).repos.add(newRepo);
+                    settingsForSpace.getProjectByKey(stashProject.getKey()).repos.put(newRepo.slug, newRepo);
                 } else {
                     mergeRepositorySettings(stashRepository, settingsRepository);
                 }
@@ -141,7 +140,7 @@ public class SettingsManager {
                                 new com.networkedassets.autodoc.transformer.settings.Branch();
                         mergeBranchSettings(stashBranch, newBranch);
                         settingsForSpace.getProjectByKey(stashProject.getKey())
-                                .getRepoBySlug(stashRepository.getSlug()).branches.add(newBranch);
+                                .getRepoBySlug(stashRepository.getSlug()).branches.put(newBranch.id, newBranch);
                     } else {
                         mergeBranchSettings(stashBranch, settingsBranch);
                     }

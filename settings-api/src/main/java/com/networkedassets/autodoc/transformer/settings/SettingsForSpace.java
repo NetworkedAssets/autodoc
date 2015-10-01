@@ -1,27 +1,38 @@
 package com.networkedassets.autodoc.transformer.settings;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Contains settings for one space
  */
 public class SettingsForSpace implements Serializable {
 
-    private List<Project> projects = new ArrayList<>();
+    private Map<String, Project> projects = new HashMap<>();
     private ConfluenceSpace confluenceSpace = new ConfluenceSpace();
 
-    public List<Project> getProjects() {
-        return projects;
+    /**
+     * Do not add projects using <code>getProjects().add(...)</code>, use {@link SettingsForSpace#addProject(Project)}.
+     * However, you can remove elements
+     */
+    public Collection<Project> getProjects() {
+        return projects.values();
     }
 
     public void setProjects(List<Project> projects) {
-        this.projects = projects;
+        this.projects = projects.stream().collect(Collectors.toMap(p -> p.key, p -> p));
+    }
+
+    public void addProject(Project p) {
+        projects.put(p.key, p);
     }
 
     public Project getProjectByKey(String key) {
-        return projects.stream().filter(p -> p.key.equals(key)).findFirst().orElse(null);
+        return projects.get(key);
     }
 
     public String getSpaceKey() {
