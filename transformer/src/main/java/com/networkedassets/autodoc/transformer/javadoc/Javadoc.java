@@ -87,7 +87,7 @@ public class Javadoc {
     @Nonnull
     public static List<Path> searchJavaFiles(@Nonnull Path localDirectory) throws JavadocException {
         try (Stream<Path> javaFiles = Files.walk(localDirectory, FileVisitOption.FOLLOW_LINKS)
-                .filter(p -> p.endsWith(".java"))) {
+                .filter(p -> p.toString().endsWith(".java"))) {
             return javaFiles.collect(Collectors.toList());
         } catch (IOException e) {
             throw new JavadocException("Could not search files", e);
