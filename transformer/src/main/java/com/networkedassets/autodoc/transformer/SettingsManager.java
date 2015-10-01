@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,8 @@ public class SettingsManager {
     public static final String settingsFilename = "transformerSettings.ser";
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
     private static final String stashUrl = "http://46.101.240.138:7990";
-    private static final String stashHookKey = "com.networkedassets.atlasian.plugins:stash-postReceive-hook-plugin";
+    private static final String stashHookKey = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
+    private static final int transformerPort = 8050;
     private Settings settings = new Settings();
 
     public SettingsManager() {
@@ -263,15 +266,16 @@ public class SettingsManager {
         StashClient stashClient = new StashClient(httpClientConfig);
         log.debug("Stash client created");
 
-        settingsForSpace.getProjects().stream().forEach(project -> {
-            project.repos.values().stream().forEach(repo -> {
-                try {
-                    stashClient.setHookSettingsEnabled(project.key, repo.slug, stashHookKey);
-                } catch (UnirestException e) {
-                    log.error("Error while activating hooks for {}/{}: ",project.name, repo.slug, e);
-                }
-            });
-        });
+        final String localhostAddress = "localhost:" + transformerPort;
+
+        settingsForSpace.getProjects().stream().forEach(project -> project.repos.values().stream().forEach(repo -> {
+            try {
+                stashClient.setHookSettings(project.key, repo.slug, stashHookKey, localhostAddress, "30000");
+                stashClient.setHookSettingsEnabled(project.key, repo.slug, stashHookKey);
+            } catch (UnirestException e) {
+                log.error("Error while activating hooks for {}/{}: ",project.name, repo.slug, e);
+            }
+        }));
     }
 
 
