@@ -264,7 +264,7 @@ public class SettingsManager {
         log.debug("Stash client created");
 
         settingsForSpace.getProjects().stream().forEach(project -> {
-            project.repos.stream().forEach(repo -> {
+            project.repos.values().stream().forEach(repo -> {
                 try {
                     stashClient.setHookSettingsEnabled(project.key, repo.slug, stashHookKey);
                 } catch (UnirestException e) {
