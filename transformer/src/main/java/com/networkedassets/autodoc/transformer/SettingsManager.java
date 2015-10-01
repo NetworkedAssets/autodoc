@@ -266,7 +266,7 @@ public class SettingsManager {
         StashClient stashClient = new StashClient(httpClientConfig);
         log.debug("Stash client created");
 
-        final String localhostAddress = "localhost:" + transformerPort;
+        final String localhostAddress = "http://localhost:" + transformerPort + "/event";
 
         settingsForSpace.getProjects().stream().forEach(project -> project.repos.values().stream().forEach(repo -> {
             try {
