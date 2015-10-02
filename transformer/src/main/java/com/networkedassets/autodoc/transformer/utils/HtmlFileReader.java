@@ -26,7 +26,7 @@ public class HtmlFileReader {
     /**
      * Attention: the returned stream should be closed when you're done with it
      */
-    public static Stream<HtmlFile> read(@Nonnull final Path path, @Nonnull final HtmlFileConventer converter) throws IOException {
+    public static Stream<HtmlFile> read(@Nonnull final Path path, @Nonnull final HtmlFileConventer converter, @Nonnull String fileExtension) throws IOException {
 
         Preconditions.checkNotNull(path);
         Preconditions.checkNotNull(converter);
@@ -35,7 +35,7 @@ public class HtmlFileReader {
                 .filter(p -> !Files.isDirectory(p) &&
                         !p.getFileName().toString().contains("-") &&
                         !p.getFileName().toString().equals("index.html") &&
-                        p.toString().endsWith(".html"))
+                        p.toString().endsWith(fileExtension))
                 .map(Throwing.rethrowAsRuntimeException(
                         p -> getTextContent(p, converter))
                 );
