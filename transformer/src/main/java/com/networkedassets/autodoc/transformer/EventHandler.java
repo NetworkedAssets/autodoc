@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer;
 
+import com.networkedassets.autodoc.transformer.event.Change;
 import com.networkedassets.autodoc.transformer.event.Event;
 import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
@@ -29,17 +30,20 @@ public class EventHandler {
     }
 
     public void handleEvent(Event event) throws IOException, JavadocException {
+
         String projectKey = event.getProjectKey();
         String repoSlug = event.getRepositorySlug();
-        List<String> branchesIds = event.getChanges().stream().map(change -> change.getRefId()).collect(Collectors.toList());
+        List<String> branchesIds = event.getChanges().stream().map(Change::getRefId).collect(Collectors.toList());
 
 
-        for (String branchId : branchesIds) {
-            Collection<SettingsForSpace> interestedSpaces = settingsManager.getSettingsForSpaces().stream()
-                    .filter(s -> s.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
-                            .getBranchById(branchId).isListened)
-                    .collect(Collectors.toList());
-            javaDocGenerator.generateFromStashAndPost(projectKey, repoSlug, branchId, interestedSpaces);
+        for (Change change : event.getChanges()) {
+            if (!change.getType().equals("DELETE")) {
+                Collection<SettingsForSpace> interestedSpaces = settingsManager.getSettingsForSpaces().stream()
+                        .filter(s -> s.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
+                                .getBranchById(change.getRefId()).isListened)
+                        .collect(Collectors.toList());
+                javaDocGenerator.generateFromStashAndPost(projectKey, repoSlug, change.getRefId(), interestedSpaces);
+            }
         }
     }
 }
