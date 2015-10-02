@@ -269,6 +269,7 @@ public class ConfluenceClient extends HttpClient {
     }
 
     private List<ConfluencePage> getAll(ContentSearchPage body) throws UnirestException {
+        if (body == null || body.getResults() == null || body.getResults().size() == 0) return new ArrayList<>();
         List<ConfluencePage> pages = new ArrayList<>(body.getResults());
 
         String nextUrl;

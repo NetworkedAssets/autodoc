@@ -67,16 +67,6 @@
         return scheduledEvents;
     }
 
-    function saveListenedEvents($branch) {
-        var listenedEvents = {};
-        var $gitEvents = $branch.find(".git-events input.checkbox");
-        var $gitEvent;
-        for(var i = 0; $gitEvent = $($gitEvents[i]), i < $gitEvents.length; i++) {
-            listenedEvents[$gitEvent.data("event-type")] = $gitEvent.is(":checked");
-        }
-        return listenedEvents;
-    }
-
     function saveBranches($repo) {
         var branches = {};
         var $newBranches = $repo.find(".branch");
@@ -88,7 +78,7 @@
                 "id": $branch.data("branch-id"),
                 "javadocPageId": $branch.find("select[name=javadoc]").val(),
                 "umlPageId": $branch.find("select[name=uml]").val(),
-                "listenedEvents": saveListenedEvents($branch),
+                "isListened": $branch.find("input.isListened").is(":checked"),
                 "scheduledEvents": saveScheduledEvents($branch)
             }
         }
@@ -110,7 +100,7 @@
         return repos;
     }
 
-    function saveSettings() {
+    function saveSettings(eventData) {
         var newSettings = [];
         var $projects = $(".project");
         var $project;
@@ -125,9 +115,13 @@
         }
         var settingsJSON = JSON.stringify(newSettings);
         console.log(settingsJSON);
-        post('', {
+        var payload = {
             newSettings: settingsJSON
-        });
+        };
+        if (eventData) {
+            payload["event"] = eventData;
+        }
+        post('', payload);
     }
 
     AJS.toInit(function() {
@@ -144,8 +138,8 @@
     $(document).on('click', '.add-scheduled-event-button', function (e) {
         $button = $(this);
         $(com.networkedassets.autodoc.configureGui.scheduledEventDetails({
-            "scheduleStart": "",
-            "period": ""
+            "scheduleStartIso": "",
+            "periodIso": ""
         })).insertBefore($button);
     });
 
@@ -157,6 +151,14 @@
         console.log("clicked save");
         saveSettings();
         console.log("after save");
+    });
+
+    $(document).on("click", ".force-regenerate-button", function() {
+        var projectKey = $(this).parents(".project").data("project-key");
+        var repoSlug = $(this).parents(".repo").data("repo-slug");
+        var branchId = $(this).parents(".branch").data("branch-id");
+        var eventData = projectKey + "//" + repoSlug + "//" + branchId;
+        saveSettings(eventData);
     });
 
 })(AJS.$);

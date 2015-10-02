@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.time.Period;
 import java.util.List;
 
-public class TransformerServerMock implements TransformerServer {
+public class TransformerServerMock {
     public static final SettingsForSpace settings = new SettingsForSpace() {
         @Override
         public List<Project> getProjects() {
@@ -50,13 +50,15 @@ public class TransformerServerMock implements TransformerServer {
                 .build();
     }
 
-    @Override
-    public SettingsForSpace getSettingsForSpace(String spaceKey) {
-        return settings;
+    public Response getSettingsForSpace(String spaceKey) {
+        return new Response(settings, null);
     }
 
-    @Override
     public void saveSettingsForSpace(SettingsForSpace settings, String spaceKey) {
 
+    }
+
+    public void forceRegenerate(String projectKey, String repoSlug, String branchId) throws SettingsException {
+        
     }
 }
