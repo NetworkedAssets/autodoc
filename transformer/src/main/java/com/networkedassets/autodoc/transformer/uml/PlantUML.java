@@ -30,13 +30,42 @@ import net.sourceforge.plantumldependency.commoncli.program.execution.JavaProgra
 public class PlantUML {
 
 	private static final String encoding = "UTF-8";
+	private static final String objectFilter = "abstract_classes,classes,extensions,implementations,imports,interfaces,native_methods,static_imports";
+
+	/**
+	 * Convenience method for generating plantUML for a project on a SCM repo
+	 *
+	 * @param scmServer
+	 *            git client using to clone repo
+	 * @param localDirectory
+	 *            where the repo should be cloned
+	 * @param projectKey
+	 *            stash's project key
+	 * @param repositorySlug
+	 *            stash's repo slug
+	 * @param branchName
+	 *            the name of the branch that is to be cloned
+	 * @param packageFilter
+	 *            regular expression to filtering package which will show on
+	 *            diagrams
+	 * @param diagramFilter
+	 *            the names of object which will be showing on diagram ( def.
+	 *            abstract_classes,classes,extensions,implementations,
+	 *            imports,interfaces,native_methods,static_imports_
+	 * @param fileFormat
+	 *            the name of file extension
+	 * @return content of image file or plant UML description when not
+	 *         specifying @see fileFormat
+	 * @throws PlantUMLException
+	 */
 
 	@Nonnull
-	public static String fromRepo(@Nonnull SCM scmServer, @Nonnull String localDirectoryPath,
+	public static String fromRepo(@Nonnull SCM scmClient, @Nonnull String localDirectoryPath,
 			@Nonnull String projectKey, @Nonnull String repositorySlug, @Nonnull String branchName,
-			@Nullable String filter, @Nullable FileFormat fileformat) throws PlantUMLException {
+			@Nullable String packageFilter, @Nullable String diagramFilter, @Nullable FileFormat fileformat)
+					throws PlantUMLException {
 
-		Preconditions.checkNotNull(scmServer);
+		Preconditions.checkNotNull(scmClient);
 		Preconditions.checkNotNull(localDirectoryPath);
 		Preconditions.checkNotNull(repositorySlug);
 		Preconditions.checkNotNull(branchName);
@@ -44,25 +73,45 @@ public class PlantUML {
 		File localDirectory = new File(localDirectoryPath);
 		PlantUML plantUML = new PlantUML();
 		createDirectoryIfNecessary(Paths.get(localDirectory.toString()));
-		cloneTheRepo(scmServer, projectKey, repositorySlug, branchName, Paths.get(localDirectory.toString()));
-		String plantUMLDescription = plantUML.generateUmlDescription(localDirectory, filter);
+		cloneTheRepo(scmClient, projectKey, repositorySlug, branchName, Paths.get(localDirectory.toString()));
+		String plantUMLDescription = plantUML.generateUmlDescription(localDirectory, packageFilter, diagramFilter);
 		return (fileformat != null) ? plantUML.generateImage(plantUMLDescription, fileformat) : plantUMLDescription;
 	}
 
+	/**
+	 * Convenience method for generating plantUML for a project on fileDirectory
+	 *
+	 * @param localDirectoryPath
+	 *            path to directory where project has been cloned
+	 * @param packageFilter
+	 *            regular expression to filtering package which will show on
+	 *            diagrams
+	 * @param diagramFilter
+	 *            the names of object which will be showing on diagram ( def.
+	 *            abstract_classes,classes,extensions,implementations,
+	 *            imports,interfaces,native_methods,static_imports_
+	 * @param fileFormat
+	 *            the name of file extension
+	 * @return content of image file or plant UML description when not
+	 *         specifying @see fileFormat
+	 * @throws PlantUMLException
+	 */
+
 	@Nonnull
-	public static String fromDirectory(@Nonnull String localDirectoryPath, @Nullable String filter,
-			@Nullable FileFormat fileformat) throws PlantUMLException {
+	public static String fromDirectory(@Nonnull String localDirectoryPath, @Nullable String packageFilter,
+			@Nullable String diagramFilter, @Nullable FileFormat fileformat) throws PlantUMLException {
 
 		Preconditions.checkNotNull(localDirectoryPath);
 		File localDirectory = new File(localDirectoryPath);
 		PlantUML plantUML = new PlantUML();
 		createDirectoryIfNecessary(Paths.get(localDirectory.toString()));
-		String plantUMLDescription = plantUML.generateUmlDescription(localDirectory, filter);
+		String plantUMLDescription = plantUML.generateUmlDescription(localDirectory, packageFilter, diagramFilter);
 		return (fileformat != null) ? plantUML.generateImage(plantUMLDescription, fileformat) : plantUMLDescription;
 
 	}
 
-	private String generateUmlDescription(@Nonnull File directory, @Nullable String filter) throws PlantUMLException {
+	private String generateUmlDescription(@Nonnull File directory, @Nullable String packageFilter,
+			@Nullable String diagramFilter) throws PlantUMLException {
 
 		Preconditions.checkNotNull(directory);
 		String svg = "";
@@ -76,8 +125,8 @@ public class PlantUML {
 
 			final CommandLine commandLineArguments = new CommandLineImpl(
 					new String[] { "-o", tempFile.getAbsolutePath(), "-b", directory.getAbsolutePath(), "-dt",
-							"abstract_classes,classes,extensions,implementations,imports,interfaces,native_methods,static_imports",
-							"-dp", Strings.isNullOrEmpty(filter) ? "*.*" : filter });
+							Strings.isNullOrEmpty(diagramFilter) ? objectFilter : diagramFilter, "-dp",
+							Strings.isNullOrEmpty(packageFilter) ? "*.*" : packageFilter });
 			plantumlDependencyProgram = new PlantUMLDependencyProgram();
 			plantumlDependencyProgramExecution = plantumlDependencyProgram.parseCommandLine(commandLineArguments);
 			plantumlDependencyProgramExecution.execute();
