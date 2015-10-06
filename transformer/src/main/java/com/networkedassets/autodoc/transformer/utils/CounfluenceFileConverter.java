@@ -11,8 +11,6 @@ import org.jsoup.select.Elements;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
-import jersey.repackaged.com.google.common.base.Joiner;
-
 /**
  * Converts javaDoc files to Confluence storage format
  */
@@ -22,7 +20,20 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 	private static final String outerLinkTemplate = "<ac:link><ri:page ri:content-title=\"%s\" /><ac:plain-text-link-body><![CDATA[%s]]></ac:plain-text-link</ac:link>";
 	private static final String innerLinkTemplate = "<ac:link ac:anchor=\"%s\"><ac:plain-text-link-body><![CDATA[#%s]]></ac:plain-text-link-body></ac:link>";
 
-	private String sufix;
+	private String suffix;
+
+	/**
+	 * Main constructor
+	 *
+	 * @param suffix
+	 *            suffix which will be added to confluence page
+	 */
+
+	public CounfluenceFileConverter(@Nullable String suffix) {
+
+		this.suffix = suffix;
+
+	}
 
 	/**
 	 * Converts javadoc html to a format usable with Atlassian Confluence
@@ -35,12 +46,6 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 	 * @return text javadoc page in Atlassian Confluence's storage format
 	 * 
 	 */
-
-	public CounfluenceFileConverter(@Nullable String sufix) {
-
-		this.sufix = sufix;
-
-	}
 
 	@Override
 	public String convert(@Nonnull String fileContent) {
@@ -83,12 +88,12 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		return doc.select("title").first().text().replaceAll("\\s", "");
 	}
 
-	public void setSufix(String sufix) {
-		this.sufix = sufix;
+	public void setSuffix(String sufix) {
+		this.suffix = sufix;
 	}
 
-	public String getSufix() {
-		return sufix;
+	public String getSuffix() {
+		return suffix;
 	}
 
 	private void replaceInnerLinks(@Nonnull Document doc) {
@@ -109,7 +114,7 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		urls.stream().forEach(url -> url
 				.after(String.format(outerLinkTemplate,
 						String.format("%s.%s", packageName,
-								!Strings.isNullOrEmpty(this.sufix) ? url.text().replaceAll("\\s", "") + this.sufix
+								!Strings.isNullOrEmpty(this.suffix) ? url.text().replaceAll("\\s", "") + this.suffix
 										: url.text().replaceAll("\\s", "")),
 						url.text().replaceAll("\\s", "")))
 				.remove());
