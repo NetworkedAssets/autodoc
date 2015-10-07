@@ -85,7 +85,7 @@ public class TransformerServer {
                 response = Unirest.post(url + SETTINGS)
                         .header("Content-Type", "application/json")
                         .queryString("spaceKey", spaceKey)
-                        .queryString("confluenceBaseUrl", confluenceUrl)
+                        .queryString("confluenceUrl", confluenceUrl)
                         .body(settings)
                         .asString();
             } else {

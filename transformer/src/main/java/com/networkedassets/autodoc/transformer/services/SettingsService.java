@@ -23,9 +23,9 @@ public class SettingsService extends RestService {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public SettingsForSpace getSettingsForSpace(@QueryParam("spaceKey") String spaceKey,
-                                                @QueryParam("confluenceBaseUrl") String confluenceBaseUrl) {
+                                                @QueryParam("confluenceUrl") String confluenceUrl) {
         log.info("GET request for settings handled");
-        SettingsForSpace settingsForSpace = settingsManager.getSettingsForSpace(spaceKey, confluenceBaseUrl);
+        SettingsForSpace settingsForSpace = settingsManager.getSettingsForSpace(spaceKey, confluenceUrl);
         return settingsForSpace;
     }
 
