@@ -52,7 +52,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 				if (confluence != null) {
 					try {
 						confluence.createJavadocPage(cs.getSpaceKey(), umlPrefix + projectKey, repoSlug, branchId,
-								umlPrefix + htmlFile.getAdditionalProperties().get("packageName").toString() + "."
+								htmlFile.getAdditionalProperties().get("packageName").toString() + "."
 										+ htmlFile.getAdditionalProperties().get("className").toString(),
 								htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
 										.getBranchById(branchId).umlPageId);
