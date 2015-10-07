@@ -33,38 +33,46 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 
 	public void generateFromStashAndPost(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
 			@Nonnull Collection<SettingsForSpace> settingsForInterestedSpaces) throws IOException {
-		if (settingsForInterestedSpaces.isEmpty())
+		log.debug("Generating UML for {}/{}/{}", projectKey, repoSlug, branchId);
+		if (settingsForInterestedSpaces.isEmpty()) {
+			log.debug("UML dropped due to empty interested spaces list");
 			return;
+		}
 		String plantUmlDescription = "";
 		Path tmpDir = Files.createTempDirectory(null);
 		SCM scmServer = getSCM();
 		try {
 			plantUmlDescription = PlantUML.fromRepo(scmServer, tmpDir, projectKey, repoSlug, branchId, null, null);
+			log.debug("plantUML clonned from repository");
 		} catch (PlantUMLException e1) {
 			log.error("Could not generate plant uml description", e1);
 		}
 
 		removeOldJavadoc(umlPrefix + projectKey, repoSlug, branchId,
 				settingsForInterestedSpaces.stream().map(SettingsForSpace::getConfluenceSpace));
+		log.debug("Old javadoc removed if it existed");
 
 		try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(tmpDir,
 				new PlantUMLFileConverter(plantUmlDescription,
 						String.format(" [%s/%s/%s]", umlPrefix + projectKey, repoSlug, branchId), null),
 				fileExtension)) {
-			htmlFiles.forEach(htmlFile -> settingsForInterestedSpaces.forEach(cs -> {
-				ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
-				if (confluence != null) {
-					try {
-						confluence.createJavadocPage(cs.getSpaceKey(), umlPrefix + projectKey, repoSlug, branchId,
-								htmlFile.getAdditionalProperties().get("packageName").toString() + "."
-										+ htmlFile.getAdditionalProperties().get("className").toString(),
-								htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
-										.getBranchById(branchId).umlPageId);
-					} catch (UnirestException e2) {
-						log.error("Could not create the page", e2);
+			htmlFiles.forEach(htmlFile -> {
+				settingsForInterestedSpaces.forEach(cs -> {
+					log.debug("Processing uml file for space: key:{}, url:{}", cs.getConfluenceSpace(), cs.getConfluenceUrl());
+					ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
+					if (confluence != null) {
+						try {
+							confluence.createJavadocPage(cs.getSpaceKey(), umlPrefix + projectKey, repoSlug, branchId,
+									htmlFile.getAdditionalProperties().get("packageName").toString() + "."
+											+ htmlFile.getAdditionalProperties().get("className").toString(),
+									htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
+											.getBranchById(branchId).umlPageId);
+						} catch (UnirestException e2) {
+							log.error("Could not create the page", e2);
+						}
 					}
-				}
-			}));
+				});
+			});
 		}
 	}
 
