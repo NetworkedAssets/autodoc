@@ -15,10 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.*;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +30,13 @@ import java.util.stream.Collectors;
  * Handles the settings of the application
  */
 public class SettingsManager {
-    public static final String settingsFilename = "transformerSettings.ser";
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
+    private Settings settings = new Settings();
+
+    public static final String settingsFilename = "transformerSettings.ser";
     private static final String stashUrl = "http://46.101.240.138:7990";
     private static final String stashHookKey = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
     private static final int transformerPort = 8050;
-    private Settings settings = new Settings();
 
     public SettingsManager() {
         loadSettingFromFile(settingsFilename);
@@ -234,11 +233,10 @@ public class SettingsManager {
         ) {
             objectOut.writeObject(settings);
             log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
-
         } catch (FileNotFoundException e) {
             log.error("Can't save settings to {} because he file was not found: ", settingsFile.getAbsolutePath(), e);
         } catch (IOException e) {
-            log.error("Can't save settings to {} because it can't be accessed: ", settingsFile.getAbsolutePath(), e);
+            log.error("Can't save settings to {} because of general IO problem: ", settingsFile.getAbsolutePath(), e);
         }
     }
 
@@ -248,14 +246,14 @@ public class SettingsManager {
                 FileInputStream fileIn = new FileInputStream(settingsFile);
                 ObjectInputStream objectIn = new ObjectInputStream(fileIn)
         ) {
-            settings = ((Settings) objectIn.readObject());
+            settings = (Settings) objectIn.readObject();
             log.error("Settings loaded from {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.error("Can't load settings from {} because he file was not found: ", settingsFile.getAbsolutePath(), e);
-        } catch (IOException e) {
-            log.error("Can't load settings from {} because he file can't be accessed: ", settingsFile.getAbsolutePath(), e);
         } catch (ClassNotFoundException e) {
             log.error("Can't load settings from {} because he file is corrupted or of incompatible version: ", settingsFile.getAbsolutePath(), e);
+        } catch (IOException e) {
+            log.error("Can't load settings from {} because general IO problem: ", settingsFile.getAbsolutePath(), e);
         }
     }
 
