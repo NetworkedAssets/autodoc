@@ -18,32 +18,36 @@ import java.util.stream.Collectors;
  */
 public class EventHandler {
 
-    public static Logger log = LoggerFactory.getLogger(EventHandler.class);
-    @Inject
-    private SettingsManager settingsManager;
-    @Inject
-    private JavaDocGenerator javaDocGenerator;
+	public static Logger log = LoggerFactory.getLogger(EventHandler.class);
+	@Inject
+	private SettingsManager settingsManager;
+	@Inject
+	private JavaDocGenerator javaDocGenerator;
+	@Inject
+	private PlantUmlGenerator plantUmlGenerator;
 
-    public EventHandler(SettingsManager settingsManager, JavaDocGenerator javaDocGenerator) {
-        this.settingsManager = settingsManager;
-        this.javaDocGenerator = javaDocGenerator;
-    }
+	public EventHandler(SettingsManager settingsManager, JavaDocGenerator javaDocGenerator,
+			PlantUmlGenerator plantUmlGenerator) {
+		this.settingsManager = settingsManager;
+		this.javaDocGenerator = javaDocGenerator;
+		this.plantUmlGenerator = plantUmlGenerator;
+	}
 
-    public void handleEvent(Event event) throws IOException, JavadocException {
+	public void handleEvent(Event event) throws IOException, JavadocException {
 
-        String projectKey = event.getProjectKey();
-        String repoSlug = event.getRepositorySlug();
-        List<String> branchesIds = event.getChanges().stream().map(Change::getRefId).collect(Collectors.toList());
+		String projectKey = event.getProjectKey();
+		String repoSlug = event.getRepositorySlug();
+		List<String> branchesIds = event.getChanges().stream().map(Change::getRefId).collect(Collectors.toList());
 
-
-        for (Change change : event.getChanges()) {
-            if (!change.getType().equals("DELETE")) {
-                Collection<SettingsForSpace> interestedSpaces = settingsManager.getSettingsForSpaces().stream()
-                        .filter(s -> s.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
-                                .getBranchById(change.getRefId()).isListened)
-                        .collect(Collectors.toList());
-                javaDocGenerator.generateFromStashAndPost(projectKey, repoSlug, change.getRefId(), interestedSpaces);
-            }
-        }
-    }
+		for (Change change : event.getChanges()) {
+			if (!change.getType().equals("DELETE")) {
+				Collection<SettingsForSpace> interestedSpaces = settingsManager
+						.getSettingsForSpaces().stream().filter(s -> s.getProjectByKey(projectKey)
+								.getRepoBySlug(repoSlug).getBranchById(change.getRefId()).isListened)
+						.collect(Collectors.toList());
+				javaDocGenerator.generateFromStashAndPost(projectKey, repoSlug, change.getRefId(), interestedSpaces);
+				plantUmlGenerator.generateFromStashAndPost(projectKey, repoSlug, change.getRefId(), interestedSpaces);
+			}
+		}
+	}
 }

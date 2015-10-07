@@ -21,6 +21,10 @@ import com.networkedassets.autodoc.transformer.utils.HtmlFileReader;
 import com.networkedassets.autodoc.transformer.utils.PlantUMLFileConverter;
 import com.networkedassets.autodoc.transformer.utils.data.HtmlFile;
 
+/**
+ * Generates plantUML description from provided code
+ */
+
 public class PlantUmlGenerator extends JavaDocGenerator {
 
 	private static final String fileExtension = ".html";

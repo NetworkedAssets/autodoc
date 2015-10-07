@@ -19,11 +19,12 @@ import net.sourceforge.plantuml.SourceStringReader;
 
 public class PlantUMLFileConverter implements HtmlFileConventer {
 	private static final String encoding = "UTF-8";
-	private static final String plantUmlPrefix = "<ac:structured-macro ac:name=\"plantuml\"/><ac:plain-text-body>/n";
-	private static final String plantUmlSuffix = "</ac:plain-text-body></ac:structured-macro>";
+	private static final String newline = System.getProperty("line.separator");
+	private static final String plantUmlTemplate = "<ac:structured-macro ac:name=\"plantuml\"/><ac:plain-text-body><![CDATA[%s%s%s]]></ac:plain-text-body></ac:structured-macro>";
 
 	private String plantUmlDescription;
 	private FileFormat fileformat;
+	private String suffix;
 
 	/**
 	 * Main constructor
@@ -39,6 +40,7 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	public PlantUMLFileConverter(String plantUmlDescription, String suffix, FileFormat fileFormat) {
 		this.plantUmlDescription = plantUmlDescription;
 		this.fileformat = fileFormat;
+		this.suffix = suffix;
 	}
 
 	/**
@@ -62,7 +64,7 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 		String plantUMLDescription = replaceClassDependency(
 				String.format("%s.%s", packageName, className).replaceAll("\\s", ""));
 
-		return plantUmlPrefix + plantUMLDescription + plantUmlSuffix;
+		return String.format(plantUmlTemplate, newline, plantUMLDescription, newline);
 	}
 
 	/**
@@ -99,9 +101,14 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	}
 
 	private String replaceClassDependency(String fullClassName) {
-		return Pattern.compile(System.getProperty("line.separator")).splitAsStream(this.plantUmlDescription)
+		return Pattern.compile(newline).splitAsStream(this.plantUmlDescription)
 				.filter(s -> s.contains(fullClassName)).sorted()
-				.collect(Collectors.joining(System.getProperty("line.separator")));
+				.collect(Collectors.joining(newline));
+	}
+
+	private String addConfluenceLinks(String suffix) {
+		return null;
+
 	}
 
 	@SuppressWarnings("unused")
