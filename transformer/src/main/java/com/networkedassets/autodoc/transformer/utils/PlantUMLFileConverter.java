@@ -30,11 +30,13 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	 *
 	 * @param plantUmlDescription
 	 *            plant Uml description
+	 * @param suffix
+	 *            added to plant uml confluence link
 	 * @param fileFormat
 	 *            file format for uml diagram based on plant uml description
 	 */
 
-	public PlantUMLFileConverter(String plantUmlDescription, FileFormat fileFormat) {
+	public PlantUMLFileConverter(String plantUmlDescription, String suffix, FileFormat fileFormat) {
 		this.plantUmlDescription = plantUmlDescription;
 		this.fileformat = fileFormat;
 	}

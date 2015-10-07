@@ -59,7 +59,8 @@ public class JavaDocGenerator {
 						confluence.createJavadocPage(cs.getSpaceKey(), projectKey, repoSlug, branchId,
 								htmlFile.getAdditionalProperties().get("packageName").toString() + "."
 										+ htmlFile.getAdditionalProperties().get("className").toString(),
-								htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
+								htmlFile.getFileContent(),
+								cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
 										.getBranchById(branchId).javadocPageId);
 					} catch (UnirestException e) {
 						log.error("Could not create the page", e);
@@ -73,7 +74,7 @@ public class JavaDocGenerator {
 		return interestedSpaces.collect(Collectors.groupingBy(ConfluenceSpace::getConfluenceUrl)).entrySet();
 	}
 
-	private void removeOldJavadoc(String projectKey, String repoSlug, String branchId,
+	protected void removeOldJavadoc(String projectKey, String repoSlug, String branchId,
 			Stream<ConfluenceSpace> interestedSpaces) {
 		groupByUrl(interestedSpaces).forEach(entry -> {
 			final String url = entry.getKey();
@@ -93,7 +94,7 @@ public class JavaDocGenerator {
 	}
 
 	// TODO: make this configurable
-	private ConfluenceClient getConfluenceForUrl(String url) {
+	protected ConfluenceClient getConfluenceForUrl(String url) {
 		try {
 			return new ConfluenceClient(new HttpClientConfig(new URL(url), "mrobakowski", "admin"));
 		} catch (MalformedURLException e) {
@@ -103,7 +104,7 @@ public class JavaDocGenerator {
 	}
 
 	// TODO: make this configurable
-	private SCM getSCM() throws MalformedURLException {
+	protected SCM getSCM() throws MalformedURLException {
 		return new GitStashSCM(new SCMClientConfig(new URL("http://46.101.240.138:7990"), "mrobakowski", "admin"));
 	}
 }
