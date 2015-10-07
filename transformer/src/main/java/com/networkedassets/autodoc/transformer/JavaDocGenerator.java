@@ -34,75 +34,76 @@ import java.util.stream.Stream;
  */
 public class JavaDocGenerator {
 
-    private static final String fileExtension = ".html";
-    private Logger log = LoggerFactory.getLogger(JavaDocGenerator.class);
+	private static final String fileExtension = ".html";
+	private Logger log = LoggerFactory.getLogger(JavaDocGenerator.class);
 
-    public void generateFromStashAndPost(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
-                                         @Nonnull Collection<SettingsForSpace> settingsForInterestedSpaces) throws JavadocException, IOException {
-        if (settingsForInterestedSpaces.isEmpty())
-            return;
+	public void generateFromStashAndPost(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
+			@Nonnull Collection<SettingsForSpace> settingsForInterestedSpaces) throws JavadocException, IOException {
+		if (settingsForInterestedSpaces.isEmpty())
+			return;
 
-        Path tmpDir = Files.createTempDirectory(null);
-        SCM scmServer = getSCM();
-        Path javadocDir = Javadoc.fromStashRepo(scmServer, tmpDir, projectKey, repoSlug, branchId);
+		Path tmpDir = Files.createTempDirectory(null);
+		SCM scmServer = getSCM();
+		Path javadocDir = Javadoc.fromStashRepo(scmServer, tmpDir, projectKey, repoSlug, branchId);
 
-        removeOldJavadoc(projectKey, repoSlug, branchId,
-                settingsForInterestedSpaces.stream().map(SettingsForSpace::getConfluenceSpace));
+		removeOldJavadoc(projectKey, repoSlug, branchId,
+				settingsForInterestedSpaces.stream().map(SettingsForSpace::getConfluenceSpace));
 
-        try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(javadocDir, new CounfluenceFileConverter(),
-                fileExtension)) {
-            htmlFiles.forEach(htmlFile -> settingsForInterestedSpaces.forEach(cs -> {
-                ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
-                if (confluence != null) {
-                    try {
-                        confluence.createJavadocPage(cs.getSpaceKey(), projectKey, repoSlug, branchId,
-                                htmlFile.getAdditionalProperties().get("packageName").toString() + "."
-                                        + htmlFile.getAdditionalProperties().get("className").toString(),
-                                htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
-                                        .getBranchById(branchId).javadocPageId);
-                    } catch (UnirestException e) {
-                        log.error("Could not create the page", e);
-                    }
-                }
-            }));
-        }
-    }
+		try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(javadocDir,
+				new CounfluenceFileConverter(String.format(" [%s/%s/%s]", projectKey, repoSlug, branchId)),
+				fileExtension)) {
+			htmlFiles.forEach(htmlFile -> settingsForInterestedSpaces.forEach(cs -> {
+				ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
+				if (confluence != null) {
+					try {
+						confluence.createJavadocPage(cs.getSpaceKey(), projectKey, repoSlug, branchId,
+								htmlFile.getAdditionalProperties().get("packageName").toString() + "."
+										+ htmlFile.getAdditionalProperties().get("className").toString(),
+								htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
+										.getBranchById(branchId).javadocPageId);
+					} catch (UnirestException e) {
+						log.error("Could not create the page", e);
+					}
+				}
+			}));
+		}
+	}
 
-    private Set<Map.Entry<String, List<ConfluenceSpace>>> groupByUrl(Stream<ConfluenceSpace> interestedSpaces) {
-        return interestedSpaces.collect(Collectors.groupingBy(ConfluenceSpace::getConfluenceUrl)).entrySet();
-    }
+	private Set<Map.Entry<String, List<ConfluenceSpace>>> groupByUrl(Stream<ConfluenceSpace> interestedSpaces) {
+		return interestedSpaces.collect(Collectors.groupingBy(ConfluenceSpace::getConfluenceUrl)).entrySet();
+	}
 
-    private void removeOldJavadoc(String projectKey, String repoSlug, String branchId,
-                                  Stream<ConfluenceSpace> interestedSpaces) {
-        groupByUrl(interestedSpaces).forEach(entry -> {
-            final String url = entry.getKey();
-            final ConfluenceClient client = getConfluenceForUrl(url);
+	private void removeOldJavadoc(String projectKey, String repoSlug, String branchId,
+			Stream<ConfluenceSpace> interestedSpaces) {
+		groupByUrl(interestedSpaces).forEach(entry -> {
+			final String url = entry.getKey();
+			final ConfluenceClient client = getConfluenceForUrl(url);
 
-            if (client != null) {
-                entry.getValue().stream().map(ConfluenceSpace::getSpaceKey).forEach(spaceKey -> {
-                    try {
-                        client.removeJavadocPages(spaceKey, projectKey, repoSlug, branchId);
-                    } catch (UnirestException e) {
-                        log.error("Could not remove javadoc pages", e);
-                    }
-                });
-            }
+			if (client != null) {
+				entry.getValue().stream().map(ConfluenceSpace::getSpaceKey).forEach(spaceKey -> {
+					try {
+						client.removeJavadocPages(spaceKey, projectKey, repoSlug, branchId);
+					} catch (UnirestException e) {
+						log.error("Could not remove javadoc pages", e);
+					}
+				});
+			}
 
-        });
-    }
+		});
+	}
 
-    // TODO: make this configurable
-    private ConfluenceClient getConfluenceForUrl(String url) {
-        try {
-            return new ConfluenceClient(new HttpClientConfig(new URL(url), "mrobakowski", "admin"));
-        } catch (MalformedURLException e) {
-            log.error("Malformed URL: " + url, e);
-            return null;
-        }
-    }
+	// TODO: make this configurable
+	private ConfluenceClient getConfluenceForUrl(String url) {
+		try {
+			return new ConfluenceClient(new HttpClientConfig(new URL(url), "mrobakowski", "admin"));
+		} catch (MalformedURLException e) {
+			log.error("Malformed URL: " + url, e);
+			return null;
+		}
+	}
 
-    // TODO: make this configurable
-    private SCM getSCM() throws MalformedURLException {
-        return new GitStashSCM(new SCMClientConfig(new URL("http://46.101.240.138:7990"), "mrobakowski", "admin"));
-    }
+	// TODO: make this configurable
+	private SCM getSCM() throws MalformedURLException {
+		return new GitStashSCM(new SCMClientConfig(new URL("http://46.101.240.138:7990"), "mrobakowski", "admin"));
+	}
 }
