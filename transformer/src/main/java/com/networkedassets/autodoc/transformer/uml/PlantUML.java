@@ -31,7 +31,7 @@ public class PlantUML {
 	/**
 	 * Convenience method for generating plantUML for a project on a SCM repo
 	 *
-	 * @param scmServer
+	 * @param scmClient
 	 *            git client using to clone repo
 	 * @param localDirectory
 	 *            where the repo should be cloned
