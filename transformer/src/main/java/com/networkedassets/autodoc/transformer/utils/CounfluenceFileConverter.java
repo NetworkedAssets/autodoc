@@ -105,19 +105,33 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 	 * }
 	 */
 	private void replaceLinks(@Nonnull Document doc) {
+
 		Preconditions.checkNotNull(doc);
+		String packageName = doc.select("div.subTitle").first().text().replaceAll("\\s", "");
 		Elements urls = doc.select("a[href]");
 
-		urls.stream()
-				.forEach(url -> url
-						.after(String.format(linkTemplate,
-								String.format("%s.%s", getPackageName(url.attr("href")),
-										!Strings.isNullOrEmpty(this.suffix)
-												? getClassName(url.attr("href")) + this.suffix
-												: getClassName(url.attr("href"))),
-								getClassName(url.attr("href"))))
-						.remove());
+		urls.stream().forEach(url -> url.after(String.format(linkTemplate, url.text(), url.text())).remove());
+		urls.stream().forEach(url -> url
+				.after(String.format(linkTemplate,
+						String.format("%s.%s", packageName,
+								!Strings.isNullOrEmpty(this.suffix) ? url.text().replaceAll("\\s", "") + this.suffix
+										: url.text().replaceAll("\\s", "")),
+						url.text().replaceAll("\\s", "")))
+				.remove());
 
+		/*
+		 * Preconditions.checkNotNull(doc); Elements urls =
+		 * doc.select("a[href]");
+		 * 
+		 * urls.stream() .forEach(url -> url .after(String.format(linkTemplate,
+		 * String.format("%s.%s", getPackageName(url.attr("href")),
+		 * !Strings.isNullOrEmpty(this.suffix) ? getClassName(url.attr("href"))
+		 * + this.suffix : getClassName(url.attr("href"))),
+		 * getClassName(url.attr("href")))) .remove());
+		 * 
+		 * 
+		 * 
+		 */
 	}
 
 	private String getPackageName(String href) {
