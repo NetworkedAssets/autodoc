@@ -109,15 +109,11 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		Preconditions.checkNotNull(doc);
 		Elements urls = doc.select("a[href]");
 
-		urls.stream()
-				.forEach(url -> url
-						.after(String.format(linkTemplate,
-								String.format("%s.%s", getPackageName(url.attr("href")),
-										!Strings.isNullOrEmpty(this.suffix)
-												? getClassName(url.attr("href")) + this.suffix
-												: getClassName(url.attr("href"))),
-								getClassName(url.attr("href"))))
-						.remove());
+		urls.stream().forEach(url -> url.after(String.format(linkTemplate,
+
+				!Strings.isNullOrEmpty(this.suffix) ? getPackageName(url.attr("href")) + this.suffix
+						: getPackageName(url.attr("href")),
+				getClassName(url.attr("href")))).remove());
 
 	}
 
