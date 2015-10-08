@@ -94,17 +94,6 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		return suffix;
 	}
 
-	/*
-	 * private void replaceInnerLinks(@Nonnull Document doc) {
-	 * Preconditions.checkNotNull(doc); Elements urls =
-	 * doc.select("span.memberNameLink>a");
-	 * 
-	 * urls.stream().forEach(url -> url.after( String.format(linkTemplate,
-	 * url.text().replaceAll("\\s", ""), url.text().replaceAll("\\s", "")))
-	 * .remove());
-	 * 
-	 * }
-	 */
 	private void replaceLinks(@Nonnull Document doc) {
 
 		Preconditions.checkNotNull(doc);
