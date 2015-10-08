@@ -3,6 +3,7 @@ package com.networkedassets.autodoc.transformer.javadoc;
 /**
  * Exception used in Javadoc wrapper
  */
+@SuppressWarnings("serial")
 public class JavadocException extends Exception {
     public JavadocException() {
     }

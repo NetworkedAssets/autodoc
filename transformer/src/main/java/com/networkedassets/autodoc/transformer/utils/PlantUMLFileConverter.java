@@ -12,6 +12,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -58,13 +59,15 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	public String convert(String fileContent) {
 
 		Preconditions.checkNotNull(fileContent);
+
 		Document doc = Jsoup.parse(fileContent);
 		String packageName = doc.select("div.subTitle").first().text();
 		String className = doc.select("title").first().text();
 		String plantUMLDescription = replaceClassDependency(
 				String.format("%s.%s", packageName, className).replaceAll("\\s", ""));
 
-		return String.format(plantUmlTemplate, newline, plantUMLDescription, newline);
+		return Strings.isNullOrEmpty(plantUmlDescription)
+				? String.format(plantUmlTemplate, newline, plantUMLDescription, newline) : "";
 	}
 
 	/**
@@ -101,9 +104,8 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	}
 
 	private String replaceClassDependency(String fullClassName) {
-		return Pattern.compile(newline).splitAsStream(this.plantUmlDescription)
-				.filter(s -> s.contains(fullClassName)).sorted()
-				.collect(Collectors.joining(newline));
+		return Pattern.compile(newline).splitAsStream(this.plantUmlDescription).filter(s -> s.contains(fullClassName))
+				.sorted().collect(Collectors.joining(newline));
 	}
 
 	private String addConfluenceLinks(String suffix) {

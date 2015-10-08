@@ -2,8 +2,6 @@ package com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.List;
-
 /**
  * Created by mrobakowski on 9/28/2015.
  */

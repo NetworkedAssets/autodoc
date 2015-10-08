@@ -1,8 +1,11 @@
 package com.networkedassets.autodoc.transformer;
 
+import com.google.common.base.Strings;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient;
 import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
+import com.networkedassets.autodoc.transformer.javadoc.Javadoc;
+import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 import com.networkedassets.autodoc.transformer.uml.PlantUML;
 import com.networkedassets.autodoc.transformer.uml.PlantUMLException;
@@ -30,7 +33,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 	private Logger log = LoggerFactory.getLogger(PlantUmlGenerator.class);
 
 	public void generateFromStashAndPost(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
-			@Nonnull Collection<SettingsForSpace> settingsForInterestedSpaces) throws IOException {
+			@Nonnull Collection<SettingsForSpace> settingsForInterestedSpaces) throws IOException, JavadocException {
 		log.debug("Generating UML for {}/{}/{}", projectKey, repoSlug, branchId);
 		if (settingsForInterestedSpaces.isEmpty()) {
 			log.debug("UML dropped due to empty interested spaces list");
@@ -45,18 +48,19 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 		} catch (PlantUMLException e1) {
 			log.error("Could not generate plant uml description", e1);
 		}
-
+		Path javaDocDir = Javadoc.fromDirectory(tmpDir);
 		removeOldJavadoc(umlPrefix + projectKey, repoSlug, branchId,
 				settingsForInterestedSpaces.stream().map(SettingsForSpace::getConfluenceSpace));
 		log.debug("Old javadoc removed if it existed");
 
-		try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(tmpDir,
+		try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(javaDocDir,
 				new PlantUMLFileConverter(plantUmlDescription,
 						String.format(" [%s/%s/%s]", umlPrefix + projectKey, repoSlug, branchId), null),
 				fileExtension)) {
-			htmlFiles.forEach(htmlFile -> {
+			htmlFiles.filter(htmlFile -> Strings.isNullOrEmpty(htmlFile.getFileContent())).forEach(htmlFile -> {
 				settingsForInterestedSpaces.forEach(cs -> {
-					log.debug("Processing uml file for space: key:{}, url:{}", cs.getConfluenceSpace(), cs.getConfluenceUrl());
+					log.debug("Processing uml file for space: key:{}, url:{}", cs.getConfluenceSpace(),
+							cs.getConfluenceUrl());
 					ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
 					if (confluence != null) {
 						try {
@@ -73,7 +77,5 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 			});
 		}
 	}
-
-
 
 }
