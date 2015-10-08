@@ -1,16 +1,5 @@
 package com.networkedassets.autodoc.transformer;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient;
 import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
@@ -20,6 +9,15 @@ import com.networkedassets.autodoc.transformer.uml.PlantUMLException;
 import com.networkedassets.autodoc.transformer.utils.HtmlFileReader;
 import com.networkedassets.autodoc.transformer.utils.PlantUMLFileConverter;
 import com.networkedassets.autodoc.transformer.utils.data.HtmlFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * Generates plantUML description from provided code
@@ -62,7 +60,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 					ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
 					if (confluence != null) {
 						try {
-							confluence.createJavadocPage(cs.getSpaceKey(), umlPrefix + projectKey, repoSlug, branchId,
+							confluence.createUmlPage(cs.getSpaceKey(), umlPrefix + projectKey, repoSlug, branchId,
 									htmlFile.getAdditionalProperties().get("packageName").toString() + "."
 											+ htmlFile.getAdditionalProperties().get("className").toString(),
 									htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)
@@ -75,5 +73,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 			});
 		}
 	}
+
+
 
 }

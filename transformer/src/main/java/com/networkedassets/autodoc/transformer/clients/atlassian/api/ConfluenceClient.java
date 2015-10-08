@@ -136,6 +136,40 @@ public class ConfluenceClient extends HttpClient {
     }
 
     /**
+     * Creates javadoc page for a given project/repo/branch in a given space
+     *
+     * @param spaceKey            space to create the page in
+     * @param projectKey          project's key
+     * @param repoSlug            repo's slug
+     * @param branchId            branch's id
+     * @param fullClassName       full name of the javadoced class (including package)
+     * @param contents            javadoc content in Confluence Storage Format
+     * @param javadocRootParentId id of the parent of the javadoc root page, may be null
+     * @return a representation of the created class
+     * @throws UnirestException
+     */
+    @Nonnull
+    public ConfluencePage createUmlPage(@Nonnull String spaceKey, @Nonnull String projectKey,
+                                            @Nonnull String repoSlug, @Nonnull String branchId,
+                                            @Nonnull String fullClassName, @Nonnull String contents,
+                                            @Nullable String javadocRootParentId)
+            throws UnirestException {
+        Preconditions.checkNotNull(spaceKey);
+        Preconditions.checkNotNull(projectKey);
+        Preconditions.checkNotNull(repoSlug);
+        Preconditions.checkNotNull(branchId);
+        Preconditions.checkNotNull(fullClassName);
+        Preconditions.checkNotNull(contents);
+
+        String pageTitle = getJavadocPageName(projectKey, repoSlug, branchId, fullClassName);
+        String rootId = getUmlRootId(spaceKey, projectKey, repoSlug, branchId, javadocRootParentId);
+
+        ConfluencePage page = createPage(pageTitle, spaceKey, contents, rootId);
+        putLabel(page.getId(), String.format("%s-%s-%s", projectKey, repoSlug, branchId));
+        return page;
+    }
+
+    /**
      * Puts a label on a page with given id
      *
      * @param pageId    id of the page that is supposed to be given a label
@@ -184,6 +218,33 @@ public class ConfluenceClient extends HttpClient {
     public String getJavadocRootId(@Nonnull String spaceKey, @Nonnull String projectKey, @Nonnull String repoSlug,
                                    @Nonnull String branchId, @Nullable String javadocRootParentId)
             throws UnirestException {
+
+        return getRootId(spaceKey, projectKey, repoSlug, branchId, javadocRootParentId, "javadoc");
+    }
+
+    /**
+     * Gets the id a uml root page for given project/repo/branch in the given space. Creates the page if necessary.
+     *
+     * @param spaceKey            space's key
+     * @param projectKey          project's key
+     * @param repoSlug            repo's slug
+     * @param branchId            branch's id
+     * @param javadocRootParentId id of the parent of the javadoc root page, may be null;
+     *                            there is no checking that the existing page is a child of this page
+     * @return id of the javadoc root page
+     */
+    @Nonnull
+    public String getUmlRootId(@Nonnull String spaceKey, @Nonnull String projectKey, @Nonnull String repoSlug,
+                                   @Nonnull String branchId, @Nullable String javadocRootParentId)
+            throws UnirestException {
+
+        return getRootId(spaceKey, projectKey, repoSlug, branchId, javadocRootParentId, "uml");
+    }
+
+    @Nonnull
+    private String getRootId(@Nonnull String spaceKey, @Nonnull String projectKey, @Nonnull String repoSlug,
+                             @Nonnull String branchId, @Nullable String javadocRootParentId, String rootPageName)
+            throws UnirestException {
         if (javadocRootId != null) return javadocRootId;
 
         Preconditions.checkNotNull(spaceKey);
@@ -191,7 +252,7 @@ public class ConfluenceClient extends HttpClient {
         Preconditions.checkNotNull(repoSlug);
         Preconditions.checkNotNull(branchId);
 
-        String javadocTitle = getJavadocPageName(projectKey, repoSlug, branchId, "javadoc");
+        String javadocTitle = getJavadocPageName(projectKey, repoSlug, branchId, rootPageName);
         // === javadoc [NAATLAS/autodoc/master]
 
         Optional<ConfluencePage> javadocRoot = findPage(spaceKey, javadocTitle);
