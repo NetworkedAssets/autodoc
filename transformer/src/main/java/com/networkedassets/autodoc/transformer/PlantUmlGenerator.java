@@ -57,7 +57,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 				new PlantUMLFileConverter(plantUmlDescription,
 						String.format(" [%s/%s/%s]", umlPrefix + projectKey, repoSlug, branchId), null),
 				fileExtension)) {
-			htmlFiles.filter(htmlFile -> Strings.isNullOrEmpty(htmlFile.getFileContent())).forEach(htmlFile -> {
+			htmlFiles.filter(htmlFile -> !Strings.isNullOrEmpty(htmlFile.getFileContent())).forEach(htmlFile -> {
 				settingsForInterestedSpaces.forEach(cs -> {
 					log.debug("Processing uml file for space: key:{}, url:{}", cs.getConfluenceSpace(),
 							cs.getConfluenceUrl());
