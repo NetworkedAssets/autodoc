@@ -17,7 +17,7 @@ import com.google.common.base.Strings;
 
 public class CounfluenceFileConverter implements HtmlFileConventer {
 
-	private static final String linkTemplate = "<ac:link><ri:page ri:content-title=\"%s\" /><ac:plain-text-link-body><![CDATA[%s]]></ac:plain-text-link</ac:link>";
+	private static final String linkTemplate = "<ac:link><ri:page ri:content-title=\"%s\" /><ac:plain-text-link-body><#$#![CDATA[%s]]#$#></ac:plain-text-link</ac:link>";
 	private String suffix;
 
 	/**
@@ -53,7 +53,8 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		doc.outputSettings().charset("UTF-8");
 		replaceLinks(doc);
 		replaceListTag(doc);
-		return doc.select("div.header~*").first().html();
+		// jsoup remove !CDATA
+		return doc.select("div.header~*").first().html().replace("&lt;#$#", "<").replace("#$#&gt;", ">");
 	}
 
 	/**
