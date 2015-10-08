@@ -17,10 +17,7 @@ import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -30,13 +27,15 @@ import java.util.stream.Collectors;
  * Handles the settings of the application
  */
 public class SettingsManager {
-    private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
-    private Settings settings = new Settings();
-
     public static final String settingsFilename = "transformerSettings.ser";
     private static final String stashUrl = "http://46.101.240.138:7990";
     private static final String stashHookKey = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
     private static final int transformerPort = 8050;
+    private static final String stashUsername = "kcala";
+    private static final String stashPassword = "admin";
+    private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
+    private final String localhostAddress = "http://localhost:" + transformerPort + "/event";
+    private Settings settings = new Settings();
 
     public SettingsManager() {
         loadSettingFromFile(settingsFilename);
@@ -58,42 +57,17 @@ public class SettingsManager {
 
     private static void updateProjectsFromStash(@Nonnull SettingsForSpace settingsForSpace) {
         Preconditions.checkNotNull(settingsForSpace);
-
-        //TODO get stash config from the settings
-        URL stashUrl;
+        StashClient stashClient;
         try {
-            stashUrl = new URL(SettingsManager.stashUrl);
+            stashClient = getConfiguredStashClient();
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return;
         }
-        HttpClientConfig httpClientConfig = new HttpClientConfig(stashUrl, "kcala", "admin");
-        StashClient stashClient = new StashClient(httpClientConfig);
-        log.debug("Stash client created");
-
-
-        List<Repository> stashRepositories;
-        Map<String, List<Branch>> branchesMap = new HashMap<>();
-        try {
-            stashRepositories = stashClient.getRepositories(null, null, 0, 9999).getBody().getValues();
-            log.debug("REST repositories retrieved");
-            for (Repository repository : stashRepositories) {
-                log.debug("REST branches for {} about to be retrieved", repository.getName());
-                List<Branch> branches
-                        = stashClient.getRepositoryBranches(repository.getProject()
-                        .getKey(), repository.getSlug(), null, 0, 9999).getBody().getValues();
-                log.debug("REST branches for {} retrieved", repository.getId());
-                branchesMap.put(repository.getSlug(), branches);
-            }
-        } catch (UnirestException e) {
-            log.error("REST request ERROR:", e);
-            return;
-        }
-        Set<Project> stashProjects =
-                stashRepositories.stream().map(Repository::getProject)
-                        .filter(distinctByProjectKey(Project::getKey)).collect(Collectors.toSet());
-        log.debug("REST request by StashClient handled successfully");
-
+        List<Repository> stashRepositories = getStashRepositories(stashClient);
+        Set<Project> stashProjects = getStashProjects(stashRepositories);
+        Map<String, List<Branch>> branchesMap = getStashBranchesMap(stashClient, stashRepositories);
+        log.debug("Projects data received successfully from Stash");
 
         //Delete projects, repos and branches in settings, that don't exist in stash (anymore)
         settingsForSpace.getProjects().removeIf(settingsProject ->
@@ -104,55 +78,102 @@ public class SettingsManager {
 
         settingsForSpace.getProjects().forEach(project ->
                 project.repos.values().stream().forEach(repo ->
-                        repo.branches.values().removeIf(branch -> !branchesMap.get(repo.slug).stream()
-                                .map(Branch::getId).anyMatch(stashId -> stashId.equals(branch.id)))));
+                        repo.branches.values().removeIf(branch -> !(branchesMap != null && branchesMap.get(repo.slug).stream()
+                                .map(Branch::getId).anyMatch(stashId -> stashId.equals(branch.id))))));
 
         //Add new projects, repos, branches from stash
         for (Project stashProject : stashProjects) {
             com.networkedassets.autodoc.transformer.settings.Project settingsProject =
                     settingsForSpace.getProjectByKey(stashProject.getKey());
-            if (settingsProject == null) {
+            if (settingsProject != null) {
+                mergeProjectSettings(stashProject, settingsProject);
+            } else {
                 com.networkedassets.autodoc.transformer.settings.Project newProject =
                         new com.networkedassets.autodoc.transformer.settings.Project();
                 mergeProjectSettings(stashProject, newProject);
                 settingsForSpace.addProject(newProject);
-            } else {
-                mergeProjectSettings(stashProject, settingsProject);
             }
             //repos belonging to project
-            List<Repository> projectRepositories =
+            List<Repository> stashProjectRepositories =
                     stashRepositories.stream().filter(r -> r.getProject()
                             .getKey().equals(stashProject.getKey())).collect(Collectors.toList());
 
-            for (Repository stashRepository : projectRepositories) {
+            for (Repository stashRepository : stashProjectRepositories) {
                 Repo settingsRepository = settingsForSpace.getProjectByKey(stashProject.getKey()).getRepoBySlug(stashRepository.getSlug());
-                if (settingsRepository == null) {
+                if (settingsRepository != null) {
+                    mergeRepositorySettings(stashRepository, settingsRepository);
+                } else {
                     Repo newRepo = new Repo();
                     mergeRepositorySettings(stashRepository, newRepo);
                     settingsForSpace.getProjectByKey(stashProject.getKey()).repos.put(newRepo.slug, newRepo);
-                } else {
-                    mergeRepositorySettings(stashRepository, settingsRepository);
                 }
+
+                @SuppressWarnings("ConstantConditions")
                 List<Branch> repositoryBranches = branchesMap.get(stashRepository.getSlug());
+
                 for (Branch stashBranch : repositoryBranches) {
                     com.networkedassets.autodoc.transformer.settings.Branch settingsBranch =
                             settingsForSpace.getProjectByKey(stashProject.getKey()).
                                     getRepoBySlug(stashRepository.getSlug())
                                     .getBranchById(stashBranch.getId());
-                    if (settingsBranch == null) {
+
+                    if (settingsBranch != null) {
+                        mergeBranchSettings(stashBranch, settingsBranch);
+                    } else {
                         com.networkedassets.autodoc.transformer.settings.Branch newBranch =
                                 new com.networkedassets.autodoc.transformer.settings.Branch();
                         mergeBranchSettings(stashBranch, newBranch);
                         settingsForSpace.getProjectByKey(stashProject.getKey())
                                 .getRepoBySlug(stashRepository.getSlug()).branches.put(newBranch.id, newBranch);
-                    } else {
-                        mergeBranchSettings(stashBranch, settingsBranch);
                     }
                 }
             }
 
         }
 
+    }
+
+    private static Set<Project> getStashProjects(List<Repository> stashRepositories) {
+        return stashRepositories.stream().map(Repository::getProject)
+                .filter(distinctByProjectKey(Project::getKey)).collect(Collectors.toSet());
+    }
+
+    private static Map<String, List<Branch>> getStashBranchesMap(StashClient stashClient, List<Repository> stashRepositories) {
+        Map<String, List<Branch>> branchesMap = new HashMap<>();
+        try {
+            for (Repository repository : stashRepositories) {
+                log.debug("REST branches for {} about to be retrieved", repository.getName());
+                List<Branch> branches
+                        = stashClient.getRepositoryBranches(repository.getProject()
+                        .getKey(), repository.getSlug(), null, 0, 9999).getBody().getValues();
+                log.debug("REST branches for {} retrieved", repository.getId());
+                branchesMap.put(repository.getSlug(), branches);
+            }
+        } catch (UnirestException e) {
+            log.error("REST request ERROR:", e);
+            return null;
+        }
+        return branchesMap;
+    }
+
+    private static List<Repository> getStashRepositories(StashClient stashClient) {
+        List<Repository> stashRepositories = new ArrayList<>();
+        try {
+            stashRepositories = stashClient.getRepositories(null, null, 0, 9999).getBody().getValues();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+        log.debug("REST repositories retrieved");
+        return stashRepositories;
+    }
+
+    private static StashClient getConfiguredStashClient() throws MalformedURLException {
+        //TODO get stash config from the settings
+        URL stashUrl;
+        stashUrl = new URL(SettingsManager.stashUrl);
+        StashClient stashClient = new StashClient(new HttpClientConfig(stashUrl, stashUsername, stashPassword));
+        log.debug("Stash client created");
+        return stashClient;
     }
 
     /**
@@ -257,28 +278,21 @@ public class SettingsManager {
         }
     }
 
-    public void enableAllHooks(SettingsForSpace settingsForSpace){
-        URL stashUrl;
+    public void enableAllHooks(SettingsForSpace settingsForSpace) {
         try {
-            stashUrl = new URL(SettingsManager.stashUrl);
+            StashClient stashClient = getConfiguredStashClient();
+            settingsForSpace.getProjects().stream().forEach(project -> project.repos.values().stream().forEach(repo -> {
+                try {
+                    stashClient.setHookSettings(project.key, repo.slug, stashHookKey, localhostAddress, "30000");
+                    stashClient.setHookSettingsEnabled(project.key, repo.slug, stashHookKey);
+                } catch (UnirestException e) {
+                    log.error("Error while activating hooks for {}/{}: ", project.name, repo.slug, e);
+                }
+            }));
         } catch (MalformedURLException e) {
             e.printStackTrace();
-            return;
         }
-        HttpClientConfig httpClientConfig = new HttpClientConfig(stashUrl, "kcala", "admin");
-        StashClient stashClient = new StashClient(httpClientConfig);
-        log.debug("Stash client created");
 
-        final String localhostAddress = "http://localhost:" + transformerPort + "/event";
-
-        settingsForSpace.getProjects().stream().forEach(project -> project.repos.values().stream().forEach(repo -> {
-            try {
-                stashClient.setHookSettings(project.key, repo.slug, stashHookKey, localhostAddress, "30000");
-                stashClient.setHookSettingsEnabled(project.key, repo.slug, stashHookKey);
-            } catch (UnirestException e) {
-                log.error("Error while activating hooks for {}/{}: ",project.name, repo.slug, e);
-            }
-        }));
     }
 
 
