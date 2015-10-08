@@ -66,7 +66,7 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 		String plantUMLDescription = replaceClassDependency(
 				String.format("%s.%s", packageName, className).replaceAll("\\s", ""));
 
-		return Strings.isNullOrEmpty(plantUmlDescription)
+		return !Strings.isNullOrEmpty(plantUmlDescription)
 				? String.format(plantUmlTemplate, newline, plantUMLDescription, newline) : "";
 	}
 
