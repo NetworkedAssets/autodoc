@@ -17,9 +17,7 @@ import com.google.common.base.Strings;
 
 public class CounfluenceFileConverter implements HtmlFileConventer {
 
-	private static final String outerLinkTemplate = "<ac:link><ri:page ri:content-title=\"%s\" /><ac:plain-text-link-body><![CDATA[%s]]></ac:plain-text-link</ac:link>";
-	private static final String innerLinkTemplate = "<ac:link ac:anchor=\"%s\"><ac:plain-text-link-body><![CDATA[#%s]]></ac:plain-text-link-body></ac:link>";
-
+	private static final String linkTemplate = "<ac:link><ri:page ri:content-title=\"%s\" /><ac:plain-text-link-body><![CDATA[%s]]></ac:plain-text-link</ac:link>";
 	private String suffix;
 
 	/**
@@ -41,7 +39,7 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 	 * @param fileContent
 	 *            text representing html to be converted
 	 * @param sufix
-	 *            text adding to outer links
+	 *            text adding to links
 	 * 
 	 * @return text javadoc page in Atlassian Confluence's storage format
 	 * 
@@ -53,8 +51,7 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		Document doc = Jsoup.parse(fileContent);
 		doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
 		doc.outputSettings().charset("UTF-8");
-		replaceInnerLinks(doc);
-		replaceOuterLinks(doc);
+		replaceLinks(doc);
 		replaceListTag(doc);
 		return doc.select("div.header~*").first().html();
 	}
@@ -96,29 +93,42 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		return suffix;
 	}
 
-	private void replaceInnerLinks(@Nonnull Document doc) {
+	/*
+	 * private void replaceInnerLinks(@Nonnull Document doc) {
+	 * Preconditions.checkNotNull(doc); Elements urls =
+	 * doc.select("span.memberNameLink>a");
+	 * 
+	 * urls.stream().forEach(url -> url.after( String.format(linkTemplate,
+	 * url.text().replaceAll("\\s", ""), url.text().replaceAll("\\s", "")))
+	 * .remove());
+	 * 
+	 * }
+	 */
+	private void replaceLinks(@Nonnull Document doc) {
 		Preconditions.checkNotNull(doc);
-		Elements urls = doc.select("span.memberNameLink>a");
+		Elements urls = doc.select("a[href]");
 
-		urls.stream().forEach(url -> url.after(
-				String.format(innerLinkTemplate, url.text().replaceAll("\\s", ""), url.text().replaceAll("\\s", "")))
-				.remove());
+		urls.stream()
+				.forEach(url -> url
+						.after(String.format(linkTemplate,
+								String.format("%s.%s", getPackageName(url.attr("href")),
+										!Strings.isNullOrEmpty(this.suffix)
+												? getClassName(url.attr("href")) + this.suffix
+												: getClassName(url.attr("href"))),
+								getClassName(url.attr("href"))))
+						.remove());
 
 	}
 
-	private void replaceOuterLinks(@Nonnull Document doc) {
-		Preconditions.checkNotNull(doc);
-		String packageName = doc.select("div.subTitle").first().text().replaceAll("\\s", "");
-		Elements urls = doc.select("a[href]");
+	private String getPackageName(String href) {
 
-		urls.stream().forEach(url -> url
-				.after(String.format(outerLinkTemplate,
-						String.format("%s.%s", packageName,
-								!Strings.isNullOrEmpty(this.suffix) ? url.text().replaceAll("\\s", "") + this.suffix
-										: url.text().replaceAll("\\s", "")),
-						url.text().replaceAll("\\s", "")))
-				.remove());
+		return href.substring(0, href.lastIndexOf(".html")).replace("../", "").replace("/", ".");
 
+	}
+
+	private String getClassName(String href) {
+
+		return href.substring(href.lastIndexOf("/") + 1, href.lastIndexOf(".html"));
 	}
 
 	private void replaceListTag(@Nonnull Document doc) {
