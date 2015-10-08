@@ -28,6 +28,7 @@ import java.util.Optional;
 public class ConfluenceClient extends HttpClient {
 
     private static final Logger log = LoggerFactory.getLogger(ConfluenceClient.class);
+    private String javadocRootId;
 
     public ConfluenceClient(HttpClientConfig config) {
         super(config);
@@ -44,18 +45,32 @@ public class ConfluenceClient extends HttpClient {
     public ConfluencePage createPage(ConfluencePage page) throws UnirestException {
         Preconditions.checkNotNull(page);
 
+        log.debug("Creating page with title: {}", page.getTitle());
+
         HttpResponse<ConfluencePage> response = Unirest.post(getBaseUrl() + "/rest/api/content")
                 .header("Content-Type", "application/json")
                 .basicAuth(getUsername(), getPassword())
                 .body(page).asObject(ConfluencePage.class);
         ConfluencePage res = response.getBody();
+
         if (res.getId() == null) {
             try {
-                log.error("Got invalid response: {}", IOUtils.toString(response.getRawBody()));
+                RuntimeException e = new RuntimeException("Got invalid response: " + IOUtils.toString(response.getRawBody()));
+                log.error("", e);
+                throw new RuntimeException(e);
             } catch (IOException e) {
                 log.error("Herd u lik errorz");
+                throw new RuntimeException("Could not convert body to string");
             }
         }
+
+        log.debug("Created page with id: {}", res.getId());
+        try {
+            log.debug("Response: {}", IOUtils.toString(response.getRawBody()));
+        } catch (IOException e) {
+            log.error("", e);
+        }
+
         putLabel(res.getId(), "networkedassets-javadoc"); // we tag all of our pages with this
         return res;
     }
@@ -169,6 +184,8 @@ public class ConfluenceClient extends HttpClient {
     public String getJavadocRootId(@Nonnull String spaceKey, @Nonnull String projectKey, @Nonnull String repoSlug,
                                    @Nonnull String branchId, @Nullable String javadocRootParentId)
             throws UnirestException {
+        if (javadocRootId != null) return javadocRootId;
+
         Preconditions.checkNotNull(spaceKey);
         Preconditions.checkNotNull(projectKey);
         Preconditions.checkNotNull(repoSlug);
@@ -181,8 +198,10 @@ public class ConfluenceClient extends HttpClient {
 
         return Optionals.orElseGetThrowing(javadocRoot,
                 () -> {
+                    log.debug("Root page not found. Creating...");
                     ConfluencePage page = createPage(javadocTitle, spaceKey, "JAVADOC ROOT", javadocRootParentId);
                     putLabel(page.getId(), String.format("%s-%s-%s", projectKey, repoSlug, branchId));
+                    javadocRootId = page.getId();
                     return page;
                 }).getId();
     }
@@ -197,11 +216,17 @@ public class ConfluenceClient extends HttpClient {
      */
     @Nonnull
     public Optional<ConfluencePage> findPage(String spaceKey, String pageTitle) throws UnirestException {
-        return Unirest.get(getBaseUrl() + "/rest/api/content/search")
+        Optional<ConfluencePage> pageFound = Unirest.get(getBaseUrl() + "/rest/api/content/search")
                 .basicAuth(getUsername(), getPassword())
                 .queryString("cql", String.format("space='%s' AND title='%s'", spaceKey, pageTitle))
                 .queryString("expand", "version")
                 .asObject(ContentSearchPage.class).getBody().getResults().stream().findFirst();
+        if (pageFound.isPresent()) {
+            log.debug("Found page ({}/{}) with id: {}", spaceKey, pageTitle, pageFound.get().getId());
+        } else {
+            log.debug("Page ({}/{}) not found", spaceKey, pageTitle);
+        }
+        return pageFound;
     }
 
     /**
