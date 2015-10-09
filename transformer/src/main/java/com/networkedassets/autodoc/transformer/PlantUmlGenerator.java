@@ -39,6 +39,9 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 			log.debug("UML dropped due to empty interested spaces list");
 			return;
 		}
+
+		clientMap.clear();
+
 		String plantUmlDescription = "";
 		Path tmpDir = Files.createTempDirectory(null);
 		SCM scmServer = getSCM();

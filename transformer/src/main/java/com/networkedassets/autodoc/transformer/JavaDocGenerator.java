@@ -33,12 +33,14 @@ public class JavaDocGenerator {
 
     private static final String fileExtension = ".html";
     private Logger log = LoggerFactory.getLogger(JavaDocGenerator.class);
-    private Map<String, ConfluenceClient> clientMap = new HashMap<>();
+    protected Map<String, ConfluenceClient> clientMap = new HashMap<>();
 
     public void generateFromStashAndPost(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
                                          @Nonnull Collection<SettingsForSpace> settingsForInterestedSpaces) throws JavadocException, IOException {
         if (settingsForInterestedSpaces.isEmpty())
             return;
+
+        clientMap.clear();
 
         Path tmpDir = Files.createTempDirectory(null);
         SCM scmServer = getSCM();
