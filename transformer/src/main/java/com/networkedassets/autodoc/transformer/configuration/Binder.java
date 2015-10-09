@@ -7,12 +7,11 @@ import com.networkedassets.autodoc.transformer.JavaDocGenerator;
 import com.networkedassets.autodoc.transformer.PlantUmlGenerator;
 import com.networkedassets.autodoc.transformer.GenerationScheduler;
 import com.networkedassets.autodoc.transformer.SettingsManager;
+import com.networkedassets.autodoc.transformer.TaskExecutor;
 import com.networkedassets.autodoc.transformer.TestManager;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 
 /**
  * Binder managing dependency injections in Jersey
@@ -26,7 +25,9 @@ public class Binder extends AbstractBinder {
 		JavaDocGenerator javaDocGenerator = new JavaDocGenerator();
 		PlantUmlGenerator plantUmlGenerator = new PlantUmlGenerator();
 		SettingsManager settingsManager = new SettingsManager();
-		EventHandler eventHandler = new EventHandler(settingsManager, javaDocGenerator, plantUmlGenerator);
+		TaskExecutor taskExecutor = new TaskExecutor();
+		EventHandler eventHandler = new EventHandler(settingsManager, javaDocGenerator, plantUmlGenerator,
+				taskExecutor);
 
 		GenerationScheduler generationScheduler = null;
 		try {
@@ -35,6 +36,7 @@ public class Binder extends AbstractBinder {
 			log.error("Cannot create scheduler: ", e);
 		}
 
+		bind(taskExecutor).to(TaskExecutor.class);
 		bind(settingsManager).to(SettingsManager.class);
 		bind(javaDocGenerator).to(JavaDocGenerator.class);
 		bind(plantUmlGenerator).to(PlantUmlGenerator.class);

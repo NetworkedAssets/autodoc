@@ -1,5 +1,26 @@
 package com.networkedassets.autodoc.transformer;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nonnull;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Strings;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient;
@@ -12,15 +33,7 @@ import com.networkedassets.autodoc.transformer.uml.PlantUMLException;
 import com.networkedassets.autodoc.transformer.utils.HtmlFileReader;
 import com.networkedassets.autodoc.transformer.utils.PlantUMLFileConverter;
 import com.networkedassets.autodoc.transformer.utils.data.HtmlFile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.stream.Stream;
+import com.networkedassets.util.functional.Throwing;
 
 /**
  * Generates plantUML description from provided code
@@ -30,6 +43,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 
 	private static final String fileExtension = ".html";
 	private static final String umlPrefix = "UML ";
+	private static final String javadocALLClassFileName = "allclasses-frame.html";
 	private Logger log = LoggerFactory.getLogger(PlantUmlGenerator.class);
 
 	public void generateFromStashAndPost(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
@@ -57,7 +71,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 		log.debug("Old javadoc removed if it existed");
 
 		try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(javaDocDir,
-				new PlantUMLFileConverter(plantUmlDescription,
+				new PlantUMLFileConverter(plantUmlDescription, getAllClassNamesList(javaDocDir),
 						String.format(" [%s/%s/%s]", umlPrefix + projectKey, repoSlug, branchId), null),
 				fileExtension)) {
 			htmlFiles.filter(htmlFile -> !Strings.isNullOrEmpty(htmlFile.getFileContent())).forEach(htmlFile -> {
@@ -79,6 +93,16 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 				});
 			});
 		}
+	}
+
+	private List<String> getAllClassNamesList(Path javaDocDir) throws IOException {
+		String fileContent = new String(
+				Files.readAllBytes(Paths.get(javaDocDir.toFile().getAbsolutePath(), javadocALLClassFileName)),
+				Charset.defaultCharset());
+		Document doc = Jsoup.parse(fileContent);
+		Elements urls = doc.select("a[href]");
+		return urls.stream().map(url -> url.text()).sorted().collect(Collectors.toList());
+
 	}
 
 }

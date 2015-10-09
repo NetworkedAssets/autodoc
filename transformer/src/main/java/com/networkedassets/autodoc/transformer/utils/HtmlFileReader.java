@@ -27,6 +27,8 @@ public class HtmlFileReader {
 
 		Preconditions.checkNotNull(path);
 		Preconditions.checkNotNull(converter);
+		
+	   
 
 		return Files.walk(path, FileVisitOption.FOLLOW_LINKS).parallel()
 				.filter(p -> !Files.isDirectory(p) && !p.getFileName().toString().contains("-")

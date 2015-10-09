@@ -3,6 +3,7 @@ package com.networkedassets.autodoc.transformer.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ import net.sourceforge.plantuml.SourceStringReader;
 public class PlantUMLFileConverter implements HtmlFileConventer {
 	private static final String encoding = "UTF-8";
 	private static final String newline = System.getProperty("line.separator");
-	private static final String plantUmlTemplate = "<ac:structured-macro ac:name=\"plantuml\"/><ac:plain-text-body><![CDATA[%s%s%s]]></ac:plain-text-body></ac:structured-macro>";
+	private static final String plantUmlTemplate = "<ac:structured-macro ac:name=\"plantuml\"><ac:plain-text-body><![CDATA[%s%s%s]]></ac:plain-text-body></ac:structured-macro>";
 
 	private String plantUmlDescription;
 	private FileFormat fileformat;
@@ -38,7 +39,7 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	 *            file format for uml diagram based on plant uml description
 	 */
 
-	public PlantUMLFileConverter(String plantUmlDescription, String suffix, FileFormat fileFormat) {
+	public PlantUMLFileConverter(String plantUmlDescription, List<String> listClassName, String suffix, FileFormat fileFormat) {
 		this.plantUmlDescription = plantUmlDescription;
 		this.fileformat = fileFormat;
 		this.suffix = suffix;
