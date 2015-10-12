@@ -5,10 +5,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,7 +14,6 @@ import javax.annotation.Nonnull;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +22,7 @@ import com.google.common.base.Strings;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient;
 import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
+import com.networkedassets.autodoc.transformer.configuration.PropertyHandler;
 import com.networkedassets.autodoc.transformer.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
@@ -33,7 +31,6 @@ import com.networkedassets.autodoc.transformer.uml.PlantUMLException;
 import com.networkedassets.autodoc.transformer.utils.HtmlFileReader;
 import com.networkedassets.autodoc.transformer.utils.PlantUMLFileConverter;
 import com.networkedassets.autodoc.transformer.utils.data.HtmlFile;
-import com.networkedassets.util.functional.Throwing;
 
 /**
  * Generates plantUML description from provided code
@@ -54,6 +51,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 			return;
 		}
 
+		System.out.println(PropertyHandler.getInstance().getValue("stashUrl"));
 		clientMap.clear();
 
 		String plantUmlDescription = "";
