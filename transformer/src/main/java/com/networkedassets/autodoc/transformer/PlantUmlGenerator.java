@@ -43,7 +43,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 
 	private static final String fileExtension = ".html";
 	private static final String umlPrefix = "UML ";
-	private static final String javadocALLClassFileName = "allclasses-frame.html";
+	private static final String javadocAllClassFileName = "allclasses-frame.html";
 	private Logger log = LoggerFactory.getLogger(PlantUmlGenerator.class);
 
 	public void generateFromStashAndPost(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
@@ -97,12 +97,18 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 
 	private List<String> getAllClassNamesList(Path javaDocDir) throws IOException {
 		String fileContent = new String(
-				Files.readAllBytes(Paths.get(javaDocDir.toFile().getAbsolutePath(), javadocALLClassFileName)),
+				Files.readAllBytes(Paths.get(javaDocDir.toFile().getAbsolutePath(), javadocAllClassFileName)),
 				Charset.defaultCharset());
 		Document doc = Jsoup.parse(fileContent);
-		Elements urls = doc.select("a[href]");
-		return urls.stream().map(url -> url.text()).sorted().collect(Collectors.toList());
+		Elements urls = doc.select("a");
+		return urls.stream().map(url -> getFullClassName(url.attr("href"))).sorted().collect(Collectors.toList());
 
+	}
+
+	private static String getFullClassName(String href) {
+
+		return href.contains(".html")
+				? href.substring(0, href.lastIndexOf(".html")).replace("../", "").replace("/", ".") : href;
 	}
 
 }

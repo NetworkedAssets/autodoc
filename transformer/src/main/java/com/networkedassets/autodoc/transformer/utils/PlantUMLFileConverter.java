@@ -27,6 +27,7 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	private String plantUmlDescription;
 	private FileFormat fileformat;
 	private String suffix;
+	private List<String> listClassName;
 
 	/**
 	 * Main constructor
@@ -39,10 +40,12 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	 *            file format for uml diagram based on plant uml description
 	 */
 
-	public PlantUMLFileConverter(String plantUmlDescription, List<String> listClassName, String suffix, FileFormat fileFormat) {
+	public PlantUMLFileConverter(String plantUmlDescription, List<String> listClassName, String suffix,
+			FileFormat fileFormat) {
 		this.plantUmlDescription = plantUmlDescription;
 		this.fileformat = fileFormat;
 		this.suffix = suffix;
+		this.listClassName = listClassName;
 	}
 
 	/**
@@ -64,11 +67,13 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 		Document doc = Jsoup.parse(fileContent);
 		String packageName = doc.select("div.subTitle").first().text();
 		String className = doc.select("title").first().text();
-		String plantUMLDescription = replaceClassDependency(
+		String umlDescription = replaceClassDependency(
 				String.format("%s.%s", packageName, className).replaceAll("\\s", ""));
 
-		return !Strings.isNullOrEmpty(plantUmlDescription)
-				? String.format(plantUmlTemplate, newline, plantUMLDescription, newline) : "";
+		umlDescription = addConfluenceLinks(suffix, umlDescription);
+
+		return !Strings.isNullOrEmpty(umlDescription)
+				? String.format(plantUmlTemplate, newline, umlDescription, newline) : "";
 	}
 
 	/**
@@ -105,12 +110,22 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	}
 
 	private String replaceClassDependency(String fullClassName) {
+
 		return Pattern.compile(newline).splitAsStream(this.plantUmlDescription).filter(s -> s.contains(fullClassName))
 				.sorted().collect(Collectors.joining(newline));
 	}
 
-	private String addConfluenceLinks(String suffix) {
-		return null;
+	private String addConfluenceLinks(String suffix, String umlDescription) {
+
+		return umlDescription + newline
+				+ listClassName.stream().filter(fullClassName -> umlDescription.contains(fullClassName))
+						.map(className -> createConfluenceLink(suffix, className)).sorted()
+						.collect(Collectors.joining(newline));
+	}
+
+	private String createConfluenceLink(String suffix, String className) {
+
+		return String.format("url for %s is [[%s]]", className, String.format("%s [%s]", className, suffix));
 
 	}
 
