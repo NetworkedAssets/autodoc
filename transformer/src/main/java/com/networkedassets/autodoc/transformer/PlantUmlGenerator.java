@@ -22,12 +22,12 @@ import com.google.common.base.Strings;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient;
 import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
-import com.networkedassets.autodoc.transformer.configuration.PropertyHandler;
 import com.networkedassets.autodoc.transformer.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 import com.networkedassets.autodoc.transformer.uml.PlantUML;
 import com.networkedassets.autodoc.transformer.uml.PlantUMLException;
+import com.networkedassets.autodoc.transformer.utils.Consts;
 import com.networkedassets.autodoc.transformer.utils.HtmlFileReader;
 import com.networkedassets.autodoc.transformer.utils.PlantUMLFileConverter;
 import com.networkedassets.autodoc.transformer.utils.data.HtmlFile;
@@ -51,7 +51,6 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 			return;
 		}
 
-		System.out.println(PropertyHandler.getInstance().getValue("stashUrl"));
 		clientMap.clear();
 
 		String plantUmlDescription = "";
@@ -70,7 +69,7 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 
 		try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(javaDocDir,
 				new PlantUMLFileConverter(plantUmlDescription, getAllClassNamesList(javaDocDir),
-						String.format(" [%s/%s/%s]", umlPrefix + projectKey, repoSlug, branchId), null),
+						String.format(Consts.SUFFIX_TEMPLATE, umlPrefix + projectKey, repoSlug, branchId), null),
 				fileExtension)) {
 			htmlFiles.filter(htmlFile -> !Strings.isNullOrEmpty(htmlFile.getFileContent())).forEach(htmlFile -> {
 				settingsForInterestedSpaces.forEach(cs -> {

@@ -18,6 +18,8 @@ import com.google.common.base.Strings;
 public class CounfluenceFileConverter implements HtmlFileConventer {
 
 	private static final String linkTemplate = "<ac:link><ri:page ri:content-title=\"%s\" /><ac:plain-text-link-body><#$#![CDATA[%s]]#$#></ac:plain-text-link</ac:link>";
+	private static final String anchorInnerTemplate = "<ac:link ac:anchor=\"%s\"><ac:plain-text-link-body><#$#![CDATA[%s]]#$#></ac:plain-text-link-body></ac:link>";
+	private static final String anchorOuterTemplate = "<ac:link ac:anchor=\"%s\"><ri:page ri:content-title=\"%s\"/><ac:plain-text-link-body><#$#![CDATA[%s]]#$#></ac:plain-text-link-body></ac:link>";
 	private String suffix;
 
 	/**
@@ -97,14 +99,37 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 	private void replaceLinks(@Nonnull Document doc) {
 
 		Preconditions.checkNotNull(doc);
+		String className = doc.select("title").first().text().replaceAll("\\s", "");
 		Elements urls = doc.select("a[href]");
 
-		urls.stream().forEach(url -> url.after(String.format(linkTemplate,
+		urls.stream().forEach(url -> url.after(createConfluenceLink(url.attr("href"), className)).remove());
 
-				!Strings.isNullOrEmpty(this.suffix) ? getPackageName(url.attr("href")) + this.suffix
-						: getPackageName(url.attr("href")),
-				getClassName(url.attr("href")))).remove());
+	}
 
+	private String createConfluenceLink(String href, String className) {
+
+		String link = "";
+
+		if (href.contains("#")) {
+			if (getClassName(href).equals(className)) {
+
+				link = String.format(anchorInnerTemplate, getMethodName(href), getMethodName(href));
+
+			} else {
+				link = String.format(anchorOuterTemplate, getMethodName(href),
+						!Strings.isNullOrEmpty(this.suffix)
+								? String.format("%s.%s", getPackageName(href), getClassName(href)) + this.suffix
+								: String.format("%s.%s", getPackageName(href), getClassName(href)),
+						getMethodName(href));
+			}
+		} else {
+
+			link = String.format(linkTemplate,
+					!Strings.isNullOrEmpty(this.suffix) ? getPackageName(href) + this.suffix : getPackageName(href),
+					getClassName(href));
+		}
+
+		return link;
 	}
 
 	private String getPackageName(String href) {
@@ -117,6 +142,16 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 	private String getClassName(String href) {
 
 		return href.contains(".html") ? href.substring(href.lastIndexOf("/") + 1, href.lastIndexOf(".html")) : href;
+
+	}
+
+	private String getMethodName(String href) {
+
+		System.out.println(href);
+
+		String result = href.contains("#") ? href.substring(href.indexOf("#") + 1, href.length()) : href;
+
+		return result.contains("-") ? result.substring(0, result.indexOf("-")) : result;
 
 	}
 

@@ -12,6 +12,7 @@ import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage;
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ContentSearchPage;
 import com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.PageVersion;
+import com.networkedassets.autodoc.transformer.utils.Consts;
 import com.networkedassets.util.functional.Optionals;
 import com.networkedassets.util.functional.Throwing;
 import org.apache.commons.io.IOUtils;
@@ -136,7 +137,7 @@ public class ConfluenceClient extends HttpClient {
 		String rootId = getJavadocRootId(spaceKey, projectKey, repoSlug, branchId, javadocRootParentId);
 
 		ConfluencePage page = createPage(pageTitle, spaceKey, contents, rootId);
-		putLabel(page.getId(), String.format("%s-%s-%s", projectKey, repoSlug, branchId));
+		putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId));
 		return page;
 	}
 
@@ -175,7 +176,7 @@ public class ConfluenceClient extends HttpClient {
 		String rootId = getUmlRootId(spaceKey, projectKey, repoSlug, branchId, javadocRootParentId);
 
 		ConfluencePage page = createPage(pageTitle, spaceKey, contents, rootId);
-		putLabel(page.getId(), String.format("%s-%s-%s", projectKey, repoSlug, branchId));
+		putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId));
 		return page;
 	}
 
@@ -214,7 +215,7 @@ public class ConfluenceClient extends HttpClient {
 	@Nonnull
 	public String getJavadocPageName(@Nonnull String projectKey, @Nonnull String repoSlug, @Nonnull String branchId,
 			@Nonnull String fullClassName) {
-		return String.format("%s [%s/%s/%s]", fullClassName, projectKey, repoSlug, branchId);
+		return String.format("%s" + Consts.SUFFIX_TEMPLATE, fullClassName, projectKey, repoSlug, branchId);
 	}
 
 	/**
@@ -285,7 +286,7 @@ public class ConfluenceClient extends HttpClient {
 		return Optionals.orElseGetThrowing(javadocRoot, () -> {
 			log.debug("Root page not found. Creating...");
 			ConfluencePage page = createPage(javadocTitle, spaceKey, "JAVADOC ROOT", javadocRootParentId);
-			putLabel(page.getId(), String.format("%s-%s-%s", projectKey, repoSlug, branchId));
+			putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId));
 			javadocRootId = page.getId();
 			return page;
 		}).getId();

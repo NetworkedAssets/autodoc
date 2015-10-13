@@ -89,8 +89,9 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 
 	public String getFileDescription(String fileContent) {
 
+		Preconditions.checkNotNull(fileContent);
 		Document doc = Jsoup.parse(fileContent);
-		return doc.select("div.subTitle").first().text();
+		return doc.select("div.subTitle").first().text().replaceAll("\\s", "");
 
 	}
 
@@ -105,8 +106,9 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 	 */
 
 	public String getFileName(String fileContent) {
+		Preconditions.checkNotNull(fileContent);
 		Document doc = Jsoup.parse(fileContent);
-		return doc.select("h2.title").first().text();
+		return doc.select("title").first().text().replaceAll("\\s", "");
 	}
 
 	private String replaceClassDependency(String fullClassName) {
@@ -117,15 +119,18 @@ public class PlantUMLFileConverter implements HtmlFileConventer {
 
 	private String addConfluenceLinks(String suffix, String umlDescription) {
 
+		List<String> plantUml = Pattern.compile(newline).splitAsStream(umlDescription.replace(" ", newline)).sorted()
+				.collect(Collectors.toList());
+
 		return umlDescription + newline
-				+ listClassName.stream().filter(fullClassName -> umlDescription.contains(fullClassName))
+				+ listClassName.stream().filter(fullClassName -> plantUml.contains(fullClassName))
 						.map(className -> createConfluenceLink(suffix, className)).sorted()
 						.collect(Collectors.joining(newline));
 	}
 
 	private String createConfluenceLink(String suffix, String className) {
 
-		return String.format("url for %s is [[%s]]", className, String.format("%s [%s]", className, suffix));
+		return String.format("url for %s is [[%s]]", className, String.format("%s%s", className, suffix));
 
 	}
 

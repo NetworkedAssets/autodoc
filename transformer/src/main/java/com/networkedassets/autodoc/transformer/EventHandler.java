@@ -48,6 +48,7 @@ public class EventHandler {
 						.getSettingsForSpaces().stream().filter(s -> s.getProjectByKey(projectKey)
 								.getRepoBySlug(repoSlug).getBranchById(change.getRefId()).isListened)
 						.collect(Collectors.toList());
+				// plant UML can't parse '/' in macro confluence link
 				javaDocGenerator.generateFromStashAndPost(projectKey, repoSlug, change.getRefId(), interestedSpaces);
 				plantUmlGenerator.generateFromStashAndPost(projectKey, repoSlug, change.getRefId(), interestedSpaces);
 				/*
