@@ -113,12 +113,19 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 		if (href.contains("#")) {
 			if (getClassName(href).equals(className)) {
 
-				link = String.format(anchorInnerTemplate, getMethodName(href), getMethodName(href));
+				link = String.format(anchorInnerTemplate, getMethodFieldName(href), getMethodFieldName(href));
 
 			} else {
-				link = String.format(anchorOuterTemplate, getMethodName(href),
-						!Strings.isNullOrEmpty(this.suffix) ? getPackageName(href) + this.suffix : getPackageName(href),
-						getMethodName(href));
+
+				link = !getPackageName(href).equals(getClassName(href))
+						? String.format(anchorOuterTemplate, getMethodFieldName(href),
+								!Strings.isNullOrEmpty(this.suffix) ? getPackageName(href) + this.suffix
+										: getPackageName(href),
+								getMethodFieldName(href))
+						: String.format(anchorOuterTemplate,
+								getMethodFieldName(href), !Strings.isNullOrEmpty(this.suffix)
+										? getMethodFieldName(href) + this.suffix : getMethodFieldName(href),
+								getMethodFieldName(href));
 			}
 		} else {
 
@@ -143,7 +150,7 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 
 	}
 
-	private String getMethodName(String href) {
+	private String getMethodFieldName(String href) {
 
 		System.out.println(href);
 
