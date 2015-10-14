@@ -117,9 +117,7 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 
 			} else {
 				link = String.format(anchorOuterTemplate, getMethodName(href),
-						!Strings.isNullOrEmpty(this.suffix)
-								? String.format("%s.%s", getPackageName(href), getClassName(href)) + this.suffix
-								: String.format("%s.%s", getPackageName(href), getClassName(href)),
+						!Strings.isNullOrEmpty(this.suffix) ? getPackageName(href) + this.suffix : getPackageName(href),
 						getMethodName(href));
 			}
 		} else {
