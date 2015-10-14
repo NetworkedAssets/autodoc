@@ -50,13 +50,15 @@ public class JavaDocGenerator {
 		removeOldJavadoc(projectKey, repoSlug, branchId,
 				settingsForInterestedSpaces.stream().map(SettingsForSpace::getConfluenceSpace));
 		try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(javadocDir,
-				new CounfluenceFileConverter(String.format(Consts.SUFFIX_TEMPLATE, projectKey, repoSlug, branchId)),
+				new CounfluenceFileConverter(
+						String.format(Consts.SUFFIX_TEMPLATE, projectKey, repoSlug, branchId.replace("/", "\\"))),
 				fileExtension)) {
 			htmlFiles.forEach(htmlFile -> settingsForInterestedSpaces.forEach(cs -> {
 				ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
 				if (confluence != null) {
 					try {
-						confluence.createJavadocPage(cs.getSpaceKey(), projectKey, repoSlug, branchId,
+						confluence.createJavadocPage(cs.getSpaceKey(), projectKey, repoSlug,
+								branchId.replace("/", "\\"),
 								htmlFile.getAdditionalProperties().get("packageName").toString() + "."
 										+ htmlFile.getAdditionalProperties().get("className").toString(),
 								htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)

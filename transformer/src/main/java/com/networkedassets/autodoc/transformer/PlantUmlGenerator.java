@@ -68,8 +68,8 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 		log.debug("Old javadoc removed if it existed");
 
 		try (Stream<HtmlFile> htmlFiles = HtmlFileReader.read(javaDocDir,
-				new PlantUMLFileConverter(plantUmlDescription, getAllClassNamesList(javaDocDir),
-						String.format(Consts.SUFFIX_TEMPLATE, umlPrefix + projectKey, repoSlug, branchId), null),
+				new PlantUMLFileConverter(plantUmlDescription, getAllClassNamesList(javaDocDir), String.format(
+						Consts.SUFFIX_TEMPLATE, umlPrefix + projectKey, repoSlug, branchId.replace("/", "\\")), null),
 				fileExtension)) {
 			htmlFiles.filter(htmlFile -> !Strings.isNullOrEmpty(htmlFile.getFileContent())).forEach(htmlFile -> {
 				settingsForInterestedSpaces.forEach(cs -> {
@@ -78,7 +78,8 @@ public class PlantUmlGenerator extends JavaDocGenerator {
 					ConfluenceClient confluence = getConfluenceForUrl(cs.getConfluenceUrl());
 					if (confluence != null) {
 						try {
-							confluence.createUmlPage(cs.getSpaceKey(), umlPrefix + projectKey, repoSlug, branchId,
+							confluence.createUmlPage(cs.getSpaceKey(), umlPrefix + projectKey, repoSlug,
+									branchId.replace("/", "\\"),
 									htmlFile.getAdditionalProperties().get("packageName").toString() + "."
 											+ htmlFile.getAdditionalProperties().get("className").toString(),
 									htmlFile.getFileContent(), cs.getProjectByKey(projectKey).getRepoBySlug(repoSlug)

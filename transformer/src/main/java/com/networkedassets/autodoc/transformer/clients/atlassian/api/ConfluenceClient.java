@@ -137,7 +137,7 @@ public class ConfluenceClient extends HttpClient {
 		String rootId = getJavadocRootId(spaceKey, projectKey, repoSlug, branchId, javadocRootParentId);
 
 		ConfluencePage page = createPage(pageTitle, spaceKey, contents, rootId);
-		putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId));
+		putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId.replace("\\", "/")));
 		return page;
 	}
 
@@ -176,7 +176,7 @@ public class ConfluenceClient extends HttpClient {
 		String rootId = getUmlRootId(spaceKey, projectKey, repoSlug, branchId, javadocRootParentId);
 
 		ConfluencePage page = createPage(pageTitle, spaceKey, contents, rootId);
-		putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId));
+		putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId.replace("\\", "/")));
 		return page;
 	}
 
@@ -286,7 +286,7 @@ public class ConfluenceClient extends HttpClient {
 		return Optionals.orElseGetThrowing(javadocRoot, () -> {
 			log.debug("Root page not found. Creating...");
 			ConfluencePage page = createPage(javadocTitle, spaceKey, "JAVADOC ROOT", javadocRootParentId);
-			putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId));
+			putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId.replace("\\", "/")));
 			javadocRootId = page.getId();
 			return page;
 		}).getId();
