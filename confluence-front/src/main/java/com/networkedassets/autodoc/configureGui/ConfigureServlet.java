@@ -98,7 +98,7 @@ public class ConfigureServlet extends HttpServlet {
         renderConfigureTemplateWithParams(req, resp, ImmutableMap.<String, Object>builder()
                         .put("allProjects", allProjectsSoy)
                         .put("pages", pages)
-                        .put("message", message)
+//                        .put("message", message)
                         .build()
         );
     }

@@ -4,25 +4,10 @@
  * Renders the configure screen
  * @param allProjects
  * @param pages
- * @param message
  */
 {template .configureScreen}
-// <html>
-// <head>
-//     {$resources |noAutoescape}
-//     <title>Configure Autodoc</title>
-//     <meta name="decorator" content="main"/>
-//     <script type="text/javascript">
-//         projects = {$allProjectsJSON |noAutoescape};
-//         pages = {$pagesJSON |noAutoescape};
-//         spaceKey = "{$spaceKey}";
-//     </script>
-// </head>
-//
-// <body>
 <div class="pagecontent">
     <h2>Select events to watch for</h2>
-    {$message}
     <div class="projects">
         {foreach $project in $allProjects}
             {call .project data="$project"}
@@ -32,8 +17,6 @@
     </div>
     <button class="aui-button aui-button-primary" id="save-button">Save</button>
 </div>
-// </body>
-// </html>
 {/template}
 
 /**
