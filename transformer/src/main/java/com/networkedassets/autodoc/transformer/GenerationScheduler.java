@@ -6,7 +6,7 @@ import org.quartz.impl.triggers.SimpleTriggerImpl;
 
 import javax.inject.Inject;
 
-import static org.quartz.JobBuilder.newJob;
+import static org.quartz.JobBuilder.*;
 
 /**
  * Registers scheduled actions and invokes them when needed
