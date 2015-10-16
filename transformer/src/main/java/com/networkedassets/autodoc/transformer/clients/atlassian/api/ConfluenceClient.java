@@ -22,14 +22,12 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ConfluenceClient extends HttpClient {
 
 	private static final Logger log = LoggerFactory.getLogger(ConfluenceClient.class);
-	private String javadocRootId;
+	private Map<RootPageInfo, String> javadocRootId = new HashMap<>();
 
 	public ConfluenceClient(HttpClientConfig config) {
 		super(config);
@@ -270,13 +268,14 @@ public class ConfluenceClient extends HttpClient {
 	private String getRootId(@Nonnull String spaceKey, @Nonnull String projectKey, @Nonnull String repoSlug,
 			@Nonnull String branchId, @Nullable String javadocRootParentId, String rootPageName)
 					throws UnirestException {
-		if (javadocRootId != null)
-			return javadocRootId;
-
 		Preconditions.checkNotNull(spaceKey);
 		Preconditions.checkNotNull(projectKey);
 		Preconditions.checkNotNull(repoSlug);
 		Preconditions.checkNotNull(branchId);
+
+		RootPageInfo key = new RootPageInfo(spaceKey, projectKey, repoSlug, branchId, rootPageName);
+		String rootId = javadocRootId.get(key);
+		if (rootId != null) return rootId;
 
 		String javadocTitle = getJavadocPageName(projectKey, repoSlug, branchId, rootPageName);
 		// === javadoc [NAATLAS/autodoc/master]
@@ -287,7 +286,7 @@ public class ConfluenceClient extends HttpClient {
 			log.debug("Root page not found. Creating...");
 			ConfluencePage page = createPage(javadocTitle, spaceKey, "JAVADOC ROOT", javadocRootParentId);
 			putLabel(page.getId(), String.format(Consts.LABEL_TEMPLATE, projectKey, repoSlug, branchId.replace("\\", "/")));
-			javadocRootId = page.getId();
+			javadocRootId.put(key, page.getId());
 			return page;
 		}).getId();
 	}
@@ -457,6 +456,39 @@ public class ConfluenceClient extends HttpClient {
 		Preconditions.checkNotNull(newParentId);
 
 		return Optionals.mapThrowing(findPage(spaceKey, title), page -> movePage(page, newParentId));
+	}
+
+	private static class RootPageInfo {
+		public String space;
+		public String project;
+		public String repo;
+		public String branch;
+		public String kind; // javadoc or uml
+
+		public RootPageInfo(String space, String project, String repo, String branch, String kind) {
+			this.space = space;
+			this.project = project;
+			this.repo = repo;
+			this.branch = branch;
+			this.kind = kind;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			RootPageInfo that = (RootPageInfo) o;
+			return Objects.equals(space, that.space) &&
+					Objects.equals(project, that.project) &&
+					Objects.equals(repo, that.repo) &&
+					Objects.equals(branch, that.branch) &&
+					Objects.equals(kind, that.kind);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(space, project, repo, branch, kind);
+		}
 	}
 
 }
