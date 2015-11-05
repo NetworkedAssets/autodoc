@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
+import com.networkedassets.autodoc.clients.git.api.SCM;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantumldependency.cli.main.program.PlantUMLDependencyProgram;
@@ -84,7 +84,7 @@ public class PlantUML {
 
 	@Nonnull
 	public static String fromDirectory(@Nonnull Path localDirectory, @Nullable String diagramFilter,
-			@Nullable FileFormat fileformat) throws PlantUMLException {
+			@Nullable FileFormat fileFormat) throws PlantUMLException {
 
 		Preconditions.checkNotNull(localDirectory);
 		PlantUML plantUML = new PlantUML();

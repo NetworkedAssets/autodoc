@@ -1,6 +1,6 @@
 package com.networkedassets.autodoc.transformer;
 
-import com.networkedassets.autodoc.transformer.event.Event;
+import com.networkedassets.autodoc.transformer.requestModel.Event;
 import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 import org.slf4j.Logger;

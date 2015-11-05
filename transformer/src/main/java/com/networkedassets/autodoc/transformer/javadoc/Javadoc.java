@@ -1,7 +1,7 @@
 package com.networkedassets.autodoc.transformer.javadoc;
 
 import com.google.common.base.Joiner;
-import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
+import com.networkedassets.autodoc.clients.git.api.SCM;
 
 import javax.annotation.Nonnull;
 import java.io.*;

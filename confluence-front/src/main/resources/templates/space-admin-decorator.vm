@@ -16,7 +16,7 @@
 
         #applyDecorator ("root")
             #decoratorParam ("context" "spaceadminpanel")
-            ##decoratorParam ("selection" "autodoc-configuration-link")
+            ##decoratorParam ("selection" "autodoc-serverConfig-link")
             #decoratorParam ("selectedSpaceToolsWebItem" "autodoc-configuration-link")
             #decoratorParam ("helper" $action.helper)
             

@@ -44,7 +44,7 @@
 	<component-import key="soyTemplateRenderer"
 		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
 
-	<!-- Link to the configuration screen -->
+	<!-- Link to the serverConfig screen -->
 	<web-item name="Autodoc" i18n-name-key="autodoc-configuration-link.name"
 		key="autodoc-configuration-link" section="system.space.tools/addons"
 		weight="1000">

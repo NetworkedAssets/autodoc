@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 
 public class TaskExecutor {
 
-	private final Collection<Runnable> tasks = new ArrayList<Runnable>();
+	private final Collection<Runnable> tasks = new ArrayList<>();
 
 	public void add(final Runnable task) {
 		tasks.add(task);
@@ -19,15 +19,13 @@ public class TaskExecutor {
 		try {
 			final CountDownLatch latch = new CountDownLatch(tasks.size());
 			for (final Runnable task : tasks)
-				threads.execute(new Runnable() {
-					public void run() {
-						try {
-							task.run();
-						} finally {
-							latch.countDown();
-						}
-					}
-				});
+				threads.execute(() -> {
+                    try {
+                        task.run();
+                    } finally {
+                        latch.countDown();
+                    }
+                });
 			latch.await();
 		} finally {
 			threads.shutdown();

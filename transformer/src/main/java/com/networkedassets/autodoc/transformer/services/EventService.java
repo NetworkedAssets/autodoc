@@ -1,7 +1,7 @@
 package com.networkedassets.autodoc.transformer.services;
 
 import com.networkedassets.autodoc.transformer.EventHandler;
-import com.networkedassets.autodoc.transformer.event.Event;
+import com.networkedassets.autodoc.transformer.requestModel.Event;
 import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

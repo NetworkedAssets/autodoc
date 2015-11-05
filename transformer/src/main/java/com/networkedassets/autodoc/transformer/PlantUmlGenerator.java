@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient;
-import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
+import com.networkedassets.autodoc.clients.atlassian.api.ConfluenceClient;
+import com.networkedassets.autodoc.clients.git.api.SCM;
 import com.networkedassets.autodoc.transformer.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;

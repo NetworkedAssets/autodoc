@@ -2,11 +2,11 @@ package com.networkedassets.autodoc.transformer;
 
 import com.google.common.base.Preconditions;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig;
-import com.networkedassets.autodoc.transformer.clients.atlassian.api.StashClient;
-import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Branch;
-import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Project;
-import com.networkedassets.autodoc.transformer.clients.atlassian.stashData.Repository;
+import com.networkedassets.autodoc.clients.atlassian.HttpClientConfig;
+import com.networkedassets.autodoc.clients.atlassian.api.StashClient;
+import com.networkedassets.autodoc.clients.atlassian.stashData.Branch;
+import com.networkedassets.autodoc.clients.atlassian.stashData.Project;
+import com.networkedassets.autodoc.clients.atlassian.stashData.Repository;
 import com.networkedassets.autodoc.transformer.settings.Repo;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;

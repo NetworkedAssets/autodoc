@@ -1,11 +1,11 @@
 package com.networkedassets.autodoc.transformer;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig;
-import com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient;
-import com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig;
-import com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM;
-import com.networkedassets.autodoc.transformer.clients.git.api.SCM;
+import com.networkedassets.autodoc.clients.atlassian.HttpClientConfig;
+import com.networkedassets.autodoc.clients.atlassian.api.ConfluenceClient;
+import com.networkedassets.autodoc.clients.git.SCMClientConfig;
+import com.networkedassets.autodoc.clients.git.api.GitStashSCM;
+import com.networkedassets.autodoc.clients.git.api.SCM;
 import com.networkedassets.autodoc.transformer.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.javadoc.JavadocException;
 import com.networkedassets.autodoc.transformer.settings.ConfluenceSpace;
