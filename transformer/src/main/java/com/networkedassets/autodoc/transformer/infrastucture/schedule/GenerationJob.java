@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer;
+package com.networkedassets.autodoc.transformer.infrastucture.schedule;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

@@ -1,6 +1,8 @@
-package com.networkedassets.autodoc.transformer;
+package com.networkedassets.autodoc.transformer.usecases;
 
+import com.networkedassets.autodoc.transformer.infrastucture.schedule.GenerationJob;
 import com.networkedassets.autodoc.transformer.settings.ScheduledEvent;
+
 import org.quartz.*;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
 
@@ -11,16 +13,16 @@ import static org.quartz.JobBuilder.*;
 /**
  * Registers scheduled actions and invokes them when needed
  */
-public class GenerationScheduler {
+public class CreateOrUpdateSchedule {
 
     private final Scheduler scheduler;
 
     @Inject
-    SettingsManager settingsManager;
+    CreateOrUpdateSettings settingsManager;
 
     JobDetail generationJob;
 
-    public GenerationScheduler() throws SchedulerException {
+    public CreateOrUpdateSchedule() throws SchedulerException {
         SchedulerFactory schedFact = new org.quartz.impl.StdSchedulerFactory();
 
         scheduler = schedFact.getScheduler();

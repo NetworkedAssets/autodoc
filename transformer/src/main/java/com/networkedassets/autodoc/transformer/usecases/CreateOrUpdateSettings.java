@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer;
+package com.networkedassets.autodoc.transformer.usecases;
 
 import com.google.common.base.Preconditions;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -26,18 +26,18 @@ import java.util.stream.Collectors;
 /**
  * Handles the settings of the application
  */
-public class SettingsManager {
+public class CreateOrUpdateSettings {
     public static final String settingsFilename = "transformerSettings.ser";
     private static final String stashUrl = "http://46.101.240.138:7990";
     private static final String stashHookKey = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
     private static final int transformerPort = 8050;
     private static final String stashUsername = "kcala";
     private static final String stashPassword = "admin";
-    private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
+    private static Logger log = LoggerFactory.getLogger(CreateOrUpdateSettings.class);
     private final String localhostAddress = "http://localhost:" + transformerPort + "/event";
     private Settings settings = new Settings();
 
-    public SettingsManager() {
+    public CreateOrUpdateSettings() {
         loadSettingFromFile(settingsFilename);
         updateSettings();
     }
@@ -170,7 +170,7 @@ public class SettingsManager {
     private static StashClient getConfiguredStashClient() throws MalformedURLException {
         //TODO get stash config from the settings
         URL stashUrl;
-        stashUrl = new URL(SettingsManager.stashUrl);
+        stashUrl = new URL(CreateOrUpdateSettings.stashUrl);
         StashClient stashClient = new StashClient(new HttpClientConfig(stashUrl, stashUsername, stashPassword));
         log.debug("Stash client created");
         return stashClient;
@@ -241,7 +241,7 @@ public class SettingsManager {
 
     private void updateSettings() {
         settings.getSettingsForSpaces().stream().forEach((settingsForSpace) -> {
-            SettingsManager.updateProjectsFromStash(settingsForSpace);
+            CreateOrUpdateSettings.updateProjectsFromStash(settingsForSpace);
             enableAllHooks(settingsForSpace);
         });
     }

@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer.javadoc;
+package com.networkedassets.autodoc.transformer.infrastucture.javadoc;
 
 /**
  * Exception used in Javadoc wrapper

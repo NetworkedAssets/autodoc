@@ -1,8 +1,9 @@
-package com.networkedassets.autodoc.transformer.services;
+package com.networkedassets.autodoc.transformer.delivery;
 
 
-import com.networkedassets.autodoc.transformer.SettingsManager;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
+import com.networkedassets.autodoc.transformer.usecases.CreateOrUpdateSettings;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 public class SettingsService extends RestService {
 
     static final Logger log = LoggerFactory.getLogger(SettingsService.class);
-    @Inject private SettingsManager settingsManager;
+    @Inject private CreateOrUpdateSettings settingsManager;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

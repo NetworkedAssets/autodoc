@@ -1,11 +1,12 @@
 package com.networkedassets.autodoc.transformer;
 
-import com.networkedassets.autodoc.transformer.serverConfig.Application;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.networkedassets.autodoc.transformer.infrastucture.config.Application;
 
 import java.util.ArrayList;
 import java.util.List;

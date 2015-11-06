@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer.requestModel;
+package com.networkedassets.autodoc.transformer.usecases.boundary.provide;
 
 import com.google.common.base.MoreObjects;
 
