@@ -1,10 +1,8 @@
 package com.networkedassets.autodoc.transformer.delivery;
 
-import com.networkedassets.autodoc.transformer.infrastucture.javadoc.JavadocException;
-import com.networkedassets.autodoc.transformer.usecases.PreprocessEvents;
 import com.networkedassets.autodoc.transformer.usecases.boundary.provide.Event;
-import com.networkedassets.autodoc.transformer.usecases.boundary.require.Command;
-import com.networkedassets.autodoc.transformer.usecases.boundary.require.EventFactory;
+import com.networkedassets.autodoc.transformer.usecases.boundary.provide.Command;
+import com.networkedassets.autodoc.transformer.usecases.boundary.provide.ProcessEventCommandFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +23,10 @@ public class EventService extends RestService {
 
 	static final Logger log = LoggerFactory.getLogger(EventService.class);
 
-	private final EventFactory factory;
+	private final ProcessEventCommandFactory factory;
 
 	@Inject
-	public EventService(EventFactory factory) {
+	public EventService(ProcessEventCommandFactory factory) {
 		this.factory = factory;
 	}
 
@@ -39,7 +37,7 @@ public class EventService extends RestService {
 		log.info("New EVENT information received: {}", requestModel.toString());
 		try {
 
-			Command preprocessEvents = factory.createPreprocessEventsCommand(requestModel);
+			Command preprocessEvents = factory.createProcessEventCommand(requestModel);
 			preprocessEvents.execute();
 
 			return SUCCESS;

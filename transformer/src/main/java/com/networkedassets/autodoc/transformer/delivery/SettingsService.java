@@ -2,8 +2,8 @@ package com.networkedassets.autodoc.transformer.delivery;
 
 
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
-import com.networkedassets.autodoc.transformer.usecases.CreateOrUpdateSettings;
-
+import com.networkedassets.autodoc.transformer.usecases.boundary.provide.SettingsProvider;
+import com.networkedassets.autodoc.transformer.usecases.boundary.provide.SettingsSetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,22 +19,22 @@ import javax.ws.rs.core.MediaType;
 public class SettingsService extends RestService {
 
     static final Logger log = LoggerFactory.getLogger(SettingsService.class);
-    @Inject private CreateOrUpdateSettings settingsManager;
+    @Inject private SettingsProvider settingsProvider;
+    @Inject private SettingsSetter settingsSetter;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public SettingsForSpace getSettingsForSpace(@QueryParam("spaceKey") String spaceKey,
                                                 @QueryParam("confluenceUrl") String confluenceUrl) {
         log.info("GET request for settings handled");
-        SettingsForSpace settingsForSpace = settingsManager.getSettingsForSpace(spaceKey, confluenceUrl);
-        return settingsForSpace;
+        return settingsProvider.getSettingsForSpace(spaceKey, confluenceUrl);
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public String setSettingsForSpace(SettingsForSpace settingsForSpace) {
         log.info("POST request for settings handled: " + settingsForSpace.toString());
-        settingsManager.setSettingsForSpace(settingsForSpace, settingsForSpace.getSpaceKey(),
+        settingsSetter.setSettingsForSpace(settingsForSpace, settingsForSpace.getSpaceKey(),
                 settingsForSpace.getConfluenceUrl());
         return SUCCESS;
     }

@@ -10,6 +10,8 @@ import com.networkedassets.autodoc.clients.atlassian.stashData.Repository;
 import com.networkedassets.autodoc.transformer.settings.Repo;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
+import com.networkedassets.autodoc.transformer.usecases.boundary.provide.SettingsProvider;
+import com.networkedassets.autodoc.transformer.usecases.boundary.provide.SettingsSetter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 /**
  * Handles the settings of the application
  */
-public class CreateOrUpdateSettings {
+public class CreateOrUpdateSettings implements SettingsProvider, SettingsSetter {
     public static final String settingsFilename = "transformerSettings.ser";
     private static final String stashUrl = "http://46.101.240.138:7990";
     private static final String stashHookKey = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";

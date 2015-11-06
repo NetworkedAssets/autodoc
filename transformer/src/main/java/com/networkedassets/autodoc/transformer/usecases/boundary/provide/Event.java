@@ -52,5 +52,9 @@ public class Event {
     public void setBranchId(String branchId) {
         this.branchId = branchId;
     }
+
+    public boolean isValidProjectChangeEvent() {
+        return sourceUrl != null && projectKey != null && repositorySlug != null && branchId != null;
+    }
 }
 
