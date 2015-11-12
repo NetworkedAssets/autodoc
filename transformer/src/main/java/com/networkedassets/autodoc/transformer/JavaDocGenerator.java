@@ -42,7 +42,7 @@ public class JavaDocGenerator {
 			return;
 
 		clientMap.clear();
-
+ 
 		Path tmpDir = Files.createTempDirectory(null);
 		SCM scmServer = getSCM();
 		Path javadocDir = Javadoc.fromStashRepo(scmServer, tmpDir, projectKey, repoSlug, branchId);

@@ -1,5 +1,7 @@
 package com.networkedassets.autodoc.transformer.usecases.boundary.provide;
 
+import java.util.List;
+
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 
 /**
@@ -7,5 +9,5 @@ import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
  */
 @FunctionalInterface
 public interface SettingsProvider {
-    SettingsForSpace getSettingsForSpace(String spaceKey, String confluenceUrl);
+    List<SettingsForSpace> getSettingsForSpaces() ;
 }
