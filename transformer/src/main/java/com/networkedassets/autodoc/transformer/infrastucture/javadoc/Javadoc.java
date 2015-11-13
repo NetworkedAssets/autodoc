@@ -65,7 +65,7 @@ public class Javadoc {
 	 * @throws JavadocException
 	 */
 	@Nonnull
-	public static Path fromStashRepo(@Nonnull SCM scmServer, @Nonnull Path localDirectory, @Nonnull String projectKey,
+	public static Path fromRepo(@Nonnull SCM scmServer, @Nonnull Path localDirectory, @Nonnull String projectKey,
 			@Nonnull String repositorySlug, @Nonnull String branchName) throws JavadocException {
 		createDirectoryIfNecessary(localDirectory);
 		cloneTheRepo(scmServer, projectKey, repositorySlug, branchName, localDirectory);

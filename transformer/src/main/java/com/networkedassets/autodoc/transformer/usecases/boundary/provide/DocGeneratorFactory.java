@@ -4,8 +4,8 @@ import java.util.Collection;
 
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 
-public interface DocumentationGeneratorFactory{
+public interface DocGeneratorFactory{
 	
-	DocumentationGenerator createDocumentationGenerator(DocumentationType docType, String projectKey, String repoSlug,
+	DocGenerator createDocumentationGenerator(DocType docType, String projectKey, String repoSlug,
 			String branchId, Collection<SettingsForSpace> interestedSpaces);
 }

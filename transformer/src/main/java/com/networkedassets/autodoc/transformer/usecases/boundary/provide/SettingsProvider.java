@@ -7,7 +7,9 @@ import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 /**
  * Created by mrobakowski on 11/6/2015.
  */
-@FunctionalInterface
+
 public interface SettingsProvider {
-    List<SettingsForSpace> getSettingsForSpaces() ;
+	SettingsForSpace getSettingsForSpace(String spaceKey, String confluenceUrl);
+
+	List<SettingsForSpace> getSettingsForSpaces();
 }

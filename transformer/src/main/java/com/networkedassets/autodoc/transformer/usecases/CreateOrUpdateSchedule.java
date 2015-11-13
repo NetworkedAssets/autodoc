@@ -1,14 +1,15 @@
 package com.networkedassets.autodoc.transformer.usecases;
 
-import com.networkedassets.autodoc.transformer.infrastucture.schedule.GenerationJob;
-import com.networkedassets.autodoc.transformer.settings.ScheduledEvent;
-
-import org.quartz.*;
-import org.quartz.impl.triggers.SimpleTriggerImpl;
+import static org.quartz.JobBuilder.newJob;
 
 import javax.inject.Inject;
 
-import static org.quartz.JobBuilder.*;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+
+import com.networkedassets.autodoc.transformer.infrastucture.schedule.GenerationJob;
 
 /**
  * Registers scheduled actions and invokes them when needed

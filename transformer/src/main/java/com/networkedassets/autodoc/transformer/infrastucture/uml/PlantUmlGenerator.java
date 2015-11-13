@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer;
+package com.networkedassets.autodoc.transformer.infrastucture.uml;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -22,15 +22,14 @@ import com.google.common.base.Strings;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.api.ConfluenceClient;
 import com.networkedassets.autodoc.clients.git.api.SCM;
+import com.networkedassets.autodoc.transformer.infrastucture.javadoc.JavaDocGenerator;
 import com.networkedassets.autodoc.transformer.infrastucture.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.infrastucture.javadoc.JavadocException;
-import com.networkedassets.autodoc.transformer.infrastucture.uml.PlantUML;
-import com.networkedassets.autodoc.transformer.infrastucture.uml.PlantUMLException;
+import com.networkedassets.autodoc.transformer.infrastucture.utlis.Consts;
+import com.networkedassets.autodoc.transformer.infrastucture.utlis.HtmlFileReader;
+import com.networkedassets.autodoc.transformer.infrastucture.utlis.PlantUMLFileConverter;
+import com.networkedassets.autodoc.transformer.infrastucture.utlis.data.HtmlFile;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
-import com.networkedassets.autodoc.transformer.utils.Consts;
-import com.networkedassets.autodoc.transformer.utils.HtmlFileReader;
-import com.networkedassets.autodoc.transformer.utils.PlantUMLFileConverter;
-import com.networkedassets.autodoc.transformer.utils.data.HtmlFile;
 
 /**
  * Generates plantUML description from provided code
