@@ -21,13 +21,11 @@ public class HtmlFileReader {
 	/**
 	 * Attention: the returned stream should be closed when you're done with it
 	 */
-	public static Stream<HtmlFile> read(@Nonnull final Path path, @Nonnull final HtmlFileConventer converter,
-										@Nonnull String fileExtension) throws IOException {
+	public static Stream<HtmlFile> read(@Nonnull final Path path, @Nonnull final CounfluenceFileConverter converter,
+			@Nonnull String fileExtension) throws IOException {
 
 		Preconditions.checkNotNull(path);
 		Preconditions.checkNotNull(converter);
-
-
 
 		return Files.walk(path, FileVisitOption.FOLLOW_LINKS).parallel()
 				.filter(p -> !Files.isDirectory(p) && !p.getFileName().toString().contains("-")
@@ -36,7 +34,7 @@ public class HtmlFileReader {
 
 	}
 
-	private static HtmlFile getTextContent(@Nonnull final Path file, @Nonnull final HtmlFileConventer converter)
+	private static HtmlFile getTextContent(@Nonnull final Path file, @Nonnull final CounfluenceFileConverter converter)
 			throws IOException {
 
 		Preconditions.checkNotNull(file);

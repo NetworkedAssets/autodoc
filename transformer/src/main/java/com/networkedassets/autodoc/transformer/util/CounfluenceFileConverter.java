@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  * Converts javaDoc files to Confluence storage format
  */
 
-public class CounfluenceFileConverter implements HtmlFileConventer {
+public class CounfluenceFileConverter{
 
 	private static final String linkTemplate = "<ac:link><ri:page ri:content-title=\"%s\" /><ac:plain-text-link-body><#$#![CDATA[%s]]#$#></ac:plain-text-link</ac:link>";
 	private static final String anchorInnerTemplate = "<ac:link ac:anchor=\"%s\"><ac:plain-text-link-body><#$#![CDATA[%s]]#$#></ac:plain-text-link-body></ac:link>";
@@ -44,7 +44,6 @@ public class CounfluenceFileConverter implements HtmlFileConventer {
 	 * 
 	 */
 
-	@Override
 	public String convert(@Nonnull String fileContent) {
 		Preconditions.checkNotNull(fileContent);
 		Document doc = Jsoup.parse(fileContent);
