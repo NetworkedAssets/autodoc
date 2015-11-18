@@ -1,11 +1,9 @@
-package com.networkedassets.autodoc.transformer.util;
+package com.networkedassets.autodoc.transformer.util.uml;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -14,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
+import com.google.common.collect.Lists;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 
 public class UmlClassDiagramConverter {
@@ -28,12 +27,28 @@ public class UmlClassDiagramConverter {
 		this.plantUmlPath = plantUmlPath;
 	}
 
-	public Documentation convert() {
-		return null;
+	public Documentation convert() throws JSONException, IOException {
+		JSONObject javadocObj = javadocToJson();
+		JSONObject umlObj = plantUmlDependencyToJson();
+		JSONArray output = new JSONArray();
+
+		List<String> lisfOfEntities = Lists.newArrayList(JSONObject.getNames(javadocObj.getJSONObject("Entities")));
+
+		JSONArray array = umlObj.getJSONArray("relations");
+
+		for (int i = 0; i < array.length(); i++) {
+			if (lisfOfEntities.contains(array.getJSONObject(i).getString("target"))) {
+				output.put(array.getJSONObject(i));
+			}
+		}
+
+		javadocObj.put("relations", output);
+
+		return new Documentation(javadocObj.toString(PRETTY_PRINT_INDENT_FACTOR));
 
 	}
 
-	private JSONObject javadocToJson() throws JSONException, UnsupportedEncodingException, IOException {
+	private JSONObject javadocToJson() throws JSONException, IOException {
 		JSONObject xmlJSONObj = new JSONObject();
 
 		xmlJSONObj = XML.toJSONObject(new String(Files.readAllBytes(this.xmlJavaDocPath), "UTF-8"));
@@ -53,19 +68,21 @@ public class UmlClassDiagramConverter {
 		return rootObj;
 	}
 
-	public JSONObject plantUmlDependencyToJson() throws UnsupportedEncodingException, IOException {
+	private JSONObject plantUmlDependencyToJson() throws IOException {
 
 		String plantUmlDependency = new String(Files.readAllBytes(this.plantUmlPath), "UTF-8");
 
-		return  new JSONObject(String.format("{\"relations\":[%s]}", Pattern.compile(newline).splitAsStream(plantUmlDependency)
-				.filter(s -> s.contains(">")).map(s -> transform(s)).sorted().collect(Collectors.joining(","))));
+		return new JSONObject(String.format("{\"relations\":[%s]}",
+				Pattern.compile(newline).splitAsStream(plantUmlDependency).filter(s -> s.contains(">"))
+						.map(s -> transform(s)).sorted().collect(Collectors.joining(","))));
 	}
 
-	private String transform(String s){
-		
+	private String transform(String s) {
+
 		String[] parts = s.split(" ");
-		return String.format("{\"source\":\"%s\",\"type\":\"%s\",\"target\":\"%s\"}",parts[0],UmlRelationship.fromDescription(parts[1]),parts[2]);
-		  
+		return String.format("{\"source\":\"%s\",\"type\":\"%s\",\"target\":\"%s\"}", parts[0],
+				UmlRelationship.fromDescription(parts[1]), parts[2]);
+
 	}
 
 }

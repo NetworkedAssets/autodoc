@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer.util;
+package com.networkedassets.autodoc.transformer.util.uml;
 
 import java.util.Arrays;
 import java.util.Map;
