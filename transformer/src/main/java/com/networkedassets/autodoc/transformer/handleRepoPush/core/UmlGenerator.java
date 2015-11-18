@@ -22,8 +22,9 @@ public class UmlGenerator implements DocumentationGenerator {
 	public Documentation generateFrom(Code code) {
 		try {
 
+			String docletPath = getClass().getClassLoader().getResource("jeldoclet.jar").getPath();
 			Path plantUmlPath = PlantUML.fromDirectory(code.getCodePath(), null, null);
-			Path xmlJavaDocPath = Javadoc.fromDirectory(code.getCodePath(), null, "com.jeldoclet.JELDoclet");
+			Path xmlJavaDocPath = Javadoc.fromDirectory(code.getCodePath(), docletPath, "com.jeldoclet.JELDoclet");
 
 			return new UmlClassDiagramConverter(xmlJavaDocPath, plantUmlPath).convert();
 
