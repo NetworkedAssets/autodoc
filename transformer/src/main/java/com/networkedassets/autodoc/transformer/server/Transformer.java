@@ -16,8 +16,6 @@ public class Transformer {
 
     static final Logger log = LoggerFactory.getLogger(Transformer.class);
 
-    private static final List<String> classnames = new ArrayList<String>();
-
     public static void main(String[] args) throws Exception {
 
         Server jettyServer = new Server(8050);

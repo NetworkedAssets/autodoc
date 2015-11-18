@@ -64,4 +64,8 @@ public class SettingsForSpace implements Serializable {
     public void setConfluenceSpace(ConfluenceSpace confluenceSpace) {
         this.confluenceSpace = confluenceSpace;
     }
+
+    public Map<String, Project> getProjectsMap() {
+        return projects;
+    }
 }
