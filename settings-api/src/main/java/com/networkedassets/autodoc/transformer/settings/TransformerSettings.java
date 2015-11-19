@@ -1,10 +1,13 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.google.common.base.MoreObjects;
+
 /**
  * Contains settings for transformer configurable from json API (e.g. from Confluence)
  */
 public class TransformerSettings {
 
+    // TODO: 19.11.2015 Remove default values and require user to enter them on first run in frontend
     private  String stashUrl = "http://46.101.240.138:7990";
     private  String stashHookKey = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
     private  String stashUsername = "kcala";
@@ -58,5 +61,17 @@ public class TransformerSettings {
 
     public void setLocalhostAddress(String localhostAddress) {
         this.localhostAddress = localhostAddress;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("stashUrl", stashUrl)
+                .add("stashHookKey", stashHookKey)
+                .add("stashUsername", stashUsername)
+                .add("stashPassword", stashPassword)
+                .add("transformerPort", transformerPort)
+                .add("localhostAddress", localhostAddress)
+                .toString();
     }
 }

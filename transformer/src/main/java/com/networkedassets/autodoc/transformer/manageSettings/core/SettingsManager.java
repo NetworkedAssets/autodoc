@@ -6,10 +6,8 @@ import com.networkedassets.autodoc.transformer.manageSettings.provide.in.Setting
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
-import com.networkedassets.autodoc.transformer.settings.Branch;
-import com.networkedassets.autodoc.transformer.settings.Project;
-import com.networkedassets.autodoc.transformer.settings.Settings;
-import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
+import com.networkedassets.autodoc.transformer.settings.*;
+import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,12 +70,22 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         return settings.getSettingsForSpaces();
     }
 
+    @Override
+    public TransformerSettings getTransformerSettings() {
+        return settings.getTransformerSettings();
+    }
+
     public void setSettingsForSpace(SettingsForSpace settingsForSpace, String spaceKey, String confluenceUrl) {
         settings.getSettingsForSpaces()
                 .removeIf(s -> (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)));
         settings.getSettingsForSpaces().add(settingsForSpace);
         updateSettings();
         saveSettingsToFile(settingsFilename);
+    }
+
+    @Override
+    public void setTransformerSettings(TransformerSettings transformerSettings) {
+        settings.setTransformerSettings(transformerSettings);
     }
 
     private void updateSettings() {
@@ -122,16 +130,14 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
     private String getSettingsFilenameFromProperties() {
 
         final String defaultFilename = "transformerSettings.ser";
-
-        InputStream propertiesStream = SettingsManager.class.getClassLoader().getResourceAsStream("autodoc_transformer.properties");
-        Properties properties = new Properties();
+        PropertyHandler propertyHandler;
         try {
-            properties.load(propertiesStream);
+            propertyHandler = PropertyHandler.getInstance();
         } catch (IOException e) {
-            log.error("Couldn't load the configuration file", e);
+            log.error("Couldn't load the properties file", e);
             return defaultFilename;
         }
-        return properties.getProperty("settings.filename", defaultFilename);
+        return propertyHandler.getValue("settings.filename", defaultFilename);
     }
 
     @SuppressWarnings("CodeBlock2Expr")
