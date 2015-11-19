@@ -2,6 +2,7 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
+import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
 import com.networkedassets.autodoc.transformer.util.RestService;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import org.slf4j.Logger;
@@ -44,5 +45,7 @@ public class SettingsService extends RestService {
 				settingsForSpace.getConfluenceUrl());
 		return SUCCESS;
 	}
+
+
 
 }

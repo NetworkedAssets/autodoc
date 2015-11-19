@@ -68,4 +68,12 @@ public class SettingsForSpace implements Serializable {
     public Map<String, Project> getProjectsMap() {
         return projects;
     }
+
+    @Override
+    public String toString() {
+        return com.google.common.base.MoreObjects.toStringHelper(this)
+                .add("projects", projects)
+                .add("confluenceSpace", confluenceSpace)
+                .toString();
+    }
 }
