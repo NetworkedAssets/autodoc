@@ -55,4 +55,15 @@ public class Optionals {
             return Optional.empty();
         }
     }
+
+    /** Returns optional with the only value of the array */
+    public static <T> Optional<T> fromArrayOfOne(T[] arr) {
+        if (arr.length == 0) {
+            return Optional.empty();
+        } else if (arr.length > 1) {
+            return Optional.empty();
+        } else {
+            return Optional.of(arr[0]);
+        }
+    }
 }

@@ -63,4 +63,18 @@
         <url-pattern>/${project.artifactId}/configure-autodoc</url-pattern>
     </servlet>
 
+	<component-import key="ao" name="Active Objects service" interface="com.atlassian.activeobjects.external.ActiveObjects">
+		<description>Component to access Active Objects functionality from the plugin</description>
+	</component-import>
+
+	<ao key="ao-module">
+		<description>The AO module for this plugin.</description>
+		<entity>com.networkedassets.autodoc.documentation.Documentation</entity>
+		<entity>com.networkedassets.autodoc.documentation.DocumentationPiece</entity>
+	</ao>
+
+	<rest key="autodocRest" path="/autodoc" version="1.0">
+		<description>Provides rest endpoints used by Autodoc</description>
+	</rest>
+
 </atlassian-plugin>
