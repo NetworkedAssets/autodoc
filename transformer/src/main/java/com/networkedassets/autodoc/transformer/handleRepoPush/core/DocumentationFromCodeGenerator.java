@@ -50,6 +50,7 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 
         for (DocumentationType docType : DocumentationType.values()) {
             Documentation documentation = docGeneratorFactory.createFor(docType).generateFrom(code);
+			documentation.setProjectInfo(projectKey, repoSlug, branchId);
             documentationSender.send(documentation, interestedSpaces);
         }
 	}

@@ -1,19 +1,21 @@
 package com.networkedassets.autodoc.transformer.util.uml;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
+import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
+import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationType;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
-
-import com.google.common.collect.Lists;
-import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 
 public class UmlClassDiagramConverter {
 
@@ -44,7 +46,17 @@ public class UmlClassDiagramConverter {
 
 		javadocObj.put("relations", output);
 
-		return new Documentation(javadocObj.toString(PRETTY_PRINT_INDENT_FACTOR));
+		Documentation documentation = new Documentation(
+				ImmutableList.of(
+						new DocumentationPiece(
+								"MAIN_PIECE",
+								"MAIN_PIECE",
+								javadocObj.toString(PRETTY_PRINT_INDENT_FACTOR)
+						)
+				)
+		);
+		documentation.setType(DocumentationType.UML_CLASS_DIAGRAM);
+		return documentation;
 
 	}
 
@@ -74,7 +86,7 @@ public class UmlClassDiagramConverter {
 
 		return new JSONObject(String.format("{\"relations\":[%s]}",
 				Pattern.compile(newline).splitAsStream(plantUmlDependency).filter(s -> s.contains(">"))
-						.map(s -> transform(s)).sorted().collect(Collectors.joining(","))));
+						.map(this::transform).sorted().collect(Collectors.joining(","))));
 	}
 
 	private String transform(String s) {

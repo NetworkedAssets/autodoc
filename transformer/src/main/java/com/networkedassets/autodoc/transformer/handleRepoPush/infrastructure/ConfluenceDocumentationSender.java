@@ -3,26 +3,47 @@ package com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
+import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 // TODO: go back to this class, when Confluence side of things is implemented
 public class ConfluenceDocumentationSender implements DocumentationSender {
-    private static final String confluenceEndpoint = "/doc";
+    private static final String confluenceEndpointFormat = "%s/rest/autodoc/1.0/documentation/%s/%s/%s/%s";
     private String username = "mrobakowski";
     private String password = "admin";
 
     @Override
     public void send(Documentation documentation, Collection<SettingsForSpace> interestedSpaces) {
         if (interestedSpaces.isEmpty()) return;
-        String confluenceUrl = interestedSpaces.stream().findAny().map(SettingsForSpace::getConfluenceUrl).get();
-        try {
-            Unirest.post(confluenceUrl + confluenceEndpoint).basicAuth(username, password)
-                    .body(documentation).asString();
-        } catch (UnirestException e) {
-            e.printStackTrace();
+
+        final Set<String> confluenceUrls = interestedSpaces.stream().map(SettingsForSpace::getConfluenceUrl)
+                .collect(Collectors.toSet());
+
+        for (String url : confluenceUrls) {
+            url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+            for (DocumentationPiece docPiece : documentation.getPieces()) {
+                try {
+                    System.out.println(Unirest.post(
+                            String.format(confluenceEndpointFormat, url,
+                                    documentation.getProject(),
+                                    documentation.getRepo(),
+                                    documentation.getBranch(),
+                                    docPiece.getPieceName()))
+                            .basicAuth(username, password)
+                            .queryString("docType", documentation.getType())
+                            .queryString("pieceType", docPiece.getPieceType())
+                            .header("Content-Type", "application/json")
+                            .body(docPiece.getContent())
+                            .asString().getBody());
+                } catch (UnirestException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 

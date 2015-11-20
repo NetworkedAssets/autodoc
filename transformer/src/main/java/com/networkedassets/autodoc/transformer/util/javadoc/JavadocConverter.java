@@ -1,15 +1,17 @@
 package com.networkedassets.autodoc.transformer.util.javadoc;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
+import com.google.common.collect.ImmutableList;
+import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
+import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
+import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 
-import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class JavadocConverter {
 
@@ -24,7 +26,18 @@ public class JavadocConverter {
 	public Documentation convert() throws JSONException, IOException {
 		JSONObject javadocObj = javadocToJson();
 
-		return new Documentation(javadocObj.toString(PRETTY_PRINT_INDENT_FACTOR));
+		// TODO: Separate the documentation into pieces
+		Documentation documentation = new Documentation(
+				ImmutableList.of(
+						new DocumentationPiece(
+								"MAIN_PIECE",
+								"MAIN_PIECE",
+								javadocObj.toString(PRETTY_PRINT_INDENT_FACTOR)
+						)
+				)
+		);
+		documentation.setType(DocumentationType.JAVADOC);
+		return documentation;
 
 	}
 
