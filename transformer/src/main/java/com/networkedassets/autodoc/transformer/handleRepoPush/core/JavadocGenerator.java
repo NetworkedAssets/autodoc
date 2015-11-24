@@ -5,6 +5,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -29,16 +30,17 @@ public class JavadocGenerator implements DocumentationGenerator {
 			Path xmlJavaDocPath = Javadoc.fromDirectory(code.getCodePath(),
 					new File(getDocletFilenameFromProperties()).getAbsolutePath(), getDocletClassnameFromProperties());
 
-			return new JavadocConverter(xmlJavaDocPath).convert();
+			return new JavadocConverter(Paths.get(xmlJavaDocPath.toString(), getDocletOutFilenameFromProperties()))
+					.convert();
 
 		} catch (JavadocException | JSONException | IOException e) {
 			throw new RuntimeException("Couldn't generate Javadoc", e);
 		}
 	}
 
-	private String getDocletFilenameFromProperties() {
+	protected String getDocletFilenameFromProperties() {
 
-		final String defaultDocletFileName = "jeldoclet.jar";
+		final String defaultDocletFileName = "json-doclet-1.0.7.jar";
 		String docletFileName = "";
 
 		try {
@@ -50,9 +52,9 @@ public class JavadocGenerator implements DocumentationGenerator {
 		return docletFileName;
 	}
 
-	private String getDocletClassnameFromProperties() {
+	protected String getDocletClassnameFromProperties() {
 
-		final String defaultDocletClassName = "jeldoclet.jar";
+		final String defaultDocletClassName = "com.github.markusbernhardt.xmldoclet.XmlDoclet";
 		String docletClassName = "";
 
 		try {
@@ -63,4 +65,19 @@ public class JavadocGenerator implements DocumentationGenerator {
 		}
 		return docletClassName;
 	}
+
+	protected String getDocletOutFilenameFromProperties() {
+
+		final String defaultDocletClassName = "javadoc.json";
+		String docletClassName = "";
+
+		try {
+			docletClassName = PropertyHandler.getInstance().getValue("doclet.oufilename", defaultDocletClassName);
+		} catch (IOException e) {
+			log.error("Couldn't load the configuration file", e);
+			return defaultDocletClassName;
+		}
+		return docletClassName;
+	}
+
 }
