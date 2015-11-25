@@ -16,6 +16,8 @@
         <module>settings-api</module>
         <module>functional-utils</module>
         <module>clients</module>
+        <module>doclet</module>
+        <module>json-doclet</module>
     </modules>
 
     <build>
