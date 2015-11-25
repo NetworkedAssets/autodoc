@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer.manageSettings.core;
 
+import com.google.common.base.Strings;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.StashHookActivator;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.StashProjectsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
@@ -16,6 +17,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -85,6 +87,10 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
 
     @Override
     public void setTransformerSettings(TransformerSettings transformerSettings) {
+        if(Strings.isNullOrEmpty(transformerSettings.getStashPassword())){
+            //password didn't change
+            transformerSettings.setStashPassword(this.getTransformerSettings().getStashPassword());
+        }
         settings.setTransformerSettings(transformerSettings);
     }
 

@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
 /**
@@ -41,6 +42,16 @@ public class TransformerSettings {
 
     public String getStashPassword() {
         return stashPassword;
+    }
+
+    /**
+     * For jackson serialization. We don't want to share password on every request so we only
+     * return null on REST request
+     * @return null
+     */
+    @JsonProperty("stashPassword")
+    public String getNullStashPassword() {
+        return null;
     }
 
     public void setStashPassword(String stashPassword) {

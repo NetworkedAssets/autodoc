@@ -40,9 +40,9 @@ public class TransformerSettingsService extends RestService{
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String setTransformerSettings(TransformerSettings transformerSettings){
+    public TransformerSettings setTransformerSettings(TransformerSettings transformerSettings){
         log.info("POST request for transformer settings handled: " + transformerSettings.toString());
         settingsSetter.setTransformerSettings(transformerSettings);
-        return SUCCESS;
+        return settingsProvider.getTransformerSettings();
     }
 }
