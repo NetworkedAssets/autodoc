@@ -12,9 +12,9 @@ import org.json.JSONException;
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonValue;
 import com.eclipsesource.json.WriterConfig;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationType;
@@ -22,7 +22,6 @@ import com.networkedassets.autodoc.transformer.util.javadoc.JavadocConverter;
 
 public class UmlClassDiagramConverter extends JavadocConverter {
 
-	public final static int PRETTY_PRINT_INDENT_FACTOR = 4;
 	private static final String newline = System.getProperty("line.separator");
 	private final Path plantUmlPath;
 
@@ -35,11 +34,13 @@ public class UmlClassDiagramConverter extends JavadocConverter {
 		JsonObject javadocObj = javadocToMainAsJson();
 		JsonObject umlObj = plantUmlDependencyToJson();
 		JsonArray output = Json.array().asArray();
-
-		List<JsonValue> lisfOfEntities = javadocObj.get("entities").asObject().get("package").asArray().values();
+		List<String> target = Lists.newArrayList();
+		javadocObj.get("entities").asObject().names().stream()
+				.map(n -> javadocObj.get("entities").asObject().get(n).asObject().names())
+				.forEach(p -> target.addAll(p));
 
 		umlObj.get("relations").asArray().forEach(item -> {
-			if (lisfOfEntities.contains(item.asObject().getString("target", ""))) {
+			if (target.contains(item.asObject().getString("target", ""))) {
 				output.add(item.asObject());
 			}
 		});
