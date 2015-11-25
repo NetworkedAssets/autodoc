@@ -1,14 +1,16 @@
 package com.networkedassets.autodoc.transformer.util.javadoc;
 
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Iterator;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+import com.eclipsesource.json.WriterConfig;
 import com.google.common.collect.ImmutableList;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
@@ -26,98 +28,66 @@ public class JavadocConverter {
 
 	public Documentation convert() throws JSONException, IOException {
 
-		// TODO: Separate the documentation into pieces
 		Documentation documentation = new Documentation(ImmutableList.of(
 				new DocumentationPiece("MAIN_PIECE", "MAIN_PIECE",
-						javadocToMainAsJson().toString(PRETTY_PRINT_INDENT_FACTOR)),
-				new DocumentationPiece("INDEX", "INDEX", javadocToIndexAsJson().toString(PRETTY_PRINT_INDENT_FACTOR))));
+						javadocToMainAsJson().toString(WriterConfig.PRETTY_PRINT)),
+				new DocumentationPiece("INDEX", "INDEX", javadocToIndexAsJson().toString(WriterConfig.PRETTY_PRINT))));
 		documentation.setType(DocumentationType.JAVADOC);
 		return documentation;
 
 	}
 
-	private JSONObject javadocToMainAsJson() throws JSONException, IOException {
-		JSONObject rootObj = new JSONObject(new String(Files.readAllBytes(this.jsonJavaDocPath), "UTF-8"));
-		JSONObject root = rootObj.getJSONObject("root");
-		JSONArray arrayOfPackages = root.getJSONArray("package");
+	protected JsonObject javadocToMainAsJson() throws IOException {
 
-		JSONObject ent = new JSONObject();
+		JsonObject rootObj = Json.parse(new FileReader(this.jsonJavaDocPath.toString())).asObject();
+		JsonValue packages = rootObj.get("root").asObject().get("package").asArray();
 
-		for (int i = 0; i < arrayOfPackages.length(); i++) {
-			JSONObject obj = new JSONObject();
-			obj.put("qualified", arrayOfPackages.getJSONObject(i).getString("name"));
-			obj.put("type", "package");
-			Iterator<?> keys = arrayOfPackages.getJSONObject(i).keys();
-			while (keys.hasNext()) {
-				String key = keys.next().toString();
-				JSONArray entities = arrayOfPackages.getJSONObject(i).optJSONArray(key);
-				if (entities != null) {
-					for (int j = 0; j < entities.length(); j++) {
-						if (entities.optJSONObject(j) != null) {
-
-							if (entities.optJSONObject(j).optString("qualified") != null) {
-								entities.optJSONObject(j).put("type", key);
-								obj.put(entities.getJSONObject(j).getString("qualified"), entities.getJSONObject(j));
-							}
-
-						}
-					}
-				}
-				;
-			}
-			ent.put(arrayOfPackages.getJSONObject(i).getString("name"), obj);
-
+		JsonObject entities_ = Json.object();
+		for (JsonValue item : packages.asArray()) {
+			JsonObject package_ = Json.object().add("qualified", item.asObject().getString("name", "")).add("type",
+					"package");
+			item.asObject().names().stream().filter(name -> item.asObject().get(name).isArray())
+					.forEach(s -> item.asObject().get(s).asArray().forEach(e -> {
+						JsonArray arr = Json.array().asArray();
+						e.asObject().names().stream().filter(modyfiers -> e.asObject().get(modyfiers).isTrue())
+								.forEach(m -> arr.add(m));
+						e.asObject().add("modifiers", (JsonValue) arr).add("type", s);
+						package_.add(e.asObject().getString("qualified", ""), (JsonValue) e.asObject());
+					}));
+			entities_.add(package_.getString("qualified", ""), (JsonValue) package_);
 		}
-
 		rootObj.remove("root");
-		rootObj.put("entities", ent);
+		rootObj.add("entities", (JsonValue) entities_);
 		return rootObj;
 	}
 
-	private JSONObject javadocToIndexAsJson() throws JSONException, IOException {
-		JSONObject rootObj = new JSONObject(new String(Files.readAllBytes(this.jsonJavaDocPath), "UTF-8"));
-		JSONObject root = rootObj.getJSONObject("root");
-		JSONArray arrayOfPackages = root.getJSONArray("package");
+	private JsonObject javadocToIndexAsJson() throws JSONException, IOException {
 
-		JSONObject entities_ = new JSONObject();
-		JSONArray arrayOfPackages_ = new JSONArray();
+		JsonObject rootObj = Json.parse(new FileReader(this.jsonJavaDocPath.toString())).asObject();
+		JsonValue packages = rootObj.get("root").asObject().get("package").asArray();
 
-		for (int i = 0; i < arrayOfPackages.length(); i++) {
+		JsonObject entities = Json.object();
+		JsonArray arrayOfPackages = Json.array().asArray();
+		for (JsonValue item : packages.asArray()) {
+			JsonObject package_ = Json.object();
+			package_.add("name", item.asObject().getString("name", ""));
+			arrayOfPackages.add((JsonValue) package_);
+			JsonArray arrayOfClasses = Json.array().asArray();
 
-			JSONObject package_ = new JSONObject();
+			item.asObject().names().stream().filter(name -> item.asObject().get(name).isArray())
+					.forEach(s -> item.asObject().get(s).asArray().forEach(e -> {
+						JsonObject classes = Json.object().add("name", e.asObject().getString("name", ""))
+								.add("qualified", e.asObject().getString("qualified", "")).add("type", s);
+						arrayOfClasses.add(classes);
 
-			package_.put("name", arrayOfPackages.getJSONObject(i).getString("name"));
-			arrayOfPackages_.put(package_);
-
-			Iterator<?> keys = arrayOfPackages.getJSONObject(i).keys();
-			while (keys.hasNext()) {
-				String key = keys.next().toString();
-				JSONArray entities = arrayOfPackages.getJSONObject(i).optJSONArray(key);
-				if (entities != null) {
-					for (int j = 0; j < entities.length(); j++) {
-						if (entities.optJSONObject(j) != null) {
-
-							if (entities.optJSONObject(j).optString("qualified") != null) {
-								JSONObject class_ = new JSONObject();
-								JSONArray arrayOfClasses = new JSONArray();
-								class_.put("name", entities.getJSONObject(j).getString("name"));
-								class_.put("qualified", entities.getJSONObject(j).getString("qualified"));
-								arrayOfClasses.put(class_);
-								package_.put("children", arrayOfClasses);
-
-							}
-
-						}
-					}
-				}
-				;
-			}
-
+					}));
+			package_.add("children", arrayOfClasses);
 		}
 
-		entities_.put("package", arrayOfPackages_);
+		entities.add("package", arrayOfPackages);
 		rootObj.remove("root");
-		rootObj.put("entities", entities_);
+		rootObj.add("entities", entities);
+
 		return rootObj;
 	}
 
