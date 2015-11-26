@@ -8,23 +8,43 @@ import java.util.List;
  * Contains settings of the application
  */
 public class Settings implements Serializable {
-    private ConfluenceSettings confluenceSettings = new ConfluenceSettings();
+
+    private String confluenceUrl = "";
     private TransformerSettings transformerSettings = new TransformerSettings();
+    private List<Source> sources = new ArrayList<>();
+
+    public Source getSourceByUrl(String url){
+        return sources.stream().filter(source -> source.getUrl().equals(url)).findAny().orElse(null);
+    }
+
+    public boolean isSourceWithUrlExistent(String url){
+        return sources.stream().anyMatch(source -> source.getUrl().equals(url));
+    }
 
 
     public TransformerSettings getTransformerSettings() {
         return transformerSettings;
     }
 
+
+
     public void setTransformerSettings(TransformerSettings transformerSettings) {
         this.transformerSettings = transformerSettings;
     }
 
-    public ConfluenceSettings getConfluenceSettings() {
-        return confluenceSettings;
+    public List<Source> getSources() {
+        return sources;
     }
 
-    public void setConfluenceSettings(ConfluenceSettings confluenceSettings) {
-        this.confluenceSettings = confluenceSettings;
+    public void setSources(List<Source> sources) {
+        this.sources = sources;
+    }
+
+    public String getConfluenceUrl() {
+        return confluenceUrl;
+    }
+
+    public void setConfluenceUrl(String confluenceUrl) {
+        this.confluenceUrl = confluenceUrl;
     }
 }

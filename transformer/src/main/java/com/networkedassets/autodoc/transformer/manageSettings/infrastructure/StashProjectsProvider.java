@@ -5,10 +5,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.api.StashClient;
 import com.networkedassets.autodoc.clients.atlassian.stashData.Repository;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
-import com.networkedassets.autodoc.transformer.settings.Branch;
-import com.networkedassets.autodoc.transformer.settings.Project;
-import com.networkedassets.autodoc.transformer.settings.Repo;
-import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
+import com.networkedassets.autodoc.transformer.settings.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,20 +22,20 @@ import java.util.stream.Collectors;
 public class StashProjectsProvider implements ProjectsProvider {
 
     private static Logger log = LoggerFactory.getLogger(StashProjectsProvider.class);
-    TransformerSettings transformerSettings;
+    Source source;
     StashClient stashClient;
 
-    private Map<String, Project> stashProjects;
+    private Map<String, Project> projects;
 
-    public StashProjectsProvider(TransformerSettings transformerSettings) throws MalformedURLException {
-        this.transformerSettings = transformerSettings;
-        stashClient = StashClientConfigurator.getConfiguredStashClient(transformerSettings);
+    public StashProjectsProvider(Source source) throws MalformedURLException {
+        this.source = source;
+        stashClient = StashClientConfigurator.getConfiguredStashClient(source);
     }
 
     @Override
-    public Map<String, Project> getStashProjects() {
+    public Map<String, Project> getProjects() {
         getDataFromStash();
-        return stashProjects;
+        return projects;
     }
 
     private void getDataFromStash() {
@@ -73,7 +70,7 @@ public class StashProjectsProvider implements ProjectsProvider {
         stashProjects = stashRepositories.stream().map(Repository::getProject)
                 .filter(distinctByField(com.networkedassets.autodoc.clients.atlassian.stashData.Project::getKey))
                 .collect(Collectors.toList());
-        this.stashProjects = translateStashDataToSettingsApi(stashProjects,stashRepositories,stashBranchesMap);
+        this.projects = translateStashDataToSettingsApi(stashProjects,stashRepositories,stashBranchesMap);
     }
 
     private Map<String, Project> translateStashDataToSettingsApi(
