@@ -77,4 +77,10 @@
 		<description>Provides rest endpoints used by Autodoc</description>
 	</rest>
 
+	<macro name="autodoc-dashboard" class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
+		   key="autodocDashboard">
+		<description>Macro element containing the Autodoc Dashboard</description>
+        <parameters/>
+	</macro>
+
 </atlassian-plugin>
