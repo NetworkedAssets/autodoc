@@ -2,6 +2,7 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.clients.atlassian.HttpClientConfig;
 import com.networkedassets.autodoc.clients.atlassian.api.StashClient;
+import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,19 +17,15 @@ import java.net.URL;
 public class StashClientConfigurator {
 
     private static Logger log = LoggerFactory.getLogger(StashClientConfigurator.class);
-    private static StashClient stashClient;
 
-    public static StashClient getConfiguredStashClient(TransformerSettings transformerSettings) throws MalformedURLException {
-        if(stashClient==null){
-            URL stashUrl;
-            stashUrl = new URL(transformerSettings.getStashUrl());
-            stashClient = new StashClient(
-                    new HttpClientConfig(
-                            stashUrl,
-                            transformerSettings.getStashUsername(),
-                            transformerSettings.getStashPassword()));
-            log.debug("Stash client created");
-        }
+    public static StashClient getConfiguredStashClient(Source source) throws MalformedURLException {
+        URL stashUrl = new URL(source.getUrl());
+        StashClient stashClient = new StashClient(
+                new HttpClientConfig(
+                        stashUrl,
+                        source.getUsername(),
+                        source.getPassword()));
+        log.debug("Stash client created");
         return stashClient;
     }
 
