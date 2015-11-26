@@ -9,7 +9,6 @@ import java.util.Collection;
  * Created by mrobakowski on 11/12/2015.
  */
 public interface SettingsProvider {
-    ConfluenceSettings getSettingsForSpace(String spaceKey, String confluenceUrl);
-    Collection<ConfluenceSettings> getSettingsForSpaces();
+    ConfluenceSettings getConfluenceSettings();
     TransformerSettings getTransformerSettings();
 }

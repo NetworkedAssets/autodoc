@@ -3,10 +3,12 @@ package com.networkedassets.autodoc.transformer.settings;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
+import java.io.Serializable;
+
 /**
  * Contains settings for transformer configurable from json API (e.g. from Confluence)
  */
-public class TransformerSettings {
+public class TransformerSettings implements Serializable {
 
     // TODO: 19.11.2015 Remove default values and require user to enter them on first run in frontend
     private  String stashUrl = "http://46.101.240.138:7990";

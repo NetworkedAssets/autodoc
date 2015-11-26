@@ -150,7 +150,7 @@ public class ConfigureServlet extends HttpServlet {
 
             settings.setProjects(projects);
             settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
-            settings.setSpaceKey(spaceKey);
+            //settings.setSpaceKey(spaceKey);
 
             message = OBJECT_MAPPER.writeValueAsString(projects);
 

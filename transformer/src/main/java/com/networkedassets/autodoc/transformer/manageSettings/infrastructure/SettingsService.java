@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.Objects;
 
 /**
  * REST service providing and receiving settings
@@ -32,15 +31,9 @@ public class SettingsService extends RestService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ConfluenceSettings getSettingsForSpace(@QueryParam("spaceKey") String spaceKey,
-												  @QueryParam("confluenceUrl") String confluenceUrl) {
+	public ConfluenceSettings getSettingsForSpace() {
 		log.info("GET request for settings handled");
-        if(Objects.isNull(spaceKey) || Objects.isNull(confluenceUrl)){
-            log.error("Wrong parameters");
-
-            return null;
-        }
-		return settingsProvider.getSettingsForSpace(spaceKey, confluenceUrl);
+		return settingsProvider.getConfluenceSettings();
 	}
 
 	@POST
@@ -48,9 +41,8 @@ public class SettingsService extends RestService {
     @Produces(MediaType.APPLICATION_JSON)
 	public ConfluenceSettings setSettingsForSpace(ConfluenceSettings confluenceSettings) {
 		log.info("POST request for settings handled: " + confluenceSettings.toString());
-		settingsSetter.setSettingsForSpace(confluenceSettings, confluenceSettings.getSpaceKey(),
-				confluenceSettings.getConfluenceUrl());
-		return settingsProvider.getSettingsForSpace(confluenceSettings.getSpaceKey(), confluenceSettings.getConfluenceUrl());
+		settingsSetter.setConfluenceSettings(confluenceSettings);
+		return settingsProvider.getConfluenceSettings();
 	}
 
 

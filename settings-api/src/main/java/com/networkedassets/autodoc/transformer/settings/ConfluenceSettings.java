@@ -38,7 +38,7 @@ public class ConfluenceSettings implements Serializable {
         return projects.get(key);
     }
 
-
+    @JsonIgnore
     public Map<String, Project> getProjectsMap() {
         return projects;
     }

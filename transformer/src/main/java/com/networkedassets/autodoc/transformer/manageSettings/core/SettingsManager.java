@@ -41,33 +41,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         updateSettings();
     }
 
-    private ConfluenceSettings getDefaultSettingsForSpace() {
-        ConfluenceSettings defaultConfluenceSettings = new ConfluenceSettings();
-        updateProjectsFromStash(defaultConfluenceSettings);
-        return defaultConfluenceSettings;
-    }
 
-    private ConfluenceSettings getDefaultSettingsForSpace(String spaceKey, String confluenceUrl) {
-        ConfluenceSettings defaultConfluenceSettings = getDefaultSettingsForSpace();
-        defaultConfluenceSettings.setConfluenceUrl(confluenceUrl);
-        defaultConfluenceSettings.setSpaceKey(spaceKey);
-        return defaultConfluenceSettings;
-    }
-
-    public ConfluenceSettings getSettingsForSpace(String spaceKey, String confluenceUrl) {
+    @Override
+    public ConfluenceSettings getConfluenceSettings() {
         updateSettings();
-        ConfluenceSettings confluenceSettings;
-        confluenceSettings = settings.getConfluenceSettingses().stream().filter(s ->
-                (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)))
-                .findFirst().orElse(getDefaultSettingsForSpace(spaceKey, confluenceUrl));
-
-        return confluenceSettings;
-    }
-
-
-    public List<ConfluenceSettings> getSettingsForSpaces() {
-        updateSettings();
-        return settings.getConfluenceSettingses();
+        return settings.getConfluenceSettings();
     }
 
     @Override
@@ -75,11 +53,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         return settings.getTransformerSettings();
     }
 
-    public void setSettingsForSpace(ConfluenceSettings confluenceSettings, String spaceKey, String confluenceUrl) {
-        settings.getConfluenceSettingses()
-                .removeIf(s -> (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)));
-        settings.getConfluenceSettingses().add(confluenceSettings);
-        updateSettings();
+
+    @Override
+    public void setConfluenceSettings(ConfluenceSettings confluenceSettings) {
+        updateProjectsFromStash(confluenceSettings);
+        settings.setConfluenceSettings(confluenceSettings);
         saveSettingsToFile(settingsFilename);
     }
 
@@ -90,13 +68,12 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
             transformerSettings.setStashPassword(this.getTransformerSettings().getStashPassword());
         }
         settings.setTransformerSettings(transformerSettings);
+        saveSettingsToFile(settingsFilename);
     }
 
     private void updateSettings() {
-        settings.getConfluenceSettingses().stream().forEach((settingsForSpace) -> {
-            updateProjectsFromStash(settingsForSpace);
-            hookActivator.enableAllHooks(settingsForSpace.getProjectsMap());
-        });
+        updateProjectsFromStash(settings.getConfluenceSettings());
+        hookActivator.enableAllHooks(settings.getConfluenceSettings().getProjectsMap());
     }
 
     private void saveSettingsToFile(String filename) {

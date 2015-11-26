@@ -6,5 +6,5 @@ import com.networkedassets.autodoc.transformer.settings.ConfluenceSettings;
 import java.util.Collection;
 
 public interface DocumentationSender {
-    void send(Documentation documentation, Collection<ConfluenceSettings> interestedSpaces);
+    void send(Documentation documentation, ConfluenceSettings confluenceSettings);
 }

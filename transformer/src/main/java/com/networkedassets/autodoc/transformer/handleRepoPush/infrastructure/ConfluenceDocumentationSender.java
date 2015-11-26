@@ -18,31 +18,26 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
     private String password = "admin";
 
     @Override
-    public void send(Documentation documentation, Collection<ConfluenceSettings> interestedSpaces) {
-        if (interestedSpaces.isEmpty()) return;
+    public void send(Documentation documentation, ConfluenceSettings confluenceSettings) {
 
-        final Set<String> confluenceUrls = interestedSpaces.stream().map(ConfluenceSettings::getConfluenceUrl)
-                .collect(Collectors.toSet());
-
-        for (String url : confluenceUrls) {
-            url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
-            for (DocumentationPiece docPiece : documentation.getPieces()) {
-                try {
-                    System.out.println(Unirest.post(
-                            String.format(confluenceEndpointFormat, url,
-                                    documentation.getProject(),
-                                    documentation.getRepo(),
-                                    documentation.getBranch(),
-                                    docPiece.getPieceName()))
-                            .basicAuth(username, password)
-                            .queryString("docType", documentation.getType())
-                            .queryString("pieceType", docPiece.getPieceType())
-                            .header("Content-Type", "application/json")
-                            .body(docPiece.getContent())
-                            .asString().getBody());
-                } catch (UnirestException e) {
-                    throw new RuntimeException(e);
-                }
+        String url = confluenceSettings.getConfluenceUrl();
+        url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        for (DocumentationPiece docPiece : documentation.getPieces()) {
+            try {
+                System.out.println(Unirest.post(
+                        String.format(confluenceEndpointFormat, url,
+                                documentation.getProject(),
+                                documentation.getRepo(),
+                                documentation.getBranch(),
+                                docPiece.getPieceName()))
+                        .basicAuth(username, password)
+                        .queryString("docType", documentation.getType())
+                        .queryString("pieceType", docPiece.getPieceType())
+                        .header("Content-Type", "application/json")
+                        .body(docPiece.getContent())
+                        .asString().getBody());
+            } catch (UnirestException e) {
+                throw new RuntimeException(e);
             }
         }
     }
