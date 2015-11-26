@@ -2,7 +2,7 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
-import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
+import com.networkedassets.autodoc.transformer.settings.ConfluenceSettings;
 import com.networkedassets.autodoc.transformer.util.RestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Objects;
 
 /**
@@ -33,8 +32,8 @@ public class SettingsService extends RestService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public SettingsForSpace getSettingsForSpace(@QueryParam("spaceKey") String spaceKey,
-			@QueryParam("confluenceUrl") String confluenceUrl) {
+	public ConfluenceSettings getSettingsForSpace(@QueryParam("spaceKey") String spaceKey,
+												  @QueryParam("confluenceUrl") String confluenceUrl) {
 		log.info("GET request for settings handled");
         if(Objects.isNull(spaceKey) || Objects.isNull(confluenceUrl)){
             log.error("Wrong parameters");
@@ -47,11 +46,11 @@ public class SettingsService extends RestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-	public SettingsForSpace setSettingsForSpace(SettingsForSpace settingsForSpace) {
-		log.info("POST request for settings handled: " + settingsForSpace.toString());
-		settingsSetter.setSettingsForSpace(settingsForSpace, settingsForSpace.getSpaceKey(),
-				settingsForSpace.getConfluenceUrl());
-		return settingsProvider.getSettingsForSpace(settingsForSpace.getSpaceKey(), settingsForSpace.getConfluenceUrl());
+	public ConfluenceSettings setSettingsForSpace(ConfluenceSettings confluenceSettings) {
+		log.info("POST request for settings handled: " + confluenceSettings.toString());
+		settingsSetter.setSettingsForSpace(confluenceSettings, confluenceSettings.getSpaceKey(),
+				confluenceSettings.getConfluenceUrl());
+		return settingsProvider.getSettingsForSpace(confluenceSettings.getSpaceKey(), confluenceSettings.getConfluenceUrl());
 	}
 
 

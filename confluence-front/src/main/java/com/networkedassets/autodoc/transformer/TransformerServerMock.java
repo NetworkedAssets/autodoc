@@ -8,7 +8,7 @@ import java.time.Period;
 import java.util.List;
 
 public class TransformerServerMock {
-    public static final SettingsForSpace settings = new SettingsForSpace() {
+    public static final ConfluenceSettings settings = new ConfluenceSettings() {
         @Override
         public List<Project> getProjects() {
             return getProjectsMocked();
@@ -54,7 +54,7 @@ public class TransformerServerMock {
         return new Response(settings, null);
     }
 
-    public void saveSettingsForSpace(SettingsForSpace settings, String spaceKey) {
+    public void saveSettingsForSpace(ConfluenceSettings settings, String spaceKey) {
 
     }
 

@@ -17,8 +17,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
 
 /**
  * Handles the settings of the application
@@ -43,33 +41,33 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         updateSettings();
     }
 
-    private SettingsForSpace getDefaultSettingsForSpace() {
-        SettingsForSpace defaultSettingsForSpace = new SettingsForSpace();
-        updateProjectsFromStash(defaultSettingsForSpace);
-        return defaultSettingsForSpace;
+    private ConfluenceSettings getDefaultSettingsForSpace() {
+        ConfluenceSettings defaultConfluenceSettings = new ConfluenceSettings();
+        updateProjectsFromStash(defaultConfluenceSettings);
+        return defaultConfluenceSettings;
     }
 
-    private SettingsForSpace getDefaultSettingsForSpace(String spaceKey, String confluenceUrl) {
-        SettingsForSpace defaultSettingsForSpace = getDefaultSettingsForSpace();
-        defaultSettingsForSpace.setConfluenceUrl(confluenceUrl);
-        defaultSettingsForSpace.setSpaceKey(spaceKey);
-        return defaultSettingsForSpace;
+    private ConfluenceSettings getDefaultSettingsForSpace(String spaceKey, String confluenceUrl) {
+        ConfluenceSettings defaultConfluenceSettings = getDefaultSettingsForSpace();
+        defaultConfluenceSettings.setConfluenceUrl(confluenceUrl);
+        defaultConfluenceSettings.setSpaceKey(spaceKey);
+        return defaultConfluenceSettings;
     }
 
-    public SettingsForSpace getSettingsForSpace(String spaceKey, String confluenceUrl) {
+    public ConfluenceSettings getSettingsForSpace(String spaceKey, String confluenceUrl) {
         updateSettings();
-        SettingsForSpace settingsForSpace;
-        settingsForSpace = settings.getSettingsForSpaces().stream().filter(s ->
+        ConfluenceSettings confluenceSettings;
+        confluenceSettings = settings.getConfluenceSettingses().stream().filter(s ->
                 (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)))
                 .findFirst().orElse(getDefaultSettingsForSpace(spaceKey, confluenceUrl));
 
-        return settingsForSpace;
+        return confluenceSettings;
     }
 
 
-    public List<SettingsForSpace> getSettingsForSpaces() {
+    public List<ConfluenceSettings> getSettingsForSpaces() {
         updateSettings();
-        return settings.getSettingsForSpaces();
+        return settings.getConfluenceSettingses();
     }
 
     @Override
@@ -77,10 +75,10 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         return settings.getTransformerSettings();
     }
 
-    public void setSettingsForSpace(SettingsForSpace settingsForSpace, String spaceKey, String confluenceUrl) {
-        settings.getSettingsForSpaces()
+    public void setSettingsForSpace(ConfluenceSettings confluenceSettings, String spaceKey, String confluenceUrl) {
+        settings.getConfluenceSettingses()
                 .removeIf(s -> (s.getSpaceKey().equals(spaceKey) && s.getConfluenceUrl().equals(confluenceUrl)));
-        settings.getSettingsForSpaces().add(settingsForSpace);
+        settings.getConfluenceSettingses().add(confluenceSettings);
         updateSettings();
         saveSettingsToFile(settingsFilename);
     }
@@ -95,7 +93,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
     }
 
     private void updateSettings() {
-        settings.getSettingsForSpaces().stream().forEach((settingsForSpace) -> {
+        settings.getConfluenceSettingses().stream().forEach((settingsForSpace) -> {
             updateProjectsFromStash(settingsForSpace);
             hookActivator.enableAllHooks(settingsForSpace.getProjectsMap());
         });
@@ -147,16 +145,16 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
     }
 
     @SuppressWarnings("CodeBlock2Expr")
-    private void updateProjectsFromStash(@Nonnull SettingsForSpace settingsForSpace) {
+    private void updateProjectsFromStash(@Nonnull ConfluenceSettings confluenceSettings) {
         //Get projects from stash
         Map<String, Project> stashProjects = projectsProvider.getStashProjects();
 
         //Delete projects, repos and branches in settings, that don't exist in stash (anymore)
-        settingsForSpace.getProjects().removeIf(project -> !stashProjects.containsKey(project.key));
-        settingsForSpace.getProjects().forEach(project ->
+        confluenceSettings.getProjects().removeIf(project -> !stashProjects.containsKey(project.key));
+        confluenceSettings.getProjects().forEach(project ->
                 project.repos.values().removeIf(repo ->
                         !stashProjects.get(project.key).repos.containsKey(repo.slug)));
-        settingsForSpace.getProjects().forEach(project ->
+        confluenceSettings.getProjects().forEach(project ->
                 project.repos.values().forEach(repo ->
                         repo.branches.values().removeIf(branch ->
                                 !stashProjects.get(project.key)
@@ -165,18 +163,18 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
 
         //Add new branches, repos, and projects from stash
         stashProjects.values().forEach(stashProject -> {
-            settingsForSpace.getProjectsMap().putIfAbsent(stashProject.key, stashProject);
+            confluenceSettings.getProjectsMap().putIfAbsent(stashProject.key, stashProject);
         });
         stashProjects.values().forEach(stashProject -> {
             stashProject.repos.values().forEach(stashRepo -> {
-                settingsForSpace.getProjectByKey(stashProject.key)
+                confluenceSettings.getProjectByKey(stashProject.key)
                         .repos.putIfAbsent(stashRepo.slug, stashRepo);
             });
         });
         stashProjects.values().forEach(stashProject -> {
             stashProject.repos.values().forEach(stashRepo -> {
                 stashRepo.branches.values().forEach(stashBranch -> {
-                    settingsForSpace.getProjectByKey(stashProject.key)
+                    confluenceSettings.getProjectByKey(stashProject.key)
                             .getRepoBySlug(stashRepo.slug)
                             .branches.putIfAbsent(stashBranch.id, stashBranch);
                 });
@@ -185,7 +183,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
 
         //Update changed non-indexing data
         stashProjects.values().forEach(stashProject -> {
-            Project project = settingsForSpace.getProjectByKey(stashProject.key);
+            Project project = confluenceSettings.getProjectByKey(stashProject.key);
             if (!project.name.equals(stashProject.name)) {
                 project.name = stashProject.name;
             }
@@ -193,7 +191,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         stashProjects.values().forEach(stashProject -> {
             stashProject.repos.values().forEach(stashRepo -> {
                 stashRepo.branches.values().forEach(stashBranch -> {
-                    Branch branch = settingsForSpace.getProjectByKey(stashProject.key)
+                    Branch branch = confluenceSettings.getProjectByKey(stashProject.key)
                             .getRepoBySlug(stashRepo.slug)
                             .getBranchById(stashBranch.id);
                     if (!branch.displayId.equals(stashBranch.displayId)) {

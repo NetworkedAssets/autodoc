@@ -4,9 +4,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.networkedassets.autodoc.transformer.Response;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
-import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
+import com.networkedassets.autodoc.transformer.settings.ConfluenceSettings;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,12 +56,12 @@ public class TransformerServer {
     }
 
     public Response getSettingsForSpace(String spaceKey) throws SettingsException {
-        HttpResponse<SettingsForSpace> response;
+        HttpResponse<ConfluenceSettings> response;
         try {
             response = Unirest.get(url + SETTINGS)
                     .queryString("spaceKey", spaceKey)
                     .queryString("confluenceUrl", confluenceUrl)
-                    .asObject(SettingsForSpace.class);
+                    .asObject(ConfluenceSettings.class);
         } catch (UnirestException e) {
             SettingsException up = new SettingsException(e);
             throw up; // heh
@@ -79,7 +78,7 @@ public class TransformerServer {
         return new Response(response.getBody(), raw);
     }
 
-    public void saveSettingsForSpace(SettingsForSpace settings, String spaceKey) throws SettingsException {
+    public void saveSettingsForSpace(ConfluenceSettings settings, String spaceKey) throws SettingsException {
         HttpResponse<String> response;
         try {
             if (confluenceUrl != null) {

@@ -3,7 +3,7 @@ package com.networkedassets.autodoc.transformer.handleRepoPush.core;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
-import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
+import com.networkedassets.autodoc.transformer.settings.ConfluenceSettings;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
 import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
@@ -42,7 +42,7 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 		String repoSlug = pushEvent.getRepositorySlug();
 		String branchId = pushEvent.getBranchId();
 
-		Collection<SettingsForSpace> interestedSpaces = settingsProvider.getSettingsForSpaces().stream()
+		Collection<ConfluenceSettings> interestedSpaces = settingsProvider.getSettingsForSpaces().stream()
 				.filter(s -> s.getProjectByKey(projectKey).getRepoBySlug(repoSlug).getBranchById(branchId).isListened)
 				.collect(Collectors.toList());
 

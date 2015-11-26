@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.transformer.settings;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.MoreObjects;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -12,13 +13,13 @@ import java.util.stream.Collectors;
 /**
  * Contains settings for one space
  */
-public class SettingsForSpace implements Serializable {
+public class ConfluenceSettings implements Serializable {
 
     private Map<String, Project> projects = new HashMap<>();
-    private ConfluenceSpace confluenceSpace = new ConfluenceSpace();
+    private String confluenceUrl = "";
 
     /**
-     * Do not add projects using <code>getProjects().add(...)</code>, use {@link SettingsForSpace#addProject(Project)}.
+     * Do not add projects using <code>getProjects().add(...)</code>, use {@link ConfluenceSettings#addProject(Project)}.
      * However, you can remove elements
      */
     public Collection<Project> getProjects() {
@@ -37,33 +38,6 @@ public class SettingsForSpace implements Serializable {
         return projects.get(key);
     }
 
-    @JsonIgnore
-    public String getSpaceKey() {
-        return confluenceSpace.getSpaceKey();
-    }
-
-    @JsonIgnore
-    public void setSpaceKey(String spaceKey) {
-        confluenceSpace.setSpaceKey(spaceKey);
-    }
-
-    @JsonIgnore
-    public String getConfluenceUrl() {
-        return confluenceSpace.getConfluenceUrl();
-    }
-
-    @JsonIgnore
-    public void setConfluenceUrl(String confluenceUrl) {
-        confluenceSpace.setConfluenceUrl(confluenceUrl);
-    }
-
-    public ConfluenceSpace getConfluenceSpace() {
-        return confluenceSpace;
-    }
-
-    public void setConfluenceSpace(ConfluenceSpace confluenceSpace) {
-        this.confluenceSpace = confluenceSpace;
-    }
 
     public Map<String, Project> getProjectsMap() {
         return projects;
@@ -71,9 +45,17 @@ public class SettingsForSpace implements Serializable {
 
     @Override
     public String toString() {
-        return com.google.common.base.MoreObjects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("projects", projects)
-                .add("confluenceSpace", confluenceSpace)
+                .add("confluenceUrl", confluenceUrl)
                 .toString();
+    }
+
+    public String getConfluenceUrl() {
+        return confluenceUrl;
+    }
+
+    public void setConfluenceUrl(String confluenceUrl) {
+        this.confluenceUrl = confluenceUrl;
     }
 }

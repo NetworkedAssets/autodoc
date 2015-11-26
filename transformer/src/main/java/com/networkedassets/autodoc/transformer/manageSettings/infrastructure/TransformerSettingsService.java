@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
  */
 
 @Path("/settings/transformer")
-public class TransformerSettingsService extends RestService{
+public class TransformerSettingsService {
 
     static final Logger log = LoggerFactory.getLogger(TransformerSettingsService.class);
     private SettingsProvider settingsProvider;

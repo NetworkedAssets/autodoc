@@ -18,7 +18,7 @@ import com.networkedassets.autodoc.transformer.Response;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
-import com.networkedassets.autodoc.transformer.settings.SettingsForSpace;
+import com.networkedassets.autodoc.transformer.settings.ConfluenceSettings;
 import org.apache.velocity.context.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +83,7 @@ public class ConfigureServlet extends HttpServlet {
         }
     }
 
-    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, SettingsForSpace settings,
+    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, ConfluenceSettings settings,
                                        String message)
             throws IOException, ServletException {
 
@@ -114,7 +114,7 @@ public class ConfigureServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String message = "";
-        SettingsForSpace settings = new SettingsForSpace();
+        ConfluenceSettings settings = new ConfluenceSettings();
         try {
             Response settingsForSpace = transformerServer.getSettingsForSpace(getSpaceKey(req));
             message = settingsForSpace.raw;
@@ -141,7 +141,7 @@ public class ConfigureServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String newSettings = req.getParameter("newSettings");
         String eventToSend = req.getParameter("event");
-        SettingsForSpace settings = new SettingsForSpace();
+        ConfluenceSettings settings = new ConfluenceSettings();
         String spaceKey = getSpaceKey(req);
         String message = "";
 
