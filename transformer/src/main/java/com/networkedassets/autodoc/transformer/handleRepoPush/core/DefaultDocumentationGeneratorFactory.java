@@ -9,7 +9,7 @@ public class DefaultDocumentationGeneratorFactory implements DocumentationGenera
         switch (type) {
             case JAVADOC:
                 return new JavadocGenerator();
-            case UML_CLASS_DIAGRAM:
+            case UML:
                 return new UmlGenerator();
             default:
                 return null;

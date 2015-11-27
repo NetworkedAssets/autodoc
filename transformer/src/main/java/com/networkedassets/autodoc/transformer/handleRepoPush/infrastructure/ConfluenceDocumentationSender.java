@@ -7,13 +7,9 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.settings.ConfluenceSettings;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 // TODO: go back to this class, when Confluence side of things is implemented
 public class ConfluenceDocumentationSender implements DocumentationSender {
-    private static final String confluenceEndpointFormat = "%s/rest/autodoc/1.0/documentation/%s/%s/%s/%s";
+    private static final String confluenceEndpointFormat = "%s/rest/autodoc/1.0/documentation/%s/%s/%s/%s/%s";
     private String username = "mrobakowski";
     private String password = "admin";
 
@@ -24,12 +20,14 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
         url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
         for (DocumentationPiece docPiece : documentation.getPieces()) {
             try {
-                System.out.println(Unirest.post(
-                        String.format(confluenceEndpointFormat, url,
-                                documentation.getProject(),
-                                documentation.getRepo(),
-                                documentation.getBranch(),
-                                docPiece.getPieceName()))
+                String requestUrl = String.format(confluenceEndpointFormat, url,
+                        documentation.getProject(),
+                        documentation.getRepo(),
+                        documentation.getBranch(),
+                        documentation.getType(),
+                        docPiece.getPieceName());
+                System.out.println("request url: " + requestUrl);
+                System.out.println(Unirest.post(requestUrl)
                         .basicAuth(username, password)
                         .queryString("docType", documentation.getType())
                         .queryString("pieceType", docPiece.getPieceType())

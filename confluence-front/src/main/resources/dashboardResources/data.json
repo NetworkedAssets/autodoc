@@ -1,0 +1,152 @@
+{
+  "entities":{
+    "mammal":{
+      "name":"Mammal",
+      "fullname":"org.na.Mammal",
+      "type":"interface",
+      "attributes":[
+
+      ],
+      "methods":[
+        "+ĄŚŻźŹWWWWWWWWWWWWWWWWWWW",
+        "+_setDateOfBirth(dob: Date): Void",
+        "+ getAgeAsDays(): Numeric"
+      ],
+      "size":{
+        "width":null,
+        "height":null
+      },
+      "position":{
+        "x":null,
+        "y":null
+      }
+    },
+    "person":{
+      "name":"Person",
+      "fullname":"org.na.Person",
+      "type":"abstract",
+      "attributes":[
+        "firstName: String",
+        "lastName: String"
+      ],
+      "methods":[
+        "+ setName(first: String, last: String): Void",
+        "+ getName(): String"
+      ],
+      "size":{
+        "width":null,
+        "height":null
+      },
+      "position":{
+        "x":null,
+        "y":null
+      }
+    },
+    "bloodgroup":{
+      "name":"Bloodgroup",
+      "fullname":"org.na.Bloodgroup",
+      "type":"class",
+      "attributes":[
+        "bloodGroup: String"
+      ],
+      "methods":[
+        "+ isCompatible(bG: String): Boolean"
+      ],
+      "size":{
+        "width":null,
+        "height":null
+      },
+      "position":{
+        "x":null,
+        "y":null
+      }
+    },
+    "man":{
+      "name":"Man",
+      "fullname":"org.na.Man",
+      "type":"class",
+      "attributes":[
+
+      ],
+      "methods":[
+
+      ],
+      "size":{
+        "width":null,
+        "height":null
+      },
+      "position":{
+        "x":null,
+        "y":null
+      }
+    },
+    "woman":{
+      "name":"Woman",
+      "fullname":"org.na.Woman",
+      "type":"class",
+      "attributes":[
+
+      ],
+      "methods":[
+        "+ giveABirth(): Person []"
+      ],
+      "size":{
+        "width":null,
+        "height":null
+      },
+      "position":{
+        "x":null,
+        "y":null
+      }
+    },
+    "address":{
+      "name":"Address",
+      "fullname":"org.na.Address",
+      "type":"class",
+      "attributes":[
+        "houseNumber: Integer",
+        "streetName: String",
+        "town: String",
+        "postcode: String"
+      ],
+      "methods":[
+
+      ],
+      "size":{
+        "width":null,
+        "height":null
+      },
+      "position":{
+        "x":null,
+        "y":null
+      }
+    }
+  },
+  "relations":[
+    {
+      "source":"mammal",
+      "target":"person",
+      "type":"implementation"
+    },
+    {
+      "source":"man",
+      "target":"person",
+      "type":"generalization"
+    },
+    {
+      "source":"woman",
+      "target":"person",
+      "type":"generalization"
+    },
+    {
+      "source":"person",
+      "target":"address",
+      "type":"aggregation"
+    },
+    {
+      "source":"person",
+      "target":"bloodgroup",
+      "type":"composition"
+    }
+  ]
+}

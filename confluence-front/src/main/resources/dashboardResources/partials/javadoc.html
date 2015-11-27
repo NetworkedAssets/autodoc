@@ -1,0 +1,19 @@
+<div class="javadoc">
+    <aside class="doc_tree">
+        <h1 class="aui-nav-heading">Reference</h1>
+        <ul>
+            <li ng-repeat="item in vm.items" class="" ng-include="'partials/javadoc.menuitem.html'"></li>
+        </ul>
+    </aside>
+    <div class="javadoc_container">
+        <div ng-hide="$state.includes('javadoc.entity')" class="aui-page-panel">
+            <h1>Package list</h1>
+            <ul>
+                <li ng-repeat="item in vm.items" class="">
+                    <a ui-sref="javadoc.entity({name: item.name})">{{item.name}}</a>
+                </li>
+            </ul>
+        </div>
+        <div ng-show="$state.includes('javadoc.entity')" id="doc_javadoc_main" class=" aui-page-panel" ui-view></div>
+    </div>
+</div>

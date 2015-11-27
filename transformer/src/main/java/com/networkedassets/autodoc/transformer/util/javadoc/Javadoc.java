@@ -1,5 +1,10 @@
 package com.networkedassets.autodoc.transformer.util.javadoc;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,12 +18,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 
 /**
  * Javadoc wrapper for generating javadoc pages TODO: Change all the printlns to
@@ -125,13 +124,16 @@ public class Javadoc {
 	 */
 	public void generate(@Nullable String docletPath, @Nullable String docletClass) throws JavadocException {
 		createDirectoryIfNecessary(javadocDirectory);
-		Stream<String> args = !Strings.isNullOrEmpty(docletPath)
+		Stream<String> args = Strings.isNullOrEmpty(docletPath)
 				? Stream.concat(Stream.of(javadocExecutablePath, "-d", javadocDirectory.toString()),
 						sourceFiles.stream().map(Path::toString))
 				: Stream.concat(Stream.of(javadocExecutablePath, "-doclet", docletClass, "-docletpath", docletPath, // javadoc
 						"-d", javadocDirectory.toString()), sourceFiles.stream().map(Path::toString));
 
-		ProcessBuilder javadocProcessBuilder = new ProcessBuilder(args.toArray(String[]::new))
+        String[] command = args.toArray(String[]::new);
+        System.out.println("Args: " + Joiner.on(" ").join(command));
+
+        ProcessBuilder javadocProcessBuilder = new ProcessBuilder(command)
 				.redirectErrorStream(true);
 
 		System.out.println("Generating javadoc...");

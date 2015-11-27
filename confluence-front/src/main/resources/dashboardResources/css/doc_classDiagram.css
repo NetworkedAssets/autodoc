@@ -1,0 +1,81 @@
+#doc_classDiagram_paper {
+    width: 100%;
+}
+
+.doc_classDiagram {
+    position: relative;
+    cursor: move;
+}
+
+.doc_classDiagram .controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-family: sans-serif;
+}
+
+.doc_classDiagram .controls span {
+    border-radius: 0.5em;
+    display: inline-block;
+    padding: 0.3em;
+    margin: 0.5em;
+    background: rgba(0,0,0,0.8);
+    color: #fff;
+    cursor: pointer;
+}
+
+.doc_classDiagram .link-tools .tool-remove,
+.doc_classDiagram .link-tools .tool-options,
+.doc_classDiagram .link .marker-arrowheads,
+.doc_classDiagram .link .connection-wrap { display: none; }
+
+.doc_classDiagram svg {
+    width: 100%;
+    height: 100%;
+}
+
+
+.node rect,
+.node circle,
+.node ellipse,
+.node polygon {
+    stroke: #333;
+    fill: #fff9e0;
+    stroke-width: 1.5px;
+}
+
+.edgePath path {
+    stroke: #333;
+    fill: #333;
+    stroke-width: 1.5px;
+}
+
+.doc_classDiagram svg {
+    min-height: 800px;
+}
+
+.doc_classDiagram rect.head {
+    fill: #fff990;
+}
+
+.doc_classDiagram text.head {
+    font-weight: bold;
+}
+
+.doc_classDiagram .abstract {
+    font-style: italic;
+}
+
+.doc_classDiagram .static {
+    text-decoration: underline;
+}
+
+.doc_classDiagram g.edgePath path.path {
+    stroke: #999;
+    stroke-width: 3px;
+}
+
+.doc_classDiagram g.edgePath:hover path.path {
+    stroke: #06c;
+    stroke-width: 3px;
+}

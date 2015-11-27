@@ -1,0 +1,76 @@
+<div id="doc_content" class="aui-page-panel-inner">
+    <section class="aui-page-panel-content elem">
+        <span class="modifiers">
+            <span ng-repeat="modifier in vm.entity.modifiers" class="modifier {{vm.modifier}}">{{vm.modifier}}</span>
+        </span>
+        <h1 class="aui-page-header-main name {{vm.entity.modifiers.join(' ')}}">{{vm.entity.name}}</h1>
+        <ol class="aui-nav aui-nav-breadcrumbs">
+            <li ng-repeat="package in entity.packages"><a href="#">{{vm.package.name}}</a></li>
+        </ol>
+        <p>{{vm.entity.summary}}</p>
+
+        <div class="doc_panel elems {{elementGroup.type}}s" ng-repeat="elementGroup in vm.entity.elements">
+            <h2>{{elementGroup.type}}s<!--{{(elementGroup.elements.length > 1)?'s':''}}--></h2>
+
+            <div class="elem {{elementGroup.type}} {{element.modifiers.join(' ')}} ng-class-even: 'even';"
+                 ng-repeat="element in elementGroup.elements">
+                <span class="toggle" ng-show="vm.element.details" title="Show/hide details"><span
+                        class="aui-icon aui-icon-small aui-iconfont-arrow-{{element.detailsVisible?'up':'down'}}"
+                        ng-click="toggleDetails(element)"></span></span>
+                <span class="modifiers">
+                    <span ng-repeat="modifier in element.modifiers" class="modifier {{modifier}}">{{modifier}}</span>
+                    <span class="type" ng-show="element.type" doc-qname="element.type"></span>
+                </span>
+                <span class="nameAndDescription">
+                    <span class="name">{{element.name}}</span><!--
+                    --><span class="parameters" ng-show="element.parameter"><span class="parenthesis">(</span><!--
+                        --><span ng-repeat="parameter in element.parameter" class="parameter"><!--
+                            --><span class="type" doc-qname="parameter.type"></span><!--
+                            --><span class="parameterName">{{parameter.name}}</span><!--
+                            --><span ng-if="!$last" class="comma">, </span><!--
+                        --></span><span class="parenthesis">)</span><!--
+                    --></span><br>
+                    <span class="descr">{{element.summary}}</span>
+                </span>
+
+                <div class="details" ng-show="element.detailsVisible">
+                    <h3>Details</h3>
+
+                    <div class="content" ng-bind-html="element.detailsSafe"></div>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="doc_panel elems methods">-->
+            <!--<div class="elem method {{method.modifiers.join(' ')}} ng-class-even: 'even';"-->
+                 <!--ng-repeat="method in entity.elements.methods">-->
+                <!--<span class="toggle" ng-show="method.details" title="Show/hide details"><span-->
+                        <!--class="aui-icon aui-icon-small aui-iconfont-arrow-{{method.detailsVisible?'up':'down'}}"-->
+                        <!--ng-click="toggleDetails(method)"></span></span>-->
+                <!--<span class="modifiers">-->
+                    <!--<span ng-repeat="modifier in method.modifiers" class="modifier {{modifier}}">{{modifier}}</span>-->
+                    <!--<span class="type" doc-qname="method.type"></span>-->
+                <!--</span>-->
+                <!--<span class="nameAndDescription">-->
+                    <!--<span class="name">{{method.name}}</span>&lt;!&ndash;-->
+                    <!--&ndash;&gt;<span class="parameters"><span class="parenthesis">(</span>&lt;!&ndash;-->
+                        <!--&ndash;&gt;<span ng-repeat="parameter in method.parameter" class="parameter"><span ng-if="$index>0"-->
+                                                                                                 <!--class="comma">, </span>&lt;!&ndash;-->
+                            <!--&ndash;&gt;<span class="type">{{parameter.type}}</span>&lt;!&ndash;-->
+                            <!--&ndash;&gt;<span class="parameterName">{{parameter.name}}</span>&lt;!&ndash;-->
+                        <!--&ndash;&gt;</span><span class="parenthesis">)</span>&lt;!&ndash;-->
+                    <!--&ndash;&gt;</span><br>-->
+                    <!--<span class="descr">{{method.summary}}</span>-->
+                <!--</span>-->
+
+                <!--<div class="details" ng-show="method.detailsVisible">-->
+                    <!--<h3>Details</h3>-->
+
+                    <!--<div class="content" ng-bind-html="method.detailsSafe"></div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+
+    </section>
+</div>

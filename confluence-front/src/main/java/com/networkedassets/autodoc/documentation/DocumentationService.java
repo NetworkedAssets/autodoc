@@ -2,7 +2,6 @@ package com.networkedassets.autodoc.documentation;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.networkedassets.util.functional.Optionals;
 import net.java.ao.Query;
 
@@ -22,15 +21,16 @@ public class DocumentationService {
         this.ao = ao;
     }
 
-    @Path("{project}/{repo}/{branch}")
+    @Path("{project}/{repo}/{branch}/{doctype}")
     @GET
     public String getDocumentationPiecesForProject(
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
-            @QueryParam("docType") String docType) {
+            @PathParam("doctype") String doctype) {
+        if ("uml".equalsIgnoreCase(doctype)) return getDocumentationPiece(project, repo, branch, doctype, "all");
         return ao.executeInTransaction(() ->
-                getDocumentation(project, repo, branch, docType)
+                getDocumentation(project, repo, branch, doctype)
                         .map(d -> "{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
                                 .join(Arrays.asList(d.getDocumentationPieces())
                                         .stream()
@@ -41,18 +41,17 @@ public class DocumentationService {
                         .orElse("{\"success\": false, \"message\": \"Could not find requested documentation!\"}"));
     }
 
-    @Path("{project}/{repo}/{branch}/{docPieceName}")
+    @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
     @GET
     public String getDocumentationPiece(
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
-            @QueryParam("docType") String docType,
-            @PathParam("docPieceName") String docPieceName,
-            @QueryParam("pieceType") String pieceType) {
+            @PathParam("doctype") String docType,
+            @PathParam("docPieceName") String docPieceName) {
         return ao.executeInTransaction(() ->
                 getDocumentation(project, repo, branch, docType)
-                        .flatMap(d -> getDocumentationPiece(d, docPieceName, pieceType))
+                        .flatMap(d -> getDocumentationPiece(d, docPieceName))
                         .map(this::makeDocPieceJson)
                         .orElse("{\"success\": false, \"message\": \"Could not find requested documentation!\"}"));
     }
@@ -65,20 +64,18 @@ public class DocumentationService {
         return Optionals.fromArrayOfOne(documentations);
     }
 
-    public Optional<DocumentationPiece> getDocumentationPiece(Documentation doc, String docPieceName, String pieceType) {
+    public Optional<DocumentationPiece> getDocumentationPiece(Documentation doc, String docPieceName) {
         DocumentationPiece[] pieces = ao.find(DocumentationPiece.class, Query.select()
-                .where("DOCUMENTATION_ID = ? AND PIECE_NAME = ? AND PIECE_TYPE = ?", doc.getID(), docPieceName, pieceType));
+                .where("DOCUMENTATION_ID = ? AND PIECE_NAME = ?", doc.getID(), docPieceName));
 
         return Optionals.fromArrayOfOne(pieces);
     }
 
     private String makeDocPieceJson(DocumentationPiece dp) {
         return dp.getContent();
-//        return "{\"success\": true, \"pieceName\": \"" + dp.getPieceName() + "\", \"pieceType\": \"" + dp.getPieceType() + "\"," +
-//                "\"content\": \"" + dp.getContent() + "\"}";
     }
 
-    @Path("{project}/{repo}/{branch}/{docPieceName}")
+    @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     public String postDocPiece(
@@ -86,13 +83,10 @@ public class DocumentationService {
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
-            @QueryParam("docType") String docType,
+            @PathParam("doctype") String docType,
             @PathParam("docPieceName") String docPieceName,
             @QueryParam("pieceType") String pieceType,
             String content) {
-        Preconditions.checkNotNull(docType);
-        Preconditions.checkNotNull(pieceType);
-
         return ao.executeInTransaction(() -> {
             Documentation doc = findOrCreateDocumentation(project, repo, branch, docType);
             DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceName, pieceType);
@@ -118,7 +112,7 @@ public class DocumentationService {
     }
 
     public DocumentationPiece findOrCreateDocumentationPiece(Documentation doc, String docPieceName, String pieceType) {
-        return getDocumentationPiece(doc, docPieceName, pieceType).orElseGet(() -> {
+        return getDocumentationPiece(doc, docPieceName).orElseGet(() -> {
             DocumentationPiece piece = ao.create(DocumentationPiece.class);
             piece.setDocumentation(doc);
             piece.setPieceName(docPieceName);

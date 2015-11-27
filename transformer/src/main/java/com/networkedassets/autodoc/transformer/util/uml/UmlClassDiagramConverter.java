@@ -1,14 +1,5 @@
 package com.networkedassets.autodoc.transformer.util.uml;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import org.json.JSONException;
-
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
@@ -19,6 +10,14 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationType;
 import com.networkedassets.autodoc.transformer.util.javadoc.JavadocConverter;
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class UmlClassDiagramConverter extends JavadocConverter {
 
@@ -37,7 +36,7 @@ public class UmlClassDiagramConverter extends JavadocConverter {
 		List<String> target = Lists.newArrayList();
 		javadocObj.get("entities").asObject().names().stream()
 				.map(n -> javadocObj.get("entities").asObject().get(n).asObject().names())
-				.forEach(p -> target.addAll(p));
+				.forEach(target::addAll);
 
 		umlObj.get("relations").asArray().forEach(item -> {
 			if (target.contains(item.asObject().getString("target", ""))) {
@@ -48,10 +47,9 @@ public class UmlClassDiagramConverter extends JavadocConverter {
 		javadocObj.add("relations", output);
 
 		Documentation documentation = new Documentation(ImmutableList.of(
-				new DocumentationPiece("MAIN_PIECE", "MAIN_PIECE", javadocObj.toString(WriterConfig.PRETTY_PRINT))));
-		documentation.setType(DocumentationType.UML_CLASS_DIAGRAM);
+				new DocumentationPiece("all", "all", javadocObj.toString(WriterConfig.PRETTY_PRINT))));
+		documentation.setType(DocumentationType.UML);
 		return documentation;
-
 	}
 
 	private JsonObject plantUmlDependencyToJson() throws IOException {

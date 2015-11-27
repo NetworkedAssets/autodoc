@@ -1,0 +1,140 @@
+{
+  "name": "ClassExample",
+  "package": "org.networkedassets.examples",
+  "summary": "This is a class summary.",
+  "modifiers": [
+    "public",
+    "abstract"
+  ],
+  "constructors": [
+    {
+      "name": "Repo",
+      "modifiers": [
+        "public"
+      ],
+      "arguments": []
+    },
+    {
+      "name": "Repo",
+      "modifiers": [
+        "public"
+      ],
+      "arguments": [
+        {
+          "name": "id",
+          "type": "int"
+        }
+      ],
+      "summary": "Fetches record from DB maybe?"
+    },
+    {
+      "name": "Repo",
+      "modifiers": [
+        "public"
+      ],
+      "arguments": [
+        {
+          "name": "name",
+          "type": "String"
+        }
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "name": "name",
+      "type": "String",
+      "modifiers": [
+        "private"
+      ]
+    },
+    {
+      "name": "id",
+      "type": "int",
+      "modifiers": [
+        "private"
+      ]
+    },
+    {
+      "name": "branches",
+      "type": "ArrayList<Branch>",
+      "modifiers": [
+        "protected"
+      ]
+    },
+    {
+      "name": "SOME_CONSTANT",
+      "type": "int",
+      "modifiers": [
+        "static",
+        "final"
+      ],
+      "summary": "Defines something not really important.",
+      "details": "In fact, it is not important at all, but needs to be long enough, to look quite nice in detailed summaryiption, because it has to be an example. Of course, here could be used Lorem Ipsum, or something like that, but..."
+    }
+  ],
+  "methods": [
+    {
+      "name": "branches",
+      "modifiers": [
+        "private",
+        "strict",
+        "transient"
+      ],
+      "type": "Map<String, Branch>",
+      "fulltype": "java.util.Map<java.lang.String, Branch>"
+    },
+    {
+      "name": "getBranchById",
+      "modifiers": [
+        "synchronized",
+        "public"
+      ],
+      "arguments": [
+        {
+          "type": "String",
+          "fulltype": "java.lang.String",
+          "name": "id"
+        }
+      ],
+      "type": "Branch",
+      "summary": "This is a summaryiption of a method.",
+      "details": "<p><b><span class=\"throwsLabel\">Throws:</span></b></p><p><code><code><a href=\"/pages/viewpage.action?pageId=755129\">Throwing.Specific.BiPredicate</a> extends java.lang.Throwable</code></code></p>"
+    },
+    {
+      "name": "getInstance",
+      "modifiers": [
+        "static",
+        "public"
+      ],
+      "arguments": [
+        {
+          "type": "String",
+          "fulltype": "java.lang.String",
+          "name": "id"
+        },
+        {
+          "type": "Integer",
+          "fulltype": "java.lang.Integer",
+          "name": "number"
+        }
+      ],
+      "type": "Repo[]",
+      "fulltype": "com.networkedassets.autodoc.transformer.settings.Repo"
+    },
+    {
+      "name": "implementMe",
+      "modifiers": [
+        "abstract",
+        "protected"
+      ],
+      "arguments": [
+        {
+          "type": "Branch",
+          "name": "branch"
+        }
+      ],
+      "type": "void"
+    }
+  ]
+}

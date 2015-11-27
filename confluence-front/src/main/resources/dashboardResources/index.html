@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Class Diagram</title>
+    <script src="js/jquery.min.js"></script>
+
+    <script src="js/lib/d3.min.js"></script>
+
+    <script src="js/lib/dagre.min.js"></script>
+
+    <script src="js/lib/dagre-d3.min.js"></script>
+
+    <script src="js/jquery.textWidth.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <link href="css/doc_javadoc.css" rel="stylesheet">
+    <link href="css/doc_classDiagram.css" rel="stylesheet">
+    <link href="css/doc_main.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://aui-cdn.atlassian.com/aui-adg/5.9.3/css/aui.css" media="all">
+    <script src="https://aui-cdn.atlassian.com/aui-adg/5.9.3/js/aui.js"></script>
+    <script src="js/lib/angular.min.js"></script>
+    <script src="js/lib/angular-sanitize.min.js"></script>
+    <script src="js/lib/angular-ui-router.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/ctrl/javadoc.entity.js"></script>
+    <script src="js/ctrl/javadoc.js"></script>
+    <script src="js/doc_classDiagram.js"></script>
+    <script src="js/ctrl/top.js"></script>
+    <script src="js/dirs/docQname.js"></script>
+    <script src="js/fn/common.js"></script>
+</head>
+<body>
+
+<!-- CUT FROM HERE -->
+<section id="doc_content" class="ac-content doc" ng-app="DoC">
+    <div id="doc_top" ng-controller="topCtrl">
+        <a id="doc_stateSelector" href="#" aria-owns="doc_states" aria-haspopup="true" class="aui-button aui-style-default aui-dropdown2-trigger">{{activeState.displayName}}</a>
+        <div id="doc_states" class="aui-style-default aui-dropdown2">
+            <ul class="aui-list-truncate">
+                <li ng-repeat="state in states"><a href="#" ng-click="changeState(state.name)">{{state.displayName}}</a></li>
+            </ul>
+        </div>
+    </div>
+    <div ui-view></div>
+</section>
+<!-- TO HERE -->
+
+</body>
+</html>

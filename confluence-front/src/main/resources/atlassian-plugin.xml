@@ -77,10 +77,40 @@
 		<description>Provides rest endpoints used by Autodoc</description>
 	</rest>
 
-	<macro name="autodoc-dashboard" class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
-		   key="autodocDashboard">
+	<macro name="autodocDshboard" class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
+		   key="autodoc-dashboard">
 		<description>Macro element containing the Autodoc Dashboard</description>
         <parameters/>
 	</macro>
+
+	<web-resource key="dashboard-resources">
+		<resource type="download" name="js/jquery.min.js" location = "dashboardResources/js/jquery.min.js" />
+		<resource type="download" name="js/lib/d3.min.js" location = "dashboardResources/js/lib/d3.min.js" />
+		<resource type="download" name="js/lib/dagre.min.js" location = "dashboardResources/js/lib/dagre.min.js" />
+		<resource type="download" name="js/lib/dagre-d3.min.js" location = "dashboardResources/js/lib/dagre-d3.min.js" />
+		<resource type="download" name="js/jquery.textWidth.min.js" location = "dashboardResources/js/jquery.textWidth.min.js" />
+		<resource type="download" name="css/doc_javadoc.css" location = "dashboardResources/css/doc_javadoc.css" />
+		<resource type="download" name="css/doc_classDiagram.css" location = "dashboardResources/css/doc_classDiagram.css" />
+		<resource type="download" name="css/doc_main.css" location = "dashboardResources/css/doc_main.css" />
+		<resource type="download" name="js/lib/angular.min.js" location = "dashboardResources/js/lib/angular.min.js" />
+		<resource type="download" name="js/lib/angular-sanitize.min.js" location = "dashboardResources/js/lib/angular-sanitize.min.js" />
+		<resource type="download" name="js/lib/angular-ui-router.min.js" location = "dashboardResources/js/lib/angular-ui-router.min.js" />
+		<resource type="download" name="js/app.js" location = "dashboardResources/js/app.js" />
+		<resource type="download" name="js/ctrl/javadoc.entity.js" location = "dashboardResources/js/ctrl/javadoc.entity.js" />
+		<resource type="download" name="js/ctrl/javadoc.js" location = "dashboardResources/js/ctrl/javadoc.js" />
+		<resource type="download" name="js/doc_classDiagram.js" location = "dashboardResources/js/doc_classDiagram.js" />
+		<resource type="download" name="js/ctrl/top.js" location = "dashboardResources/js/ctrl/top.js" />
+		<resource type="download" name="js/dirs/docQname.js" location = "dashboardResources/js/dirs/docQname.js" />
+		<resource type="download" name="js/fn/common.js" location = "dashboardResources/js/fn/common.js" />
+
+		<transformation extension="html">
+			<transformer key="template" />
+		</transformation>
+
+		<resource type="download" name="partials/classDiagram.html" location="dashboardResources/partials/classDiagram.html" />
+		<resource type="download" name="partials/javadoc.entity.html" location="dashboardResources/partials/javadoc.entity.html" />
+		<resource type="download" name="partials/javadoc.html" location="dashboardResources/partials/javadoc.html" />
+		<resource type="download" name="partials/javadoc.menuitem.html" location="dashboardResources/partials/javadoc.menuitem.html" />
+	</web-resource>
 
 </atlassian-plugin>
