@@ -3,6 +3,7 @@ package com.networkedassets.autodoc.transformer.util.javadoc;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.json.JSONException;
 
@@ -15,6 +16,8 @@ import com.google.common.collect.ImmutableList;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationType;
+
+import jersey.repackaged.com.google.common.collect.Lists;
 
 public class JavadocConverter {
 
@@ -46,19 +49,42 @@ public class JavadocConverter {
 		for (JsonValue item : packages.asArray()) {
 			JsonObject package_ = Json.object().add("qualified", item.asObject().getString("name", "")).add("type",
 					"package");
-			item.asObject().names().stream().filter(name -> item.asObject().get(name).isArray())
-					.forEach(s -> item.asObject().get(s).asArray().forEach(e -> {
-						JsonArray arr = Json.array().asArray();
-						e.asObject().names().stream().filter(modyfiers -> e.asObject().get(modyfiers).isTrue())
-								.forEach(m -> arr.add(m));
-						e.asObject().add("modifiers", (JsonValue) arr).add("type", s);
-						package_.add(e.asObject().getString("qualified", ""), (JsonValue) e.asObject());
+			item.asObject().names().stream().filter(names -> item.asObject().get(names).isArray())
+					.forEach(entityType -> item.asObject().get(entityType).asArray().forEach(entity -> {
+
+						entity.asObject().names().stream()
+								.filter(entityTypes -> entity.asObject().get(entityTypes).isArray())
+								.forEach(classes -> entity.asObject().get(classes).asArray().forEach(clazz -> {
+							clazz.asObject().add("modifiers", (JsonValue) addModifiers(clazz.asObject()));
+							removeModifiers(clazz.asObject());
+						}));
+						entity.asObject().add("modifiers", (JsonValue) addModifiers(entity.asObject())).add("type",
+								entityType);
+						package_.add(entity.asObject().getString("qualified", ""),
+								(JsonValue) removeModifiers(entity.asObject()));
 					}));
 			entities_.add(package_.getString("qualified", ""), (JsonValue) package_);
 		}
 		rootObj.remove("root");
 		rootObj.add("entities", (JsonValue) entities_);
 		return rootObj;
+	}
+
+	private JsonArray addModifiers(JsonObject obj) {
+
+		JsonArray arr = Json.array().asArray();
+		obj.names().stream().filter(modifiers -> obj.get(modifiers).isTrue() && !modifiers.equals("included")
+				&& !modifiers.equals("varArgs")).forEach(modifier -> arr.add(modifier));
+		return arr;
+	}
+
+	private JsonObject removeModifiers(JsonObject obj) {
+
+		List<String> target = Lists.newArrayList();
+		obj.names().stream().filter(modifiers -> obj.get(modifiers).isFalse() && !modifiers.equals("included")
+				&& !modifiers.equals("varArgs")).forEach(modifier -> target.add(modifier.toString()));
+		target.forEach(modifier -> obj.remove(modifier));
+		return obj;
 	}
 
 	private JsonObject javadocToIndexAsJson() throws JSONException, IOException {
