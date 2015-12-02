@@ -4,8 +4,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
-import com.networkedassets.autodoc.transformer.settings.ConfluenceSettings;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +55,11 @@ public class TransformerServer {
         setConfluenceUrl(confluenceUrl);
     }
 
-    public Response getSettingsForSpace(String spaceKey) throws SettingsException {
-        HttpResponse<ConfluenceSettings> response;
+    public Response getSettings() throws SettingsException {
+        HttpResponse<Settings> response;
         try {
             response = Unirest.get(url + SETTINGS)
-                    .queryString("spaceKey", spaceKey)
-                    .queryString("confluenceUrl", confluenceUrl)
-                    .asObject(ConfluenceSettings.class);
+                    .asObject(Settings.class);
         } catch (UnirestException e) {
             SettingsException up = new SettingsException(e);
             throw up; // heh
@@ -78,28 +76,17 @@ public class TransformerServer {
         return new Response(response.getBody(), raw);
     }
 
-    public void saveSettingsForSpace(ConfluenceSettings settings, String spaceKey) throws SettingsException {
+    public void saveSettingsForSpace(Settings settings) throws SettingsException {
         HttpResponse<String> response;
         try {
-            if (confluenceUrl != null) {
-                response = Unirest.post(url + SETTINGS)
-                        .header("Content-Type", "application/json")
-                        .queryString("spaceKey", spaceKey)
-                        .queryString("confluenceUrl", confluenceUrl)
-                        .body(settings)
-                        .asString();
-            } else {
-                response = Unirest.post(url + SETTINGS)
-                        .header("Content-Type", "application/json")
-                        .queryString("spaceKey", spaceKey)
-                        .body(settings)
-                        .asString();
-            }
+            response = Unirest.post(url + SETTINGS)
+                    .header("Content-Type", "application/json")
+                    .body(settings)
+                    .asString();
         } catch (UnirestException e) {
             throw new SettingsException(e);
         }
-
-        if (!"Success".equals(response.getBody())) {
+        if (response.getStatus()!=200) {
             throw new SettingsException("Could not save settings: " + response.getBody());
         }
     }
