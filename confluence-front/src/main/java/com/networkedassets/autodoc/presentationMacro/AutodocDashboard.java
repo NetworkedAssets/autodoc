@@ -28,6 +28,8 @@ public class AutodocDashboard extends BaseMacro {
     @Override
     public String execute(Map map, String s, RenderContext renderContext) throws MacroException {
         String dashboardSection;
+        String resourcesPath = "download/resources/com.networkedassets.autodoc.confluence-front:dashboard-resources/dashboardResources/";
+
         try {
             dashboardSection = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("/dashboardResources/index.html"));
         } catch (IOException e) {
@@ -38,6 +40,9 @@ public class AutodocDashboard extends BaseMacro {
 
         VelocityContext context = new VelocityContext(MacroUtils.defaultVelocityContext());
         context.put("dashboardSectionHtml", dashboardSection);
+        context.put("resourcesPath", resourcesPath);
+
+
         return VelocityUtils.getRenderedTemplate("/dashboardResources/dashboard.vm", context);
     }
 }

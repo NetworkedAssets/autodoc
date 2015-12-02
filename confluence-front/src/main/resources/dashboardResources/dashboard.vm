@@ -1,2 +1,5 @@
 #requireResource("com.networkedassets.autodoc.confluence-front:dashboard-resources")
 $dashboardSectionHtml
+<script type="text/javascript">
+    var dashboardResourcePath = "$resourcesPath";
+</script>
