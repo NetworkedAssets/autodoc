@@ -86,7 +86,6 @@
 
 	<web-resource key="dashboard-resources" name="Dashboard web resources">
 		<resource type="download" name="dashboardResources/" location="/dashboardResources" />
-
 		<resource type="download" name="js/jquery.min.js" location = "dashboardResources/js/jquery.min.js" />
 		<resource type="download" name="js/lib/d3.min.js" location = "dashboardResources/js/lib/d3.min.js" />
 		<resource type="download" name="js/lib/dagre.min.js" location = "dashboardResources/js/lib/dagre.min.js" />
@@ -105,6 +104,15 @@
 		<resource type="download" name="js/ctrl/top.js" location = "dashboardResources/js/ctrl/top.js" />
 		<resource type="download" name="js/dirs/docQname.js" location = "dashboardResources/js/dirs/docQname.js" />
 		<resource type="download" name="js/fn/common.js" location = "dashboardResources/js/fn/common.js" />
+		<resource type="download" name="class.json" location="dashboardResources/class.json"/>
+		<resource type="download" name="data.json" location="dashboardResources/data.json"/>
+		<resource type="download" name="data2.json" location="dashboardResources/data2.json"/>
+		<resource type="download" name="list.json" location="dashboardResources/list.json"/>
+		<resource type="download" name="na.json" location="dashboardResources/na.json"/>
+		<resource type="download" name="na2.json" location="dashboardResources/na2.json"/>
+		<resource type="download" name="na_single.json" location="dashboardResources/na_single.json"/>
+		<resource type="download" name="na_single2.json" location="dashboardResources/na_single2.json"/>
+		<resource type="download" name="uml.json" location="dashboardResources/uml.json"/>
 	</web-resource>
 	<!--<web-resource key="dashboard-resources">-->
 		<!--<resource type="download" name="wroclaw" location="dashboardResources/wroclaw.jpg"/>-->

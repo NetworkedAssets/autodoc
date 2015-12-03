@@ -42,7 +42,6 @@ public class AutodocDashboard extends BaseMacro {
         context.put("dashboardSectionHtml", dashboardSection);
         context.put("resourcesPath", resourcesPath);
 
-
         return VelocityUtils.getRenderedTemplate("/dashboardResources/dashboard.vm", context);
     }
 }

@@ -4,6 +4,8 @@
 
 /* From JSON to Dagre */
 
+var doc_resourcePath = AJS.Data.get("base-url")+"/" + AJS.Meta.get("dashboardResourcePath");
+
 function ClassDiagram(options) {
 
     var defaults = {
@@ -54,7 +56,7 @@ function ClassDiagram(options) {
     };
 
     this.load = function() {
-        $.getJSON("uml.json?",function(data) {
+        $.getJSON(doc_resourcePath + "uml.json?",function(data) {
             that.generate(data);
         });
     };

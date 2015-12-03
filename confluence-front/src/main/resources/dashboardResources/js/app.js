@@ -1,12 +1,14 @@
 /**
  * Created by Jakub on 16/11/15.
  */
+
+var doc_resourcePath = AJS.Data.get("base-url")+"/" + AJS.Meta.get("dashboardResourcePath");
+
 angular.module('DoC',['ui.router','ngSanitize']);
 
 angular.module('DoC').config(function($stateProvider,$urlRouterProvider,$sanitizeProvider) {
 // For any unmatched url, redirect to /state1
     $urlRouterProvider.otherwise("/javadoc");
-
 
     // Now set up the states
     $stateProvider
@@ -14,18 +16,18 @@ angular.module('DoC').config(function($stateProvider,$urlRouterProvider,$sanitiz
             url: "/javadoc",
             name: "Javadoc",
             displayName: "Javadoc",
-            templateUrl: "partials/javadoc.html",
+            templateUrl: doc_resourcePath + "partials/javadoc.html",
             controller: "javadocCtrl as vm"
         })
         .state('javadoc.entity', {
             url: "/entity/{name}",
-            templateUrl: "partials/javadoc.entity.html?",
+            templateUrl: doc_resourcePath + "partials/javadoc.entity.html?",
             controller: "javadocEntityCtrl as vm"
         })
         .state('classDiagram', {
             url: "/classDiagram",
             displayName: "ClassDiagram",
-            templateUrl: "partials/classDiagram.html",
+            templateUrl: doc_resourcePath + "partials/classDiagram.html",
             controller: function($scope) {
                 var cd = new ClassDiagram({
                     elem: $("#doc_classDiagram_paper")

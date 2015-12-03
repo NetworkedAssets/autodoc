@@ -2,11 +2,13 @@
  * Created by Jakub on 24/11/15.
  */
 
+var doc_resourcePath = AJS.Data.get("base-url")+"/" + AJS.Meta.get("dashboardResourcePath");
+
 angular.module("DoC")
 .controller("javadocCtrl",function($http,$state) {
     var vm = this;
 
-    $http.get('list.json?').then(function(data) {
+    $http.get(doc_resourcePath + 'list.json?').then(function(data) {
         vm.items = data.data.entities.package;
     });
     vm.items = [];

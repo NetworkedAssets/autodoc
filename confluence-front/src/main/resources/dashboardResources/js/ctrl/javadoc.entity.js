@@ -2,6 +2,8 @@
  * Created by Jakub on 24/11/15.
  */
 
+var doc_resourcePath = AJS.Data.get("base-url")+"/" + AJS.Meta.get("dashboardResourcePath");
+
 angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams) {
 
     var vm = this;
@@ -37,7 +39,7 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
 
     console.log($stateParams.name);
 
-    $http.get('na_single2.json').then(function(data) {
+    $http.get(doc_resourcePath + 'na_single2.json').then(function(data) {
 
 
         vm.entity = parseEntityFromJson(data.data);

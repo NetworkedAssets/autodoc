@@ -5,5 +5,7 @@
     <span class="name" ng-click="vm.go(item)" doc-qname="item.name"></span>
 </a>
 <ul ng-show="item.expanded">
-    <li ng-repeat="item in item.children" class="" ng-include="'partials/javadoc.menuitem.html'"></li>
+    <li ng-repeat="item in item.children" class=""
+        ng-include="'../../../download/resources/com.networkedassets.autodoc.confluence-front:dashboard-resources/dashboardResources/partials/javadoc.menuitem.html'">
+    </li>
 </ul>
