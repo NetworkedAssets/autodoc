@@ -17,8 +17,8 @@ import com.google.common.collect.ImmutableMap;
 import com.networkedassets.autodoc.transformer.Response;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.settings.Project;
+import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
-import com.networkedassets.autodoc.transformer.settings.ConfluenceSettings;
 import org.apache.velocity.context.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,24 +83,25 @@ public class ConfigureServlet extends HttpServlet {
         }
     }
 
-    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, ConfluenceSettings settings,
+    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, Settings settings,
                                        String message)
             throws IOException, ServletException {
-
-        Collection<Project> allProjects = settings.getProjects();
-        Optional<Long> defaultJavadocLocation = findDefaultJavadocLocation(req);
-        Optional<Long> defaultUmlLocation = findDefaultUmlLocation(req);
-        defaultJavadocLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
-        defaultUmlLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultUmlLocation(pageId)));
-        List<SimplePage> pages = getPages(req);
-
-        List<Map<String, ?>> allProjectsSoy = allProjects.stream().map(Project::toSoyData).collect(Collectors.toList());
-        renderConfigureTemplateWithParams(req, resp, ImmutableMap.<String, Object>builder()
-                        .put("allProjects", allProjectsSoy)
-                        .put("pages", pages)
-//                        .put("message", message)
-                        .build()
-        );
+// TODO: 02.12.2015 Refactor to fit new settings API
+////        settings.getSources().stream().map(source -> source.projects).flatMap(p -> p.values().stream()).collect(Collectors.toList());
+//        Collection<Project> allProjects = settings.getProjects();
+//        Optional<Long> defaultJavadocLocation = findDefaultJavadocLocation(req);
+//        Optional<Long> defaultUmlLocation = findDefaultUmlLocation(req);
+//        defaultJavadocLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
+//        defaultUmlLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultUmlLocation(pageId)));
+//        List<SimplePage> pages = getPages(req);
+//
+//        List<Map<String, ?>> allProjectsSoy = allProjects.stream().map(Project::toSoyData).collect(Collectors.toList());
+//        renderConfigureTemplateWithParams(req, resp, ImmutableMap.<String, Object>builder()
+//                        .put("allProjects", allProjectsSoy)
+//                        .put("pages", pages)
+////                        .put("message", message)
+//                        .build()
+//        );
     }
 
     private Optional<Long> findDefaultUmlLocation(HttpServletRequest req) {
@@ -113,16 +114,17 @@ public class ConfigureServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String message = "";
-        ConfluenceSettings settings = new ConfluenceSettings();
-        try {
-            Response settingsForSpace = transformerServer.getSettingsForSpace(getSpaceKey(req));
-            message = settingsForSpace.raw;
-            settings = settingsForSpace.body;
-        } catch (SettingsException e) {
-            message = e.getMessage();
-        }
-        renderConfigureScreen(req, resp, settings, message);
+        // TODO: 02.12.2015 Refactor to fit new settings API
+//        String message = "";
+//        ConfluenceSettings settings = new ConfluenceSettings();
+//        try {
+//            Response settingsForSpace = transformerServer.getSettings();
+//            message = settingsForSpace.raw;
+//            settings = settingsForSpace.body;
+//        } catch (SettingsException e) {
+//            message = e.getMessage();
+//        }
+//        renderConfigureScreen(req, resp, settings, message);
     }
 
     private String getSpaceKey(HttpServletRequest req) {
@@ -139,46 +141,47 @@ public class ConfigureServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String newSettings = req.getParameter("newSettings");
-        String eventToSend = req.getParameter("event");
-        ConfluenceSettings settings = new ConfluenceSettings();
-        String spaceKey = getSpaceKey(req);
-        String message = "";
-
-        if (newSettings != null) {
-            List<Project> projects = OBJECT_MAPPER.readValue(newSettings, LIST_PROJECTS_JSON_TYPE);
-
-            settings.setProjects(projects);
-            settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
-            //settings.setSpaceKey(spaceKey);
-
-            message = OBJECT_MAPPER.writeValueAsString(projects);
-
-            try {
-                transformerServer.saveSettingsForSpace(settings, spaceKey);
-            } catch (SettingsException e) {
-                message = e.getMessage();
-            }
-        } else {
-            try {
-                Response settingsForSpace = transformerServer.getSettingsForSpace(spaceKey);
-                settings = settingsForSpace.body;
-                message = settingsForSpace.raw;
-            } catch (SettingsException e) {
-                message = e.getMessage();
-            }
-        }
-
-        if (eventToSend != null) {
-            String[] eventData = eventToSend.split("//");
-            try {
-                transformerServer.forceRegenerate(eventData[0], eventData[1], eventData[2]);
-            } catch (SettingsException e) {
-                message += "\n" + e.getMessage();
-            }
-        }
-
-        renderConfigureScreen(req, resp, settings, message);
+// TODO: 02.12.2015 Refactor to fit new settings API
+//        String newSettings = req.getParameter("newSettings");
+//        String eventToSend = req.getParameter("event");
+//        ConfluenceSettings settings = new ConfluenceSettings();
+//        String spaceKey = getSpaceKey(req);
+//        String message = "";
+//
+//        if (newSettings != null) {
+//            List<Project> projects = OBJECT_MAPPER.readValue(newSettings, LIST_PROJECTS_JSON_TYPE);
+//
+//            settings.setProjects(projects);
+//            settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
+//            //settings.setSpaceKey(spaceKey);
+//
+//            message = OBJECT_MAPPER.writeValueAsString(projects);
+//
+//            try {
+//                transformerServer.saveSettingsForSpace(settings);
+//            } catch (SettingsException e) {
+//                message = e.getMessage();
+//            }
+//        } else {
+//            try {
+//                Response settingsForSpace = transformerServer.getSettings();
+//                settings = settingsForSpace.body;
+//                message = settingsForSpace.raw;
+//            } catch (SettingsException e) {
+//                message = e.getMessage();
+//            }
+//        }
+//
+//        if (eventToSend != null) {
+//            String[] eventData = eventToSend.split("//");
+//            try {
+//                transformerServer.forceRegenerate(eventData[0], eventData[1], eventData[2]);
+//            } catch (SettingsException e) {
+//                message += "\n" + e.getMessage();
+//            }
+//        }
+//
+//        renderConfigureScreen(req, resp, settings, message);
     }
 
     private String getTransformerUrl() {
