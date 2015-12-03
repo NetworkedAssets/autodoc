@@ -18,7 +18,6 @@ import javax.ws.rs.core.MediaType;
 @Path("/settings")
 public class SettingsService extends RestService {
 
-
 	static final Logger log = LoggerFactory.getLogger(SettingsService.class);
 	private SettingsProvider settingsProvider;
 	private SettingsSaver settingsSetter;
@@ -44,7 +43,5 @@ public class SettingsService extends RestService {
 		settingsSetter.setCurrentSettings(settings);
 		return settingsProvider.getCurrentSettings();
 	}
-
-
 
 }
