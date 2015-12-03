@@ -11,19 +11,8 @@ import java.io.Serializable;
 public class TransformerSettings implements Serializable {
 
     // TODO: 19.11.2015 Remove default values and require user to enter them on first run in frontend
-    private  int transformerPort = 8050;
-    private  String localhostAddress = "http://localhost:" + transformerPort + "/event";
-
-
-    /**
-     * For jackson serialization. We don't want to share password on every request so we only
-     * return null on REST request
-     * @return null
-     */
-    @JsonProperty("stashPassword")
-    public String getNullStashPassword() {
-        return null;
-    }
+    private int transformerPort = 8050;
+    private String localhostAddress = "http://localhost:" + transformerPort + "/event";
 
 
     public int getTransformerPort() {

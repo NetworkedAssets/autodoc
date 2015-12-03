@@ -29,7 +29,7 @@ public class StashProjectsProvider implements ProjectsProvider {
 
     public StashProjectsProvider(Source source) throws MalformedURLException {
         this.source = source;
-        stashClient = StashClientConfigurator.getConfiguredStashClient(source);
+        stashClient = ClientConfigurator.getConfiguredStashClient(source);
     }
 
     @Override

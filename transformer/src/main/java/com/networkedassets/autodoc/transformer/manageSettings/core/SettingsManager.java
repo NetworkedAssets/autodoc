@@ -1,15 +1,13 @@
 package com.networkedassets.autodoc.transformer.manageSettings.core;
 
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.StashHookActivator;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.StashProjectsProvider;
+import com.google.common.base.Strings;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
-import com.networkedassets.autodoc.transformer.settings.Branch;
-import com.networkedassets.autodoc.transformer.settings.Project;
-import com.networkedassets.autodoc.transformer.settings.Settings;
-import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.settings.*;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,44 +39,53 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
     public SettingsManager() {
         settingsFilename = getSettingsFilenameFromProperties();
         loadSettingsFromFile(settingsFilename);
-        updateSettings();
+        updateSettings(this.settings);
     }
-
-
 
 
     @Override
     public Settings getCurrentSettings() {
-        if(!LOLIDONTEVENRUNONCE){
-            Source source = new Source();
-            settings.getSources().add(source);
+        //todo delete this
+        if (!LOLIDONTEVENRUNONCE) {
+            Source stashSource = new Source();
+            settings.getSources().add(stashSource);
+
+            Source bitbucketSource = new Source();
+            bitbucketSource.setUrl("http://46.101.240.138:7991");
+            bitbucketSource.setUsername("admin");
+            bitbucketSource.setPassword("admin");
+            bitbucketSource.setHookKey("");
+            bitbucketSource.setSourceType(Source.SourceType.BITBUCKET);
+            settings.getSources().add(bitbucketSource);
             LOLIDONTEVENRUNONCE = true;
         }
-        updateSettings();
+        updateSettings(this.settings);
         return settings;
     }
 
     @Override
     public void setCurrentSettings(Settings settings) {
-        //TODO update those settings with them clients
-        //TODO look for null passwords and if they appear - preserve old ones!
+        updateSettings(settings);
+        //look for null passwords and if they appear - preserve old ones!
+        settings.getSources().stream().forEach(source -> {
+            if (Strings.isNullOrEmpty(source.getPassword())) {
+                String previousPassword = this.settings.getSources().stream()
+                        .filter(source1 -> source1.getUrl().equals(source.getUrl()))
+                        .map(Source::getPassword).findFirst().orElse(null);
+                source.setPassword(previousPassword);
+            }
+        });
         this.settings = settings;
         saveSettingsToFile(settingsFilename);
     }
 
-    private void updateSettings() {
-        settings.getSources().forEach(source -> {
+    private void
+    updateSettings(Settings givenSettings) {
+        givenSettings.getSources().forEach(source -> {
             try {
-                updateProjectsFromSource(source);
-                HookActivator hookActivator;
-                switch (source.getSourceType()){
-                    case STASH:
-                        hookActivator = new StashHookActivator(source, settings.getTransformerSettings().getLocalhostAddress());
-                        break;
-                    default:
-                        log.error("Trying to update projects from unimplemented source!");
-                        return;
-                }
+                updateProjectsFromRemoteSource(source);
+                HookActivator hookActivator = HookActivatorFactory.getInstance(source,
+                        givenSettings.getTransformerSettings().getLocalhostAddress());
                 hookActivator.enableAllHooks();
             } catch (MalformedURLException e) {
                 log.error("Source {} has malformed URL. Can't load projects: ", source.toString(), e);
@@ -133,20 +140,9 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
 
 
     @SuppressWarnings("CodeBlock2Expr")
-    private void updateProjectsFromSource(@Nonnull Source source) throws MalformedURLException {
+    private void updateProjectsFromRemoteSource(@Nonnull Source source) throws MalformedURLException {
         //Get projects from source
-        ProjectsProvider projectsProvider;
-        switch (source.getSourceType()) {
-            case STASH:
-                projectsProvider = new StashProjectsProvider(source);
-                break;
-            //not yet implemented
-            case BITBUCKET:
-            case GITHUB:
-            default:
-                log.error("Trying to update projects from unimplemented source!");
-                return;
-        }
+        ProjectsProvider projectsProvider = ProjectsProviderFactory.getInstance(source);
 
         Map<String, Project> sourceProjects = projectsProvider.getProjects();
 

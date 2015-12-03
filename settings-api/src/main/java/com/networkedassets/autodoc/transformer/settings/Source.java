@@ -1,5 +1,7 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +11,6 @@ import java.util.Map;
 public class Source {
     // TODO: 26.11.2015 Remove default values and require user to enter them on first run in frontend
     private String url = "http://46.101.240.138:7990";
-    private String hookKey = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
     private String username = "kcala";
     private String password = "admin";
     private SourceType sourceType = SourceType.STASH;
@@ -32,11 +33,11 @@ public class Source {
     }
 
     public String getHookKey() {
-        return hookKey;
+        return sourceType.getHookKey();
     }
 
     public void setHookKey(String hookKey) {
-        this.hookKey = hookKey;
+        this.getSourceType().setHookKey(hookKey);
     }
 
     public String getUsername() {
@@ -51,6 +52,14 @@ public class Source {
         return password;
     }
 
+    /**
+     * For jackson serialization. We don't want to share password on every request so we only
+     * return null on REST request
+     * @return null
+     */
+    @JsonProperty("password")
+    public String getNullPassword() {return null;}
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -61,5 +70,25 @@ public class Source {
 
     public void setSourceType(SourceType sourceType) {
         this.sourceType = sourceType;
+    }
+
+    public static enum SourceType {
+        STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"),
+        BITBUCKET("com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener"),
+        GITHUB("");
+        private String hookKey;
+
+        SourceType(String hookKey) {
+            this.hookKey = hookKey;
+        }
+
+
+        public String getHookKey() {
+            return hookKey;
+        }
+
+        public void setHookKey(String hookKey) {
+            this.hookKey = hookKey;
+        }
     }
 }
