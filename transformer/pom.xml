@@ -169,9 +169,14 @@
 		<dependency>
 			<groupId>sun.jdk</groupId>
 			<artifactId>rt.jar</artifactId>
-			<version>1.8</version>
+			<version>${java.version}</version>
 			<scope>system</scope>
 			<systemPath>${java.home}/lib/rt.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>com.github.markusbernhardt</groupId>
+			<artifactId>json-doclet</artifactId>
+			<version>1.0.7</version>
 		</dependency>
 	</dependencies>
 

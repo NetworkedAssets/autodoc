@@ -1,15 +1,16 @@
 package com.github.markusbernhardt.xmldoclet;
 
+import com.github.markusbernhardt.xmldoclet.xjc.Root;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.markusbernhardt.xmldoclet.xjc.Root;
+import static com.github.markusbernhardt.xmldoclet.JavadocRunner.join;
 
 /**
  * Base class for all tests.
@@ -61,8 +62,9 @@ public class AbstractTestParent {
 	 *            Additional Arguments.
 	 * @return XStream compatible data structure
 	 */
+	@SuppressWarnings("Duplicates")
 	public Root executeJavadoc(String extendedClassPath, String[] sourcePaths, String[] packages, String[] sourceFiles,
-			String[] subPackages, String[] additionalArguments) {
+							   String[] subPackages, String[] additionalArguments) {
 		try {
 			OutputStream errors = new LoggingOutputStream(log, LoggingLevelEnum.ERROR);
 			OutputStream warnings = new LoggingOutputStream(log, LoggingLevelEnum.WARN);
@@ -131,43 +133,6 @@ public class AbstractTestParent {
 		}
 
 		return XmlDoclet.root;
-	}
-
-	/**
-	 * Helper method to concat strings.
-	 * 
-	 * @param glue
-	 *            the seperator.
-	 * @param strings
-	 *            the strings to concat.
-	 * @return concated string
-	 */
-	public static String join(String glue, String[] strings) {
-		return join(glue, Arrays.asList(strings));
-	}
-
-	/**
-	 * Helper method to concat strings.
-	 * 
-	 * @param glue
-	 *            the seperator.
-	 * @param strings
-	 *            the strings to concat.
-	 * @return concated string
-	 */
-	public static String join(String glue, Iterable<String> strings) {
-		if (strings == null) {
-			return null;
-		}
-
-		StringBuilder stringBuilder = new StringBuilder();
-		String verkett = "";
-		for (String string : strings) {
-			stringBuilder.append(verkett);
-			stringBuilder.append(string);
-			verkett = glue;
-		}
-		return stringBuilder.toString();
 	}
 
 }
