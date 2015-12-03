@@ -34,13 +34,9 @@ public class Binder extends AbstractBinder {
 
         bind(settingsManager).to(SettingsSaver.class);
         bind(settingsManager).to(SettingsProvider.class);
-
         bind(docFactory).to(DocumentationGeneratorFactory.class);
-
         bind(sender).to(DocumentationSender.class);
-
         bind(codeProvider).to(CodeProvider.class);
-
         bind(docGen).to(PushEventProcessor.class);
 	}
 }

@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.networkedassets.autodoc.clients.atlassian.api.BitbucketClient;
 import com.networkedassets.autodoc.clients.atlassian.api.StashClient;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
 import com.networkedassets.autodoc.transformer.settings.Source;
@@ -12,18 +13,18 @@ import java.net.MalformedURLException;
 /**
  * Created by kamil on 18.11.2015.
  */
-public class StashHookActivator implements HookActivator {
+public class BitbucketHookActivator implements HookActivator {
 
-    private static Logger log = LoggerFactory.getLogger(StashHookActivator.class);
+    private static Logger log = LoggerFactory.getLogger(BitbucketHookActivator.class);
 
-    StashClient stashClient;
+    BitbucketClient bitbucketClient;
     Source source;
     String localhostAddress;
 
-    public StashHookActivator(Source source, String localhostAddress) throws MalformedURLException {
+    public BitbucketHookActivator(Source source, String localhostAddress) throws MalformedURLException {
         this.localhostAddress = localhostAddress;
         this.source = source;
-        stashClient = ClientConfigurator.getConfiguredStashClient(source);
+        bitbucketClient = ClientConfigurator.getConfiguredBitbucketClient(source);
     }
 
 
@@ -31,7 +32,7 @@ public class StashHookActivator implements HookActivator {
     public void enableAllHooks() {
         source.projects.values().stream().forEach(project -> project.repos.values().stream().forEach(repo -> {
             try {
-                stashClient.setHookSettings(
+                bitbucketClient.setHookSettings(
                         project.key,
                         repo.slug,
                         source.getHookKey(),

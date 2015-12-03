@@ -1,8 +1,8 @@
 package com.networkedassets.autodoc.transformer.manageSettings.core;
 
 import com.google.common.base.Strings;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.StashHookActivator;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.StashProjectsProvider;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,56 +23,74 @@ import java.util.Map;
 public class SettingsManager implements SettingsProvider, SettingsSaver {
 
     public String settingsFilename;
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+    }
+
     private Settings settings = new Settings();
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
-    private HookActivator hookActivator;
-    private ProjectsProvider projectsProvider;
+    public static boolean LOLIDONTEVENRUNONCE = false;
 
     public SettingsManager() {
         settingsFilename = getSettingsFilenameFromProperties();
         loadSettingsFromFile(settingsFilename);
-        try {
-            hookActivator = new StashHookActivator(settings.getTransformerSettings());
-            projectsProvider = new StashProjectsProvider(settings.getTransformerSettings());
-        } catch (MalformedURLException e) {
-            log.error("Can't create stash client. Url in Transformer settings is malformed: ", e);
+        updateSettings(this.settings);
+    }
+
+
+    @Override
+    public Settings getCurrentSettings() {
+        //todo delete this
+        if (!LOLIDONTEVENRUNONCE) {
+            Source stashSource = new Source();
+            settings.getSources().add(stashSource);
+
+            Source bitbucketSource = new Source();
+            bitbucketSource.setUrl("http://46.101.240.138:7991");
+            bitbucketSource.setUsername("admin");
+            bitbucketSource.setPassword("admin");
+            bitbucketSource.setHookKey("");
+            bitbucketSource.setSourceType(Source.SourceType.BITBUCKET);
+            settings.getSources().add(bitbucketSource);
+            LOLIDONTEVENRUNONCE = true;
         }
-        updateSettings();
-    }
-
-
-    @Override
-    public ConfluenceSettings getConfluenceSettings() {
-        updateSettings();
-        return settings.getConfluenceSettings();
+        updateSettings(this.settings);
+        return settings;
     }
 
     @Override
-    public TransformerSettings getTransformerSettings() {
-        return settings.getTransformerSettings();
-    }
-
-
-    @Override
-    public void setConfluenceSettings(ConfluenceSettings confluenceSettings) {
-        updateProjectsFromStash(confluenceSettings);
-        settings.setConfluenceSettings(confluenceSettings);
+    public void setCurrentSettings(Settings settings) {
+        updateSettings(settings);
+        //look for null passwords and if they appear - preserve old ones!
+        settings.getSources().stream().forEach(source -> {
+            if (Strings.isNullOrEmpty(source.getPassword())) {
+                String previousPassword = this.settings.getSources().stream()
+                        .filter(source1 -> source1.getUrl().equals(source.getUrl()))
+                        .map(Source::getPassword).findFirst().orElse(null);
+                source.setPassword(previousPassword);
+            }
+        });
+        this.settings = settings;
         saveSettingsToFile(settingsFilename);
     }
 
-    @Override
-    public void setTransformerSettings(TransformerSettings transformerSettings) {
-        if(Strings.isNullOrEmpty(transformerSettings.getStashPassword())){
-            //password didn't change
-            transformerSettings.setStashPassword(this.getTransformerSettings().getStashPassword());
-        }
-        settings.setTransformerSettings(transformerSettings);
-        saveSettingsToFile(settingsFilename);
-    }
-
-    private void updateSettings() {
-        updateProjectsFromStash(settings.getConfluenceSettings());
-        hookActivator.enableAllHooks(settings.getConfluenceSettings().getProjectsMap());
+    private void
+    updateSettings(Settings givenSettings) {
+        givenSettings.getSources().forEach(source -> {
+            try {
+                updateProjectsFromRemoteSource(source);
+                HookActivator hookActivator = HookActivatorFactory.getInstance(source,
+                        givenSettings.getTransformerSettings().getLocalhostAddress());
+                hookActivator.enableAllHooks();
+            } catch (MalformedURLException e) {
+                log.error("Source {} has malformed URL. Can't load projects: ", source.toString(), e);
+            }
+        });
     }
 
     private void saveSettingsToFile(String filename) {
@@ -121,37 +138,40 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         return propertyHandler.getValue("settings.filename", defaultFilename);
     }
 
+
     @SuppressWarnings("CodeBlock2Expr")
-    private void updateProjectsFromStash(@Nonnull ConfluenceSettings confluenceSettings) {
-        //Get projects from stash
-        Map<String, Project> stashProjects = projectsProvider.getStashProjects();
+    private void updateProjectsFromRemoteSource(@Nonnull Source source) throws MalformedURLException {
+        //Get projects from source
+        ProjectsProvider projectsProvider = ProjectsProviderFactory.getInstance(source);
+
+        Map<String, Project> sourceProjects = projectsProvider.getProjects();
 
         //Delete projects, repos and branches in settings, that don't exist in stash (anymore)
-        confluenceSettings.getProjects().removeIf(project -> !stashProjects.containsKey(project.key));
-        confluenceSettings.getProjects().forEach(project ->
+        source.projects.values().removeIf(project -> !sourceProjects.containsKey(project.key));
+        source.projects.values().forEach(project ->
                 project.repos.values().removeIf(repo ->
-                        !stashProjects.get(project.key).repos.containsKey(repo.slug)));
-        confluenceSettings.getProjects().forEach(project ->
+                        !sourceProjects.get(project.key).repos.containsKey(repo.slug)));
+        source.projects.values().forEach(project ->
                 project.repos.values().forEach(repo ->
                         repo.branches.values().removeIf(branch ->
-                                !stashProjects.get(project.key)
+                                !sourceProjects.get(project.key)
                                         .repos.get(repo.slug).branches.containsKey(branch.id))));
 
 
         //Add new branches, repos, and projects from stash
-        stashProjects.values().forEach(stashProject -> {
-            confluenceSettings.getProjectsMap().putIfAbsent(stashProject.key, stashProject);
+        sourceProjects.values().forEach(stashProject -> {
+            source.projects.putIfAbsent(stashProject.key, stashProject);
         });
-        stashProjects.values().forEach(stashProject -> {
+        sourceProjects.values().forEach(stashProject -> {
             stashProject.repos.values().forEach(stashRepo -> {
-                confluenceSettings.getProjectByKey(stashProject.key)
+                source.getProjectByKey(stashProject.key)
                         .repos.putIfAbsent(stashRepo.slug, stashRepo);
             });
         });
-        stashProjects.values().forEach(stashProject -> {
+        sourceProjects.values().forEach(stashProject -> {
             stashProject.repos.values().forEach(stashRepo -> {
                 stashRepo.branches.values().forEach(stashBranch -> {
-                    confluenceSettings.getProjectByKey(stashProject.key)
+                    source.getProjectByKey(stashProject.key)
                             .getRepoBySlug(stashRepo.slug)
                             .branches.putIfAbsent(stashBranch.id, stashBranch);
                 });
@@ -159,16 +179,16 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         });
 
         //Update changed non-indexing data
-        stashProjects.values().forEach(stashProject -> {
-            Project project = confluenceSettings.getProjectByKey(stashProject.key);
+        sourceProjects.values().forEach(stashProject -> {
+            Project project = source.getProjectByKey(stashProject.key);
             if (!project.name.equals(stashProject.name)) {
                 project.name = stashProject.name;
             }
         });
-        stashProjects.values().forEach(stashProject -> {
+        sourceProjects.values().forEach(stashProject -> {
             stashProject.repos.values().forEach(stashRepo -> {
                 stashRepo.branches.values().forEach(stashBranch -> {
-                    Branch branch = confluenceSettings.getProjectByKey(stashProject.key)
+                    Branch branch = source.getProjectByKey(stashProject.key)
                             .getRepoBySlug(stashRepo.slug)
                             .getBranchById(stashBranch.id);
                     if (!branch.displayId.equals(stashBranch.displayId)) {
@@ -180,6 +200,4 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
 
 
     }
-
-
 }

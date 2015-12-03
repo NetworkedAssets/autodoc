@@ -11,6 +11,6 @@ import java.util.Map;
  */
 public interface ProjectsProvider {
 
-    Map<String, Project> getStashProjects();
+    Map<String, Project> getProjects();
 
 }
