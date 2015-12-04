@@ -28,7 +28,7 @@ public class Binder extends AbstractBinder {
         SettingsManager settingsManager = new SettingsManager();
         DefaultDocumentationGeneratorFactory docFactory = new DefaultDocumentationGeneratorFactory();
         ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
-        GitCodeProvider codeProvider = new GitCodeProvider(null);
+        GitCodeProvider codeProvider = new GitCodeProvider();
         DocumentationFromCodeGenerator docGen =
                 new DocumentationFromCodeGenerator(settingsManager, docFactory, sender, codeProvider);
 

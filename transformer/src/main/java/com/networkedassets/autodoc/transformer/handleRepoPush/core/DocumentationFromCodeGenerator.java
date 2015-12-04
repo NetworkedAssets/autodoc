@@ -14,51 +14,44 @@ import javax.inject.Inject;
 
 @SuppressWarnings("unused")
 public class DocumentationFromCodeGenerator implements PushEventProcessor {
-    @SuppressWarnings("unused")
-    public static Logger log = LoggerFactory.getLogger(DocumentationFromCodeGenerator.class);
+	@SuppressWarnings("unused")
+	public static Logger log = LoggerFactory.getLogger(DocumentationFromCodeGenerator.class);
 
-    private SettingsProvider settingsProvider;
-    private DocumentationGeneratorFactory docGeneratorFactory;
-    private DocumentationSender documentationSender;
-    private CodeProvider codeProvider;
+	private SettingsProvider settingsProvider;
+	private DocumentationGeneratorFactory docGeneratorFactory;
+	private DocumentationSender documentationSender;
+	private CodeProvider codeProvider;
 
-    @Inject
-    public DocumentationFromCodeGenerator(SettingsProvider settingsProvider,
-                                          DocumentationGeneratorFactory docGeneratorFactory,
-                                          DocumentationSender documentationSender,
-                                          CodeProvider codeProvider) {
-        this.settingsProvider = settingsProvider;
-        this.docGeneratorFactory = docGeneratorFactory;
-        this.documentationSender = documentationSender;
-        this.codeProvider = codeProvider;
-    }
+	@Inject
+	public DocumentationFromCodeGenerator(SettingsProvider settingsProvider,
+			DocumentationGeneratorFactory docGeneratorFactory, DocumentationSender documentationSender,
+			CodeProvider codeProvider) {
+		this.settingsProvider = settingsProvider;
+		this.docGeneratorFactory = docGeneratorFactory;
+		this.documentationSender = documentationSender;
+		this.codeProvider = codeProvider;
+	}
 
-    @Override
-    public void process(PushEvent pushEvent) {
-        String sourceUrl = pushEvent.getSourceUrl();
-        String projectKey = pushEvent.getProjectKey();
-        String repoSlug = pushEvent.getRepositorySlug();
-        String branchId = pushEvent.getBranchId();
+	@Override
+	public void process(PushEvent pushEvent) {
+		String sourceUrl = pushEvent.getSourceUrl();
+		String projectKey = pushEvent.getProjectKey();
+		String repoSlug = pushEvent.getRepositorySlug();
+		String branchId = pushEvent.getBranchId();
 
-        if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl) ||
-                settingsProvider
-                        .getCurrentSettings()
-                        .getSourceByUrl(sourceUrl)
-                        .getProjectByKey(projectKey)
-                        .getRepoBySlug(repoSlug)
-                        .getBranchById(branchId)
-                        .isListened
-                ) {
+		if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl)
+				|| settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
+						.getRepoBySlug(repoSlug).getBranchById(branchId).isListened) {
 
-            Code code = codeProvider.getCode(projectKey, repoSlug, branchId);
+			Code code = codeProvider.getCode(settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl),
+					projectKey, repoSlug, branchId);
 
-            for (DocumentationType docType : DocumentationType.values()) {
-                Documentation documentation = docGeneratorFactory.createFor(docType).generateFrom(code);
-                documentation.setProjectInfo(projectKey, repoSlug, branchId);
-                //TODO
-                //documentationSender.send(documentation, settingsProvider.getConfluenceSettings());
-            }
-        }
+			for (DocumentationType docType : DocumentationType.values()) {
+				Documentation documentation = docGeneratorFactory.createFor(docType).generateFrom(code);
+				documentation.setProjectInfo(projectKey, repoSlug, branchId);
+				documentationSender.send(documentation,settingsProvider.getCurrentSettings());
+			}
+		}
 
-    }
+	}
 }

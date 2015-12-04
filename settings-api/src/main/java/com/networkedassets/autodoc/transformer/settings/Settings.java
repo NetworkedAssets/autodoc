@@ -9,42 +9,58 @@ import java.util.List;
  */
 public class Settings implements Serializable {
 
-    private String confluenceUrl = "";
-    private TransformerSettings transformerSettings = new TransformerSettings();
-    private List<Source> sources = new ArrayList<>();
+	private static final long serialVersionUID = 1L;
+	private String confluenceUrl = "";
+	private String confluenceUsername = "";
+	private String confluencePassword = "";
+	private TransformerSettings transformerSettings = new TransformerSettings();
+	private List<Source> sources = new ArrayList<>();
 
-    public Source getSourceByUrl(String url){
-        return sources.stream().filter(source -> source.getUrl().equals(url)).findAny().orElse(null);
-    }
+	public Source getSourceByUrl(String url) {
+		return sources.stream().filter(source -> source.getUrl().equals(url)).findAny().orElse(null);
+	}
 
-    public boolean isSourceWithUrlExistent(String url){
-        return sources.stream().anyMatch(source -> source.getUrl().equals(url));
-    }
+	public boolean isSourceWithUrlExistent(String url) {
+		return sources.stream().anyMatch(source -> source.getUrl().equals(url));
+	}
 
+	public TransformerSettings getTransformerSettings() {
+		return transformerSettings;
+	}
 
-    public TransformerSettings getTransformerSettings() {
-        return transformerSettings;
-    }
+	public void setTransformerSettings(TransformerSettings transformerSettings) {
+		this.transformerSettings = transformerSettings;
+	}
 
+	public List<Source> getSources() {
+		return sources;
+	}
 
+	public void setSources(List<Source> sources) {
+		this.sources = sources;
+	}
 
-    public void setTransformerSettings(TransformerSettings transformerSettings) {
-        this.transformerSettings = transformerSettings;
-    }
+	public String getConfluenceUrl() {
+		return confluenceUrl;
+	}
 
-    public List<Source> getSources() {
-        return sources;
-    }
+	public void setConfluenceUrl(String confluenceUrl) {
+		this.confluenceUrl = confluenceUrl;
+	}
 
-    public void setSources(List<Source> sources) {
-        this.sources = sources;
-    }
+	public String getConfluenceUsername() {
+		return confluenceUsername;
+	}
 
-    public String getConfluenceUrl() {
-        return confluenceUrl;
-    }
+	public void setConfluenceUsername(String confluenceUsername) {
+		this.confluenceUsername = confluenceUsername;
+	}
 
-    public void setConfluenceUrl(String confluenceUrl) {
-        this.confluenceUrl = confluenceUrl;
-    }
+	public String getConfluencePassword() {
+		return confluencePassword;
+	}
+
+	public void setConfluencePassword(String confluencePassword) {
+		this.confluencePassword = confluencePassword;
+	}
 }
