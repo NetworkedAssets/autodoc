@@ -1,47 +1,16 @@
 package com.github.markusbernhardt.xmldoclet;
 
-import java.util.Map;
-import java.util.TreeMap;
-
+import com.github.markusbernhardt.xmldoclet.xjc.*;
+import com.github.markusbernhardt.xmldoclet.xjc.Class;
+import com.github.markusbernhardt.xmldoclet.xjc.Enum;
+import com.github.markusbernhardt.xmldoclet.xjc.Package;
+import com.sun.javadoc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.markusbernhardt.xmldoclet.xjc.Annotation;
-import com.github.markusbernhardt.xmldoclet.xjc.AnnotationArgument;
-import com.github.markusbernhardt.xmldoclet.xjc.AnnotationElement;
-import com.github.markusbernhardt.xmldoclet.xjc.AnnotationInstance;
-import com.github.markusbernhardt.xmldoclet.xjc.Class;
-import com.github.markusbernhardt.xmldoclet.xjc.Constructor;
-import com.github.markusbernhardt.xmldoclet.xjc.Enum;
-import com.github.markusbernhardt.xmldoclet.xjc.EnumConstant;
-import com.github.markusbernhardt.xmldoclet.xjc.Field;
-import com.github.markusbernhardt.xmldoclet.xjc.Interface;
-import com.github.markusbernhardt.xmldoclet.xjc.Method;
-import com.github.markusbernhardt.xmldoclet.xjc.MethodParameter;
-import com.github.markusbernhardt.xmldoclet.xjc.ObjectFactory;
-import com.github.markusbernhardt.xmldoclet.xjc.Package;
-import com.github.markusbernhardt.xmldoclet.xjc.Root;
-import com.github.markusbernhardt.xmldoclet.xjc.TagInfo;
-import com.github.markusbernhardt.xmldoclet.xjc.TypeInfo;
-import com.github.markusbernhardt.xmldoclet.xjc.TypeParameter;
-import com.github.markusbernhardt.xmldoclet.xjc.Wildcard;
-import com.sun.javadoc.AnnotationDesc;
-import com.sun.javadoc.AnnotationTypeDoc;
-import com.sun.javadoc.AnnotationTypeElementDoc;
-import com.sun.javadoc.AnnotationValue;
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.ConstructorDoc;
-import com.sun.javadoc.FieldDoc;
-import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.PackageDoc;
-import com.sun.javadoc.Parameter;
-import com.sun.javadoc.ParameterizedType;
-import com.sun.javadoc.ProgramElementDoc;
-import com.sun.javadoc.RootDoc;
-import com.sun.javadoc.Tag;
-import com.sun.javadoc.Type;
-import com.sun.javadoc.TypeVariable;
-import com.sun.javadoc.WildcardType;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The main parser class. It scans the given Doclet document root and creates
@@ -53,7 +22,8 @@ public class Parser {
 
 	private final static Logger log = LoggerFactory.getLogger(Parser.class);
 
-	protected Map<String, Package> packages = new TreeMap<String, Package>();
+	protected Map<String, Package> packages = new TreeMap<>();
+    protected Map<String, Index.IndexPackage> indexPackages = new TreeMap<>();
 
 	protected ObjectFactory objectFactory = new ObjectFactory();
 
@@ -63,28 +33,65 @@ public class Parser {
 	 * @param rootDoc
 	 *            The RootDoc intstance obtained via the doclet API
 	 * @return The root node, containing everything parsed from javadoc doclet
+     *
 	 */
 	public Root parseRootDoc(RootDoc rootDoc) {
 		Root rootNode = objectFactory.createRoot();
+        Index index = objectFactory.createIndex();
+        rootNode.setIndex(index);
 
 		for (ClassDoc classDoc : rootDoc.classes()) {
 			PackageDoc packageDoc = classDoc.containingPackage();
 
 			Package packageNode = packages.get(packageDoc.name());
+            Index.IndexPackage indexPackage = indexPackages.get(packageDoc.name());
 			if (packageNode == null) {
 				packageNode = parsePackage(packageDoc);
 				packages.put(packageDoc.name(), packageNode);
 				rootNode.getPackage().add(packageNode);
+
+                indexPackage = objectFactory.createIndexIndexPackage();
+                indexPackage.setName(packageNode.getName());
+                indexPackages.put(packageNode.getName(), indexPackage);
+                index.getIndexPackage().add(indexPackage);
 			}
 
 			if (classDoc instanceof AnnotationTypeDoc) {
-				packageNode.getAnnotation().add(parseAnnotationTypeDoc((AnnotationTypeDoc) classDoc));
+                Annotation a = parseAnnotationTypeDoc((AnnotationTypeDoc) classDoc);
+                packageNode.getAnnotation().add(a);
+
+                Index.IndexPackage.IndexClass clazz = objectFactory.createIndexIndexPackageIndexClass();
+                clazz.setName(a.getName());
+                clazz.setQualified(a.getQualified());
+                clazz.setType("annotation");
+                indexPackage.getIndexClass().add(clazz);
 			} else if (classDoc.isEnum()) {
-				packageNode.getEnum().add(parseEnum(classDoc));
+                Enum e = parseEnum(classDoc);
+                packageNode.getEnum().add(e);
+
+                Index.IndexPackage.IndexClass clazz = objectFactory.createIndexIndexPackageIndexClass();
+                clazz.setName(e.getName());
+                clazz.setQualified(e.getQualified());
+                clazz.setType("enum");
+                indexPackage.getIndexClass().add(clazz);
 			} else if (classDoc.isInterface()) {
-				packageNode.getInterface().add(parseInterface(classDoc));
+                Interface i = parseInterface(classDoc);
+                packageNode.getInterface().add(i);
+
+                Index.IndexPackage.IndexClass clazz = objectFactory.createIndexIndexPackageIndexClass();
+                clazz.setName(i.getName());
+                clazz.setQualified(i.getQualified());
+                clazz.setType("interface");
+                indexPackage.getIndexClass().add(clazz);
 			} else {
-				packageNode.getClazz().add(parseClass(classDoc));
+                Class c = parseClass(classDoc);
+                packageNode.getClazz().add(c);
+
+                Index.IndexPackage.IndexClass clazz = objectFactory.createIndexIndexPackageIndexClass();
+                clazz.setName(c.getName());
+                clazz.setQualified(c.getQualified());
+                clazz.setType(c.isException() || c.isError() ? "exception" : "class");
+                indexPackage.getIndexClass().add(clazz);
 			}
 		}
 
@@ -217,7 +224,10 @@ public class Parser {
 			enumNode.setComment(comment);
 		}
 		enumNode.setIncluded(classDoc.isIncluded());
-		enumNode.setScope(parseScope(classDoc));
+        String scope = parseScope(classDoc);
+        enumNode.setScope(scope);
+        enumNode.getModifier().add(scope);
+        enumNode.setType("enum");
 
 		Type superClassType = classDoc.superclassType();
 		if (superClassType != null) {
@@ -278,7 +288,10 @@ public class Parser {
 			interfaceNode.setComment(comment);
 		}
 		interfaceNode.setIncluded(classDoc.isIncluded());
-		interfaceNode.setScope(parseScope(classDoc));
+        String scope = parseScope(classDoc);
+        interfaceNode.setScope(scope);
+        interfaceNode.setType("interface");
+        interfaceNode.getModifier().add(scope);
 
 		for (TypeVariable typeVariable : classDoc.typeParameters()) {
 			interfaceNode.getGeneric().add(parseTypeParameter(typeVariable));
@@ -322,7 +335,14 @@ public class Parser {
 		classNode.setExternalizable(classDoc.isExternalizable());
 		classNode.setIncluded(classDoc.isIncluded());
 		classNode.setSerializable(classDoc.isSerializable());
-		classNode.setScope(parseScope(classDoc));
+        String scope = parseScope(classDoc);
+        classNode.setScope(scope);
+        classNode.setType(classDoc.isException() || classDoc.isError() ? "exception" : "class");
+        List<String> modifiers = classNode.getModifier();
+        modifiers.add(scope);
+        if (classDoc.isAbstract()) modifiers.add("abstract");
+        if (classDoc.isStatic()) modifiers.add("static");
+        if (classDoc.isFinal()) modifiers.add("final");
 
 		for (TypeVariable typeVariable : classDoc.typeParameters()) {
 			classNode.getGeneric().add(parseTypeParameter(typeVariable));
@@ -369,7 +389,8 @@ public class Parser {
 		if (comment.length() > 0) {
 			constructorNode.setComment(comment);
 		}
-		constructorNode.setScope(parseScope(constructorDoc));
+        String scope = parseScope(constructorDoc);
+        constructorNode.setScope(scope);
 		constructorNode.setIncluded(constructorDoc.isIncluded());
 		constructorNode.setFinal(constructorDoc.isFinal());
 		constructorNode.setNative(constructorDoc.isNative());
@@ -378,7 +399,13 @@ public class Parser {
 		constructorNode.setVarArgs(constructorDoc.isVarArgs());
 		constructorNode.setSignature(constructorDoc.signature());
 
-		for (Parameter parameter : constructorDoc.parameters()) {
+        List<String> modifiers = constructorNode.getModifier();
+        modifiers.add(scope);
+        if (constructorNode.isFinal()) modifiers.add("final");
+        if (constructorNode.isSynchronized()) modifiers.add("synchronized");
+        if (constructorNode.isNative()) modifiers.add("native");
+
+        for (Parameter parameter : constructorDoc.parameters()) {
 			constructorNode.getParameter().add(parseMethodParameter(parameter));
 		}
 
@@ -406,7 +433,8 @@ public class Parser {
 		if (comment.length() > 0) {
 			methodNode.setComment(comment);
 		}
-		methodNode.setScope(parseScope(methodDoc));
+        String scope = parseScope(methodDoc);
+        methodNode.setScope(scope);
 		methodNode.setAbstract(methodDoc.isAbstract());
 		methodNode.setIncluded(methodDoc.isIncluded());
 		methodNode.setFinal(methodDoc.isFinal());
@@ -417,7 +445,15 @@ public class Parser {
 		methodNode.setSignature(methodDoc.signature());
 		methodNode.setReturn(parseTypeInfo(methodDoc.returnType()));
 
-		for (Parameter parameter : methodDoc.parameters()) {
+        List<String> modifiers = methodNode.getModifier();
+        modifiers.add(scope);
+        if (methodNode.isFinal()) modifiers.add("final");
+        if (methodNode.isStatic()) modifiers.add("static");
+        if (methodNode.isNative()) modifiers.add("native");
+        if (methodNode.isSynchronized()) modifiers.add("synchronized");
+        if (methodNode.isAbstract()) modifiers.add("abstract");
+
+        for (Parameter parameter : methodDoc.parameters()) {
 			methodNode.getParameter().add(parseMethodParameter(parameter));
 		}
 
@@ -457,12 +493,20 @@ public class Parser {
 		if (comment.length() > 0) {
 			fieldNode.setComment(comment);
 		}
-		fieldNode.setScope(parseScope(fieldDoc));
+        String scope = parseScope(fieldDoc);
+        fieldNode.setScope(scope);
 		fieldNode.setFinal(fieldDoc.isFinal());
 		fieldNode.setStatic(fieldDoc.isStatic());
 		fieldNode.setVolatile(fieldDoc.isVolatile());
 		fieldNode.setTransient(fieldDoc.isTransient());
 		fieldNode.setConstant(fieldDoc.constantValueExpression());
+
+        List<String> modifiers = fieldNode.getModifier();
+        modifiers.add(scope);
+        if (fieldNode.isFinal()) modifiers.add("final");
+        if (fieldNode.isStatic()) modifiers.add("static");
+        if (fieldNode.isTransient()) modifiers.add("transient");
+        if (fieldDoc.isVolatile()) modifiers.add("volatile");
 
 		for (AnnotationDesc annotationDesc : fieldDoc.annotations()) {
 			fieldNode.getAnnotation().add(parseAnnotationDesc(annotationDesc, fieldDoc.qualifiedName()));

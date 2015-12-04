@@ -1,14 +1,20 @@
 package com.github.markusbernhardt.xmldoclet;
 
 import com.github.markusbernhardt.xmldoclet.xjc.Root;
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import org.eclipse.persistence.jaxb.MarshallerProperties;
+import org.eclipse.persistence.jaxb.xmlmodel.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.github.markusbernhardt.xmldoclet.JavadocRunner.join;
 
@@ -133,6 +139,21 @@ public class AbstractTestParent {
 		}
 
 		return XmlDoclet.root;
+	}
+
+	public static String marshalToString(Root root) throws JAXBException {
+		Map<String, Object> properties = new HashMap<String, Object>(2);
+		properties.put(MarshallerProperties.MEDIA_TYPE, "application/json");
+		properties.put(MarshallerProperties.JSON_INCLUDE_ROOT, true);
+		properties.put(MarshallerProperties.INDENT_STRING, true);
+		JAXBContext contextObj = JAXBContextFactory.createContext(new Class[] { Root.class, ObjectFactory.class },
+				properties);
+		Marshaller marshaller = contextObj.createMarshaller();
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		marshaller.marshal(root, baos);
+		return baos.toString();
 	}
 
 }

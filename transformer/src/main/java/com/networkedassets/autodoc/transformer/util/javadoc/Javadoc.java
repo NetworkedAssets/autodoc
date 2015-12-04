@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.transformer.util.javadoc;
 
 import com.github.markusbernhardt.xmldoclet.JavadocRunner;
+import com.github.markusbernhardt.xmldoclet.XmlDoclet;
 import com.github.markusbernhardt.xmldoclet.xjc.Root;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -11,10 +12,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -63,13 +62,44 @@ public class Javadoc {
     public static Path fromDirectory(@Nonnull Path localDirectory, @Nullable String docletPath,
                                      @Nullable String docletClass) throws JavadocException {
         System.out.println("From directory: " + localDirectory.toAbsolutePath());
-        Javadoc javadoc = new Javadoc(Paths.get(localDirectory.toString(), "javadoc"));
+        Javadoc javadoc = new Javadoc(localDirectory.resolve("javadoc"));
         List<Path> javaFiles = searchJavaFiles(localDirectory);
         System.out.println("Java files:\n" + Joiner.on("\n").join(javaFiles));
         javadoc.addFiles(javaFiles);
         javadoc.generate(docletPath, docletClass);
         System.out.println("Javadoc generated");
         return javadoc.javadocDirectory;
+    }
+
+    @Nonnull
+    public static Root structureFromDirectory(@Nonnull Path localDirectory) throws JavadocException {
+        Path javadocPath = localDirectory.resolve("javadoc");
+        Javadoc javadoc = new Javadoc(javadocPath);
+        List<Path> javaFiles = searchJavaFiles(localDirectory);
+        javadoc.addFiles(javaFiles);
+        Root r = javadoc.generate(XmlDoclet.class);
+        try {
+            rmDir(javadocPath);
+        } catch (IOException e) {
+            throw new JavadocException(e);
+        }
+        return r;
+    }
+
+    private static void rmDir(Path dir) throws IOException {
+        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 
     @Nonnull

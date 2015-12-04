@@ -1,18 +1,16 @@
 package com.github.markusbernhardt.xmldoclet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-
 import com.github.markusbernhardt.xmldoclet.simpledata.Annotation1;
 import com.github.markusbernhardt.xmldoclet.simpledata.Annotation2;
 import com.github.markusbernhardt.xmldoclet.simpledata.Annotation3;
-import com.github.markusbernhardt.xmldoclet.xjc.Annotation;
-import com.github.markusbernhardt.xmldoclet.xjc.AnnotationElement;
-import com.github.markusbernhardt.xmldoclet.xjc.AnnotationInstance;
+import com.github.markusbernhardt.xmldoclet.xjc.*;
 import com.github.markusbernhardt.xmldoclet.xjc.Package;
-import com.github.markusbernhardt.xmldoclet.xjc.Root;
+import org.junit.Test;
+
+import javax.xml.bind.JAXBException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test group for Annotations
@@ -54,7 +52,13 @@ public class AnnotationTest extends AbstractTestParent {
 		assertEquals(annotationNode.getAnnotation().size(), 0);
 		assertEquals(annotationNode.getElement().size(), 0);
 		assertTrue(annotationNode.isIncluded());
-	}
+
+        try {
+            System.out.println(marshalToString(rootNode));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+    }
 
 	/**
 	 * testing an annotation with an annotation decorating it
@@ -88,6 +92,12 @@ public class AnnotationTest extends AbstractTestParent {
 		assertEquals(annotationInstance.getQualified(), "java.lang.Deprecated");
 		assertEquals(annotationInstance.getName(), "Deprecated");
 		assertEquals(annotationInstance.getArgument().size(), 0);
+
+        try {
+            System.out.println(marshalToString(rootNode));
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
 	}
 
 	/**

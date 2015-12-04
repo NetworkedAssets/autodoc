@@ -1,17 +1,31 @@
 package com.networkedassets.autodoc.transformer.util.javadoc;
 
 import com.eclipsesource.json.*;
+import com.github.markusbernhardt.xmldoclet.xjc.Class;
+import com.github.markusbernhardt.xmldoclet.xjc.Enum;
+import com.github.markusbernhardt.xmldoclet.xjc.*;
+import com.github.markusbernhardt.xmldoclet.xjc.Package;
 import com.google.common.collect.ImmutableList;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationType;
 import jersey.repackaged.com.google.common.collect.Lists;
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import org.eclipse.persistence.jaxb.MarshallerProperties;
+import org.eclipse.persistence.jaxb.xmlmodel.ObjectFactory;
 import org.json.JSONException;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class JavadocConverter {
 
@@ -111,4 +125,52 @@ public class JavadocConverter {
 		return rootObj;
 	}
 
+    public static String docToString(java.lang.Class<?> clazz, Object val) throws JAXBException {
+        Map<String, Object> properties = new HashMap<>(2);
+        properties.put(MarshallerProperties.MEDIA_TYPE, "application/json");
+        properties.put(MarshallerProperties.JSON_INCLUDE_ROOT, true);
+        properties.put(MarshallerProperties.INDENT_STRING, true);
+        JAXBContext contextObj = JAXBContextFactory.createContext(new java.lang.Class[] { clazz, ObjectFactory.class },
+                properties);
+        Marshaller marshaller = contextObj.createMarshaller();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        marshaller.marshal(val, baos);
+        return baos.toString();
+    }
+
+	public static Documentation convert(Root docRoot) throws JAXBException {
+
+		JAXBContext jc = JAXBContext.newInstance(Root.class);
+		Marshaller marshaller  = jc.createMarshaller();
+		marshaller.setProperty(MarshallerProperties.MEDIA_TYPE, "application/json");
+		marshaller.setProperty(MarshallerProperties.JSON_INCLUDE_ROOT, true);
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		marshaller.marshal(docRoot, System.out);
+
+        Documentation doc = new Documentation(new ArrayList<>());
+        doc.setType(DocumentationType.JAVADOC);
+
+        List<DocumentationPiece> pieces = doc.getPieces();
+        String index = docToString(Index.class, docRoot.getIndex());
+        pieces.add(new DocumentationPiece("index", "index", index));
+
+        for (Package p : docRoot.getPackage()) {
+            for (Enum e : p.getEnum()) {
+                String en = docToString(Enum.class, e);
+                pieces.add(new DocumentationPiece(e.getQualified(), "enum", en));
+            }
+            for (Interface i : p.getInterface()) {
+                String en = docToString(Interface.class, i);
+                pieces.add(new DocumentationPiece(i.getQualified(), "interface", en));
+            }
+            for (Class e : p.getClazz()) {
+                String en = docToString(Class.class, e);
+                pieces.add(new DocumentationPiece(e.getQualified(), "class", en));
+            }
+        }
+
+        return doc;
+	}
 }

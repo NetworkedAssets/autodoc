@@ -1,23 +1,15 @@
 package com.github.markusbernhardt.xmldoclet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.List;
-
+import com.github.markusbernhardt.xmldoclet.simpledata.Annotation12;
+import com.github.markusbernhardt.xmldoclet.xjc.*;
+import com.github.markusbernhardt.xmldoclet.xjc.Class;
+import com.github.markusbernhardt.xmldoclet.xjc.Package;
 import org.junit.Test;
 
-import com.github.markusbernhardt.xmldoclet.simpledata.Annotation12;
-import com.github.markusbernhardt.xmldoclet.xjc.AnnotationArgument;
-import com.github.markusbernhardt.xmldoclet.xjc.AnnotationInstance;
-import com.github.markusbernhardt.xmldoclet.xjc.Class;
-import com.github.markusbernhardt.xmldoclet.xjc.Field;
-import com.github.markusbernhardt.xmldoclet.xjc.Package;
-import com.github.markusbernhardt.xmldoclet.xjc.Root;
+import javax.xml.bind.JAXBException;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test group for Fields
@@ -168,6 +160,12 @@ public class FieldTest extends AbstractTestParent {
 		assertNotNull(field.getType());
 		assertEquals(field.getType().getQualified(), "java.lang.String");
 		assertEquals(field.getType().getDimension(), "[]");
+
+		try {
+			System.out.println(marshalToString(rootNode));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer.handleRepoPush.core;
 
+import com.github.markusbernhardt.xmldoclet.xjc.Root;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
@@ -10,10 +11,9 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Created by mrobakowski on 11/13/2015.
@@ -28,12 +28,11 @@ public class JavadocGenerator implements DocumentationGenerator {
 			String docletPath = new File(getDocletFilenameFromProperties()).getAbsolutePath();
 			String docletClassname = getDocletClassnameFromProperties();
 			System.out.println("doclet path: " + docletPath + "\ndoclet class: " + docletClassname);
-			Path xmlJavaDocPath = Javadoc.fromDirectory(code.getCodePath(), docletPath, docletClassname);
+			Root docRoot = Javadoc.structureFromDirectory(code.getCodePath());
 
-			return new JavadocConverter(Paths.get(xmlJavaDocPath.toString(), getDocletOutFilenameFromProperties()))
-					.convert();
+			return JavadocConverter.convert(docRoot);
 
-		} catch (JavadocException | JSONException | IOException e) {
+		} catch (JavadocException | JSONException | JAXBException e) {
 			throw new RuntimeException("Couldn't generate Javadoc", e);
 		}
 	}
@@ -79,5 +78,4 @@ public class JavadocGenerator implements DocumentationGenerator {
 		}
 		return docletClassName;
 	}
-
 }
