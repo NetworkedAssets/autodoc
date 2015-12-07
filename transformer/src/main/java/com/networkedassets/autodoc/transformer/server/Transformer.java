@@ -129,7 +129,9 @@ public class Transformer {
 
         keypair.generate(keysize);
         PrivateKey privKey = keypair.getPrivateKey();
-
+      
+        
+        
         X509Certificate[] chain = new X509Certificate[1];
 
         chain[0] = keypair.getSelfCertificate(x500Name, new Date(), validity * 24 * 60 * 60);

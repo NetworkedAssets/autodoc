@@ -8,7 +8,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.require.Documentat
 import com.networkedassets.autodoc.transformer.settings.Settings;
 
 public class ConfluenceDocumentationSender implements DocumentationSender {
-    private static final String confluenceEndpointFormat = "%s/rest/autodoc/1.0/documentation/%s/%s/%s/%s";
+    private static final String confluenceEndpointFormat = "%s/rest/autodoc/1.0/documentation/%s/%s/%s/%s/%s";
    
     @Override
     public void send(Documentation documentation, Settings settings) {
@@ -22,6 +22,7 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
                                 documentation.getProject(),
                                 documentation.getRepo(),
                                 documentation.getBranch(),
+                                documentation.getType(),
                                 docPiece.getPieceName()))
                         .basicAuth(settings.getConfluenceUsername(), settings.getConfluencePassword())
                         .queryString("docType", documentation.getType())
