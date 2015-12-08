@@ -1,7 +1,7 @@
 angular.module("DoC")
-    .directive('docQname', function() {
+    .directive('docQname', function($compile) {
         return {
-            link: function(scope,elem,attr) {
+            link: function(scope,element,attr) {
                 //var arr;
                 //var qualified;
                 //if (typeof scope.source == "string") {
@@ -16,12 +16,18 @@ angular.module("DoC")
                 //}
                 scope.name = qName(scope.source);
                 scope.qualified = qName(scope.source,true);
+                //console.log(elem);
+
+                var html = '<span title="{{qualified}}"  ui-sref="javadoc.entity({name:qualified})">{{name}}</span>';
+                element.html(html);
+
+                $compile(element.contents())(scope);
+
             },
             scope: {
                 source: "=docQname",
                 name: "=",
                 qualified: "="
-            },
-            template: '<span ui-sref="javadoc.entity({name:qualified})">{{name}}</span>'
+            }
         };
     });
