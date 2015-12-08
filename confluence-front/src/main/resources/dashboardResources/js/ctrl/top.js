@@ -27,8 +27,6 @@ angular.module("DoC").controller("topCtrl",function($scope,$state) {
         }
     });
 
-    console.log($scope.states);
-
     $scope.changeState = function(state) {
         console.log(state);
         $scope.activeState = $scope.states[state];

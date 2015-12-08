@@ -86,33 +86,47 @@
 
 	<web-resource key="dashboard-resources" name="Dashboard web resources">
 		<resource type="download" name="dashboardResources/" location="/dashboardResources" />
-		<resource type="download" name="js/jquery.min.js" location = "dashboardResources/js/jquery.min.js" />
+		<!--<resource type="download" name="js/jquery.min.js" location = "dashboardResources/js/jquery.min.js" />-->
 		<resource type="download" name="js/lib/d3.min.js" location = "dashboardResources/js/lib/d3.min.js" />
 		<resource type="download" name="js/lib/dagre.min.js" location = "dashboardResources/js/lib/dagre.min.js" />
 		<resource type="download" name="js/lib/dagre-d3.min.js" location = "dashboardResources/js/lib/dagre-d3.min.js" />
-		<resource type="download" name="js/jquery.textWidth.min.js" location = "dashboardResources/js/jquery.textWidth.min.js" />
-		<resource type="download" name="css/doc_javadoc.css" location = "dashboardResources/css/doc_javadoc.css" />
-		<resource type="download" name="css/doc_classDiagram.css" location = "dashboardResources/css/doc_classDiagram.css" />
-		<resource type="download" name="css/doc_main.css" location = "dashboardResources/css/doc_main.css" />
 		<resource type="download" name="js/lib/angular.min.js" location = "dashboardResources/js/lib/angular.min.js" />
 		<resource type="download" name="js/lib/angular-sanitize.min.js" location = "dashboardResources/js/lib/angular-sanitize.min.js" />
 		<resource type="download" name="js/lib/angular-ui-router.min.js" location = "dashboardResources/js/lib/angular-ui-router.min.js" />
+
 		<resource type="download" name="js/app.js" location = "dashboardResources/js/app.js" />
+		<resource type="download" name="js/config.js" location = "dashboardResources/js/config.js" />
+
+		<resource type="download" name="css/doc_javadoc.css" location = "dashboardResources/css/doc_javadoc.css" />
+		<resource type="download" name="css/doc_javadoc.entity.css" location = "dashboardResources/css/doc_javadoc.entity.css" />
+		<resource type="download" name="css/doc_classDiagram.css" location = "dashboardResources/css/doc_classDiagram.css" />
+		<resource type="download" name="css/doc_main.css" location = "dashboardResources/css/doc_main.css" />
+
 		<resource type="download" name="js/ctrl/javadoc.entity.js" location = "dashboardResources/js/ctrl/javadoc.entity.js" />
 		<resource type="download" name="js/ctrl/javadoc.js" location = "dashboardResources/js/ctrl/javadoc.js" />
-		<resource type="download" name="js/doc_classDiagram.js" location = "dashboardResources/js/doc_classDiagram.js" />
+		<resource type="download" name="js/ctrl/classDiagram.js" location = "dashboardResources/js/ctrl/classDiagram.js" />
 		<resource type="download" name="js/ctrl/top.js" location = "dashboardResources/js/ctrl/top.js" />
+
+		<resource type="download" name="js/doc_classDiagram.js" location = "dashboardResources/js/doc_classDiagram.js" />
+
 		<resource type="download" name="js/dirs/docQname.js" location = "dashboardResources/js/dirs/docQname.js" />
+
+		<resource type="download" name="js/services/restPath.js" location = "dashboardResources/js/services/restPath.js" />
+		<resource type="download" name="js/services/javadocEntities.js" location = "dashboardResources/js/services/javadocEntities.js" />
+
+		<resource type="download" name="js/filters/javadoc.menuItemSorter.js" location = "dashboardResources/js/filters/javadoc.menuItemSorter.js" />
+
 		<resource type="download" name="js/fn/common.js" location = "dashboardResources/js/fn/common.js" />
-		<resource type="download" name="class.json" location="dashboardResources/class.json"/>
-		<resource type="download" name="data.json" location="dashboardResources/data.json"/>
-		<resource type="download" name="data2.json" location="dashboardResources/data2.json"/>
-		<resource type="download" name="list.json" location="dashboardResources/list.json"/>
-		<resource type="download" name="na.json" location="dashboardResources/na.json"/>
-		<resource type="download" name="na2.json" location="dashboardResources/na2.json"/>
-		<resource type="download" name="na_single.json" location="dashboardResources/na_single.json"/>
-		<resource type="download" name="na_single2.json" location="dashboardResources/na_single2.json"/>
-		<resource type="download" name="uml.json" location="dashboardResources/uml.json"/>
+
+		<!--<resource type="download" name="class.json" location="dashboardResources/class.json"/>-->
+		<!--<resource type="download" name="data.json" location="dashboardResources/data.json"/>-->
+		<!--<resource type="download" name="data2.json" location="dashboardResources/data2.json"/>-->
+		<!--<resource type="download" name="list.json" location="dashboardResources/list.json"/>-->
+		<!--<resource type="download" name="na.json" location="dashboardResources/na.json"/>-->
+		<!--<resource type="download" name="na2.json" location="dashboardResources/na2.json"/>-->
+		<!--<resource type="download" name="na_single.json" location="dashboardResources/na_single.json"/>-->
+		<!--<resource type="download" name="na_single2.json" location="dashboardResources/na_single2.json"/>-->
+		<!--<resource type="download" name="uml.json" location="dashboardResources/uml.json"/>-->
 	</web-resource>
 	<!--<web-resource key="dashboard-resources">-->
 		<!--<resource type="download" name="wroclaw" location="dashboardResources/wroclaw.jpg"/>-->

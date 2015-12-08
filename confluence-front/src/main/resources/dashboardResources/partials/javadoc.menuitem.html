@@ -1,11 +1,12 @@
 <a>
     <span ng-show="item.children" class="aui-icon aui-icon-small aui-iconfont-arrow-{{item.expanded?'up':'down'}}" ng-click="vm.toggleItem(item)"></span>
     <span ng-hide="item.children" class="aui-icon aui-icon-small"></span>
-    <span class="type {{item.type}}">{{item.type[0]}}</span>
-    <span class="name" ng-click="vm.go(item)" doc-qname="item.name"></span>
+    <span class="type {{item.type}}">{{item.type[0]}}</span><!--
+    --><span class="name" ng-click="vm.go(item)" doc-qname="item.name"></span>
 </a>
 <ul ng-show="item.expanded">
-    <li ng-repeat="item in item.children" class=""
-        ng-include="'../../../download/resources/com.networkedassets.autodoc.confluence-front:dashboard-resources/dashboardResources/partials/javadoc.menuitem.html'">
+    <li ng-repeat="item in item.children | javadocMenuItemSorter" class="">
+
+        <ng-include src="vm.getMenuItemPartialPath()"></ng-include>
     </li>
 </ul>

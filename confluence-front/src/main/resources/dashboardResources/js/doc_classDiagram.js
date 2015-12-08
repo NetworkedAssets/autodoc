@@ -4,8 +4,6 @@
 
 /* From JSON to Dagre */
 
-var doc_resourcePath = AJS.Data.get("base-url")+"/" + AJS.Meta.get("dashboardResourcePath");
-
 function ClassDiagram(options) {
 
     var defaults = {
@@ -55,8 +53,8 @@ function ClassDiagram(options) {
         that.load();
     };
 
-    this.load = function() {
-        $.getJSON(doc_resourcePath + "uml.json?",function(data) {
+    this.load = function(url) {
+        $.getJSON(url,function(data) {
             that.generate(data);
         });
     };
@@ -197,7 +195,7 @@ function ClassDiagram(options) {
     * */
     var elementToString = function(elem) {
         var string = "";
-        var isMethod = (typeof elem.return != "undefined");
+        var isMethod = (typeof elem.return != "undefined") || elem.signature;
         switch (elem.scope) {
             case "public": string += "+ "; break;
             case "protected": string += "# "; break;
@@ -276,6 +274,20 @@ function ClassDiagram(options) {
 
         $.each(entities,function(key,entity) {
 
+            entity.methods = entity.method;
+
+            if (!entity.methods) {
+                entity.methods = [];
+            }
+
+            entity.fields = entity.field;
+
+            entity.constructors = [];
+
+            if (typeof entity.constructor == "object") {
+                entity.methods = (entity.constructors.concat(entity.constructor).concat(entity.methods));
+            }
+
 
             if (entity.methods) {
                 $.each(entity.methods,function(key,method) {
@@ -284,6 +296,8 @@ function ClassDiagram(options) {
             } else {
                 entity.methods = [];
             }
+
+
 
             if (entity.fields) {
                 $.each(entity.fields,function(key,field) {
