@@ -66,11 +66,24 @@ public class DocumentationFromCodeGeneratorIntegrationTest {
     }
 
     @Test
-    public void testJSONSourceUrlExists() throws IOException {
-        final String sourceUrl = createPushEventInstanceFromJSON().getSourceUrl();
+    public void testJSONSourceUrlNotExistButIsFound() throws IOException {
+        PushEvent pushEvent = createPushEventInstanceFromJSON();
+        final String sourceUrl = pushEvent.getSourceUrl();
+        final String projectKey = pushEvent.getProjectKey();
+        final String repoSlug = pushEvent.getRepositorySlug();
+        final String branchId = pushEvent.getBranchId();
         assertNotNull(sourceUrl);
         assertNotEquals(sourceUrl, "");
 
-        //assertTrue(settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl));
+        // not exist
+        assertFalse(settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl));
+        // is found
+        /*assertTrue(settingsProvider.getCurrentSettings()
+                .getSourceByUrl(sourceUrl)
+                .getProjectByKey(projectKey)
+                .getRepoBySlug(repoSlug)
+                .getBranchById(branchId)
+                .isListened
+        );*/
     }
 }
