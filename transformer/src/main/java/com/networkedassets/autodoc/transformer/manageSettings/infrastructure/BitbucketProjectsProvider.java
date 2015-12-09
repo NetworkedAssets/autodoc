@@ -90,7 +90,6 @@ public class BitbucketProjectsProvider implements ProjectsProvider {
 
         //translate projects
         bitbucketProjects.forEach(bitbucketProject -> {
-//            projects.add(new Project(stashProject.getName(), stashProject.getKey()))
             projects.put(bitbucketProject.getKey(), new Project(bitbucketProject.getName(), bitbucketProject.getKey()));
         });
 

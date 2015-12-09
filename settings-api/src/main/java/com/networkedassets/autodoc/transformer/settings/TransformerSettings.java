@@ -12,7 +12,7 @@ public class TransformerSettings implements Serializable {
 
     // TODO: 19.11.2015 Remove default values and require user to enter them on first run in frontend
     private int transformerPort = 8050;
-    private String localhostAddress = "http://localhost:" + transformerPort + "/event";
+    private String localhostAddress = "https://localhost:" + transformerPort + "/event";
 
 
     public int getTransformerPort() {

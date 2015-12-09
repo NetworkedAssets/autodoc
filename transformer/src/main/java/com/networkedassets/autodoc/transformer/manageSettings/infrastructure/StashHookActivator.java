@@ -37,6 +37,12 @@ public class StashHookActivator implements HookActivator {
                         source.getHookKey(),
                         localhostAddress,
                         "30000");
+                stashClient.setHookSettingsEnabled(
+                        project.key,
+                        repo.slug,
+                        source.getHookKey()
+                );
+
             } catch (UnirestException e) {
                 log.error("Error while activating hooks for {}/{}: ", project.name, repo.slug, e);
             }

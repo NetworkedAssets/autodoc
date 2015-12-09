@@ -20,8 +20,6 @@ public class ProjectsProviderFactory {
             case BITBUCKET:
                 projectsProvider = new BitbucketProjectsProvider(source);
                 break;
-            case GITHUB:
-                break;
         }
         return projectsProvider;
     }

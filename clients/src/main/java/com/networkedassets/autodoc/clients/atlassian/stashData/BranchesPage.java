@@ -1,10 +1,12 @@
 package com.networkedassets.autodoc.clients.atlassian.stashData;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.MoreObjects;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BranchesPage {
 
 	private Integer size;

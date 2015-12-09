@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
+@SuppressWarnings("Duplicates")
 public class BitbucketClient extends HttpClient {
 
 	public BitbucketClient(HttpClientConfig config) {
