@@ -10,16 +10,17 @@ import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import javax.inject.Inject;
 import java.io.IOException;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by mtulaza on 2015-12-07.
  */
+@Category(IntegrationTest.class)
 public class DocumentationFromCodeGeneratorIntegrationTest {
     @Inject
     private PushEventProcessor documentationFromCodeGenerator;
