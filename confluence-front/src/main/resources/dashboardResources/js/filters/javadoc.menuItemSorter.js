@@ -1,9 +1,5 @@
 angular.module("DoC").filter('javadocMenuItemSorter', function() {
 
-    function order() {
-
-    }
-
     return function(items, field) {
         var filtered = [];
         angular.forEach(items, function(item) {
@@ -11,13 +7,20 @@ angular.module("DoC").filter('javadocMenuItemSorter', function() {
         });
 
         filtered.sort(function (a, b) {
-            //console.log(a.type, b.type);
             if (a.type == b.type) {
-                return a.name < b.name;
+                if (a.name == b.name) {
+                    return 0;
+                } else if (a.name> b.name ) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            } else if (a.type > b.type) {
+                return -1;
             } else {
-                //console.log(a.name,b.name);
-                return a.type >= b.type;
+                return 1;
             }
+
         });
         return filtered;
     };

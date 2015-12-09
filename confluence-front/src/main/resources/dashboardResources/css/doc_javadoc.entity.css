@@ -2,6 +2,10 @@
     padding: 1em;
 }
 
+.doc .javadoc .supers, .doc .javadoc .interfaces {
+    margin-left: 50px;
+}
+
 .doc .javadoc .elems > table {
     width: 100%;
     table-layout: auto;
@@ -32,17 +36,23 @@
 }
 
 .doc .javadoc span.modifier,
-.doc .javadoc .elems span.type {
+.doc .javadoc .javadoc_container span.type {
     background: #e9e9e9;
     font-weight: 600;
     display: inline-block;
     border-radius: 1em;
+    margin: 0.2em 0;
+    vertical-align: 0;
     /*margin-top: 0.5em;*/
     /*margin-right: 0.5em;*/
     padding: 0 0.75em;
 }
 
-.doc .javadoc .elems span.type {
+.doc .javadoc span.modifier:not(:first-of-type) {
+    margin: 0 4px;
+}
+
+.doc .javadoc .javadoc_container span.type {
     border-radius: 0.2em;
 }
 
@@ -75,7 +85,7 @@
     color: #fff;
 }
 
-.doc .javadoc .elems span.type {
+.doc .javadoc .javadoc_container span.type {
     background: #e9e9e9;
 }
 
@@ -96,7 +106,7 @@
 
 .doc .javadoc .elems .elem span.parameters span.parameter {
     margin: 0 0.2em;
-    white-space: normal;
+    white-space: nowrap;
 }
 
 .doc .javadoc .elems .elem span.parameters span.parameterName {
@@ -110,6 +120,10 @@
 .doc .javadoc .elem > span {
     display: inline-block;
     vertical-align: top;
+}
+
+.doc .javadoc span.modifiers {
+    margin-right: 5px;
 }
 
 .doc .javadoc .elem > span.modifiers {
@@ -161,4 +175,28 @@
 .doc .javadoc .typeWrapper {
     /*min-width: 150px;*/
     display: inline-block;
+}
+
+.doc .javadoc .annotations .annotation {
+    display: block;
+    color: #999999;
+}
+
+.doc .javadoc .annotations.inline .annotation {
+    display: inline-block;
+}
+
+.doc .javadoc h3.annotations {
+    margin-top: 0;
+    font-style: normal;
+    font-weight: normal;
+}
+
+.doc .javadoc span.type {
+    cursor: default;
+}
+
+.doc .javadoc span.type.clickable {
+    cursor: pointer;
+    color: #205081;
 }

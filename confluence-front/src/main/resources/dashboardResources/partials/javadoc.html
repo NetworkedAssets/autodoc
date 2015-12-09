@@ -1,14 +1,14 @@
 <div class="javadoc">
     <div class="row">
         <aside class="doc_tree">
-            <h1 class="aui-nav-heading">Reference</h1>
+            <h2>Structure</h2>
             <ul>
                 <li ng-repeat="item in vm.items | javadocMenuItemSorter" class=""><ng-include src="vm.getMenuItemPartialPath()"></ng-include></li>
             </ul>
         </aside>
         <div class="javadoc_container">
             <div ng-hide="$state.includes('javadoc.entity')">
-                <h1>Package list</h1>
+                <h2>Package list</h2>
                 <ul>
                     <li ng-repeat="item in vm.items" class="">
                         <a ui-sref="javadoc.entity({name: item.name})">{{item.name}}</a>

@@ -1,14 +1,24 @@
 angular.module("DoC").factory('javadocEntities',function() {
-    var entities = {
-        list: {},
-        push: function(entity) {
 
+    var tree = null;
+
+    var list = {};
+
+    var entities = {
+        push: function(entity) {
+            list[entity.qualified] = entity;
         },
-        clear: {
-            //this.list = {};
+        clear: function() {
+            list = {};
         },
-        exists: function(name) {
-            return typeof this.list[name] != "undefined";
+        setTree: function(newTree) {
+            tree = newTree;
+        },
+        existsByName: function(name) {
+            return typeof list[name] != "undefined";
+        },
+        getByName: function(name) {
+            return list[name];
         }
     };
 

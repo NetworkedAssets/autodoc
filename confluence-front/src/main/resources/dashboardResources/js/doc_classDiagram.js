@@ -13,6 +13,8 @@ function ClassDiagram(options) {
         }
     };
 
+    var scopeLockSize = 20;
+
     var settings;
 
     var dagreGraph;
@@ -357,6 +359,8 @@ function ClassDiagram(options) {
                 .attr("y",-h/2)
                 .attr("width",w)
                 .attr("height",h)
+                .attr("rx",5)
+                .attr("ry",5)
                 ;
 
             var nameRect = g.append("rect")
@@ -364,7 +368,10 @@ function ClassDiagram(options) {
                 .attr("y",-h/2)
                 .attr("width",w)
                 .attr("height",h1)
+                .attr("rx",5)
+                .attr("ry",5)
                 .classed("head",true)
+                .attr("fill","url(#HeaderGradient)")
                 ;
 
 
@@ -409,7 +416,6 @@ function ClassDiagram(options) {
             }
 
 
-
             if (node.data.fields && node.data.fields.length) {
                 var fieldRect = g.append("rect")
                     .attr("x",-w/2)
@@ -422,7 +428,7 @@ function ClassDiagram(options) {
                     var tspan = g.append("text")
                         //.classed("abstract",true)
                         //.classed("static",true)
-                        .attr("x",textOffset.x)
+                        .attr("x",textOffset.x+scopeLockSize)
                         .attr("y",textOffset.y+h_row*i+h1)
                         .append("tspan")
                         .text(elem.string)
@@ -433,6 +439,16 @@ function ClassDiagram(options) {
                     if (elem.static) {
                         tspan.classed("static",true);
                     }
+                    console.log(elem);
+                    if (elem.scope == "public" || elem.scope == "private" || elem.scope == "protected") {
+                        g.append("image")
+                            .attr("x",textOffset.x-3)
+                            .attr("y",textOffset.y-15+h_row*i+h1)
+                            .attr("width",scopeLockSize)
+                            .attr("height",scopeLockSize)
+                            .attr("xlink:href",doc_resourcePath+"images/"+elem.scope+"ScopeLock.png");
+                    }
+
                     i++;
                 });
 
@@ -444,7 +460,7 @@ function ClassDiagram(options) {
                     var tspan = g.append("text")
                         //.classed("abstract",true)
                         //.classed("static",true)
-                        .attr("x",textOffset.x)
+                        .attr("x",textOffset.x+scopeLockSize)
                         .attr("y",textOffset.y+h_row*i+h2)
                         .append("tspan")
                         .text(elem.string)
@@ -455,6 +471,16 @@ function ClassDiagram(options) {
                     if (elem.static) {
                         tspan.classed("static",true);
                     }
+
+                    if (elem.scope == "public" || elem.scope == "private" || elem.scope == "protected") {
+                        g.append("image")
+                            .attr("x",textOffset.x-3)
+                            .attr("y",textOffset.y-15+h_row*i+h2)
+                            .attr("width",scopeLockSize)
+                            .attr("height",scopeLockSize)
+                            .attr("xlink:href",doc_resourcePath+"images/"+elem.scope+"ScopeLock.png");
+                    }
+
                     i++;
 
                 });
@@ -480,120 +506,6 @@ function ClassDiagram(options) {
             .translate([-200, -400])
             .scale(initialScale)
             .event(svg);
-        //svg.attr('height', dagreGraph.graph().height * initialScale + 40);
-
-
-
-
-
-
-        /*dagreGraph.nodes().forEach(function(id) {
-
-            var node = dagreGraph.node(id);
-            var entity = entities[id];
-
-            console.log(entities,id,entity,node);
-            if (!entity) {
-                console.log(id,node);
-            }
-
-            entity.position = {
-                x: node.x,
-                y: node.y
-            };
-
-            entity.attrs = {
-                '*': {
-                    "font-family": "Helvetica Neue",
-                    "font-size": "12px"
-                }
-            };
-
-            entity.methods = entity.methodString;
-            entity.attributes = entity.fieldString;
-
-            try {
-                if (entity.type == "interface") {
-                    entity.umlEntity = new uml.Interface(entity);
-                } else if (entity.type == "abstract") {
-                    entity.umlEntity = new uml.Abstract(entity);
-                } else if (entity.type == "class") {
-                    entity.umlEntity = new uml.Class(entity);
-                } else {
-                    throw "Invalid entity.type: "+entity.type;
-                }
-                graph.addCell(entity.umlEntity);
-            } catch(e) {
-                console.error(e);
-            }
-
-
-
-        });
-
-        $.each(data.relations,function(key,relation) {
-            var umlRelation = relation.umlRelation;
-            var obj = {
-                source: {
-                    id: entities[relation.source].umlEntity.id
-                },
-                target: {
-                    id: entities[relation.target].umlEntity.id
-                }
-            };
-
-            if (relation.type == "implementation") {
-                umlRelation = new uml.Implementation(obj);
-            } else if (relation.type == "generalization") {
-                umlRelation = new uml.Generalization(obj);
-            } else if (relation.type == "association") {
-                umlRelation = new uml.Association(obj);
-            } else if (relation.type == "composition") {
-                umlRelation = new uml.Composition(obj);
-            } else if (relation.type == "aggregation") {
-                umlRelation = new uml.Aggregation(obj);
-            } else {
-                umlRelation = new uml.Association(obj);
-                console.error("Invalid relation.type: "+relation.type);
-                //throw new String("Invalid relation.type: "+relation.type);
-            }
-
-            graph.addCell(umlRelation);
-
-        });*/
-
-        //initInteraction();
-        //that.fitContent();
     };
 
 };
-
-/*
-var cd = new ClassDiagram();
-cd.load();
-
-$(window).on("resize.ClassDiagram",function() {
-    cd.setDimensions($(window).width(),$(window).height());
-});
-
-
-var method = {
-    name: "doSomething",
-    visibility: "public",
-    arguments: [
-        {
-            type: "Object",
-            name: "arg1"
-        },
-        {
-            final: true,
-            type: "String[]",
-            name: "stringArr"
-        }
-    ],
-    static: true,
-    returns: "void"
-};
-
-console.log(cd.elementToString(method,true));
-    */

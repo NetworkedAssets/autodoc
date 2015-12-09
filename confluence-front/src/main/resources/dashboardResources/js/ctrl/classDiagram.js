@@ -4,7 +4,7 @@ angular.module("DoC").controller('classDiagramCtrl',function($scope,restPath) {
     });
     cd.load(restPath.get("UML/all/"));
 
-    $(window).on("resize.ClassDiagram",function() {
-        cd.setDimensions($(window).width(),$(window).height());
-    });
+    //$(window).on("resize.ClassDiagram",function() {
+    //    cd.setDimensions($(window).width(),$(window).height());
+    //});
 });

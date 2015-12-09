@@ -3,22 +3,22 @@
  */
 
 angular.module("DoC")
-.controller("javadocCtrl",function($http,$state,restPath) {
+.controller("javadocCtrl",function($http,$state,restPath,javadocEntities,$timeout) {
     var vm = this;
+
+    /*
+    * TODO Active item indication
+    * */
 
     var parsePackageList = function(packageList) {
         var packages = {children:{}};
-        //packageList = packageList.sort(function(a,b) {
-        //    if (a.name < b.name)
-        //        return -1;
-        //    if (a.name > b.name)
-        //        return 1;
-        //    return 0;
-        //});
         angular.forEach(packageList,function(pack,key) {
             if (!pack.name || pack.name == "") {
                 pack.name = "(default)";
                 return true;
+            }
+            if (!pack.qualified) {
+                pack.qualified = pack.name;
             }
             var arr = pack.name.split(".");
             var currentPackage = packages;
@@ -29,9 +29,6 @@ angular.module("DoC")
                         type: "package",
                         children: {}
                     };
-                    if (pack.name === "com.networkedassets.autodoc.transformer.util.javadoc") {
-                        console.log(value,currentPackage.children[value],packages);
-                    }
                     if (currentPackage.name) {
                         currentPackage.children[value].name = currentPackage.name+'.'+value;
                     } else {
@@ -44,6 +41,9 @@ angular.module("DoC")
             if (typeof currentPackage.children == "undefined") {
                 currentPackage.children = {};
             }
+
+            javadocEntities.push(pack);
+
             angular.forEach(pack.indexClass,function(cl) {
                 //var name = cl.qualified.replace(pack.name);
                 //var arr = name.split(".");
@@ -57,6 +57,7 @@ angular.module("DoC")
                     name: cl.qualified,
                     type: cl.type
                 };
+                javadocEntities.push(cl);
             });
 
             angular.forEach(pack.indexInterface,function(interf) {
@@ -64,6 +65,7 @@ angular.module("DoC")
                     name: interf.qualified,
                     type: "interface"
                 };
+                javadocEntities.push(interf);
             });
 
 
@@ -91,6 +93,7 @@ angular.module("DoC")
 
         //packages = packages.children;
 
+        javadocEntities.setTree(packages);
 
         if (rootPackage) {
             var obj = {};
@@ -104,8 +107,6 @@ angular.module("DoC")
     }
 
     $http.get(restPath.get('JAVADOC/index')).then(function(data) {
-        console.log(data.data.indexPackage);
-        //vm.items = data.data.entities.package;
         parsePackageList(data.data.indexPackage);
     });
     vm.items = [];
@@ -117,11 +118,28 @@ angular.module("DoC")
         item.expanded = true;
     };
 
+    vm.isExpanded = function(item) {
+        var active = false;
+        if (typeof $state.params.name == "string") {
+            active = $state.params.name.match(item.name) !== null;
+        }
+
+        return (active) || item.expanded;
+    }
+
     vm.go = function(item) {
+        vm.expandItem(item);
+        console.log(item);
+        if (item.type == "package") {
+            return false;
+        }
         $state.go("javadoc.entity",{
             name: item.name
         });
-        vm.expandItem(item);
+    }
+
+    vm.isActive = function(item) {
+        return item.name===$state.params.name;
     }
 
     vm.getMenuItemPartialPath = function() {

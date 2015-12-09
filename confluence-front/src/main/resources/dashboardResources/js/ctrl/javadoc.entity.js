@@ -2,9 +2,13 @@
  * Created by Jakub on 24/11/15.
  */
 
-angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,restPath,$timeout) {
+angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,restPath,javadocEntities) {
 
     var vm = this;
+
+    /*
+    * TODO Entity refactor into 'class'
+    * */
 
     var parseModifiers = function(entity) {
         if (entity.modifier) {
@@ -93,5 +97,17 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
             });
         }
 
+        vm.entity.supers = [];
+        if (typeof vm.entity.class == "object") {
+            vm.entity.supers = [vm.entity.class];
+        }
+        vm.entity.interfaces = [];
+        if (vm.entity.interface) {
+            console.log(vm.entity.interface);
+            vm.entity.interfaces = vm.entity.interface;
+        }
+
     });
+
+
 });
