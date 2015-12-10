@@ -28,6 +28,7 @@ public class BitbucketHookActivator implements HookActivator {
     }
 
 
+    @SuppressWarnings("Duplicates")
     @Override
     public void enableAllHooks() {
         source.projects.values().stream().forEach(project -> project.repos.values().stream().forEach(repo -> {
@@ -38,6 +39,11 @@ public class BitbucketHookActivator implements HookActivator {
                         source.getHookKey(),
                         localhostAddress,
                         "30000");
+                bitbucketClient.setHookSettingsEnabled(
+                        project.key,
+                        repo.slug,
+                        source.getHookKey()
+                );
             } catch (UnirestException e) {
                 log.error("Error while activating hooks for {}/{}: ", project.name, repo.slug, e);
             }
