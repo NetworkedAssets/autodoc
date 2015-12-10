@@ -27,6 +27,7 @@ public class StashHookActivator implements HookActivator {
     }
 
 
+    @SuppressWarnings("Duplicates")
     @Override
     public void enableAllHooks() {
         source.projects.values().stream().forEach(project -> project.repos.values().stream().forEach(repo -> {
