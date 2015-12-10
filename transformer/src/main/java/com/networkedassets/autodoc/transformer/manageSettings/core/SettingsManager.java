@@ -54,7 +54,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
             bitbucketSource.setUrl("http://46.101.240.138:7991");
             bitbucketSource.setUsername("admin");
             bitbucketSource.setPassword("admin");
-            bitbucketSource.setHookKey("");
             bitbucketSource.setSourceType(Source.SourceType.BITBUCKET);
             settings.getSources().add(bitbucketSource);
             LOLIDONTEVENRUNONCE = true;

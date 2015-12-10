@@ -16,11 +16,9 @@ public class HookActivatorFactory {
         switch (source.getSourceType()) {
             case STASH:
                 hookActivator = new StashHookActivator(source, localhostAddress);
+                break;
             case BITBUCKET:
                 hookActivator = new BitbucketHookActivator(source, localhostAddress);
-                break;
-            case GITHUB:
-                //TODO gitHookActivator
                 break;
         }
 

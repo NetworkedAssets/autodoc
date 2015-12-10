@@ -36,12 +36,13 @@
 
 
 .node rect,
-.node circle,
-.node ellipse,
 .node polygon {
-    stroke: #333;
-    fill: #fff9e0;
-    stroke-width: 1.5px;
+    stroke: #ccc;
+    stroke-width: 1px;
+}
+
+.node rect:not(.head) {
+    fill: #fafbfe;
 }
 
 .edgePath path {
@@ -55,7 +56,8 @@
 }
 
 .doc_classDiagram rect.head {
-    fill: #fff990;
+    /*fill: url(#HeaderGradient) #ccc;*/
+    stroke-width: 0;
 }
 
 .doc_classDiagram text.head {

@@ -2,24 +2,37 @@
  * Created by Jakub on 24/11/15.
  */
 
-var doc_resourcePath = AJS.Data.get("base-url")+"/" + AJS.Meta.get("dashboardResourcePath");
-
-angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams) {
+angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,restPath,javadocEntities) {
 
     var vm = this;
 
+    /*
+    * TODO Entity refactor into 'class'
+    * */
+
     var parseModifiers = function(entity) {
-        entity.modifiers = [];
-
-        ["final","volatile","static","abstract","synchronized"].forEach(function(modifier) {
-            if (entity[modifier]) {
-                entity.modifiers.push(modifier);
-            }
-        });
-
-        if (entity.scope) {
-            entity.modifiers.push(entity.scope);
+        if (entity.modifier) {
+            entity.modifiers = entity.modifier;
+        } else {
+            entity.modifiers = [];
         }
+    }
+
+    var parseDetails = function(entity) {
+        entity.details = {
+            tags: [],
+            visible: false,
+            exist: false
+        };
+
+        if (entity.tag) {
+            entity.details.tags = entity.tag;
+            entity.details.exist = true;
+        }
+
+
+
+
     }
 
     var parseEntityFromJson = function(entity) {
@@ -32,14 +45,13 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
     }
 
     vm.toggleDetails = function(method) {
-        method.detailsVisible = !method.detailsVisible;
+        method.details.visible = !method.details.visible;
     };
 
     vm.entity = {};
 
-    console.log($stateParams.name);
 
-    $http.get(doc_resourcePath + 'na_single2.json').then(function(data) {
+    $http.get(restPath.get("JAVADOC/"+$stateParams.name)).then(function(data) {
 
 
         vm.entity = parseEntityFromJson(data.data);
@@ -54,21 +66,21 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
         vm.entity.elements = [
             {
                 type: "constructor",
-                elements: vm.entity.constructor
+                elements: (typeof vm.entity.constructor=="object")?vm.entity.constructor:[]
             },
             {
                 type: "field",
-                elements: vm.entity.field
+                elements: vm.entity.field?vm.entity.field:[]
             },
             {
                 type: "method",
-                elements: vm.entity.method
+                elements: vm.entity.method?vm.entity.method:[]
             }
         ];
 
         if (vm.entity.elements) {
             vm.entity.elements.forEach(function(elementGroup) {
-                if (elementGroup.elements) {
+                if (typeof elementGroup.elements == "object") {
                     elementGroup.elements.forEach(function(element) {
                         if (element.return) {
                             element.type = element.return;
@@ -79,12 +91,23 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
                         }
 
                         parseModifiers(element);
-
-                        element.detailsSafe = $sanitize(element.details);
+                        parseDetails(element);
                     });
                 }
             });
         }
 
+        vm.entity.supers = [];
+        if (typeof vm.entity.class == "object") {
+            vm.entity.supers = [vm.entity.class];
+        }
+        vm.entity.interfaces = [];
+        if (vm.entity.interface) {
+            console.log(vm.entity.interface);
+            vm.entity.interfaces = vm.entity.interface;
+        }
+
     });
+
+
 });

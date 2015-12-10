@@ -3,7 +3,7 @@ package com.networkedassets.autodoc.clients.atlassian.stashData;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.MoreObjects;
 
-@JsonIgnoreProperties({"metadata"})
+@JsonIgnoreProperties(ignoreUnknown = true, value = {"metadata"})
 public class Branch {
     private String id;
     private String displayId;

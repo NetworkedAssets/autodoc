@@ -1,7 +1,7 @@
 angular.module("DoC")
-    .directive('docQname', function() {
+    .directive('docQname', function($compile,javadocEntities) {
         return {
-            link: function(scope,elem,attr) {
+            link: function(scope,element,attr) {
                 //var arr;
                 //var qualified;
                 //if (typeof scope.source == "string") {
@@ -14,14 +14,32 @@ angular.module("DoC")
                 //} else {
                 //    scope.name = qualified;
                 //}
+                /*
+                * TODO Generics
+                * TODO Aui label instead of plain title attr
+                * */
                 scope.name = qName(scope.source);
                 scope.qualified = qName(scope.source,true);
+                //console.log(scope.name,scope.source,scope);
+
+                var html = '<span title="{{qualified}}"';
+                if (javadocEntities.existsByName(scope.qualified)) {
+                    html += 'ui-sref="javadoc.entity({name:qualified})"';
+                    element.addClass("clickable");
+                }
+
+                html += '>{{name}}</span>';
+                element.html(html);
+
+
+
+                $compile(element.contents())(scope);
+
             },
             scope: {
                 source: "=docQname",
                 name: "=",
                 qualified: "="
-            },
-            template: '<span ui-sref="javadoc.entity({name:qualified})">{{name}}</span>'
+            }
         };
     });

@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
+@SuppressWarnings("ALL")
 public class StashClient extends HttpClient {
 
 	public StashClient(HttpClientConfig config) {

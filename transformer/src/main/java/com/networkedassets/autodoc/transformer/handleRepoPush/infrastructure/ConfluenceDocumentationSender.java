@@ -7,12 +7,9 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 
-// TODO: go back to this class, when Confluence side of things is implemented
 public class ConfluenceDocumentationSender implements DocumentationSender {
-    private static final String confluenceEndpointFormat = "%s/rest/autodoc/1.0/documentation/%s/%s/%s/%s";
-    private String username = "mrobakowski";
-    private String password = "admin";
-
+    private static final String confluenceEndpointFormat = "%s/rest/autodoc/1.0/documentation/%s/%s/%s/%s/%s";
+   
     @Override
     public void send(Documentation documentation, Settings settings) {
 
@@ -25,8 +22,9 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
                                 documentation.getProject(),
                                 documentation.getRepo(),
                                 documentation.getBranch(),
+                                documentation.getType(),
                                 docPiece.getPieceName()))
-                        .basicAuth(username, password)
+                        .basicAuth(settings.getConfluenceUsername(), settings.getConfluencePassword())
                         .queryString("docType", documentation.getType())
                         .queryString("pieceType", docPiece.getPieceType())
                         .header("Content-Type", "application/json")
@@ -38,19 +36,5 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
         }
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+   
 }
