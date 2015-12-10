@@ -1,19 +1,18 @@
 package com.networkedassets.autodoc.clients.atlassian.api;
 
-import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.BranchesPage;
-import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.RepositoriesPage;
-import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.HookConfirm;
-import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.HookSettings;
-import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.ProjectsPage;
 import com.google.common.base.Preconditions;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.HttpClient;
 import com.networkedassets.autodoc.clients.atlassian.HttpClientConfig;
+import com.networkedassets.autodoc.clients.atlassian.atlassianHookData.HookConfirm;
+import com.networkedassets.autodoc.clients.atlassian.atlassianHookData.HookSettings;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.*;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @SuppressWarnings("ALL")
@@ -94,49 +93,81 @@ public class StashClient extends HttpClient {
         return jsonResponse;
     }
 
+    public List<Project> getProjects() throws UnirestException {
+        List<Project> projects = new ArrayList<>();
+        final int limit = 1000;
+        int start = 0;
+        HttpResponse<ProjectsPage> projectsPage;
+        do {
+            projectsPage = getProjectsPage(start, limit);
+            start+=limit+1;
+            projects.addAll(projectsPage.getBody().getProjects());
+        }while (!projectsPage.getBody().isIsLastPage());
+        return projects;
+    }
+
+    public List<Repository> getRepositoriesForProject(@Nonnull final String projectKey) throws UnirestException {
+        List<Repository> repositories = new ArrayList<>();
+        final int limit = 1000;
+        int start = 0;
+        HttpResponse<RepositoriesPage> repositoriesPage;
+        do {
+            repositoriesPage = getRepositoriesPageForProject(start, limit, projectKey);
+            start+=limit+1;
+            repositories.addAll(repositoriesPage.getBody().getRepositories());
+        }while (!repositoriesPage.getBody().isIsLastPage());
+        return repositories;
+    }
+
+    public List<Branch> getBranchesforRepository(@Nonnull final String projectKey,
+                                                 @Nonnull final String repositorySlug) throws UnirestException {
+        List<Branch> branches = new ArrayList<>();
+        final int limit = 1000;
+        int start = 0;
+        HttpResponse<BranchesPage> branchesPage;
+        do {
+            branchesPage = getBranchesPageforRepository(start, limit,projectKey, repositorySlug);
+            start+=limit+1;
+            branches.addAll(branchesPage.getBody().getBranches());
+        }while (!branchesPage.getBody().isIsLastPage());
+        return branches;
+    }
+
     public HttpResponse<ProjectsPage> getProjectsPage(@Nonnull final long start, @Nonnull final long limit) throws UnirestException {
         Preconditions.checkNotNull(start);
         Preconditions.checkNotNull(limit);
 
         String requestUrl = "/rest/api/1.0/projects";
-        if (start > 0) {
-            requestUrl += "?start=" + start;
-        }
-        if (limit > 0) {
-            requestUrl += "&limit=" + limit;
-        }
 
         return Unirest.get(getBaseUrl().toString() + requestUrl)
+                .queryString("start", start)
+                .queryString("limit", limit)
                 .basicAuth(getUsername(), getPassword())
                 .header("accept", "application/json")
                 .asObject(ProjectsPage.class);
     }
 
-    public HttpResponse<RepositoriesPage> getRepositoriesForProjectPage(@Nonnull final long start,
+    public HttpResponse<RepositoriesPage> getRepositoriesPageForProject(@Nonnull final long start,
                                                                         @Nonnull final long limit,
-                                                                        @Nonnull final String projectId) throws UnirestException {
+                                                                        @Nonnull final String projectKey) throws UnirestException {
         Preconditions.checkNotNull(start);
         Preconditions.checkNotNull(limit);
-        Preconditions.checkNotNull(projectId);
+        Preconditions.checkNotNull(projectKey);
 
-        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos", projectId);
-        if (start > 0) {
-            requestUrl += "?start=" + start;
-        }
-        if (limit > 0) {
-            requestUrl += "&limit=" + limit;
-        }
+        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos", projectKey);
 
         return Unirest.get(getBaseUrl().toString() + requestUrl)
+                .queryString("start", start)
+                .queryString("limit", limit)
                 .basicAuth(getUsername(), getPassword())
                 .header("accept", "application/json")
                 .asObject(RepositoriesPage.class);
     }
 
-    public HttpResponse<BranchesPage> getRepositoryBranchesPage(final long start,
-                                                                final long limit,
-                                                                @Nonnull final String projectKey,
-                                                                @Nonnull final String repositorySlug)
+    public HttpResponse<BranchesPage> getBranchesPageforRepository(final long start,
+                                                                   final long limit,
+                                                                   @Nonnull final String projectKey,
+                                                                   @Nonnull final String repositorySlug)
             throws UnirestException {
 
         Preconditions.checkNotNull(start);
@@ -145,14 +176,10 @@ public class StashClient extends HttpClient {
         Preconditions.checkNotNull(repositorySlug);
 
         String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/branches", projectKey, repositorySlug);
-        if (start > 0) {
-            requestUrl += "?start=" + start;
-        }
-        if (limit > 0) {
-            requestUrl += "&limit=" + limit;
-        }
 
         return Unirest.get(this.getBaseUrl().toString() + requestUrl)
+                .queryString("start", start)
+                .queryString("limit", limit)
                 .basicAuth(this.getUsername(), this.getPassword())
                 .header("accept", "application/json")
                 .asObject(BranchesPage.class);

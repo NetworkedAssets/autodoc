@@ -90,16 +90,16 @@ public class ProjectsPage {
      * @return The values
      */
     @JsonProperty("values")
-    public List<Project> getValues() {
+    public List<Project> getProjects() {
         return projects;
     }
 
     /**
-     * @param values The values
+     * @param projects The values
      */
     @JsonProperty("values")
-    public void setValues(List<Project> values) {
-        this.projects = values;
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 
     /**

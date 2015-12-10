@@ -6,9 +6,11 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.HttpClient;
 import com.networkedassets.autodoc.clients.atlassian.HttpClientConfig;
+import com.networkedassets.autodoc.clients.atlassian.atlassianHookData.HookConfirm;
+import com.networkedassets.autodoc.clients.atlassian.atlassianHookData.HookSettings;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.BranchesPage;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.ProjectsPage;
 import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.RepositoriesPage;
-import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.HookConfirm;
-import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.HookSettings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -92,50 +94,69 @@ public class BitbucketClient extends HttpClient {
 		return jsonResponse;
 	}
 
-	public HttpResponse<RepositoriesPage> getRepositories(@Nullable final String projectKey, @Nullable final String query,
-														  @Nonnull final long start, @Nonnull final long limit) throws UnirestException {
-
+	public HttpResponse<ProjectsPage> getProjectsPage(@Nonnull final long start, @Nonnull final long limit) throws UnirestException {
 		Preconditions.checkNotNull(start);
 		Preconditions.checkNotNull(limit);
-		String requestUrl = String.format("/rest/api/1.0/repos?start=%d", start);
+
+		String requestUrl = "/rest/api/1.0/projects";
+		if (start > 0) {
+			requestUrl += "?start=" + start;
+		}
 		if (limit > 0) {
 			requestUrl += "&limit=" + limit;
 		}
-		if (!isBlank(projectKey)) {
-			requestUrl += "&projectname=" + encode(projectKey);
-		}
-		if (!isBlank(query)) {
-			requestUrl += "&name=" + encode(query);
-		}
 
-		HttpResponse<RepositoriesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
-				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(RepositoriesPage.class);
-
-		return jsonResponse;
+		return Unirest.get(getBaseUrl().toString() + requestUrl)
+				.basicAuth(getUsername(), getPassword())
+				.header("accept", "application/json")
+				.asObject(ProjectsPage.class);
 	}
 
-	public HttpResponse<RepositoriesPage> getRepositoryBranches(@Nonnull final String projectKey,
-																@Nonnull final String repositorySlug, @Nullable final String query, final long start, final long limit)
-					throws UnirestException {
-
+	public HttpResponse<RepositoriesPage> getRepositoriesForProjectPage(@Nonnull final long start,
+																		@Nonnull final long limit,
+																		@Nonnull final String projectId) throws UnirestException {
 		Preconditions.checkNotNull(start);
 		Preconditions.checkNotNull(limit);
-		String requestUrl = String.format(
-				"/rest/api/1.0/projects/%s/repos/%s/branches?start=%d&details=true&orderBy=MODIFICATION", projectKey,
-				repositorySlug, start);
+		Preconditions.checkNotNull(projectId);
+
+		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos", projectId);
+		if (start > 0) {
+			requestUrl += "?start=" + start;
+		}
 		if (limit > 0) {
 			requestUrl += "&limit=" + limit;
 		}
-		if (!isBlank(query)) {
-			requestUrl += "&filterText=" + encode(query);
+
+		return Unirest.get(getBaseUrl().toString() + requestUrl)
+				.basicAuth(getUsername(), getPassword())
+				.header("accept", "application/json")
+				.asObject(RepositoriesPage.class);
+	}
+
+	public HttpResponse<BranchesPage> getRepositoryBranchesPage(final long start,
+																final long limit,
+																@Nonnull final String projectKey,
+																@Nonnull final String repositorySlug)
+			throws UnirestException {
+
+		Preconditions.checkNotNull(start);
+		Preconditions.checkNotNull(limit);
+		Preconditions.checkNotNull(projectKey);
+		Preconditions.checkNotNull(repositorySlug);
+
+		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/branches", projectKey, repositorySlug);
+		if (start > 0) {
+			requestUrl += "?start=" + start;
+		}
+		if (limit > 0) {
+			requestUrl += "&limit=" + limit;
 		}
 
-		HttpResponse<RepositoriesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
-				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(RepositoriesPage.class);
+		return Unirest.get(this.getBaseUrl().toString() + requestUrl)
+				.basicAuth(this.getUsername(), this.getPassword())
+				.header("accept", "application/json")
+				.asObject(BranchesPage.class);
 
-		return jsonResponse;
 	}
 
 }

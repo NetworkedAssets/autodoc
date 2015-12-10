@@ -13,12 +13,10 @@ public class ProjectsProviderFactory {
         ProjectsProvider projectsProvider = null;
 
         switch (source.getSourceType()) {
+            //fallthrough!
             case STASH:
-                projectsProvider = new StashProjectsProvider(source);
-                break;
-            //not yet implemented
             case BITBUCKET:
-                projectsProvider = new BitbucketProjectsProvider(source);
+                projectsProvider = new AtlassianProjectsProvider(source);
                 break;
         }
         return projectsProvider;
