@@ -52,6 +52,5 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 				documentationSender.send(documentation,settingsProvider.getCurrentSettings());
 			}
 		}
-
 	}
 }

@@ -1,40 +1,21 @@
 package com.github.markusbernhardt.xmldoclet;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import com.github.markusbernhardt.xmldoclet.xjc.Root;
+import com.sun.javadoc.DocErrorReporter;
+import com.sun.javadoc.LanguageVersion;
+import com.sun.javadoc.RootDoc;
+import org.apache.commons.cli.*;
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 import org.eclipse.persistence.jaxb.xmlmodel.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.markusbernhardt.xmldoclet.xjc.Root;
-import com.sun.javadoc.DocErrorReporter;
-import com.sun.javadoc.LanguageVersion;
-import com.sun.javadoc.RootDoc;
-import org.eclipse.persistence.jaxb.JAXBContextFactory;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.*;
+import java.util.*;
 
 /**
  * Doclet class.
@@ -196,11 +177,7 @@ public class XmlDoclet {
 			bufferedOutputStream.flush();
 			fileOutputStream.flush();
 
-		} catch (JAXBException e) {
-			log.error(e.getMessage(), e);
-		} catch (FileNotFoundException e) {
-			log.error(e.getMessage(), e);
-		} catch (IOException e) {
+		} catch (JAXBException | IOException e) {
 			log.error(e.getMessage(), e);
 		} finally {
 			try {
@@ -257,8 +234,7 @@ public class XmlDoclet {
 					}
 				}
 			};
-			CommandLine commandLine = commandLineParser.parse(options, argumentList.toArray(new String[] {}));
-			return commandLine;
+			return commandLineParser.parse(options, argumentList.toArray(new String[argumentList.size()]));
 		} catch (ParseException e) {
 			LoggingOutputStream loggingOutputStream = new LoggingOutputStream(log, LoggingLevelEnum.INFO);
 			PrintWriter printWriter = new PrintWriter(loggingOutputStream);

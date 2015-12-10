@@ -25,7 +25,6 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
                                 documentation.getType(),
                                 docPiece.getPieceName()))
                         .basicAuth(settings.getConfluenceUsername(), settings.getConfluencePassword())
-                        .queryString("docType", documentation.getType())
                         .queryString("pieceType", docPiece.getPieceType())
                         .header("Content-Type", "application/json")
                         .body(docPiece.getContent())

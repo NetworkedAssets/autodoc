@@ -78,11 +78,6 @@ public class Javadoc {
         List<Path> javaFiles = searchJavaFiles(localDirectory);
         javadoc.addFiles(javaFiles);
         Root r = javadoc.generate(XmlDoclet.class);
-        try {
-            rmDir(javadocPath);
-        } catch (IOException e) {
-            throw new JavadocException(e);
-        }
         return r;
     }
 
@@ -177,10 +172,9 @@ public class Javadoc {
     }
 
     public Root generate(Class<?> docletClass) throws JavadocException {
-        createDirectoryIfNecessary(javadocDirectory);
         return JavadocRunner.executeJavadoc(docletClass, null, null, null,
                 sourceFiles.stream().map(Path::toString).collect(Collectors.toList()), null,
-                "-d", javadocDirectory.toString());
+                "-dryrun");
     }
 
     /**
