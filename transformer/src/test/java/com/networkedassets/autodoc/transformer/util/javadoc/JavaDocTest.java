@@ -1,10 +1,12 @@
 package com.networkedassets.autodoc.transformer.util.javadoc;
 
+import com.networkedassets.autodoc.integration.IntegrationTest;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
@@ -52,7 +54,7 @@ public class JavaDocTest {
         Javadoc.fromDirectory(null, null, null);
     }
 
-    @Test
+    @Test @Category(IntegrationTest.class)
     public void testFromDirectoryGivenIncorrectDocletPathAndDocletClassCreatesEmptyDirectory() throws JavadocException, IOException{
         Path result = Javadoc.fromDirectory(folder.newFolder().toPath(), "abc", "def");
 

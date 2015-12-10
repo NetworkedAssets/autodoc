@@ -5,6 +5,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
 import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.server.Binder;
+import org.eclipse.jgit.util.StringUtils;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Before;
@@ -28,10 +29,10 @@ public class DocumentationFromCodeGeneratorIntegrationTest {
     private SettingsProvider settingsProvider;
 
     private final String JSON_REQUEST = "{\n" +
-            "\"sourceUrl\" : \"http://46.101.240.138:7990/\",\n" +
+            "\"sourceUrl\" : \"http://46.101.240.138:7990\",\n" +
             "\"projectKey\" : \"APD\",\n" +
             "\"repositorySlug\" : \"javadoc-plugin\",\n" +
-            "\"branchId\" : \"master\"\n" +
+            "\"branchId\" : \"refs/heads/master\"\n" +
             "}";
 
     private PushEvent createPushEventInstanceFromJSON() throws IOException {
@@ -66,24 +67,20 @@ public class DocumentationFromCodeGeneratorIntegrationTest {
     }
 
     @Test
-    public void testJSONSourceUrlNotExistButIsFound() throws IOException {
+    public void testBranchFromJSONIsFound() throws IOException {
         PushEvent pushEvent = createPushEventInstanceFromJSON();
         final String sourceUrl = pushEvent.getSourceUrl();
         final String projectKey = pushEvent.getProjectKey();
         final String repoSlug = pushEvent.getRepositorySlug();
         final String branchId = pushEvent.getBranchId();
-        assertNotNull(sourceUrl);
-        assertNotEquals(sourceUrl, "");
+        assertFalse(StringUtils.isEmptyOrNull(sourceUrl));
 
-        // not exist
-        assertFalse(settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl));
         // is found
-        /*assertTrue(settingsProvider.getCurrentSettings()
+        assertNotNull(settingsProvider.getCurrentSettings()
                 .getSourceByUrl(sourceUrl)
                 .getProjectByKey(projectKey)
                 .getRepoBySlug(repoSlug)
                 .getBranchById(branchId)
-                .isListened
-        );*/
+        );
     }
 }
