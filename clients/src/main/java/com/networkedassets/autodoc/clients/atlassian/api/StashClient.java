@@ -1,9 +1,10 @@
 package com.networkedassets.autodoc.clients.atlassian.api;
 
-import com.networkedassets.autodoc.clients.atlassian.stashData.BranchesPage;
-import com.networkedassets.autodoc.clients.atlassian.stashData.HookConfirm;
-import com.networkedassets.autodoc.clients.atlassian.stashData.HookSettings;
-import com.networkedassets.autodoc.clients.atlassian.stashData.RepositoriesPage;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.BranchesPage;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.RepositoriesPage;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.HookConfirm;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.HookSettings;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.ProjectsPage;
 import com.google.common.base.Preconditions;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -18,125 +19,145 @@ import javax.annotation.Nullable;
 @SuppressWarnings("ALL")
 public class StashClient extends HttpClient {
 
-	public StashClient(HttpClientConfig config) {
-		super(config);
-	}
+    public StashClient(HttpClientConfig config) {
+        super(config);
+    }
 
-	public HttpResponse<HookSettings> getHookSettings(@Nonnull final String projectKey,
-													  @Nonnull final String repositorySlug, final String hookKey) throws UnirestException {
+    public HttpResponse<HookSettings> getHookSettings(@Nonnull final String projectKey,
+                                                      @Nonnull final String repositorySlug, final String hookKey) throws UnirestException {
 
-		Preconditions.checkNotNull(projectKey);
-		Preconditions.checkNotNull(repositorySlug);
-		Preconditions.checkNotNull(hookKey);
+        Preconditions.checkNotNull(projectKey);
+        Preconditions.checkNotNull(repositorySlug);
+        Preconditions.checkNotNull(hookKey);
 
-		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings", projectKey,
-				repositorySlug, hookKey);
-		HttpResponse<HookSettings> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
-				.header("accept", "application/json").header("content-type", "application/json")
-				.basicAuth(this.getUsername(), this.getPassword()).asObject(HookSettings.class);
+        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings", projectKey,
+                repositorySlug, hookKey);
+        HttpResponse<HookSettings> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
+                .header("accept", "application/json").header("content-type", "application/json")
+                .basicAuth(this.getUsername(), this.getPassword()).asObject(HookSettings.class);
 
-		return jsonResponse;
-	}
+        return jsonResponse;
+    }
 
-	public HttpResponse<HookSettings> setHookSettings(@Nonnull final String projectKey,
-			@Nonnull final String repositorySlug, @Nonnull final String hookKey, @Nonnull final String endpointURL,
-			@Nonnull final String endpointTimeout) throws UnirestException {
+    public HttpResponse<HookSettings> setHookSettings(@Nonnull final String projectKey,
+                                                      @Nonnull final String repositorySlug, @Nonnull final String hookKey, @Nonnull final String endpointURL,
+                                                      @Nonnull final String endpointTimeout) throws UnirestException {
 
-		Preconditions.checkNotNull(projectKey);
-		Preconditions.checkNotNull(repositorySlug);
-		Preconditions.checkNotNull(hookKey);
-		Preconditions.checkNotNull(endpointURL);
-		Preconditions.checkNotNull(endpointTimeout);
+        Preconditions.checkNotNull(projectKey);
+        Preconditions.checkNotNull(repositorySlug);
+        Preconditions.checkNotNull(hookKey);
+        Preconditions.checkNotNull(endpointURL);
+        Preconditions.checkNotNull(endpointTimeout);
 
-		HookSettings hookSettings = new HookSettings();
-		hookSettings.setTimeout(endpointTimeout);
-		hookSettings.setUrl(endpointURL);
+        HookSettings hookSettings = new HookSettings();
+        hookSettings.setTimeout(endpointTimeout);
+        hookSettings.setUrl(endpointURL);
 
-		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings", projectKey,
-				repositorySlug, hookKey);
-		HttpResponse<HookSettings> jsonResponse = Unirest.put(this.getBaseUrl().toString() + requestUrl)
-				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.header("content-type", "application/json").body(hookSettings).asObject(HookSettings.class);
+        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings", projectKey,
+                repositorySlug, hookKey);
+        HttpResponse<HookSettings> jsonResponse = Unirest.put(this.getBaseUrl().toString() + requestUrl)
+                .basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
+                .header("content-type", "application/json").body(hookSettings).asObject(HookSettings.class);
 
-		return jsonResponse;
-	}
+        return jsonResponse;
+    }
 
-	public HttpResponse<HookConfirm> setHookSettingsEnabled(@Nonnull final String projectKey,
-															@Nonnull final String repositorySlug, @Nonnull final String hookKey) throws UnirestException {
+    public HttpResponse<HookConfirm> setHookSettingsEnabled(@Nonnull final String projectKey,
+                                                            @Nonnull final String repositorySlug, @Nonnull final String hookKey) throws UnirestException {
 
-		Preconditions.checkNotNull(projectKey);
-		Preconditions.checkNotNull(repositorySlug);
-		Preconditions.checkNotNull(hookKey);
+        Preconditions.checkNotNull(projectKey);
+        Preconditions.checkNotNull(repositorySlug);
+        Preconditions.checkNotNull(hookKey);
 
-		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled", projectKey,
-				repositorySlug, hookKey);
-		HttpResponse<HookConfirm> jsonResponse = Unirest.put(this.getBaseUrl().toString() + requestUrl)
-				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.header("content-type", "application/json").asObject(HookConfirm.class);
+        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled", projectKey,
+                repositorySlug, hookKey);
+        HttpResponse<HookConfirm> jsonResponse = Unirest.put(this.getBaseUrl().toString() + requestUrl)
+                .basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
+                .header("content-type", "application/json").asObject(HookConfirm.class);
 
-		return jsonResponse;
-	}
+        return jsonResponse;
+    }
 
-	public HttpResponse<HookConfirm> setHookSettingsDisabled(@Nonnull final String projectKey,
-			@Nonnull final String repositorySlug, @Nonnull final String hookKey) throws UnirestException {
+    public HttpResponse<HookConfirm> setHookSettingsDisabled(@Nonnull final String projectKey,
+                                                             @Nonnull final String repositorySlug, @Nonnull final String hookKey) throws UnirestException {
 
-		Preconditions.checkNotNull(projectKey);
-		Preconditions.checkNotNull(repositorySlug);
-		Preconditions.checkNotNull(hookKey);
+        Preconditions.checkNotNull(projectKey);
+        Preconditions.checkNotNull(repositorySlug);
+        Preconditions.checkNotNull(hookKey);
 
-		String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled", projectKey,
-				repositorySlug, hookKey);
-		HttpResponse<HookConfirm> jsonResponse = Unirest.delete(this.getBaseUrl().toString() + requestUrl)
-				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.header("content-type", "application/json").asObject(HookConfirm.class);
+        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled", projectKey,
+                repositorySlug, hookKey);
+        HttpResponse<HookConfirm> jsonResponse = Unirest.delete(this.getBaseUrl().toString() + requestUrl)
+                .basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
+                .header("content-type", "application/json").asObject(HookConfirm.class);
 
-		return jsonResponse;
-	}
+        return jsonResponse;
+    }
 
-	public HttpResponse<RepositoriesPage> getRepositories(@Nullable final String projectKey, @Nullable final String query,
-														  @Nonnull final long start, @Nonnull final long limit) throws UnirestException {
+    public HttpResponse<ProjectsPage> getProjectsPage(@Nonnull final long start, @Nonnull final long limit) throws UnirestException {
+        Preconditions.checkNotNull(start);
+        Preconditions.checkNotNull(limit);
 
-		Preconditions.checkNotNull(start);
-		Preconditions.checkNotNull(limit);
-		String requestUrl = String.format("/rest/api/1.0/repos?start=%d", start);
-		if (limit > 0) {
-			requestUrl += "&limit=" + limit;
-		}
-		if (!isBlank(projectKey)) {
-			requestUrl += "&projectname=" + encode(projectKey);
-		}
-		if (!isBlank(query)) {
-			requestUrl += "&name=" + encode(query);
-		}
+        String requestUrl = "/rest/api/1.0/projects";
+        if (start > 0) {
+            requestUrl += "?start=" + start;
+        }
+        if (limit > 0) {
+            requestUrl += "&limit=" + limit;
+        }
 
-		HttpResponse<RepositoriesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
-				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(RepositoriesPage.class);
+        return Unirest.get(getBaseUrl().toString() + requestUrl)
+                .basicAuth(getUsername(), getPassword())
+                .header("accept", "application/json")
+                .asObject(ProjectsPage.class);
+    }
 
-		return jsonResponse;
-	}
+    public HttpResponse<RepositoriesPage> getRepositoriesForProjectPage(@Nonnull final long start,
+                                                                        @Nonnull final long limit,
+                                                                        @Nonnull final String projectId) throws UnirestException {
+        Preconditions.checkNotNull(start);
+        Preconditions.checkNotNull(limit);
+        Preconditions.checkNotNull(projectId);
 
-	public HttpResponse<BranchesPage> getRepositoryBranches(@Nonnull final String projectKey,
-															@Nonnull final String repositorySlug, @Nullable final String query, final long start, final long limit)
-					throws UnirestException {
+        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos", projectId);
+        if (start > 0) {
+            requestUrl += "?start=" + start;
+        }
+        if (limit > 0) {
+            requestUrl += "&limit=" + limit;
+        }
 
-		Preconditions.checkNotNull(start);
-		Preconditions.checkNotNull(limit);
-		String requestUrl = String.format(
-				"/rest/api/1.0/projects/%s/repos/%s/branches?start=%d&details=true&orderBy=MODIFICATION", projectKey,
-				repositorySlug, start);
-		if (limit > 0) {
-			requestUrl += "&limit=" + limit;
-		}
-		if (!isBlank(query)) {
-			requestUrl += "&filterText=" + encode(query);
-		}
+        return Unirest.get(getBaseUrl().toString() + requestUrl)
+                .basicAuth(getUsername(), getPassword())
+                .header("accept", "application/json")
+                .asObject(RepositoriesPage.class);
+    }
 
-		HttpResponse<BranchesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
-				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(BranchesPage.class);
+    public HttpResponse<BranchesPage> getRepositoryBranchesPage(final long start,
+                                                                final long limit,
+                                                                @Nonnull final String projectKey,
+                                                                @Nonnull final String repositorySlug)
+            throws UnirestException {
 
-		return jsonResponse;
-	}
+        Preconditions.checkNotNull(start);
+        Preconditions.checkNotNull(limit);
+        Preconditions.checkNotNull(projectKey);
+        Preconditions.checkNotNull(repositorySlug);
+
+        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/branches", projectKey, repositorySlug);
+        if (start > 0) {
+            requestUrl += "?start=" + start;
+        }
+        if (limit > 0) {
+            requestUrl += "&limit=" + limit;
+        }
+
+        return Unirest.get(this.getBaseUrl().toString() + requestUrl)
+                .basicAuth(this.getUsername(), this.getPassword())
+                .header("accept", "application/json")
+                .asObject(BranchesPage.class);
+
+    }
+
 
 }

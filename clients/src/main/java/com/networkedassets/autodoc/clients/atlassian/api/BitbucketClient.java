@@ -6,10 +6,9 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.HttpClient;
 import com.networkedassets.autodoc.clients.atlassian.HttpClientConfig;
-import com.networkedassets.autodoc.clients.atlassian.stashData.BranchesPage;
-import com.networkedassets.autodoc.clients.atlassian.stashData.HookConfirm;
-import com.networkedassets.autodoc.clients.atlassian.stashData.HookSettings;
-import com.networkedassets.autodoc.clients.atlassian.stashData.RepositoriesPage;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.RepositoriesPage;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.HookConfirm;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.HookSettings;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -116,8 +115,8 @@ public class BitbucketClient extends HttpClient {
 		return jsonResponse;
 	}
 
-	public HttpResponse<BranchesPage> getRepositoryBranches(@Nonnull final String projectKey,
-															@Nonnull final String repositorySlug, @Nullable final String query, final long start, final long limit)
+	public HttpResponse<RepositoriesPage> getRepositoryBranches(@Nonnull final String projectKey,
+																@Nonnull final String repositorySlug, @Nullable final String query, final long start, final long limit)
 					throws UnirestException {
 
 		Preconditions.checkNotNull(start);
@@ -132,9 +131,9 @@ public class BitbucketClient extends HttpClient {
 			requestUrl += "&filterText=" + encode(query);
 		}
 
-		HttpResponse<BranchesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
+		HttpResponse<RepositoriesPage> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
 				.basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-				.asObject(BranchesPage.class);
+				.asObject(RepositoriesPage.class);
 
 		return jsonResponse;
 	}

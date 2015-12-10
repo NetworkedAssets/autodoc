@@ -3,7 +3,7 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.api.BitbucketClient;
-import com.networkedassets.autodoc.clients.atlassian.stashData.Repository;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Repository;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Project;
@@ -47,9 +47,9 @@ public class BitbucketProjectsProvider implements ProjectsProvider {
 
     private void getDataFromBitbucket() {
         List<Repository> bitbucketRepositories = new ArrayList<>();
-        Map<String, List<com.networkedassets.autodoc.clients.atlassian.stashData.Branch>>
+        Map<String, List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Branch>>
                 bitbucketBranchesMap = new HashMap<>();
-        List<com.networkedassets.autodoc.clients.atlassian.stashData.Project> bitbucketProjects;
+        List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project> bitbucketProjects;
 
         //get repositories
         try {
@@ -63,9 +63,9 @@ public class BitbucketProjectsProvider implements ProjectsProvider {
         try {
             for (Repository repository : bitbucketRepositories) {
                 log.debug("REST branches for {} about to be retrieved", repository.getName());
-                List<com.networkedassets.autodoc.clients.atlassian.stashData.Branch> branches
+                List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Branch> branches
                         = bitbucketClient.getRepositoryBranches(repository.getProject()
-                        .getKey(), repository.getSlug(), null, 0, 9999).getBody().getValues();
+                        .getKey(), repository.getSlug(), null, 0, 9999).getBody().getRepositories();
                 log.debug("REST branches for {} retrieved", repository.getId());
                 bitbucketBranchesMap.put(repository.getSlug(), branches);
             }
@@ -75,15 +75,15 @@ public class BitbucketProjectsProvider implements ProjectsProvider {
 
         //get projects basing on retrieved branches
         bitbucketProjects = bitbucketRepositories.stream().map(Repository::getProject)
-                .filter(distinctByField(com.networkedassets.autodoc.clients.atlassian.stashData.Project::getKey))
+                .filter(distinctByField(com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project::getKey))
                 .collect(Collectors.toList());
         this.projects = translateBitbucketDataToSettingsApi(bitbucketProjects, bitbucketRepositories, bitbucketBranchesMap);
     }
 
     private Map<String, Project> translateBitbucketDataToSettingsApi(
-            List<com.networkedassets.autodoc.clients.atlassian.stashData.Project> bitbucketProjects,
+            List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project> bitbucketProjects,
             List<Repository> bitbucketRepositories,
-            Map<String, List<com.networkedassets.autodoc.clients.atlassian.stashData.Branch>> bitbucketBranchesMap
+            Map<String, List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Branch>> bitbucketBranchesMap
     ) {
 
         Map<String, Project> projects = new HashMap<>();
@@ -106,7 +106,7 @@ public class BitbucketProjectsProvider implements ProjectsProvider {
             String projectKey = bitbucketRepositories.stream()
                     .filter(r -> r.getSlug().equals(s))
                     .map(Repository::getProject)
-                    .map(com.networkedassets.autodoc.clients.atlassian.stashData.Project::getKey)
+                    .map(com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project::getKey)
                     .findAny().orElse(null);
             projects.get(projectKey).repos.get(s).branches.put(branch.id, branch);
         }));
