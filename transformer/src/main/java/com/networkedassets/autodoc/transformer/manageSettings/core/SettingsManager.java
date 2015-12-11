@@ -7,7 +7,10 @@ import com.networkedassets.autodoc.transformer.manageSettings.provide.in.Setting
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
-import com.networkedassets.autodoc.transformer.settings.*;
+import com.networkedassets.autodoc.transformer.settings.Branch;
+import com.networkedassets.autodoc.transformer.settings.Project;
+import com.networkedassets.autodoc.transformer.settings.Settings;
+import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,9 +67,8 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
 
     @Override
     public void setCurrentSettings(Settings settings) {
-        updateSettings(settings);
         //look for null passwords and if they appear - preserve old ones!
-        settings.getSources().stream().forEach(source -> {
+        settings.getSources().forEach(source -> {
             if (Strings.isNullOrEmpty(source.getPassword())) {
                 String previousPassword = this.settings.getSources().stream()
                         .filter(source1 -> source1.getUrl().equals(source.getUrl()))
@@ -74,12 +76,12 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
                 source.setPassword(previousPassword);
             }
         });
+        updateSettings(settings);
         this.settings = settings;
         saveSettingsToFile(settingsFilename);
     }
 
-    private void
-    updateSettings(Settings givenSettings) {
+    private void updateSettings(Settings givenSettings) {
         givenSettings.getSources().forEach(source -> {
             try {
                 updateProjectsFromRemoteSource(source);
@@ -196,7 +198,5 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
                 });
             });
         });
-
-
     }
 }
