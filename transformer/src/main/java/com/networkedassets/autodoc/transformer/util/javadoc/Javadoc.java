@@ -55,21 +55,8 @@ public class Javadoc {
      * subdirectories recursively
      *
      * @param localDirectory the directory javadoc should be generated for
-     * @return the location of the javadoc (subdirectory of the localDirectory)
      * @throws JavadocException
      */
-    @Nonnull
-    public static Path fromDirectory(@Nonnull Path localDirectory, @Nullable String docletPath,
-                                     @Nullable String docletClass) throws JavadocException {
-        System.out.println("From directory: " + localDirectory.toAbsolutePath());
-        Javadoc javadoc = new Javadoc(localDirectory.resolve("javadoc"));
-        List<Path> javaFiles = searchJavaFiles(localDirectory);
-        System.out.println("Java files:\n" + Joiner.on("\n").join(javaFiles));
-        javadoc.addFiles(javaFiles);
-        javadoc.generate(docletPath, docletClass);
-        System.out.println("Javadoc generated");
-        return javadoc.javadocDirectory;
-    }
 
     @Nonnull
     public static Root structureFromDirectory(@Nonnull Path localDirectory) throws JavadocException {
@@ -81,22 +68,6 @@ public class Javadoc {
         return r;
     }
 
-    private static void rmDir(Path dir) throws IOException {
-        Files.walkFileTree(dir, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
-            }
-        });
-    }
-
     @Nonnull
     public static List<Path> searchJavaFiles(@Nonnull Path localDirectory) throws JavadocException {
         try (Stream<Path> javaFiles = Files.walk(localDirectory, FileVisitOption.FOLLOW_LINKS)
@@ -104,16 +75,6 @@ public class Javadoc {
             return javaFiles.collect(Collectors.toList());
         } catch (IOException e) {
             throw new JavadocException("Could not search files", e);
-        }
-    }
-
-    private static void createDirectoryIfNecessary(@Nonnull Path localDirectory) throws JavadocException {
-        try {
-            if (!Files.isDirectory(localDirectory)) {
-                Files.createDirectories(localDirectory);
-            }
-        } catch (IOException e) {
-            throw new JavadocException("could not create the directory: " + localDirectory, e);
         }
     }
 
@@ -136,56 +97,15 @@ public class Javadoc {
 
     /**
      * Generates the javadoc
-     *
-     * @param docletPath  the path for doclet jar
+
      * @param docletClass
      * @throws JavadocException
      */
-    public void generate(@Nullable String docletPath, @Nullable String docletClass) throws JavadocException {
-        createDirectoryIfNecessary(javadocDirectory);
-        Stream<String> args = Strings.isNullOrEmpty(docletPath)
-                ? Stream.concat(Stream.of(javadocExecutablePath, "-d", javadocDirectory.toString()),
-                sourceFiles.stream().map(Path::toString))
-                : Stream.concat(Stream.of(javadocExecutablePath, "-doclet", docletClass, "-docletpath", docletPath, // javadoc
-                "-d", javadocDirectory.toString()), sourceFiles.stream().map(Path::toString));
-
-        String[] command = args.toArray(String[]::new);
-        System.out.println("Args: " + Joiner.on(" ").join(command));
-
-        ProcessBuilder javadocProcessBuilder = new ProcessBuilder(command)
-                .redirectErrorStream(true);
-
-        System.out.println("Generating javadoc...");
-        StreamGobbler gobbler;
-        try {
-            Process javadocProcess = javadocProcessBuilder.start();
-            gobbler = new StreamGobbler(javadocProcess.getInputStream(), "");
-            gobbler.start();
-            if (!javadocProcess.waitFor(5, TimeUnit.MINUTES)) {
-                throw new JavadocException("javadoc process error");
-            }
-        } catch (InterruptedException | IOException e) {
-            throw new JavadocException(e);
-        }
-        System.out.println("Javadoc successfully generated");
-
-    }
-
     public Root generate(Class<?> docletClass) throws JavadocException {
         return JavadocRunner.executeJavadoc(docletClass, null, null, null,
                 sourceFiles.stream().map(Path::toString).collect(Collectors.toList()), null,
                 "-dryrun");
     }
-
-    /**
-     * Generates the javadoc with custom doclet
-     *
-     * @param docletPath
-     *            the path for doclet jar
-     * @param docletClass
-     *
-     * @throws JavadocException
-     */
 
     /**
      * Adds the files that should be looked at during javadoc's generation
@@ -207,26 +127,4 @@ public class Javadoc {
         sourceFiles.add(javaFile);
     }
 
-    private class StreamGobbler extends Thread {
-        InputStream is;
-        String type;
-
-        StreamGobbler(InputStream is, String type) {
-            this.is = is;
-            this.type = type;
-        }
-
-        @Override
-        public void run() {
-            try {
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
-                String line;
-                while ((line = br.readLine()) != null)
-                    System.out.println(type + "> " + line);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
-        }
-    }
 }
