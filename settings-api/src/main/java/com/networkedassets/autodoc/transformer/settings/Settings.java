@@ -10,9 +10,9 @@ import java.util.List;
 public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private String confluenceUrl = "";
-	private String confluenceUsername = "";
-	private String confluencePassword = "";
+	private String confluenceUrl = "http://46.101.240.138:8090/";
+	private String confluenceUsername = "mrobakowski";
+	private String confluencePassword = "admin";
 	private TransformerSettings transformerSettings = new TransformerSettings();
 	private List<Source> sources = new ArrayList<>();
 

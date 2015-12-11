@@ -8,6 +8,8 @@ import net.java.ao.Query;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,10 +29,15 @@ public class DocumentationService {
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
-            @PathParam("doctype") String doctype) {
-        if ("uml".equalsIgnoreCase(doctype)) return getDocumentationPiece(project, repo, branch, doctype, "all");
+            @PathParam("doctype") String doctype) throws UnsupportedEncodingException {
+        String projectDec = URLDecoder.decode(project, "UTF-8");
+        String repoDec = URLDecoder.decode(repo, "UTF-8");
+        String branchDec = URLDecoder.decode(branch, "UTF-8");
+        String doctypeDec = URLDecoder.decode(doctype, "UTF-8");
+
+        if ("uml".equalsIgnoreCase(doctypeDec)) return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
         return ao.executeInTransaction(() ->
-                getDocumentation(project, repo, branch, doctype)
+                getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
                         .map(d -> "{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
                                 .join(Arrays.asList(d.getDocumentationPieces())
                                         .stream()
@@ -48,10 +55,15 @@ public class DocumentationService {
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
             @PathParam("doctype") String docType,
-            @PathParam("docPieceName") String docPieceName) {
+            @PathParam("docPieceName") String docPieceName) throws UnsupportedEncodingException {
+        String projectDec = URLDecoder.decode(project, "UTF-8");
+        String repoDec = URLDecoder.decode(repo, "UTF-8");
+        String branchDec = URLDecoder.decode(branch, "UTF-8");
+        String doctypeDec = URLDecoder.decode(docType, "UTF-8");
+        String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
         return ao.executeInTransaction(() ->
-                getDocumentation(project, repo, branch, docType)
-                        .flatMap(d -> getDocumentationPiece(d, docPieceName))
+                getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
+                        .flatMap(d -> getDocumentationPiece(d, docPieceNameDec))
                         .map(this::makeDocPieceJson)
                         .orElse("{\"success\": false, \"message\": \"Could not find requested documentation!\"}"));
     }
@@ -86,10 +98,16 @@ public class DocumentationService {
             @PathParam("doctype") String docType,
             @PathParam("docPieceName") String docPieceName,
             @QueryParam("pieceType") String pieceType,
-            String content) {
+            String content) throws UnsupportedEncodingException {
+        String projectDec = URLDecoder.decode(project, "UTF-8");
+        String repoDec = URLDecoder.decode(repo, "UTF-8");
+        String branchDec = URLDecoder.decode(branch, "UTF-8");
+        String docTypeDec = URLDecoder.decode(docType, "UTF-8");
+        String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
+        String pieceTypeDec = URLDecoder.decode(pieceType, "UTF-8");
         return ao.executeInTransaction(() -> {
-            Documentation doc = findOrCreateDocumentation(project, repo, branch, docType);
-            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceName, pieceType);
+            Documentation doc = findOrCreateDocumentation(projectDec, repoDec, branchDec, docTypeDec);
+            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec);
             piece.setContent(content);
             piece.save();
             doc.save();
