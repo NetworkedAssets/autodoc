@@ -77,7 +77,7 @@
 	<rest key="autodocRest" path="/autodoc" version="1.0">
 		<description>Provides rest endpoints used by Autodoc</description>
 	</rest>
-
+	
 	<macro name="autodocDshboard" class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
 		   key="autodoc-dashboard">
 		<description>Macro element containing the Autodoc Dashboard</description>
