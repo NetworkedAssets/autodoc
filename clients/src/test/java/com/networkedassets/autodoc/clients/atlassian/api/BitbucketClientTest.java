@@ -3,7 +3,6 @@ package com.networkedassets.autodoc.clients.atlassian.api;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.HttpClientConfig;
-import com.networkedassets.autodoc.clients.atlassian.api.BitbucketClient;
 import com.networkedassets.autodoc.clients.atlassian.stashData.Branch;
 import com.networkedassets.autodoc.clients.atlassian.stashData.HookSettings;
 import com.networkedassets.autodoc.clients.atlassian.stashData.Repository;
@@ -27,6 +26,7 @@ public class BitbucketClientTest {
 
     private final String PROJECT_KEY = "WIAD";
     private final String REPO_SLUG = "dwawiadro";
+    private final String HOOK_KEY = "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener";
 
     private BitbucketClient bitbucketClient;
 
@@ -57,7 +57,7 @@ public class BitbucketClientTest {
     @Test
     public void testGetHookSettings() throws UnirestException {
         HttpResponse<HookSettings> response = bitbucketClient
-                .getHookSettings(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+                .getHookSettings(PROJECT_KEY, REPO_SLUG, HOOK_KEY);
         assertNotNull(response);
         assertNotNull(response.getBody());
         assertNotNull(response.getHeaders());
@@ -82,21 +82,19 @@ public class BitbucketClientTest {
         final String defaultEndpointURL = "http://localhost:8050/event";
         final String connTimeout = "30000";
         // test if hook's settings are changed properly
-        HttpResponse<HookSettings> testResponse = bitbucketClient.setHookSettings(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener",
-                testEndpointURL, connTimeout);
+        HttpResponse<HookSettings> testResponse = bitbucketClient.setHookSettings(PROJECT_KEY, REPO_SLUG, HOOK_KEY, testEndpointURL, connTimeout);
         assertNotNull(testResponse.getBody());
 
         // restores default settings
-        HttpResponse<HookSettings> defaultResponse = bitbucketClient.setHookSettings(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener",
-                defaultEndpointURL, connTimeout);
+        HttpResponse<HookSettings> defaultResponse = bitbucketClient.setHookSettings(PROJECT_KEY, REPO_SLUG, HOOK_KEY, defaultEndpointURL, connTimeout);
         assertNotNull(defaultResponse.getBody());
     }
 
     @Test
     public void testSetHookSettingsDisabledEnabledAndRestoreDefault() throws UnirestException {
         // test
-        bitbucketClient.setHookSettingsDisabled(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+        bitbucketClient.setHookSettingsDisabled(PROJECT_KEY, REPO_SLUG, HOOK_KEY);
         // restore default
-        bitbucketClient.setHookSettingsEnabled(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+        bitbucketClient.setHookSettingsEnabled(PROJECT_KEY, REPO_SLUG, HOOK_KEY);
     }
 }

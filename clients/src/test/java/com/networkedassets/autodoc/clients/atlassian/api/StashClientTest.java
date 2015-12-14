@@ -7,7 +7,6 @@ import com.networkedassets.autodoc.clients.atlassian.stashData.Branch;
 import com.networkedassets.autodoc.clients.atlassian.stashData.HookSettings;
 import com.networkedassets.autodoc.clients.atlassian.stashData.Repository;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.MalformedURLException;
@@ -20,7 +19,6 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by mtulaza on 2015-12-14.
  */
-// TODO: appropriate hookKey for stash is required, then remove @Ignore annotations
 public class StashClientTest {
     private final String BITBUCKET_URL = "http://46.101.240.138:7990";
     private final String BITBUCKET_USERNAME = "kcala";
@@ -28,6 +26,7 @@ public class StashClientTest {
 
     private final String PROJECT_KEY = "TP";
     private final String REPO_SLUG = "lol";
+    private final String HOOK_KEY = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
 
     private StashClient stashClient;
 
@@ -56,10 +55,9 @@ public class StashClientTest {
     }
 
     @Test
-    @Ignore
     public void testGetHookSettings() throws UnirestException {
         HttpResponse<HookSettings> response = stashClient
-                .getHookSettings(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener");
+                .getHookSettings(PROJECT_KEY, REPO_SLUG, HOOK_KEY);
         assertNotNull(response);
         assertNotNull(response.getBody());
         assertNotNull(response.getHeaders());
@@ -79,28 +77,24 @@ public class StashClientTest {
     }
 
     @Test
-    @Ignore
     public void testSetHookSettingsAndRestoreDefault() throws UnirestException {
         final String testEndpointURL = "http://test.test:1234/test";
         final String defaultEndpointURL = "http://localhost:8050/event";
         final String connTimeout = "30000";
         // test if hook's settings are changed properly
-        HttpResponse<HookSettings> testResponse = stashClient.setHookSettings(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener",
-                testEndpointURL, connTimeout);
+        HttpResponse<HookSettings> testResponse = stashClient.setHookSettings(PROJECT_KEY, REPO_SLUG, HOOK_KEY, testEndpointURL, connTimeout);
         assertNotNull(testResponse.getBody());
 
         // restores default settings
-        HttpResponse<HookSettings> defaultResponse = stashClient.setHookSettings(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener",
-                defaultEndpointURL, connTimeout);
+        HttpResponse<HookSettings> defaultResponse = stashClient.setHookSettings(PROJECT_KEY, REPO_SLUG, HOOK_KEY, defaultEndpointURL, connTimeout);
         assertNotNull(defaultResponse.getBody());
     }
 
     @Test
-    @Ignore
     public void testSetHookSettingsDisabledEnabledAndRestoreDefault() throws UnirestException {
         // test
-        stashClient.setHookSettingsDisabled(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener");
+        stashClient.setHookSettingsDisabled(PROJECT_KEY, REPO_SLUG, HOOK_KEY);
         // restore default
-        stashClient.setHookSettingsEnabled(PROJECT_KEY, REPO_SLUG, "com.networkedassets.atlassian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener");
+        stashClient.setHookSettingsEnabled(PROJECT_KEY, REPO_SLUG, HOOK_KEY);
     }
 }
