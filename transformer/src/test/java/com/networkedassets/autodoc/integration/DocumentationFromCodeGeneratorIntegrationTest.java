@@ -61,7 +61,6 @@ public class DocumentationFromCodeGeneratorIntegrationTest {
     }
 
     @Test
-    @Ignore
     public void testDocumentationFromCodeGenerator() throws IOException {
         documentationFromCodeGenerator.process(createPushEventInstanceFromJSON());
     }
