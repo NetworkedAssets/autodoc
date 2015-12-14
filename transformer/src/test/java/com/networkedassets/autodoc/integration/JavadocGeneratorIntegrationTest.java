@@ -11,7 +11,6 @@ import com.networkedassets.autodoc.transformer.settings.Source;
 import org.eclipse.jgit.util.StringUtils;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -52,6 +51,7 @@ public class JavadocGeneratorIntegrationTest {
 
     @Test
     public void testInjectionsNotNull() {
+        assertNotNull(settingsProvider);
         assertNotNull(gitCodeProvider);
     }
 
@@ -68,7 +68,7 @@ public class JavadocGeneratorIntegrationTest {
         Code code = gitCodeProvider.getCode(source, projectKey, repoSlug, branchId);
         JavadocGenerator generator = new JavadocGenerator();
 
-        Assert.assertNotNull(generator.generateFrom(code));
+        assertNotNull(generator.generateFrom(code));
     }
 
     @Test (expected = NullPointerException.class)
