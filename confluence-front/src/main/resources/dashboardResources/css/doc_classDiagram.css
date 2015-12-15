@@ -37,12 +37,13 @@
 
 .node rect,
 .node polygon {
-    stroke: #ccc;
+    color: #1b3062;
+    stroke: #f18f27;
     stroke-width: 1px;
 }
 
 .node rect:not(.head) {
-    fill: #fafbfe;
+    fill: #fff8b7;
 }
 
 .edgePath path {
@@ -56,7 +57,7 @@
 }
 
 .doc_classDiagram rect.head {
-    /*fill: url(#HeaderGradient) #ccc;*/
+    fill: #151935;
     stroke-width: 0;
 }
 

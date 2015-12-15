@@ -1,0 +1,59 @@
+.doc_config-event div.inline-block {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#doc_config-branch div.table {
+    display: table;
+    width: 100%;
+}
+
+#doc_config-branch div.table div.table-row {
+    display: table-row;
+}
+
+#doc_config-branch div.table div.table-row > div {
+    display: table-cell;
+    vertical-align: top;
+    padding: 20px;
+}
+
+#doc_config-branch-menu {
+    width: 200px;
+}
+
+#doc_config-branch-menu form > div {
+    display: block;
+}
+
+#doc_config-branch-container div.aui-message  {
+    display: inline-block;
+}
+
+#doc_config-sources form.source {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 20px;
+}
+
+.doc-aui-button-group .aui-button-primary {
+    font-weight: normal;
+}
+
+#doc_config-branch-container .table-cell {
+    width: 48%;
+}
+
+.doc_config-branch-event {
+    border-bottom: 1px solid #eee;
+    padding-top: 20px;
+    padding-bottom: 5px;
+}
+
+.doc_config-branch-event.even {
+    background: #fafafa;
+}
+
+#doc_config-branch-container h4 {
+    margin-top: 1em;
+}

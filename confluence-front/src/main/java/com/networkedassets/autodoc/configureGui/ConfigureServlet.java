@@ -19,6 +19,7 @@ import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.context.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,53 +58,6 @@ public class ConfigureServlet extends HttpServlet {
         transformerServer = new TransformerServer(getTransformerUrl(), settingsManager.getGlobalSettings().getBaseUrl());
     }
 
-    private void renderConfigureTemplateWithParams(HttpServletRequest req, HttpServletResponse resp, Map<String, Object> templateParams)
-            throws IOException, ServletException {
-        resp.setContentType("text/html;charset=UTF-8");
-        try {
-            Context context = MacroUtils.createDefaultVelocityContext();
-            context.put("soyRenderer", soyTemplateRenderer);
-            context.put("soyParams", templateParams);
-            context.put("soyResource", TEMPLATES_RESOURCE);
-            context.put("pageContent", TEMPLATE_NAME);
-            Space space = getSpace(req);
-            context.put("space", space);
-            SpaceAdminAction action = new SpaceAdminAction();
-            ContainerManager.autowireComponent(action);
-            action.setSpace(space);
-            context.put("action", action);
-            VelocityUtils.renderTemplateWithoutSwallowingErrors("templates/space-admin-decorator.vm", context,
-                    resp.getWriter());
-        } catch (Exception e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof IOException) {
-                throw (IOException) cause;
-            }
-            throw new ServletException(e);
-        }
-    }
-
-    private void renderConfigureScreen(HttpServletRequest req, HttpServletResponse resp, Settings settings,
-                                       String message)
-            throws IOException, ServletException {
-// TODO: 02.12.2015 Refactor to fit new settings API
-////        settings.getSources().stream().map(source -> source.projects).flatMap(p -> p.values().stream()).collect(Collectors.toList());
-//        Collection<Project> allProjects = settings.getProjects();
-//        Optional<Long> defaultJavadocLocation = findDefaultJavadocLocation(req);
-//        Optional<Long> defaultUmlLocation = findDefaultUmlLocation(req);
-//        defaultJavadocLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
-//        defaultUmlLocation.ifPresent(pageId -> allProjects.forEach(p -> p.setDefaultUmlLocation(pageId)));
-//        List<SimplePage> pages = getPages(req);
-//
-//        List<Map<String, ?>> allProjectsSoy = allProjects.stream().map(Project::toSoyData).collect(Collectors.toList());
-//        renderConfigureTemplateWithParams(req, resp, ImmutableMap.<String, Object>builder()
-//                        .put("allProjects", allProjectsSoy)
-//                        .put("pages", pages)
-////                        .put("message", message)
-//                        .build()
-//        );
-    }
-
     private Optional<Long> findDefaultUmlLocation(HttpServletRequest req) {
         return Optional.ofNullable(pageManager.getPage(getSpaceKey(req), "5. Building Block View")).map(Page::getId);
     }
@@ -114,18 +68,39 @@ public class ConfigureServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: 02.12.2015 Refactor to fit new settings API
-//        String message = "";
-//        ConfluenceSettings settings = new ConfluenceSettings();
-//        try {
-//            Response settingsForSpace = transformerServer.getSettings();
-//            message = settingsForSpace.raw;
-//            settings = settingsForSpace.body;
-//        } catch (SettingsException e) {
-//            message = e.getMessage();
-//        }
-//        renderConfigureScreen(req, resp, settings, message);
+        renderTemplate(req,resp);
     }
+
+    private void renderTemplate(HttpServletRequest req, HttpServletResponse resp) throws IOException,ServletException {
+        resp.setContentType("text/html;charset=UTF-8");
+        try {
+            Context context = MacroUtils.createDefaultVelocityContext();
+            context.put("pageContent", TEMPLATE_NAME);
+            Space space = getSpace(req);
+            context.put("space", space);
+            context.put("innerHtml", getInnerHtml());
+            SpaceAdminAction action = new SpaceAdminAction();
+            ContainerManager.autowireComponent(action);
+            action.setSpace(space);
+            context.put("action", action);
+            VelocityUtils.renderTemplateWithoutSwallowingErrors("configurationResources/configuration.vm", context,
+                    resp.getWriter());
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
+            }
+            throw new ServletException(e);
+        }
+    }
+
+    private String getInnerHtml() throws IOException {
+        String html;
+        html = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("/configurationResources/index.html"));
+        html = (html.split("<!--CUT-START-->")[1]).split("<!--CUT-END-->")[0];
+        return html;
+    }
+
 
     private String getSpaceKey(HttpServletRequest req) {
         return req.getParameter("key");
@@ -141,47 +116,7 @@ public class ConfigureServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-// TODO: 02.12.2015 Refactor to fit new settings API
-//        String newSettings = req.getParameter("newSettings");
-//        String eventToSend = req.getParameter("event");
-//        ConfluenceSettings settings = new ConfluenceSettings();
-//        String spaceKey = getSpaceKey(req);
-//        String message = "";
-//
-//        if (newSettings != null) {
-//            List<Project> projects = OBJECT_MAPPER.readValue(newSettings, LIST_PROJECTS_JSON_TYPE);
-//
-//            settings.setProjects(projects);
-//            settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
-//            //settings.setSpaceKey(spaceKey);
-//
-//            message = OBJECT_MAPPER.writeValueAsString(projects);
-//
-//            try {
-//                transformerServer.saveSettingsForSpace(settings);
-//            } catch (SettingsException e) {
-//                message = e.getMessage();
-//            }
-//        } else {
-//            try {
-//                Response settingsForSpace = transformerServer.getSettings();
-//                settings = settingsForSpace.body;
-//                message = settingsForSpace.raw;
-//            } catch (SettingsException e) {
-//                message = e.getMessage();
-//            }
-//        }
-//
-//        if (eventToSend != null) {
-//            String[] eventData = eventToSend.split("//");
-//            try {
-//                transformerServer.forceRegenerate(eventData[0], eventData[1], eventData[2]);
-//            } catch (SettingsException e) {
-//                message += "\n" + e.getMessage();
-//            }
-//        }
-//
-//        renderConfigureScreen(req, resp, settings, message);
+
     }
 
     private String getTransformerUrl() {

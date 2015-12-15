@@ -371,7 +371,7 @@ function ClassDiagram(options) {
                 .attr("rx",5)
                 .attr("ry",5)
                 .classed("head",true)
-                .attr("fill","url(#HeaderGradient)")
+                //.attr("fill","url(#HeaderGradient)")
                 ;
 
 
