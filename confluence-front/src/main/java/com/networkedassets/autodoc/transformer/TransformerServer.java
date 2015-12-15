@@ -90,6 +90,7 @@ public class TransformerServer {
 			throw new SettingsException(e);
 		}
 
+		
 		String raw;
 		try {
 			raw = IOUtils.toString(response.getRawBody());
@@ -101,7 +102,7 @@ public class TransformerServer {
 		return new Response(response.getBody(), raw);
 	}
 
-	public void saveSettingsForSpace(Settings settings) throws SettingsException {
+	public HttpResponse<String> saveSettingsForSpace(Settings settings) throws SettingsException {
 		HttpResponse<String> response;
 		try {
 			response = Unirest.post(url + SETTINGS).header("Content-Type", "application/json").body(settings)
@@ -112,6 +113,8 @@ public class TransformerServer {
 		if (response.getStatus() != 200) {
 			throw new SettingsException("Could not save settings: " + response.getBody());
 		}
+		
+		return response;
 	}
 
 	public void forceRegenerate(String projectKey, String repoSlug, String branchId) throws SettingsException {

@@ -8,7 +8,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,7 +22,9 @@ import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.core.util.ClassLoaderUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.mashape.unirest.http.HttpResponse;
 import com.networkedassets.autodoc.transformer.Response;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.settings.Project;
@@ -35,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public class ConfigurationService {
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	private PageManager pageManager;
 	private SpaceManager spaceManager;
 	private TransformerServer transformerServer;
@@ -51,22 +56,35 @@ public class ConfigurationService {
 	@GET
 	public String getProjects(@PathParam("space") String spaceKey) {
 
-		String message = "";
 		Settings settings = new Settings();
 		try {
 			Response settingsForSpace = transformerServer.getSettings();
-			message = settingsForSpace.raw;
 			settings = settingsForSpace.body;
 		} catch (SettingsException e) {
-			throw new TransformerSettingsException(e.getMessage());
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
 
 		List<Project> projects = settings.getSources().stream().map(source -> source.projects)
 				.flatMap(p -> p.values().stream()).collect(Collectors.toList());
-		List<Map<String, ?>> allProjectsSoy = projects.stream().map(Project::toSoyData).collect(Collectors.toList());
 		Optional<Long> defaultLocation = findDefaultLocation(spaceKey);
 		defaultLocation.ifPresent(pageId -> projects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
-		return new Gson().toJson(allProjectsSoy);
+
+		return new Gson().toJson(settings);
+
+	}
+
+	@Path("{space}/projects")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String setProjects(@PathParam("space") String spaceKey, Settings settings) {
+
+		HttpResponse<String> response = null;
+		try {
+			response = transformerServer.saveSettingsForSpace(settings);
+		} catch (SettingsException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
+		return response.getBody();
 
 	}
 

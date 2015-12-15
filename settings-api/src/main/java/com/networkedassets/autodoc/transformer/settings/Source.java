@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -81,7 +82,7 @@ public class Source implements Serializable {
      * return null on REST request
      * @return null
      */
-    @JsonProperty("password")
+    @JsonGetter("password")
     public String getNullPassword() {return null;}
 
     public void setPassword(String password) {

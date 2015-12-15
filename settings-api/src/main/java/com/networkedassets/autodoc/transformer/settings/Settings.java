@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Contains settings of the application
  */
@@ -24,6 +26,7 @@ public class Settings implements Serializable {
 		return sources.stream().anyMatch(source -> source.getUrl().equals(url));
 	}
 
+	@JsonProperty("transformerSettings")
 	public TransformerSettings getTransformerSettings() {
 		return transformerSettings;
 	}
@@ -32,6 +35,7 @@ public class Settings implements Serializable {
 		this.transformerSettings = transformerSettings;
 	}
 
+	@JsonProperty("sources")
 	public List<Source> getSources() {
 		return sources;
 	}
@@ -40,6 +44,7 @@ public class Settings implements Serializable {
 		this.sources = sources;
 	}
 
+	@JsonProperty("confluenceUrl")
 	public String getConfluenceUrl() {
 		return confluenceUrl;
 	}
@@ -48,6 +53,7 @@ public class Settings implements Serializable {
 		this.confluenceUrl = confluenceUrl;
 	}
 
+	@JsonProperty("confluenceUsername")
 	public String getConfluenceUsername() {
 		return confluenceUsername;
 	}
@@ -56,6 +62,7 @@ public class Settings implements Serializable {
 		this.confluenceUsername = confluenceUsername;
 	}
 
+	@JsonProperty("confluencePassword")
 	public String getConfluencePassword() {
 		return confluencePassword;
 	}
