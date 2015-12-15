@@ -13,7 +13,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by mtulaza on 2015-12-14.
@@ -75,5 +76,19 @@ public class ConfluenceClientTest {
         Assert.assertThat(foundPage, CoreMatchers.not(Optional.empty()));
 
         confluenceClient.removePage(createdPage.getId());
+    }
+
+    @Test
+    public void testCreatePagePutLabelAndThenRemove() throws UnirestException {
+        ConfluencePage confluencePage = confluenceClient.createPage(RandomStringUtils.randomAlphabetic(10), "spac", "SOME CONTENT", "javadoc");
+        boolean putLabelResult = confluenceClient.putLabel(confluencePage.getId(), "LABEL1 LABEL2 LABEL3");
+        assertTrue(putLabelResult);
+        confluenceClient.removePage(confluencePage.getId());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testThrowsNullPointerExceptionWhenNullPassed() throws UnirestException {
+        //guava Precondition test
+        confluenceClient.createJavadocPage(null, null, null, null, null, null, null);
     }
 }
