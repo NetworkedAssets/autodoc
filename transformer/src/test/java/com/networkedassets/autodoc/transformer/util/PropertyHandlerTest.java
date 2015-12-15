@@ -5,12 +5,19 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class PropertyHandlerTest {
+	private PropertyHandler propertyHandler;
+
+	@Before
+	public void createPropertyHandler() throws IOException {
+		propertyHandler = PropertyHandler.getInstance();
+	}
+
 	@Test
-	public void testGetValuePort() throws IOException {
-		PropertyHandler propertyHandler = PropertyHandler.getInstance();
+	public void testGetValuePort() {
 		assertNotNull(propertyHandler);
 
 		assertNotNull(propertyHandler.getValue("jetty.port", "8050"));
@@ -18,8 +25,7 @@ public class PropertyHandlerTest {
 	}
 
 	@Test
-	public void testGetValueNotFoundKey() throws IOException {
-		PropertyHandler propertyHandler = PropertyHandler.getInstance();
+	public void testGetValueNotFoundKey() {
 		assertNotNull(propertyHandler);
 
 		assertNotNull(propertyHandler.getValue("not-found-key", "default-value"));
@@ -27,8 +33,7 @@ public class PropertyHandlerTest {
 	}
 
 	@Test
-	public void testGetValueSeetingsFilename() throws IOException {
-		PropertyHandler propertyHandler = PropertyHandler.getInstance();
+	public void testGetValueSeetingsFilename() {
 		assertNotNull(propertyHandler);
 
 		assertNotNull(propertyHandler.getValue("settings.filename", "transformerSettings.ser"));
