@@ -3,7 +3,6 @@ package com.networkedassets.autodoc.configureGui;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -16,13 +15,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.atlassian.confluence.pages.Page;
 import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.spaces.Space;
 import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.core.util.ClassLoaderUtils;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.networkedassets.autodoc.transformer.Response;
@@ -30,8 +31,6 @@ import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("/configuration/")
 
@@ -39,7 +38,6 @@ import org.slf4j.LoggerFactory;
 public class ConfigurationService {
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	private PageManager pageManager;
 	private SpaceManager spaceManager;
 	private TransformerServer transformerServer;
