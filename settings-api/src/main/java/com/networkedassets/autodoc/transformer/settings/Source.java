@@ -15,9 +15,15 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Source implements Serializable {
-    // TODO: 26.11.2015 Remove default values and require user to enter them on
-    // first run in frontend
+    @JsonIgnore
+    private static int totalId = 0;
+
     private String name;
+    private int id;
+
+    public Source() {
+        id = totalId++;
+    }
 
     private String url = "http://46.101.240.138:7990";
     private SourceType sourceType = SourceType.STASH;
@@ -35,7 +41,6 @@ public class Source implements Serializable {
 
     public Map<String, Project> projects = new HashMap<>();
 
-
     public void addProject(Project p) {
         projects.put(p.key, p);
     }
@@ -50,17 +55,6 @@ public class Source implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * Returns url-safe version of source name. Leaves only alphanumeric
-     * characters and dashes ("-") Rest of the characters is changed to dash
-     *
-     * @return Alpanumeric characters only string
-     */
-    @JsonGetter("slug")
-    public String getSlug() {
-        return name != null ? name.replaceAll("[^A-Za-z0-9\\-]", "-") : null;
     }
 
     public String getUrl() {
@@ -145,6 +139,10 @@ public class Source implements Serializable {
 
     public void setSlugUnique(Boolean slugUnique) {
         this.slugUnique = slugUnique;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public static enum SourceType implements Serializable {
