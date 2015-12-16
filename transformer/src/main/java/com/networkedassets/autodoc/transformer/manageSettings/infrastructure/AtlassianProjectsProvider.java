@@ -2,7 +2,7 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.networkedassets.autodoc.clients.atlassian.api.StashClient;
+import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
 import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.*;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
 import com.networkedassets.autodoc.transformer.settings.*;
@@ -22,13 +22,13 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
 
     private static Logger log = LoggerFactory.getLogger(AtlassianProjectsProvider.class);
     Source source;
-    StashClient stashClient;
+    StashBitbucketClient stashBitbucketClient;
 
     private Map<String, Project> projects = new HashMap<>();
 
     public AtlassianProjectsProvider(Source source) throws MalformedURLException {
         this.source = source;
-        stashClient = ClientConfigurator.getConfiguredStashClient(source);
+        stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
 
         //get all projects
         try {
-            sourceProjects = stashClient.getProjects();
+            sourceProjects = stashBitbucketClient.getProjects();
             log.debug("REST projects retrieved from {}", this.source.getUrl());
         } catch (UnirestException e) {
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
         //get repos for projects
         projects.values().stream().forEach(project -> {
             try {
-                List<Repository> sourceRepositories = stashClient.getRepositoriesForProject(project.key);
+                List<Repository> sourceRepositories = stashBitbucketClient.getRepositoriesForProject(project.key);
                 sourceRepositories.stream().forEach(sourceRepository -> {
                     project.repos.put(sourceRepository.getSlug(), new Repo(sourceRepository.getName(), sourceRepository.getSlug()));
                 });
@@ -70,7 +70,7 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
             project.repos.values().forEach(repo -> {
                 try {
                     List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Branch> sourceBranches
-                            = stashClient.getBranchesforRepository(project.key, repo.slug);
+                            = stashBitbucketClient.getBranchesforRepository(project.key, repo.slug);
                     sourceBranches.forEach(sourceBranch -> {
                         project.repos.get(repo.slug).branches.put(sourceBranch.getId(),
                                 new Branch(sourceBranch.getDisplayId(), sourceBranch.getId()));

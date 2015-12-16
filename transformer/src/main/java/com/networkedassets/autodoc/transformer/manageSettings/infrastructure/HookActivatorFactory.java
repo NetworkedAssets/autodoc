@@ -14,11 +14,10 @@ public class HookActivatorFactory {
         HookActivator hookActivator = null;
 
         switch (source.getSourceType()) {
+            //fallthrough!
             case STASH:
-                hookActivator = new StashHookActivator(source, localhostAddress);
-                break;
             case BITBUCKET:
-                hookActivator = new BitbucketHookActivator(source, localhostAddress);
+                hookActivator = new AtlassianHookActivator(source, localhostAddress);
                 break;
         }
 

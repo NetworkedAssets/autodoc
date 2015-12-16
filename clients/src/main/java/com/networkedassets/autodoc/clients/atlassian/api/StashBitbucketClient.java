@@ -16,31 +16,39 @@ import java.util.List;
 
 
 @SuppressWarnings("ALL")
-public class StashClient extends HttpClient {
+public class StashBitbucketClient extends HttpClient {
 
-    public StashClient(HttpClientConfig config) {
+    public static final String hookSettingsRestUrl = "/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings";
+    public static final String hookEnableResturl = "/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled";
+
+    public StashBitbucketClient(HttpClientConfig config) {
         super(config);
     }
 
-    public HttpResponse<HookSettings> getHookSettings(@Nonnull final String projectKey,
-                                                      @Nonnull final String repositorySlug, final String hookKey) throws UnirestException {
+
+    public HookSettings getHookSettings(@Nonnull final String projectKey,
+                                        @Nonnull final String repositorySlug, final String hookKey) throws UnirestException {
 
         Preconditions.checkNotNull(projectKey);
         Preconditions.checkNotNull(repositorySlug);
         Preconditions.checkNotNull(hookKey);
 
-        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings", projectKey,
-                repositorySlug, hookKey);
-        HttpResponse<HookSettings> jsonResponse = Unirest.get(this.getBaseUrl().toString() + requestUrl)
-                .header("accept", "application/json").header("content-type", "application/json")
-                .basicAuth(this.getUsername(), this.getPassword()).asObject(HookSettings.class);
+        String requestUrl = String.format(hookSettingsRestUrl, projectKey, repositorySlug, hookKey);
+        HttpResponse<HookSettings> jsonResponse =
+                Unirest.get(this.getBaseUrl().toString() + requestUrl)
+                        .header("accept", "application/json")
+                        .header("content-type", "application/json")
+                        .basicAuth(this.getUsername(), this.getPassword())
+                        .asObject(HookSettings.class);
 
-        return jsonResponse;
+        return jsonResponse.getBody();
     }
 
-    public HttpResponse<HookSettings> setHookSettings(@Nonnull final String projectKey,
-                                                      @Nonnull final String repositorySlug, @Nonnull final String hookKey, @Nonnull final String endpointURL,
-                                                      @Nonnull final String endpointTimeout) throws UnirestException {
+    public HookSettings setHookSettings(@Nonnull final String projectKey,
+                                        @Nonnull final String repositorySlug,
+                                        @Nonnull final String hookKey,
+                                        @Nonnull final String endpointURL,
+                                        @Nonnull final String endpointTimeout) throws UnirestException {
 
         Preconditions.checkNotNull(projectKey);
         Preconditions.checkNotNull(repositorySlug);
@@ -52,43 +60,52 @@ public class StashClient extends HttpClient {
         hookSettings.setTimeout(endpointTimeout);
         hookSettings.setUrl(endpointURL);
 
-        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings", projectKey,
-                repositorySlug, hookKey);
-        HttpResponse<HookSettings> jsonResponse = Unirest.put(this.getBaseUrl().toString() + requestUrl)
-                .basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-                .header("content-type", "application/json").body(hookSettings).asObject(HookSettings.class);
+        String requestUrl = String.format(hookSettingsRestUrl, projectKey, repositorySlug, hookKey);
+        HttpResponse<HookSettings> jsonResponse =
+                Unirest.put(this.getBaseUrl().toString() + requestUrl)
+                        .basicAuth(this.getUsername(), this.getPassword())
+                        .header("accept", "application/json")
+                        .header("content-type", "application/json")
+                        .body(hookSettings)
+                        .asObject(HookSettings.class);
 
-        return jsonResponse;
+        return jsonResponse.getBody();
     }
 
-    public HttpResponse<HookConfirm> setHookSettingsEnabled(@Nonnull final String projectKey,
-                                                            @Nonnull final String repositorySlug, @Nonnull final String hookKey) throws UnirestException {
+    public HttpResponse<HookConfirm> enableHook(@Nonnull final String projectKey,
+                                                @Nonnull final String repositorySlug,
+                                                @Nonnull final String hookKey) throws UnirestException {
 
         Preconditions.checkNotNull(projectKey);
         Preconditions.checkNotNull(repositorySlug);
         Preconditions.checkNotNull(hookKey);
 
-        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled", projectKey,
-                repositorySlug, hookKey);
-        HttpResponse<HookConfirm> jsonResponse = Unirest.put(this.getBaseUrl().toString() + requestUrl)
-                .basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-                .header("content-type", "application/json").asObject(HookConfirm.class);
+        String requestUrl = String.format(hookEnableResturl, projectKey, repositorySlug, hookKey);
+        HttpResponse<HookConfirm> jsonResponse =
+                Unirest.put(this.getBaseUrl().toString() + requestUrl)
+                        .basicAuth(this.getUsername(), this.getPassword())
+                        .header("accept", "application/json")
+                        .header("content-type", "application/json")
+                        .asObject(HookConfirm.class);
 
         return jsonResponse;
     }
 
-    public HttpResponse<HookConfirm> setHookSettingsDisabled(@Nonnull final String projectKey,
-                                                             @Nonnull final String repositorySlug, @Nonnull final String hookKey) throws UnirestException {
+    public HttpResponse<HookConfirm> disableHook(@Nonnull final String projectKey,
+                                                 @Nonnull final String repositorySlug,
+                                                 @Nonnull final String hookKey) throws UnirestException {
 
         Preconditions.checkNotNull(projectKey);
         Preconditions.checkNotNull(repositorySlug);
         Preconditions.checkNotNull(hookKey);
 
-        String requestUrl = String.format("/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled", projectKey,
-                repositorySlug, hookKey);
-        HttpResponse<HookConfirm> jsonResponse = Unirest.delete(this.getBaseUrl().toString() + requestUrl)
-                .basicAuth(this.getUsername(), this.getPassword()).header("accept", "application/json")
-                .header("content-type", "application/json").asObject(HookConfirm.class);
+        String requestUrl = String.format(hookEnableResturl, projectKey, repositorySlug, hookKey);
+        HttpResponse<HookConfirm> jsonResponse =
+                Unirest.delete(this.getBaseUrl().toString() + requestUrl)
+                        .basicAuth(this.getUsername(), this.getPassword())
+                        .header("accept", "application/json")
+                        .header("content-type", "application/json")
+                        .asObject(HookConfirm.class);
 
         return jsonResponse;
     }
@@ -100,9 +117,9 @@ public class StashClient extends HttpClient {
         HttpResponse<ProjectsPage> projectsPage;
         do {
             projectsPage = getProjectsPage(start, limit);
-            start+=limit+1;
+            start += limit + 1;
             projects.addAll(projectsPage.getBody().getProjects());
-        }while (!projectsPage.getBody().isIsLastPage());
+        } while (!projectsPage.getBody().isIsLastPage());
         return projects;
     }
 
@@ -113,9 +130,9 @@ public class StashClient extends HttpClient {
         HttpResponse<RepositoriesPage> repositoriesPage;
         do {
             repositoriesPage = getRepositoriesPageForProject(start, limit, projectKey);
-            start+=limit+1;
+            start += limit + 1;
             repositories.addAll(repositoriesPage.getBody().getRepositories());
-        }while (!repositoriesPage.getBody().isIsLastPage());
+        } while (!repositoriesPage.getBody().isIsLastPage());
         return repositories;
     }
 
@@ -126,10 +143,10 @@ public class StashClient extends HttpClient {
         int start = 0;
         HttpResponse<BranchesPage> branchesPage;
         do {
-            branchesPage = getBranchesPageforRepository(start, limit,projectKey, repositorySlug);
-            start+=limit+1;
+            branchesPage = getBranchesPageforRepository(start, limit, projectKey, repositorySlug);
+            start += limit + 1;
             branches.addAll(branchesPage.getBody().getBranches());
-        }while (!branchesPage.getBody().isIsLastPage());
+        } while (!branchesPage.getBody().isIsLastPage());
         return branches;
     }
 
