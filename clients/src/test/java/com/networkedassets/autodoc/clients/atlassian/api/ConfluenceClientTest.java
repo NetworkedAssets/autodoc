@@ -43,6 +43,25 @@ public class ConfluenceClientTest {
         confluenceClient.removePage(confluencePage.getId());
     }
 
+    @Test(expected = NullPointerException.class)
+    public void testCreatePageThrowsNullPointerException() throws UnirestException {
+        confluenceClient.createPage(null, null, null, null);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testInvalidSpaceNameThrowsRuntimeException() throws UnirestException {
+        confluenceClient.createPage(new ConfluencePage("##@#@FöˇQ(#ťö@@#F", "1212Í8üß63:q`vřëi!@!FR!F@F", "1e2rf2f22"));
+    }
+
+    @Test
+    @Ignore
+    public void testCreatedPageHasDefaultNetworkedassetsJavadocLabel() throws UnirestException, InterruptedException {
+        ConfluencePage confluencePage = confluenceClient.createPage(RandomStringUtils.randomAlphabetic(10), "spac", "CONTENTS-TEST", "javadoc");
+        boolean isLabelPresent = confluencePage.getMetadata().labels.results.stream().anyMatch(n -> n.get("name").equals("networkedassets-javadoc"));
+        assertTrue(isLabelPresent);
+        confluenceClient.removePage(confluencePage.getId());
+    }
+
     @Test(expected = RuntimeException.class)
     public void testCannotCreatePageWithTheSameNameAndThenRemove() throws UnirestException {
         final String name = "PAGE_NAME_THAT_ALREADY_EXISTS";
