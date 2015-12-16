@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.clients.atlassian.stashData;
+package com.networkedassets.autodoc.clients.atlassian.atlassianHookData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

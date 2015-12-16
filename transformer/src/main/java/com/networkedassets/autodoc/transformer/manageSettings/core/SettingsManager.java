@@ -117,6 +117,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         ) {
             settings = (Settings) objectIn.readObject();
             log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
+            LOLIDONTEVENRUNONCE = true;
         } catch (FileNotFoundException e) {
             log.error("Can't load settings from {} - file not found. Creating new default settings...", settingsFile.getAbsolutePath());
         } catch (ClassNotFoundException e) {
