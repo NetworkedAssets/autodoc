@@ -2,10 +2,7 @@ package com.networkedassets.autodoc.configureGui;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -18,34 +15,23 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.atlassian.confluence.pages.Page;
-import com.atlassian.confluence.pages.PageManager;
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.confluence.spaces.Space;
-import com.atlassian.confluence.spaces.SpaceManager;
 import com.atlassian.core.util.ClassLoaderUtils;
-import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.networkedassets.autodoc.transformer.Response;
 import com.networkedassets.autodoc.transformer.TransformerServer;
-import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 
 @Path("/configuration/")
 
-
 public class ConfigurationService {
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
-	private PageManager pageManager;
-	private SpaceManager spaceManager;
 	private TransformerServer transformerServer;
 
-	public ConfigurationService(PageManager pageManager, SpaceManager spaceManager, SettingsManager settingsManager) {
+	public ConfigurationService(SettingsManager settingsManager) {
 
-		this.pageManager = pageManager;
-		this.spaceManager = spaceManager;
 		this.transformerServer = new TransformerServer(getTransformerUrl(),
 				settingsManager.getGlobalSettings().getBaseUrl());
 	}
@@ -62,11 +48,6 @@ public class ConfigurationService {
 		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
-
-		List<Project> projects = settings.getSources().stream().map(source -> source.projects)
-				.flatMap(p -> p.values().stream()).collect(Collectors.toList());
-		Optional<Long> defaultLocation = findDefaultLocation(spaceKey);
-		defaultLocation.ifPresent(pageId -> projects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
 
 		return settings;
 
@@ -85,25 +66,6 @@ public class ConfigurationService {
 		}
 		return response.getBody();
 
-	}
-
-	@Path("{space}/pages")
-	@GET
-	public String getConfluencePages(@PathParam("space") String spaceKey) {
-		List<SimplePage> pages = getPages(spaceKey);
-		return new Gson().toJson(pages);
-	}
-
-	private Optional<Long> findDefaultLocation(String key) {
-		return Optional.ofNullable(pageManager.getPage(key, "5. Building Block View")).map(Page::getId);
-	}
-
-	private List<SimplePage> getPages(String key) {
-		return pageManager.getPages(getSpace(key), true).stream().map(SimplePage::new).collect(Collectors.toList());
-	}
-
-	private Space getSpace(String key) {
-		return spaceManager.getSpace(key);
 	}
 
 	private String getTransformerUrl() {
