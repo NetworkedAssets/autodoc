@@ -34,7 +34,7 @@ import com.networkedassets.autodoc.transformer.settings.SettingsException;
 
 @Path("/configuration/")
 
-@Produces({ MediaType.APPLICATION_JSON })
+
 public class ConfigurationService {
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
@@ -51,8 +51,9 @@ public class ConfigurationService {
 	}
 
 	@Path("{space}/projects")
+	@Produces({ MediaType.APPLICATION_JSON })
 	@GET
-	public String getProjects(@PathParam("space") String spaceKey) {
+	public Settings getProjects(@PathParam("space") String spaceKey) {
 
 		Settings settings = new Settings();
 		try {
@@ -67,7 +68,7 @@ public class ConfigurationService {
 		Optional<Long> defaultLocation = findDefaultLocation(spaceKey);
 		defaultLocation.ifPresent(pageId -> projects.forEach(p -> p.setDefaultJavadocLocation(pageId)));
 
-		return new Gson().toJson(settings);
+		return settings;
 
 	}
 
