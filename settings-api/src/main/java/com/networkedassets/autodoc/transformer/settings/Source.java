@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,101 +15,106 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Source implements Serializable {
-    // TODO: 26.11.2015 Remove default values and require user to enter them on first run in frontend
-    private String name;
+	// TODO: 26.11.2015 Remove default values and require user to enter them on
+	// first run in frontend
+	private String name;
 
-    private String url = "http://46.101.240.138:7990";
-    private SourceType sourceType = SourceType.STASH;
+	private String url = "http://46.101.240.138:7990";
+	private SourceType sourceType = SourceType.STASH;
 
-    private String username = "kcala";
-    private String password = "admin";
-  @JsonIgnore
-    private Boolean sourceExists;
- @JsonIgnore
-    private Boolean credentialsCorrect;
-   @JsonIgnore
-    private Boolean verified;
-   @JsonIgnore
-    private Boolean slugUnique;
-    
-    
-    
-    public Map<String, Project> projects = new HashMap<>();
+	private String username = "kcala";
+	private String password = "admin";
+	@JsonIgnore
+	private Boolean sourceExists;
+	@JsonIgnore
+	private Boolean credentialsCorrect;
+	@JsonIgnore
+	private Boolean verified;
+	@JsonIgnore
+	private Boolean slugUnique;
 
-    public void addProject(Project p) {
-        projects.put(p.key, p);
-    }
+	public Map<String, Project> projects = new HashMap<>();
 
-    public Project getProjectByKey(String key) {
-        return projects.get(key);
-    }
-    public String getName() {
-        return name;
-    }
+	public void addProject(Project p) {
+		projects.put(p.key, p);
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Project getProjectByKey(String key) {
+		return projects.get(key);
+	}
 
-    /**
-     * Returns url-safe version of source name. Leaves only alphanumeric characters and dashes ("-")
-     * Rest of the characters is changed to dash
-     * @return Alpanumeric characters only string
-     */
-    @JsonProperty("slug")
-    public String getSlug(){
-        return name != null ? name.replaceAll("[^A-Za-z0-9\\-]", "-") : null;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	/**
+	 * Returns url-safe version of source name. Leaves only alphanumeric
+	 * characters and dashes ("-") Rest of the characters is changed to dash
+	 * 
+	 * @return Alpanumeric characters only string
+	 */
+	@JsonGetter("slug")
+	public String getSlug() {
+		return name != null ? name.replaceAll("[^A-Za-z0-9\\-]", "-") : null;
+	}
 
-    public String getHookKey() {
-        return this.getSourceType().getHookKey();
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public void setHookKey(String hookKey) {
-        this.getSourceType().setHookKey(hookKey);
-    }
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public String getHookKey() {
+		return this.getSourceType().getHookKey();
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setHookKey(String hookKey) {
+		this.getSourceType().setHookKey(hookKey);
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public String getUsername() {
+		return username;
+	}
 
-    /**
-     * For jackson serialization. We don't want to share password on every request so we only
-     * return null on REST request
-     * @return null
-     */
-    @JsonGetter("password")
-    public String getNullPassword() {return null;}
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public SourceType getSourceType() {
-        return sourceType;
-    }
+	/**
+	 * For jackson serialization. We don't want to share password on every
+	 * request so we only return null on REST request
+	 * 
+	 * @return null
+	 */
+	@JsonGetter("password")
+	public String getNullPassword() {
+		return null;
+	}
 
-    public void setSourceType(SourceType sourceType) {
-        this.sourceType = sourceType;
-    }
+	@JsonSetter("password")
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public Boolean getSourceExists() {
+	public SourceType getSourceType() {
+		return sourceType;
+	}
+
+	public void setSourceType(SourceType sourceType) {
+		this.sourceType = sourceType;
+	}
+
+	public Boolean getSourceExists() {
 		return sourceExists;
 	}
 
@@ -141,22 +147,21 @@ public class Source implements Serializable {
 	}
 
 	public static enum SourceType implements Serializable {
-        STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"),
-        BITBUCKET("com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+		STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"), BITBUCKET(
+				"com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
 
-        private String hookKey;
+		private String hookKey;
 
-        SourceType(String hookKey) {
-            this.hookKey = hookKey;
-        }
+		SourceType(String hookKey) {
+			this.hookKey = hookKey;
+		}
 
+		public String getHookKey() {
+			return hookKey;
+		}
 
-        public String getHookKey() {
-            return hookKey;
-        }
-
-        public void setHookKey(String hookKey) {
-            this.hookKey = hookKey;
-        }
-    }
+		public void setHookKey(String hookKey) {
+			this.hookKey = hookKey;
+		}
+	}
 }
