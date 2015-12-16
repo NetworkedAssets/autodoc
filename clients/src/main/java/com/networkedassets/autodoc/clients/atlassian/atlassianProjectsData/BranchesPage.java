@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
         "size",
         "limit",
         "isLastPage",
-        "branches",
+        "values",
         "start"
 })
 public class BranchesPage {
@@ -31,7 +31,7 @@ public class BranchesPage {
     private int limit;
     @JsonProperty("isLastPage")
     private boolean isLastPage;
-    @JsonProperty("branches")
+    @JsonProperty("values")
     private List<Branch> branches = new ArrayList<Branch>();
     @JsonProperty("start")
     private int start;

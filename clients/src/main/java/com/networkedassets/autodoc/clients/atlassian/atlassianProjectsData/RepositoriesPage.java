@@ -21,7 +21,7 @@ import com.google.common.base.MoreObjects;
         "size",
         "limit",
         "isLastPage",
-        "repositories",
+        "values",
         "start"
 })
 public class RepositoriesPage {
@@ -32,7 +32,7 @@ public class RepositoriesPage {
     private int limit;
     @JsonProperty("isLastPage")
     private boolean isLastPage;
-    @JsonProperty("repositories")
+    @JsonProperty("values")
     private List<Repository> repositories = new ArrayList<Repository>();
     @JsonProperty("start")
     private int start;
