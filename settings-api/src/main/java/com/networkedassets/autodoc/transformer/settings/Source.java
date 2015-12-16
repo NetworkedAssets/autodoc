@@ -22,6 +22,17 @@ public class Source implements Serializable {
 
     private String username = "kcala";
     private String password = "admin";
+  @JsonIgnore
+    private Boolean sourceExists;
+ @JsonIgnore
+    private Boolean credentialsCorrect;
+   @JsonIgnore
+    private Boolean verified;
+   @JsonIgnore
+    private Boolean slugUnique;
+    
+    
+    
     public Map<String, Project> projects = new HashMap<>();
 
     public void addProject(Project p) {
@@ -97,7 +108,39 @@ public class Source implements Serializable {
         this.sourceType = sourceType;
     }
 
-    public static enum SourceType implements Serializable {
+    public Boolean getSourceExists() {
+		return sourceExists;
+	}
+
+	public void setSourceExists(Boolean sourceExists) {
+		this.sourceExists = sourceExists;
+	}
+
+	public Boolean getCredentialsCorrect() {
+		return credentialsCorrect;
+	}
+
+	public void setCredentialsCorrect(Boolean credentialsCorrect) {
+		this.credentialsCorrect = credentialsCorrect;
+	}
+
+	public Boolean getVerified() {
+		return verified;
+	}
+
+	public void setVerified(Boolean verified) {
+		this.verified = verified;
+	}
+
+	public Boolean getSlugUnique() {
+		return slugUnique;
+	}
+
+	public void setSlugUnique(Boolean slugUnique) {
+		this.slugUnique = slugUnique;
+	}
+
+	public static enum SourceType implements Serializable {
         STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"),
         BITBUCKET("com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
 
