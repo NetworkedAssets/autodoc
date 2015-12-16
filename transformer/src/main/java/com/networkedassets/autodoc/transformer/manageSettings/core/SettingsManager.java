@@ -4,7 +4,9 @@ import com.google.common.base.Strings;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
@@ -21,11 +23,12 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Handles the settings of the application
  */
-public class SettingsManager implements SettingsProvider, SettingsSaver {
+public class SettingsManager implements SettingsProvider, SettingsSaver, SourceProvider, SourceCreator {
 
     public String settingsFilename;
 
@@ -86,7 +89,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
     private void updateSettings(Settings givenSettings) {
         //drop sources that aren't in the current settings
         //(to add source - use special endpoint)
-        givenSettings.getSources().removeIf(s -> settings.getSourceByUrl(s.getUrl())==null);
+        givenSettings.getSources().removeIf(s -> settings.getSourceByUrl(s.getUrl()) == null);
 
         givenSettings.getSources().forEach(source -> {
             try {
@@ -102,7 +105,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
         //add sources from current settings that don't appear in givenOnes
         List<Source> sourcesToAdd = new ArrayList<>();
         settings.getSources().stream().forEach(source -> {
-            if(givenSettings.getSourceByUrl(source.getUrl())==null){
+            if (givenSettings.getSourceByUrl(source.getUrl()) == null) {
                 sourcesToAdd.add(source);
             }
         });
@@ -214,5 +217,17 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
                 });
             });
         });
+    }
+
+    @Override
+    public Optional<Source> getSourceById(int id) {
+        return getCurrentSettings().getSources().stream()
+                .filter(source -> source.getId() == id)
+                .findFirst();
+    }
+
+    @Override
+    public Source createSource(Source source) {
+        return null;
     }
 }

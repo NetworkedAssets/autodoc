@@ -1,16 +1,9 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.settings.Source;
-import com.networkedassets.autodoc.transformer.settings.SourceCheckingDeserializer;
-import com.networkedassets.autodoc.transformer.settings.SourceCheckingSerializer;
-import com.networkedassets.autodoc.transformer.util.RestErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +20,15 @@ import java.util.Optional;
 @Path("/sources/")
 public class SourceService {
 
-    private SettingsProvider settingsProvider;
+    private SourceProvider sourceProvider;
+    private SourceCreator sourceCreator;
 
     @Inject
-    public SourceService(SettingsProvider settingsProvider) {
-        this.settingsProvider = settingsProvider;
+    public SourceService(SourceProvider sourceProvider, SourceCreator sourceCreator) {
+        this.sourceProvider = sourceProvider;
+        this.sourceCreator = sourceCreator;
     }
+
 
     static final Logger log = LoggerFactory.getLogger(SourceService.class);
 
@@ -41,10 +37,7 @@ public class SourceService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSource(@PathParam("id") int sourceId) {
         log.info("GET request for source handled");
-        Optional<Source> requestedSource = settingsProvider.getCurrentSettings().getSources().stream()
-                .filter(source -> source.getId()==sourceId)
-                .findFirst();
-
+        Optional<Source> requestedSource = sourceProvider.getSourceById(sourceId);
         if (!requestedSource.isPresent()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } else {
@@ -53,10 +46,16 @@ public class SourceService {
                     .entity(requestedSource.orElse(null))
                     .build();
         }
-
     }
 
-
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createSource(Source source) {
+        Preconditions.checkNotNull(source);
+        log.info("POST request for source handled");
+        Source resultSource = sourceCreator.createSource(source);
+        return null;
+    }
 
 
 }

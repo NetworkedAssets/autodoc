@@ -30,19 +30,39 @@ public class Source implements Serializable {
 
     private String username = "kcala";
     private String password = "admin";
-    @JsonIgnore
-    private Boolean sourceExists;
-    @JsonIgnore
-    private Boolean credentialsCorrect;
-    @JsonIgnore
-    private Boolean verified;
-    @JsonIgnore
-    private Boolean slugUnique;
+
+    private boolean sourceExists;
+    private boolean credentialsCorrect;
+    private boolean verified;
 
     public Map<String, Project> projects = new HashMap<>();
 
     public void addProject(Project p) {
         projects.put(p.key, p);
+    }
+
+    public boolean isSourceExists() {
+        return sourceExists;
+    }
+
+    public void setSourceExists(boolean sourceExists) {
+        this.sourceExists = sourceExists;
+    }
+
+    public boolean isCredentialsCorrect() {
+        return credentialsCorrect;
+    }
+
+    public void setCredentialsCorrect(boolean credentialsCorrect) {
+        this.credentialsCorrect = credentialsCorrect;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 
     public Project getProjectByKey(String key) {
@@ -107,38 +127,6 @@ public class Source implements Serializable {
 
     public void setSourceType(SourceType sourceType) {
         this.sourceType = sourceType;
-    }
-
-    public Boolean getSourceExists() {
-        return sourceExists;
-    }
-
-    public void setSourceExists(Boolean sourceExists) {
-        this.sourceExists = sourceExists;
-    }
-
-    public Boolean getCredentialsCorrect() {
-        return credentialsCorrect;
-    }
-
-    public void setCredentialsCorrect(Boolean credentialsCorrect) {
-        this.credentialsCorrect = credentialsCorrect;
-    }
-
-    public Boolean getVerified() {
-        return verified;
-    }
-
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
-    }
-
-    public Boolean getSlugUnique() {
-        return slugUnique;
-    }
-
-    public void setSlugUnique(Boolean slugUnique) {
-        this.slugUnique = slugUnique;
     }
 
     public int getId() {
