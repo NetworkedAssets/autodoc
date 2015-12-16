@@ -15,153 +15,154 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Source implements Serializable {
-	// TODO: 26.11.2015 Remove default values and require user to enter them on
-	// first run in frontend
-	private String name;
+    // TODO: 26.11.2015 Remove default values and require user to enter them on
+    // first run in frontend
+    private String name;
 
-	private String url = "http://46.101.240.138:7990";
-	private SourceType sourceType = SourceType.STASH;
+    private String url = "http://46.101.240.138:7990";
+    private SourceType sourceType = SourceType.STASH;
 
-	private String username = "kcala";
-	private String password = "admin";
-	@JsonIgnore
-	private Boolean sourceExists;
-	@JsonIgnore
-	private Boolean credentialsCorrect;
-	@JsonIgnore
-	private Boolean verified;
-	@JsonIgnore
-	private Boolean slugUnique;
+    private String username = "kcala";
+    private String password = "admin";
+    @JsonIgnore
+    private Boolean sourceExists;
+    @JsonIgnore
+    private Boolean credentialsCorrect;
+    @JsonIgnore
+    private Boolean verified;
+    @JsonIgnore
+    private Boolean slugUnique;
 
-	public Map<String, Project> projects = new HashMap<>();
+    public Map<String, Project> projects = new HashMap<>();
 
-	public void addProject(Project p) {
-		projects.put(p.key, p);
-	}
 
-	public Project getProjectByKey(String key) {
-		return projects.get(key);
-	}
+    public void addProject(Project p) {
+        projects.put(p.key, p);
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Project getProjectByKey(String key) {
+        return projects.get(key);
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * Returns url-safe version of source name. Leaves only alphanumeric
-	 * characters and dashes ("-") Rest of the characters is changed to dash
-	 * 
-	 * @return Alpanumeric characters only string
-	 */
-	@JsonGetter("slug")
-	public String getSlug() {
-		return name != null ? name.replaceAll("[^A-Za-z0-9\\-]", "-") : null;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    /**
+     * Returns url-safe version of source name. Leaves only alphanumeric
+     * characters and dashes ("-") Rest of the characters is changed to dash
+     *
+     * @return Alpanumeric characters only string
+     */
+    @JsonGetter("slug")
+    public String getSlug() {
+        return name != null ? name.replaceAll("[^A-Za-z0-9\\-]", "-") : null;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public String getHookKey() {
-		return this.getSourceType().getHookKey();
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public void setHookKey(String hookKey) {
-		this.getSourceType().setHookKey(hookKey);
-	}
+    public String getHookKey() {
+        return this.getSourceType().getHookKey();
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public void setHookKey(String hookKey) {
+        this.getSourceType().setHookKey(hookKey);
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	/**
-	 * For jackson serialization. We don't want to share password on every
-	 * request so we only return null on REST request
-	 * 
-	 * @return null
-	 */
-	@JsonGetter("password")
-	public String getNullPassword() {
-		return null;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	@JsonSetter("password")
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * For jackson serialization. We don't want to share password on every
+     * request so we only return null on REST request
+     *
+     * @return null
+     */
+    @JsonGetter("password")
+    public String getNullPassword() {
+        return null;
+    }
 
-	public SourceType getSourceType() {
-		return sourceType;
-	}
+    @JsonSetter("password")
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setSourceType(SourceType sourceType) {
-		this.sourceType = sourceType;
-	}
+    public SourceType getSourceType() {
+        return sourceType;
+    }
 
-	public Boolean getSourceExists() {
-		return sourceExists;
-	}
+    public void setSourceType(SourceType sourceType) {
+        this.sourceType = sourceType;
+    }
 
-	public void setSourceExists(Boolean sourceExists) {
-		this.sourceExists = sourceExists;
-	}
+    public Boolean getSourceExists() {
+        return sourceExists;
+    }
 
-	public Boolean getCredentialsCorrect() {
-		return credentialsCorrect;
-	}
+    public void setSourceExists(Boolean sourceExists) {
+        this.sourceExists = sourceExists;
+    }
 
-	public void setCredentialsCorrect(Boolean credentialsCorrect) {
-		this.credentialsCorrect = credentialsCorrect;
-	}
+    public Boolean getCredentialsCorrect() {
+        return credentialsCorrect;
+    }
 
-	public Boolean getVerified() {
-		return verified;
-	}
+    public void setCredentialsCorrect(Boolean credentialsCorrect) {
+        this.credentialsCorrect = credentialsCorrect;
+    }
 
-	public void setVerified(Boolean verified) {
-		this.verified = verified;
-	}
+    public Boolean getVerified() {
+        return verified;
+    }
 
-	public Boolean getSlugUnique() {
-		return slugUnique;
-	}
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
 
-	public void setSlugUnique(Boolean slugUnique) {
-		this.slugUnique = slugUnique;
-	}
+    public Boolean getSlugUnique() {
+        return slugUnique;
+    }
 
-	public static enum SourceType implements Serializable {
-		STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"), BITBUCKET(
-				"com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+    public void setSlugUnique(Boolean slugUnique) {
+        this.slugUnique = slugUnique;
+    }
 
-		private String hookKey;
+    public static enum SourceType implements Serializable {
+        STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"), BITBUCKET(
+                "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
 
-		SourceType(String hookKey) {
-			this.hookKey = hookKey;
-		}
+        private String hookKey;
 
-		public String getHookKey() {
-			return hookKey;
-		}
+        SourceType(String hookKey) {
+            this.hookKey = hookKey;
+        }
 
-		public void setHookKey(String hookKey) {
-			this.hookKey = hookKey;
-		}
-	}
+        public String getHookKey() {
+            return hookKey;
+        }
+
+        public void setHookKey(String hookKey) {
+            this.hookKey = hookKey;
+        }
+    }
 }

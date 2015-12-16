@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -82,6 +84,10 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
     }
 
     private void updateSettings(Settings givenSettings) {
+        //drop sources that aren't in the current settings
+        //(to add source - use special endpoint)
+        givenSettings.getSources().removeIf(s -> settings.getSourceByUrl(s.getUrl())==null);
+
         givenSettings.getSources().forEach(source -> {
             try {
                 updateProjectsFromRemoteSource(source);
@@ -92,6 +98,15 @@ public class SettingsManager implements SettingsProvider, SettingsSaver {
                 log.error("Source {} has malformed URL. Can't load projects: ", source.toString(), e);
             }
         });
+
+        //add sources from current settings that don't appear in givenOnes
+        List<Source> sourcesToAdd = new ArrayList<>();
+        settings.getSources().stream().forEach(source -> {
+            if(givenSettings.getSourceByUrl(source.getUrl())==null){
+                sourcesToAdd.add(source);
+            }
+        });
+        givenSettings.getSources().addAll(sourcesToAdd);
     }
 
     private void saveSettingsToFile(String filename) {
