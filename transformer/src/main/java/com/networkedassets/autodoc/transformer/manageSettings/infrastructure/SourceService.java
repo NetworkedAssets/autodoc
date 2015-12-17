@@ -51,10 +51,17 @@ public class SourceService {
     public Response createSource(Source source) {
         Preconditions.checkNotNull(source);
         log.info("POST request for source handled");
-        Source resultSource = sourceCreator.createSource(source);
-        return null;
+        Source resultSource = sourceCreator.addSource(source);
+        Response.Status responseStatus;
+        if(resultSource.isCorrect()){
+            responseStatus = Response.Status.CREATED;
+        } else{
+            responseStatus = Response.Status.BAD_REQUEST;
+        }
+        return Response.status(responseStatus)
+                .entity(resultSource)
+                .build();
     }
-
 
 
 }

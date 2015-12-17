@@ -212,7 +212,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
     }
 
     @Override
-    public Source createSource(Source source) {
+    public Source addSource(Source source) {
         source.setSourceExists(false);
         source.setCredentialsCorrect(false);
         source.setNameCorrect(false);
@@ -235,10 +235,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         source.setNameCorrect(!Strings.isNullOrEmpty(source.getName()));
         source.setSourceTypeCorrect(!Objects.isNull(source.getSourceType()));
 
-        if(source.isSourceExists()
-                && source.isCredentialsCorrect()
-                && source.isNameCorrect()
-                && source.isSourceTypeCorrect()){
+        if(source.isCorrect()){
             getSettings().getSources().add(source);
         }
         return source;
