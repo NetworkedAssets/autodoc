@@ -2,6 +2,8 @@ package com.networkedassets.autodoc.configureGui;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Properties;
 
 import javax.ws.rs.Consumes;
@@ -9,7 +11,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -38,9 +39,9 @@ public class ConfigurationService {
 				settingsManager.getGlobalSettings().getBaseUrl());
 	}
 
-	@Path("{space}/projects")
+	@Path("projects")
 	@GET
-	public Response getProjects(@PathParam("space") String spaceKey) {
+	public Response getProjects() {
 
 		Settings settings = null;
 		try {
@@ -54,15 +55,31 @@ public class ConfigurationService {
 
 	}
 
-	@Path("{space}/projects")
+	@Path("projects")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String setProjects(@PathParam("space") String spaceKey, Settings settings) {
+	public String setProjects(Settings settings) {
 
 		HttpResponse<String> response = null;
 		try {
 			response = transformerServer.saveSettingsForSpace(settings);
 		} catch (SettingsException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
+		return response.getBody();
+
+	}
+
+	@Path("event/{projectKey}/{repoSlug}/{branchId}")
+	@POST
+	public String setForceGenerete(@PathParam("projectKey") String projectKey, @PathParam("repoSlug") String repoSlug,
+			@PathParam("branchId") String branchId) {
+
+		HttpResponse<String> response = null;
+		try {
+			response = transformerServer.forceRegenerate(URLDecoder.decode(projectKey, "UTF-8"),
+					URLDecoder.decode(repoSlug, "UTF-8"), URLDecoder.decode(branchId, "UTF-8"));
+		} catch (SettingsException | UnsupportedEncodingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
 		return response.getBody();
