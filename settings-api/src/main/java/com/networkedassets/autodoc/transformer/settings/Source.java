@@ -20,18 +20,19 @@ public class Source implements Serializable {
 
     private String name;
     private int id;
-    public Source() {
-        id = totalId++;
-    }
-    private String url = "http://46.101.240.138:7990";
-    private SourceType sourceType = SourceType.STASH;
-    private String username = "kcala";
-    private String password = "admin";
+    private String url;
+    private SourceType sourceType;
+    private String username;
+    private String password;
     public Map<String, Project> projects = new HashMap<>();
     private boolean sourceExists;
     private boolean credentialsCorrect;
     private boolean nameCorrect;
     private boolean sourceTypeCorrect;
+
+    public Source() {
+        id = totalId++;
+    }
 
     public void addProject(Project p) {
         projects.put(p.key, p);

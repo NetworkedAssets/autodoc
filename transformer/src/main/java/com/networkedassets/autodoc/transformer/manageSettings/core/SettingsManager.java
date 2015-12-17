@@ -42,7 +42,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     private Settings settings = new Settings();
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
-    public static boolean LOLIDONTEVENRUNONCE = false;
 
     public SettingsManager() {
         settingsFilename = getSettingsFilenameFromProperties();
@@ -53,19 +52,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public Settings getCurrentSettings() {
-        //todo delete this
-        if (!LOLIDONTEVENRUNONCE) {
-            Source stashSource = new Source();
-            settings.getSources().add(stashSource);
-
-            Source bitbucketSource = new Source();
-            bitbucketSource.setUrl("http://46.101.240.138:7991");
-            bitbucketSource.setUsername("admin");
-            bitbucketSource.setPassword("admin");
-            bitbucketSource.setSourceType(Source.SourceType.BITBUCKET);
-            settings.getSources().add(bitbucketSource);
-            LOLIDONTEVENRUNONCE = true;
-        }
         updateSettings(this.settings);
         return settings;
     }
@@ -135,7 +121,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         ) {
             settings = (Settings) objectIn.readObject();
             log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
-            LOLIDONTEVENRUNONCE = true;
         } catch (FileNotFoundException e) {
             log.error("Can't load settings from {} - file not found. Creating new default settings...", settingsFile.getAbsolutePath());
         } catch (ClassNotFoundException e) {
