@@ -63,8 +63,8 @@ public class ConfigurationService {
 
 	@Path("event/{projectKey}/{repoSlug}/{branchId}")
 	@POST
-	public String setForceGenerete(@PathParam("projectKey") String projectKey, @PathParam("repoSlug") String repoSlug,
-			@PathParam("branchId") String branchId) {
+	public String setForceGenerate(@PathParam("projectKey") String projectKey, @PathParam("repoSlug") String repoSlug,
+								   @PathParam("branchId") String branchId) {
 
 		HttpResponse<String> response;
 		try {
