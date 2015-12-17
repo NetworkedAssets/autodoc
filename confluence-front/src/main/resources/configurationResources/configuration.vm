@@ -2,31 +2,18 @@
 <html>
 <head>
     <title>Configure Autodoc</title>
-    <meta name="decorator" content="main"/>
+    <meta name="decorator" content="atl.admin"/>
     #requireResource("confluence.web.resources:ajs")
     #requireResource("com.atlassian.auiplugin:aui-select")
     #requireResource("com.atlassian.auiplugin:aui-toggle")
     #requireResource("com.atlassian.auiplugin:dialog2")
     #requireResource("com.networkedassets.autodoc.confluence-front:configuration-resources")
-    $webResourceManager.requireResourcesForContext("autodoc_confluence")
-    $webResourceManager.requireResourcesForContext("add-pagetree")
 </head>
 
-    #applyDecorator("root")
-    #decoratorParam("helper" $action.helper)
-    #decoratorParam("context" "space-administration")
-
-    #applyDecorator ("root")
-    #decoratorParam ("context" "spaceadminpanel")
-    ##decoratorParam ("selection" "autodoc-serverConfig-link")
-#decoratorParam ("selectedSpaceToolsWebItem" "autodoc-configuration-link")
-    #decoratorParam ("helper" $action.helper)
-
 <body>
-##$soyRenderer.render($soyResource, $pageContent, $soyParams)
+    #parse ( "/template/includes/actionmessages.vm" )
+    #parse ( "/template/includes/actionerrors.vm" )
 
-                $innerHtml
+    $innerHtml
 </body>
-#end
-#end
 </html>
