@@ -1,6 +1,9 @@
 package com.networkedassets.autodoc.transformer.manageSettings.core;
 
 import com.google.common.base.Strings;
+import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
+import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
@@ -20,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Handles the settings of the application
@@ -228,6 +228,34 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public Source createSource(Source source) {
-        return null;
+        source.setSourceExists(false);
+        source.setCredentialsCorrect(false);
+        source.setNameCorrect(false);
+        source.setSourceTypeCorrect(false);
+
+        //check for connection data correctness
+        try {
+            StashBitbucketClient codeProvider = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+            if(codeProvider.isVerified()){
+                source.setSourceExists(true);
+                source.setCredentialsCorrect(true);
+
+            } else if(codeProvider.doesExist()){
+                source.setSourceExists(true);
+            }
+        } catch (MalformedURLException e) {
+        }
+
+        //name and type correctness
+        source.setNameCorrect(!Strings.isNullOrEmpty(source.getName()));
+        source.setSourceTypeCorrect(!Objects.isNull(source.getSourceType()));
+
+        if(source.isSourceExists()
+                && source.isCredentialsCorrect()
+                && source.isNameCorrect()
+                && source.isSourceTypeCorrect()){
+            getSettings().getSources().add(source);
+        }
+        return source;
     }
 }

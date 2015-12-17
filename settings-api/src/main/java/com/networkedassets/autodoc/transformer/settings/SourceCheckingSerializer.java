@@ -28,7 +28,6 @@ public class SourceCheckingSerializer extends StdSerializer<Source> {
         jgen.writeStringField("sourceType", source.getName()); 
         jgen.writeBooleanField("sourceExists", source.isSourceExists());
         jgen.writeBooleanField("credentialsCorrect",source.isCredentialsCorrect());
-        jgen.writeBooleanField("verified", source.isVerified());
         jgen.writeEndObject();
     }
 }

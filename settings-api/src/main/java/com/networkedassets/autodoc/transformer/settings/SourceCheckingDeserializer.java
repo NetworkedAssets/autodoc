@@ -22,7 +22,6 @@ public class SourceCheckingDeserializer extends JsonDeserializer<Source> {
         source.setSourceType(SourceType.valueOf(node.get("sourceType").asText()));
         source.setUsername(node.get("username").asText());
         source.setPassword(node.get("password").asText());
-        source.setVerified(node.get("verified").asBoolean());
         source.setHookKey(node.get("hookKey").asText());
         return source;
     }
