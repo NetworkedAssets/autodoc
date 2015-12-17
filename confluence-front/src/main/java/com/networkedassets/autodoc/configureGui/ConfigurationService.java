@@ -1,22 +1,5 @@
 package com.networkedassets.autodoc.configureGui;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Properties;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.core.util.ClassLoaderUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -25,6 +8,17 @@ import com.mashape.unirest.http.HttpResponse;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Properties;
 
 @Path("/configuration/")
 public class ConfigurationService {
@@ -42,11 +36,8 @@ public class ConfigurationService {
 	@Path("projects")
 	@GET
 	public Response getProjects() {
-
-		Settings settings = null;
 		try {
-			com.networkedassets.autodoc.transformer.Response settingsForSpace = transformerServer.getSettings();
-			settings = settingsForSpace.body;
+			Settings settings = transformerServer.getSettings();
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(objectMapper.writeValueAsString(settings)).build();
 		} catch (SettingsException | JsonProcessingException e) {
@@ -60,7 +51,7 @@ public class ConfigurationService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String setProjects(Settings settings) {
 
-		HttpResponse<String> response = null;
+		HttpResponse<String> response;
 		try {
 			response = transformerServer.saveSettingsForSpace(settings);
 		} catch (SettingsException e) {
@@ -72,10 +63,10 @@ public class ConfigurationService {
 
 	@Path("event/{projectKey}/{repoSlug}/{branchId}")
 	@POST
-	public String setForceGenerete(@PathParam("projectKey") String projectKey, @PathParam("repoSlug") String repoSlug,
-			@PathParam("branchId") String branchId) {
+	public String setForceGenerate(@PathParam("projectKey") String projectKey, @PathParam("repoSlug") String repoSlug,
+								   @PathParam("branchId") String branchId) {
 
-		HttpResponse<String> response = null;
+		HttpResponse<String> response;
 		try {
 			response = transformerServer.forceRegenerate(URLDecoder.decode(projectKey, "UTF-8"),
 					URLDecoder.decode(repoSlug, "UTF-8"), URLDecoder.decode(branchId, "UTF-8"));

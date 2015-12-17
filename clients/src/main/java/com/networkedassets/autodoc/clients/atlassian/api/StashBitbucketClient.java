@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@SuppressWarnings("ALL")
+
 public class StashBitbucketClient extends HttpClient {
 
     public static final String hookSettingsRestUrl = "/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings";
@@ -175,7 +175,7 @@ public class StashBitbucketClient extends HttpClient {
         return branches;
     }
 
-    public HttpResponse<ProjectsPage> getProjectsPage(@Nonnull final long start, @Nonnull final long limit) throws UnirestException {
+    public HttpResponse<ProjectsPage> getProjectsPage(final long start, final long limit) throws UnirestException {
         Preconditions.checkNotNull(start);
         Preconditions.checkNotNull(limit);
 
@@ -189,8 +189,8 @@ public class StashBitbucketClient extends HttpClient {
                 .asObject(ProjectsPage.class);
     }
 
-    public HttpResponse<RepositoriesPage> getRepositoriesPageForProject(@Nonnull final long start,
-                                                                        @Nonnull final long limit,
+    public HttpResponse<RepositoriesPage> getRepositoriesPageForProject(final long start,
+                                                                        final long limit,
                                                                         @Nonnull final String projectKey) throws UnirestException {
         Preconditions.checkNotNull(start);
         Preconditions.checkNotNull(limit);

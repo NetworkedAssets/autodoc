@@ -19,6 +19,7 @@ import static junit.framework.Assert.assertTrue;
 /**
  * Created by mtulaza on 2015-12-14.
  */
+@Ignore
 public class ConfluenceClientTest {
     private final String CONFLUENCE_URL = "http://46.101.240.138:8090";
     private final String CONFLUENCE_USERNAME = "kcala";
