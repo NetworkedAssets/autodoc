@@ -11,23 +11,25 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.core.util.ClassLoaderUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
-import com.networkedassets.autodoc.transformer.Response;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 
 @Path("/configuration/")
-
 public class ConfigurationService {
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
+	private static ObjectMapper objectMapper = new ObjectMapper();
 	private TransformerServer transformerServer;
 
 	public ConfigurationService(SettingsManager settingsManager) {
@@ -37,19 +39,18 @@ public class ConfigurationService {
 	}
 
 	@Path("{space}/projects")
-	@Produces({ MediaType.APPLICATION_JSON })
 	@GET
-	public Settings getProjects(@PathParam("space") String spaceKey) {
+	public Response getProjects(@PathParam("space") String spaceKey) {
 
-		Settings settings = new Settings();
+		Settings settings = null;
 		try {
-			Response settingsForSpace = transformerServer.getSettings();
+			com.networkedassets.autodoc.transformer.Response settingsForSpace = transformerServer.getSettings();
 			settings = settingsForSpace.body;
-		} catch (SettingsException e) {
+			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
+					.entity(objectMapper.writeValueAsString(settings)).build();
+		} catch (SettingsException | JsonProcessingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
-
-		return settings;
 
 	}
 
