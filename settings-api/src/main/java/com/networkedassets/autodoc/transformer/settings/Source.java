@@ -1,10 +1,6 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,21 +10,35 @@ import java.util.Map;
  * Represents code source like Stash, Bitbucket, Github and so on
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder({
+        "id",
+        "name",
+        "url",
+        "sourceType",
+        "username",
+        "password",
+        "sourceExists",
+        "credentialsCorrect",
+        "nameCorrect",
+        "sourceTypeCorrect",
+        "correct",
+        "projects"
+})
 public class Source implements Serializable {
     @JsonIgnore
     private static int totalId = 0;
 
-    private String name;
     private int id;
+    private String name;
     private String url;
     private SourceType sourceType;
     private String username;
     private String password;
-    public Map<String, Project> projects = new HashMap<>();
     private boolean sourceExists;
     private boolean credentialsCorrect;
     private boolean nameCorrect;
     private boolean sourceTypeCorrect;
+    public Map<String, Project> projects = new HashMap<>();
 
     public Source() {
         id = totalId++;
@@ -75,11 +85,7 @@ public class Source implements Serializable {
     }
 
     public String getHookKey() {
-        return this.getSourceType().getHookKey();
-    }
-
-    public void setHookKey(String hookKey) {
-        this.getSourceType().setHookKey(hookKey);
+        return sourceType != null ? this.getSourceType().getHookKey() : null;
     }
 
     public String getUsername() {
