@@ -25,6 +25,31 @@ public class StashBitbucketClient extends HttpClient {
         super(config);
     }
 
+    public boolean isVerified(){
+        boolean isVerified = false;
+        try {
+            HttpResponse<UsersPage> response = getUserPage(0, 25);
+            if(response.getStatus()==200){
+                isVerified = true;
+            }
+        } catch (UnirestException ignored) {
+        }
+        return isVerified;
+    }
+
+    public boolean doesExist(){
+        boolean doesExist = false;
+        try {
+            HttpResponse<UsersPage> response = getUserPage(0, 25);
+            if(response.getStatus()==200 || response.getStatus()==401){
+                doesExist = true;
+            }
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
+        return doesExist;
+    }
+
 
     public HookSettings getHookSettings(@Nonnull final String projectKey,
                                         @Nonnull final String repositorySlug, final String hookKey) throws UnirestException {
@@ -184,8 +209,7 @@ public class StashBitbucketClient extends HttpClient {
     public HttpResponse<BranchesPage> getBranchesPageforRepository(final long start,
                                                                    final long limit,
                                                                    @Nonnull final String projectKey,
-                                                                   @Nonnull final String repositorySlug)
-            throws UnirestException {
+                                                                   @Nonnull final String repositorySlug) throws UnirestException {
 
         Preconditions.checkNotNull(start);
         Preconditions.checkNotNull(limit);
@@ -201,6 +225,17 @@ public class StashBitbucketClient extends HttpClient {
                 .header("accept", "application/json")
                 .asObject(BranchesPage.class);
 
+    }
+
+    public HttpResponse<UsersPage> getUserPage(final long start, final long limit) throws UnirestException {
+        String requestUrl = "/rest/api/1.0/projects";
+
+        return Unirest.get(this.getBaseUrl().toString() + requestUrl)
+                .queryString("start", start)
+                .queryString("limit", limit)
+                .basicAuth(this.getUsername(), this.getPassword())
+                .header("accept", "application/json")
+                .asObject(UsersPage.class);
     }
 
 

@@ -20,22 +20,19 @@ public class Source implements Serializable {
 
     private String name;
     private int id;
+    private String url;
+    private SourceType sourceType;
+    private String username;
+    private String password;
+    public Map<String, Project> projects = new HashMap<>();
+    private boolean sourceExists;
+    private boolean credentialsCorrect;
+    private boolean nameCorrect;
+    private boolean sourceTypeCorrect;
 
     public Source() {
         id = totalId++;
     }
-
-    private String url = "http://46.101.240.138:7990";
-    private SourceType sourceType = SourceType.STASH;
-
-    private String username = "kcala";
-    private String password = "admin";
-
-    private boolean sourceExists;
-    private boolean credentialsCorrect;
-    private boolean verified;
-
-    public Map<String, Project> projects = new HashMap<>();
 
     public void addProject(Project p) {
         projects.put(p.key, p);
@@ -55,14 +52,6 @@ public class Source implements Serializable {
 
     public void setCredentialsCorrect(boolean credentialsCorrect) {
         this.credentialsCorrect = credentialsCorrect;
-    }
-
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
     }
 
     public Project getProjectByKey(String key) {
@@ -131,6 +120,22 @@ public class Source implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public boolean isNameCorrect() {
+        return nameCorrect;
+    }
+
+    public void setNameCorrect(boolean nameCorrect) {
+        this.nameCorrect = nameCorrect;
+    }
+
+    public boolean isSourceTypeCorrect() {
+        return sourceTypeCorrect;
+    }
+
+    public void setSourceTypeCorrect(boolean sourceTypeCorrect) {
+        this.sourceTypeCorrect = sourceTypeCorrect;
     }
 
     public static enum SourceType implements Serializable {

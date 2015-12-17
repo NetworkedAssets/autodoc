@@ -1,6 +1,9 @@
 package com.networkedassets.autodoc.transformer.manageSettings.core;
 
 import com.google.common.base.Strings;
+import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
+import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
@@ -20,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Handles the settings of the application
@@ -42,7 +42,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     private Settings settings = new Settings();
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
-    public static boolean LOLIDONTEVENRUNONCE = false;
 
     public SettingsManager() {
         settingsFilename = getSettingsFilenameFromProperties();
@@ -53,19 +52,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public Settings getCurrentSettings() {
-        //todo delete this
-        if (!LOLIDONTEVENRUNONCE) {
-            Source stashSource = new Source();
-            settings.getSources().add(stashSource);
-
-            Source bitbucketSource = new Source();
-            bitbucketSource.setUrl("http://46.101.240.138:7991");
-            bitbucketSource.setUsername("admin");
-            bitbucketSource.setPassword("admin");
-            bitbucketSource.setSourceType(Source.SourceType.BITBUCKET);
-            settings.getSources().add(bitbucketSource);
-            LOLIDONTEVENRUNONCE = true;
-        }
         updateSettings(this.settings);
         return settings;
     }
@@ -135,7 +121,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         ) {
             settings = (Settings) objectIn.readObject();
             log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
-            LOLIDONTEVENRUNONCE = true;
         } catch (FileNotFoundException e) {
             log.error("Can't load settings from {} - file not found. Creating new default settings...", settingsFile.getAbsolutePath());
         } catch (ClassNotFoundException e) {
@@ -228,6 +213,34 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public Source createSource(Source source) {
-        return null;
+        source.setSourceExists(false);
+        source.setCredentialsCorrect(false);
+        source.setNameCorrect(false);
+        source.setSourceTypeCorrect(false);
+
+        //check for connection data correctness
+        try {
+            StashBitbucketClient codeProvider = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+            if(codeProvider.isVerified()){
+                source.setSourceExists(true);
+                source.setCredentialsCorrect(true);
+
+            } else if(codeProvider.doesExist()){
+                source.setSourceExists(true);
+            }
+        } catch (MalformedURLException e) {
+        }
+
+        //name and type correctness
+        source.setNameCorrect(!Strings.isNullOrEmpty(source.getName()));
+        source.setSourceTypeCorrect(!Objects.isNull(source.getSourceType()));
+
+        if(source.isSourceExists()
+                && source.isCredentialsCorrect()
+                && source.isNameCorrect()
+                && source.isSourceTypeCorrect()){
+            getSettings().getSources().add(source);
+        }
+        return source;
     }
 }
