@@ -138,6 +138,13 @@ public class Source implements Serializable {
         this.sourceTypeCorrect = sourceTypeCorrect;
     }
 
+    public boolean isCorrect() {
+        return isSourceExists()
+                && isCredentialsCorrect()
+                && isNameCorrect()
+                && isSourceTypeCorrect();
+    }
+
     public static enum SourceType implements Serializable {
         STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"), BITBUCKET(
                 "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
