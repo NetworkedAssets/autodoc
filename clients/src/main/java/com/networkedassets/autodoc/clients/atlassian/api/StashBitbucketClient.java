@@ -13,23 +13,23 @@ import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.*;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 
 
 public class StashBitbucketClient extends HttpClient {
 
-    public static final String hookSettingsRestUrl = "/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings";
-    public static final String hookEnableResturl = "/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled";
+    private static final String hookSettingsRestUrl = "/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/settings";
+    private static final String hookEnableResturl = "/rest/api/1.0/projects/%s/repos/%s/settings/hooks/%s/enabled";
 
     public StashBitbucketClient(HttpClientConfig config) {
         super(config);
     }
 
-    public boolean isVerified(){
+    public boolean isVerified() {
         boolean isVerified = false;
         try {
             HttpResponse<UsersPage> response = getUserPage(0, 25);
-            if(response.getStatus()==200){
+            if (response.getStatus() == 200) {
                 isVerified = true;
             }
         } catch (UnirestException ignored) {
@@ -37,11 +37,11 @@ public class StashBitbucketClient extends HttpClient {
         return isVerified;
     }
 
-    public boolean doesExist(){
+    public boolean doesExist() {
         boolean doesExist = false;
         try {
             HttpResponse<UsersPage> response = getUserPage(0, 25);
-            if(response.getStatus()==200 || response.getStatus()==401){
+            if (response.getStatus() == 200 || response.getStatus() == 401) {
                 doesExist = true;
             }
         } catch (UnirestException e) {
@@ -50,6 +50,17 @@ public class StashBitbucketClient extends HttpClient {
         return doesExist;
     }
 
+    public Optional<ApplicationProperties> getApplicationProperties() {
+
+        try {
+            HttpResponse<ApplicationProperties> response = getApplicationPropertiesAsHttpResponse();
+            if(response.getStatus()==200){
+                return Optional.of(response.getBody());
+            }
+        } catch (UnirestException ignore) {
+        }
+        return Optional.empty();
+    }
 
     public HookSettings getHookSettings(@Nonnull final String projectKey,
                                         @Nonnull final String repositorySlug, final String hookKey) throws UnirestException {
@@ -236,6 +247,15 @@ public class StashBitbucketClient extends HttpClient {
                 .basicAuth(this.getUsername(), this.getPassword())
                 .header("accept", "application/json")
                 .asObject(UsersPage.class);
+    }
+
+    public HttpResponse<ApplicationProperties> getApplicationPropertiesAsHttpResponse() throws UnirestException {
+        String requestUrl = "/rest/api/1.0/application-properties";
+
+        return Unirest.get(this.getBaseUrl().toString() + requestUrl)
+                .basicAuth(this.getUsername(), this.getPassword())
+                .header("accept", "application/json")
+                .asObject(ApplicationProperties.class);
     }
 
 
