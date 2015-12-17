@@ -20,8 +20,10 @@ import java.util.Optional;
 @Path("/sources/")
 public class SourceService {
 
+    static final Logger log = LoggerFactory.getLogger(SourceService.class);
     private SourceProvider sourceProvider;
     private SourceCreator sourceCreator;
+
 
     @Inject
     public SourceService(SourceProvider sourceProvider, SourceCreator sourceCreator) {
@@ -29,23 +31,19 @@ public class SourceService {
         this.sourceCreator = sourceCreator;
     }
 
-
-    static final Logger log = LoggerFactory.getLogger(SourceService.class);
-
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSource(@PathParam("id") int sourceId) {
         log.info("GET request for source handled");
         Optional<Source> requestedSource = sourceProvider.getSourceById(sourceId);
-        if (!requestedSource.isPresent()) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        } else {
-            return Response.status(Response.Status.OK)
-                    .type(MediaType.APPLICATION_JSON)
-                    .entity(requestedSource.orElse(null))
-                    .build();
-        }
+
+        return requestedSource.map(s ->
+                Response.status(Response.Status.OK)
+                        .type(MediaType.APPLICATION_JSON)
+                        .entity(s)
+                        .build()
+        ).orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
 
     @POST
