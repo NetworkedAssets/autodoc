@@ -10,8 +10,8 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     $http
         //.get("data/settings2.json")
         //.get("data/settings3.json")
-        .get("http://46.101.240.138:8090/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources/data/settings3.json")
-        //.get("http://46.101.240.138:8090/rest/autodoc/1.0/configuration/TEST/projects")
+        //.get(doc_confluencePath+"download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources/data/settings3.json")
+        .get(doc_confluencePath+"rest/autodoc/1.0/configuration/projects")
         .then(function(response) {
             var sources = {};
             response.data.sources.forEach(function(source) {

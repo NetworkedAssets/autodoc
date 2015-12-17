@@ -70,7 +70,7 @@ public class ConfigurationService {
 
 	}
 
-	@Path("{event/{projectKey}/{repoSlug}/{branchId}")
+	@Path("event/{projectKey}/{repoSlug}/{branchId}")
 	@POST
 	public String setForceGenerete(@PathParam("projectKey") String projectKey, @PathParam("repoSlug") String repoSlug,
 			@PathParam("branchId") String branchId) {
