@@ -1,27 +1,22 @@
 package com.networkedassets.autodoc.transformer;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-import org.apache.http.conn.ssl.SSLContextBuilder;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 public class TransformerServer {
 	public static final String SETTINGS = "/settings";
@@ -66,33 +61,26 @@ public class TransformerServer {
 		setConfluenceUrl(confluenceUrl);
 	}
 
-	public Response getSettings() throws SettingsException {
+	public Settings getSettings() throws SettingsException {
 		HttpResponse<Settings> response;
-		String raw;
 		try {
-			Unirest.setHttpClient(setCustumHttpClient());
+			Unirest.setHttpClient(setCustomHttpClient());
 			response = Unirest.get(url + SETTINGS).asObject(Settings.class);
-			raw = IOUtils.toString(response.getRawBody());
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
-		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
-			throw new RuntimeException(e);
 		}
 
-		return new Response(response.getBody(), raw);
+		return response.getBody();
 	}
 
 	public HttpResponse<String> saveSettingsForSpace(Settings settings) throws SettingsException {
 		HttpResponse<String> response;
 		try {
-			Unirest.setHttpClient(setCustumHttpClient());
+			Unirest.setHttpClient(setCustomHttpClient());
 			response = Unirest.post(url + SETTINGS).header("Content-Type", "application/json").body(settings)
 					.asString();
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
-
-		} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
-			throw new RuntimeException(e);
 		}
 
 		if (response.getStatus() != 200) {
@@ -107,13 +95,11 @@ public class TransformerServer {
 		String eventPayload = String.format(EVENT_JSON, repoSlug, projectKey, branchId);
 		HttpResponse<String> response;
 		try {
-			Unirest.setHttpClient(setCustumHttpClient());
+			Unirest.setHttpClient(setCustomHttpClient());
 			response = Unirest.post(url + EVENT).header("Content-Type", "application/json").body(eventPayload)
 					.asString();
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
-		} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
-			throw new RuntimeException(e);
 		}
 
 		if (response.getStatus() != 200) {
@@ -134,17 +120,13 @@ public class TransformerServer {
 		this.confluenceUrl = confluenceUrl;
 	}
 
-	private CloseableHttpClient setCustumHttpClient()
-			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-
-		CloseableHttpClient httpClient = HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier())
-				.setSslcontext(new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-					public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-						return true;
-					}
-				}).build()).build();
-		return httpClient;
-
+	// TODO(@pgwizdalski): could we just create the Client once as a static final?
+	private CloseableHttpClient setCustomHttpClient() {
+		try {
+			return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier())
+                    .setSslcontext(new SSLContextBuilder().loadTrustMaterial(null, (_1, _2) -> true).build()).build();
+		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
-
 }
