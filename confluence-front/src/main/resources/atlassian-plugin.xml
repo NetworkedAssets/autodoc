@@ -79,11 +79,21 @@
 		<description>Provides rest endpoints used by Autodoc</description>
 	</rest>
 	
-	<macro name="autodocDshboard" class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
+	<xhtml-macro name="autodocDashboard" class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
 		   key="autodoc-dashboard">
 		<description>Macro element containing the Autodoc Dashboard</description>
-        <parameters/>
-	</macro>
+        <parameters>
+            <parameter name="project" type="enum"/>
+            <parameter name="repo" type="enum"/>
+            <parameter name="branch" type="enum"/>
+        </parameters>
+	</xhtml-macro>
+
+    <web-resource key="autodoc-macro-params" name="autodoc macro parameter autocompletion">
+        <resource type="download" name="autodocMacroParams.js" location="js/autodocMacroParams.js" />
+        <dependency>confluence.editor.actions:editor-macro-browser</dependency>
+        <context>macro-browser</context>
+    </web-resource>
 
 	<web-resource key="dashboard-resources" name="Dashboard web resources">
 		<resource type="download" name="dashboardResources/" location="/dashboardResources" />
