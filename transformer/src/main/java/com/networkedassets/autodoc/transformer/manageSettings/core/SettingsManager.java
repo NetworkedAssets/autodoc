@@ -213,31 +213,51 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public Source addSource(Source source) {
+        verifySource(source);
+        if (source.isCorrect()) {
+            getSettings().getSources().add(source);
+        }
+        return source;
+    }
+
+    /**
+     * Sets verification parameters of the source
+     * @param source Source that will be checked for all conditions and proper flags will be set on it
+     */
+    private void verifySource(Source source) {
         source.setSourceExists(false);
         source.setCredentialsCorrect(false);
         source.setNameCorrect(false);
         source.setSourceTypeCorrect(false);
 
-        //check for connection data correctness
+        //is name unique and not empty
+        if (!Strings.isNullOrEmpty(source.getName())
+                && !settings.getSources().stream().map(Source::getName).anyMatch(s -> s.equals(source.getName()))) {
+            source.setNameCorrect(true);
+        }
+
         try {
-            StashBitbucketClient codeProvider = ClientConfigurator.getConfiguredStashBitbucketClient(source);
-            if(codeProvider.isVerified()){
+            //check for connection data correctness
+            StashBitbucketClient stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+            if (stashBitbucketClient.isVerified()) {
                 source.setSourceExists(true);
                 source.setCredentialsCorrect(true);
-
-            } else if(codeProvider.doesExist()){
+            } else if (stashBitbucketClient.doesExist()) {
                 source.setSourceExists(true);
             }
-        } catch (MalformedURLException e) {
-        }
 
-        //name and type correctness
-        source.setNameCorrect(!Strings.isNullOrEmpty(source.getName()));
-        source.setSourceTypeCorrect(!Objects.isNull(source.getSourceType()));
-
-        if(source.isCorrect()){
-            getSettings().getSources().add(source);
+            /*
+            check if sourceType matches what lays at the end of given url link
+            has to be verified user to get appProperties on bitbucket (but not on stash)
+            */
+            if (source.isCredentialsCorrect()
+                    && Objects.nonNull(source.getSourceType())) {
+                Boolean isSourceTypeRight = stashBitbucketClient.getApplicationProperties()
+                        .map(ap -> ap.getDisplayName().equalsIgnoreCase(source.getSourceType().toString()))
+                        .orElse(false);
+                source.setSourceTypeCorrect(isSourceTypeRight);
+            }
+        } catch (MalformedURLException ignored) {
         }
-        return source;
     }
 }
