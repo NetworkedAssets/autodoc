@@ -6,6 +6,8 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
+import com.networkedassets.autodoc.transformer.settings.Source;
+
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -20,10 +22,12 @@ import java.security.NoSuchAlgorithmException;
 
 public class TransformerServer {
 	public static final String SETTINGS = "/settings";
+	public static final String SOURCES = "/sources";
 	public static final String EVENT = "/event";
 	public static final String EVENT_JSON = "{\"repositorySlug\":\"%s\",\"projectKey\":\"%s\",\"changes\":[{\"refId\":\"%s\",\"type\":\"UPDATE\"}]}";
-
 	public static final Logger log = LoggerFactory.getLogger(TransformerServer.class);
+	private static final CloseableHttpClient HTTP_CLIENT = setHttpClient();
+	private static final ObjectMapper OBJECT_MAPPER = setObjectMapper();
 
 	private String url;
 	private String confluenceUrl;
@@ -33,7 +37,118 @@ public class TransformerServer {
 
 		this.url = url;
 
-		Unirest.setObjectMapper(new ObjectMapper() {
+		Unirest.setObjectMapper(OBJECT_MAPPER);
+		Unirest.setHttpClient(HTTP_CLIENT);
+
+	}
+
+	public TransformerServer(String transformerUrl, String confluenceUrl) {
+		this(transformerUrl);
+		setConfluenceUrl(confluenceUrl);
+	}
+
+	public Settings getSettings() throws SettingsException {
+		HttpResponse<Settings> response;
+		try {
+
+			response = Unirest.get(url + SETTINGS).asObject(Settings.class);
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		return response.getBody();
+	}
+
+	public HttpResponse<String> saveSettingsForSpace(Settings settings) throws SettingsException {
+		HttpResponse<String> response;
+		try {
+
+			response = Unirest.post(url + SETTINGS).header("Content-Type", "application/json").body(settings)
+					.asString();
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		if (response.getStatus() != 200) {
+			throw new SettingsException("Could not save settings: " + response.getBody());
+		}
+
+		return response;
+	}
+
+	public HttpResponse<String> forceRegenerate(String projectKey, String repoSlug, String branchId)
+			throws SettingsException {
+		String eventPayload = String.format(EVENT_JSON, repoSlug, projectKey, branchId);
+		HttpResponse<String> response;
+		try {
+
+			response = Unirest.post(url + EVENT).header("Content-Type", "application/json").body(eventPayload)
+					.asString();
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		if (response.getStatus() != 200) {
+			throw new SettingsException("Error in transformer: " + response);
+		}
+		return response;
+	}
+
+	public Source getSource(int id) throws SettingsException {
+		HttpResponse<Source> response;
+		try {
+
+			response = Unirest.get(url + SOURCES).queryString("id", id).asObject(Source.class);
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		return response.getBody();
+
+	}
+
+	public HttpResponse<String> setSource(Source source) throws SettingsException {
+
+		HttpResponse<String> response;
+		try {
+
+			response = Unirest.post(url + SOURCES).header("Content-Type", "application/json").body(source).asString();
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		if (response.getStatus() != 200) {
+			throw new SettingsException("Could not save sources: " + response.getBody());
+		}
+
+		return response;
+
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setConfluenceUrl(String confluenceUrl) {
+		this.confluenceUrl = confluenceUrl;
+	}
+
+	private static CloseableHttpClient setHttpClient() {
+		try {
+			return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier())
+					.setSslcontext(new SSLContextBuilder().loadTrustMaterial(null, (_1, _2) -> true).build()).build();
+		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static ObjectMapper setObjectMapper() {
+
+		return new ObjectMapper() {
 			private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
 
 			@Override
@@ -53,80 +168,7 @@ public class TransformerServer {
 					throw new RuntimeException(e);
 				}
 			}
-		});
-	}
+		};
 
-	public TransformerServer(String transformerUrl, String confluenceUrl) {
-		this(transformerUrl);
-		setConfluenceUrl(confluenceUrl);
-	}
-
-	public Settings getSettings() throws SettingsException {
-		HttpResponse<Settings> response;
-		try {
-			Unirest.setHttpClient(setCustomHttpClient());
-			response = Unirest.get(url + SETTINGS).asObject(Settings.class);
-		} catch (UnirestException e) {
-			throw new SettingsException(e);
-		}
-
-		return response.getBody();
-	}
-
-	public HttpResponse<String> saveSettingsForSpace(Settings settings) throws SettingsException {
-		HttpResponse<String> response;
-		try {
-			Unirest.setHttpClient(setCustomHttpClient());
-			response = Unirest.post(url + SETTINGS).header("Content-Type", "application/json").body(settings)
-					.asString();
-		} catch (UnirestException e) {
-			throw new SettingsException(e);
-		}
-
-		if (response.getStatus() != 200) {
-			throw new SettingsException("Could not save settings: " + response.getBody());
-		}
-
-		return response;
-	}
-
-	public HttpResponse<String> forceRegenerate(String projectKey, String repoSlug, String branchId)
-			throws SettingsException {
-		String eventPayload = String.format(EVENT_JSON, repoSlug, projectKey, branchId);
-		HttpResponse<String> response;
-		try {
-			Unirest.setHttpClient(setCustomHttpClient());
-			response = Unirest.post(url + EVENT).header("Content-Type", "application/json").body(eventPayload)
-					.asString();
-		} catch (UnirestException e) {
-			throw new SettingsException(e);
-		}
-
-		if (response.getStatus() != 200) {
-			throw new SettingsException("Error in transformer: " + response);
-		}
-		return response;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public void setConfluenceUrl(String confluenceUrl) {
-		this.confluenceUrl = confluenceUrl;
-	}
-
-	// TODO(@pgwizdalski): could we just create the Client once as a static final?
-	private CloseableHttpClient setCustomHttpClient() {
-		try {
-			return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier())
-                    .setSslcontext(new SSLContextBuilder().loadTrustMaterial(null, (_1, _2) -> true).build()).build();
-		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
-			throw new RuntimeException(e);
-		}
 	}
 }
