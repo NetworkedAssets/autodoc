@@ -80,12 +80,18 @@
 	</rest>
 	
 	<xhtml-macro name="autodocDashboard" class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
-		   key="autodoc-dashboard">
+		   key="autodocDashboard">
 		<description>Macro element containing the Autodoc Dashboard</description>
         <parameters>
-            <parameter name="project" type="enum"/>
-            <parameter name="repo" type="enum"/>
-            <parameter name="branch" type="enum"/>
+            <parameter name="project" type="enum">
+				<value name="test"/>
+			</parameter>
+            <parameter name="repo" type="enum">
+				<value name="test2"/>
+			</parameter>
+            <parameter name="branch" type="enum">
+				<value name="test3"/>
+			</parameter>
         </parameters>
 	</xhtml-macro>
 
