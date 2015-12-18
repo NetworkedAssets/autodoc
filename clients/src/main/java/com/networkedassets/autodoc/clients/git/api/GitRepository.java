@@ -51,7 +51,6 @@ public class GitRepository implements CodeRepository {
 
 		String URI = String.format(uriTemplate.toString(), this.username, projectKey, repositorySlug);
 
-		System.out.println(URI);
 		Git.cloneRepository().setURI(URI).setDirectory(localRepoDirectory.toFile()).setBranch(branchName)
 				.setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.username, this.password)).call();
 
