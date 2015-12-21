@@ -13,8 +13,8 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         //.get("data/settings3.json")
         //.get(doc_confluencePath+"download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources/data/settings3.json")
         //.get(doc_confluencePath+"rest/autodoc/1.0/configuration/projects")
-        //.get(urlProvider.getResourcesUrl("/data/settings3.json"))
-        .get(urlProvider.getRestUrl("/configuration/projects"))
+        .get(urlProvider.getResourcesUrl("/data/settings3.json"))
+        //.get(urlProvider.getRestUrl("/projects"))
         .then(function(response) {
             var sources = {};
             response.data.sources.forEach(function(source) {
@@ -36,7 +36,12 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         });
 
     settings.save = function() {
-        $.post();
+        console.log(urlProvider.getRestUrl("/projects"),settings.raw);
+        $http
+            .post(urlProvider.getRestUrl("/projects"),settings.raw)
+            .then(function(response) {
+                console.log(response);
+            });
     }
 
     settings.get = function() {
@@ -90,7 +95,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
         console.log(settings.getPathAsString());
         /*$http
-            .post(urlProvider.getRestUrl(settingsData.getPathAsString()))
+            .post(urlProvider.getRestUrl("/"+settingsData.getPathAsString()))
             .then(callback);*/
 
         setTimeout(callback,1000);
@@ -104,6 +109,8 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         callbacks[name] = fn;
 
     }
+
+    $rootScope.settings = settings;
 
     return settings;
 });

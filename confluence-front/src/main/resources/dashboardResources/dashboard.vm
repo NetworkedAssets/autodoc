@@ -1,3 +1,4 @@
 #putMetadata('dashboardResourcePath', $resourcesPath)
+#putMetadata('dashboardProjectile', $paramproject)
 #requireResource("com.networkedassets.autodoc.confluence-front:dashboard-resources")
 $dashboardSectionHtml

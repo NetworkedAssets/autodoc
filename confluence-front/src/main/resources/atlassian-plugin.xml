@@ -83,15 +83,20 @@
 		   key="autodocDashboard">
 		<description>Macro element containing the Autodoc Dashboard</description>
         <parameters>
-            <parameter name="project" type="enum">
-				<value name="test"/>
+			<parameter name="source" type="string" required="false"/>
+            <parameter name="project" type="string" required="false"/>
+            <parameter name="sourceProject" type="enum" required="true">
+                <value name="Loading..."/>
+            </parameter>
+            <parameter name="repo" type="enum" required="true">
+				<value name="Loading..."/>
+                <option key="hidden" value="true" />
 			</parameter>
-            <parameter name="repo" type="enum">
-				<value name="test2"/>
+            <parameter name="branch" type="enum" required="true">
+				<value name="Loading..."/>
 			</parameter>
-            <parameter name="branch" type="enum">
-				<value name="test3"/>
-			</parameter>
+            <parameter name="javadoc" type="boolean" />
+            <parameter name="classDiagram" type="boolean" />
         </parameters>
 	</xhtml-macro>
 
@@ -127,7 +132,7 @@
 
 		<resource type="download" name="js/dirs/docQname.js" location = "dashboardResources/js/dirs/docQname.js" />
 
-		<resource type="download" name="js/services/restPath.js" location = "dashboardResources/js/services/restPath.js" />
+		<resource type="download" name="js/services/urlProvider.js" location = "dashboardResources/js/services/urlProvider.js" />
 		<resource type="download" name="js/services/javadocEntities.js" location = "dashboardResources/js/services/javadocEntities.js" />
 
 		<resource type="download" name="js/filters/javadoc.menuItemSorter.js" location = "dashboardResources/js/filters/javadoc.menuItemSorter.js" />

@@ -1,7 +1,7 @@
 angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,settingsData,$timeout,urlProvider) {
     var sources = this;
 
-    var url = urlProvider.getRestUrl("/configuration/source");
+    var url = urlProvider.getRestUrl("/source");
 
     sources.list = [];
 

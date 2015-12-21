@@ -2,7 +2,7 @@
  * Created by Jakub on 24/11/15.
  */
 
-angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,restPath,javadocEntities) {
+angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,urlProvider,javadocEntities) {
 
     var vm = this;
 
@@ -51,7 +51,7 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
     vm.entity = {};
 
 
-    $http.get(restPath.get("JAVADOC/"+$stateParams.name)).then(function(data) {
+    $http.get(urlProvider.getRestUrl("/JAVADOC/"+$stateParams.name)).then(function(data) {
 
 
         vm.entity = parseEntityFromJson(data.data);

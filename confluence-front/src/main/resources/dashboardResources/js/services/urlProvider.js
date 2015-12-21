@@ -1,4 +1,4 @@
-angular.module("DoC_Config").factory("urlProvider",function() {
+angular.module("DoC").factory("urlProvider",function() {
     var urlProvider = {
         getBaseUrl: function() {
 
@@ -12,7 +12,7 @@ angular.module("DoC_Config").factory("urlProvider",function() {
             if (!path) {
                 path = "";
             }
-            return this.getBaseUrl()+"/rest/autodoc/1.0/configuration"+path;
+            return this.getBaseUrl()+"/rest/autodoc/1.0/documentation/AUT/autodoc/master"+path;
         },
         getResourcesUrl: function(path) {
             if (!path) {

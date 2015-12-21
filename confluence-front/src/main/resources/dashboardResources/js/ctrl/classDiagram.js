@@ -1,8 +1,8 @@
-angular.module("DoC").controller('classDiagramCtrl',function($scope,restPath) {
+angular.module("DoC").controller('classDiagramCtrl',function($scope,urlProvider) {
     var cd = new ClassDiagram({
         elem: $("#doc_classDiagram_paper")
     });
-    cd.load(restPath.get("UML/all/"));
+    cd.load(urlProvider.getRestUrl("/UML/all/"));
 
     //$(window).on("resize.ClassDiagram",function() {
     //    cd.setDimensions($(window).width(),$(window).height());

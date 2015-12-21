@@ -3,7 +3,7 @@
  */
 
 angular.module("DoC")
-.controller("javadocCtrl",function($http,$state,restPath,javadocEntities,$timeout) {
+.controller("javadocCtrl",function($http,$state,urlProvider,javadocEntities,$timeout) {
     var vm = this;
 
     /*
@@ -106,7 +106,7 @@ angular.module("DoC")
 
     }
 
-    $http.get(restPath.get('JAVADOC/index')).then(function(data) {
+    $http.get(urlProvider.getRestUrl('/JAVADOC/index')).then(function(data) {
         parsePackageList(data.data.indexPackage);
     });
     vm.items = [];
