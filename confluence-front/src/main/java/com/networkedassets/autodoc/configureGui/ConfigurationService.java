@@ -88,7 +88,7 @@ public class ConfigurationService {
 
 	@Path("source/{id}")
 	@GET
-	public Response getSource(@PathParam("id") int id) {
+	public Response getSource(@PathParam("id") String id) {
 		try {
 			Source source = transformerServer.getSource(id);
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
@@ -103,15 +103,15 @@ public class ConfigurationService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setSource(Source source) {
-
-		HttpResponse<String> response;
+	public Response setSource(Source source) {
 		try {
-			response = transformerServer.setSource(source);
-		} catch (SettingsException e) {
+			HttpResponse<Source> response = transformerServer.setSource(source);
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
+					.entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
+		} catch (SettingsException | JsonProcessingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
-		return response.getBody();
+		
 
 	}
 

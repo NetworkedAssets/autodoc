@@ -20,9 +20,11 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
+import javax.ws.rs.core.Response;
+
 public class TransformerServer {
 	public static final String SETTINGS = "/settings";
-	public static final String SOURCES = "/sources";
+	public static final String SOURCES = "/sources/";
 	public static final String EVENT = "/event";
 	public static final String EVENT_JSON = "{\"repositorySlug\":\"%s\",\"projectKey\":\"%s\",\"changes\":[{\"refId\":\"%s\",\"type\":\"UPDATE\"}]}";
 	public static final Logger log = LoggerFactory.getLogger(TransformerServer.class);
@@ -94,11 +96,11 @@ public class TransformerServer {
 		return response;
 	}
 
-	public Source getSource(int id) throws SettingsException {
+	public Source getSource(String id) throws SettingsException {
 		HttpResponse<Source> response;
 		try {
 
-			response = Unirest.get(url + SOURCES).queryString("id", id).asObject(Source.class);
+			response = Unirest.get(url + SOURCES+"{id}").routeParam("id", id).asObject(Source.class);
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
 		}
@@ -107,18 +109,14 @@ public class TransformerServer {
 
 	}
 
-	public HttpResponse<String> setSource(Source source) throws SettingsException {
+	public HttpResponse<Source> setSource(Source source) throws SettingsException {
 
-		HttpResponse<String> response;
+		HttpResponse<Source> response;
 		try {
 
-			response = Unirest.post(url + SOURCES).header("Content-Type", "application/json").body(source).asString();
+			response = Unirest.post(url + SOURCES).header("Content-Type", "application/json").body(source).asObject(Source.class);
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
-		}
-
-		if (response.getStatus() != 200) {
-			throw new SettingsException("Could not save sources: " + response.getBody());
 		}
 
 		return response;

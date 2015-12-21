@@ -128,10 +128,12 @@ public class Source implements Serializable {
         return id;
     }
 
+   
     public boolean isNameCorrect() {
         return nameCorrect;
     }
 
+    
     public void setNameCorrect(boolean nameCorrect) {
         this.nameCorrect = nameCorrect;
     }
