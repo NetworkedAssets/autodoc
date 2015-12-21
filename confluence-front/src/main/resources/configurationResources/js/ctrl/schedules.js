@@ -3,16 +3,26 @@
  */
 angular.module("DoC_Config").controller("schedulesCtrl",function($scope,settingsData) {
     var schedules = this;
-    schedules.types= [
-        {
-            label: "day",
-            value: "day"
-        },
-        {
-            label: "week",
-            value: "week"
-        }
-    ];
+    schedules.types = {
+        singular: [
+            {
+                label: "day",
+                value: "day"
+            }, {
+                label: "week",
+                value: "week"
+            }
+        ],
+        plural: [
+            {
+                label: "days",
+                value: "day"
+            }, {
+                label: "weeks",
+                value: "week"
+            }
+        ]
+    };
 
     schedules.weekdayOptions = {
         "mon": {

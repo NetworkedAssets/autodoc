@@ -1,3 +1,8 @@
+#doc_config-loading {
+    height: 200px;
+    width: 100%;
+}
+
 .doc_config-event div.inline-block {
     display: inline-block;
     vertical-align: top;
@@ -30,10 +35,11 @@
     display: inline-block;
 }
 
-#doc_config-sources form.source {
+#doc_config-sources form {
     display: inline-block;
     vertical-align: top;
     margin-top: 20px;
+    width: 400px;
 }
 
 .doc-aui-button-group .aui-button-primary {

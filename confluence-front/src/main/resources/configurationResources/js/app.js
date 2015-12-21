@@ -14,3 +14,6 @@ if (AJS.Data) {
 
 
 angular.module("DoC_Config",[]);
+angular.element(document).ready(function() {
+    $("#doc_config-loading").spin("large");
+});

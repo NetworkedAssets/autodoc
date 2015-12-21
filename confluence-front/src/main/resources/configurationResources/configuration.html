@@ -3,9 +3,21 @@
     <meta charset="utf-8">
     <script src="js/lib/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="https://aui-cdn.atlassian.com/aui-adg/5.9.4/js/aui.min.js"></script>
-    <script src="https://aui-cdn.atlassian.com/aui-adg/5.9.4/js/aui-experimental.min.js"></script>
-    <script src="https://aui-cdn.atlassian.com/aui-adg/5.9.4/js/aui-datepicker.min.js"></script>
+
+
+    <!--  AUI Core -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui.js"></script>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/css/aui.css" media="all">
+
+    <!-- AUI Experimental components -->
+    <script src="//cdn.rawgit.com/jrburke/almond/0.3.0/almond.js"></script>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/css/aui-experimental.css" media="all">
+    <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui-experimental.js"></script>
+
+    <!-- AUI Datepicker and Soy templates -->
+    <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui-datepicker.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui-soy.js"></script>
 
 
 
@@ -16,12 +28,11 @@
     <script src="js/ctrl/schedules.js"></script>
     <script src="js/ctrl/sources.js"></script>
     <script src="js/services/settingsData.js"></script>
+    <script src="js/services/urlProvider.js"></script>
     <script src="js/dirs/docAuiDatePicker.js"></script>
     <script src="js/dirs/auiSelect2.js"></script>
     <script src="js/dirs/docAuiButtonGroup.js"></script>
 
-    <link rel="stylesheet" href="https://aui-cdn.atlassian.com/aui-adg/5.9.4/css/aui.min.css" media="all">
-    <link rel="stylesheet" href="https://aui-cdn.atlassian.com/aui-adg/5.9.4/css/aui-experimental.min.css" media="all">
 
     <link rel="stylesheet" href="css/doc_config.css" media="all">
     <style>
@@ -29,62 +40,72 @@
             background: #fff;
         }
     </style>
-
 </head>
 <body>
 <!--CUT-START-->
 <section ng-app="DoC_Config">
-    <div class="aui-tabs horizontal-tabs">
+    <div id="doc_config-loading" ng-show="$root.loading"></div>
+    <div ng-hide="$root.loading" class="aui-tabs horizontal-tabs">
         <ul class="tabs-menu">
-            <li class="menu-item">
+            <li class="menu-item active-tab">
                 <a href="#doc_config-sources">Sources</a>
             </li>
-            <li class="menu-item active-tab">
+            <li class="menu-item">
                 <a href="#doc_config-branch">Branches</a>
             </li>
         </ul>
-
-        <div class="tabs-pane" id="doc_config-sources" ng-controller="sourcesCtrl as sources">
+        <div class="tabs-pane active-pane" id="doc_config-sources" ng-controller="sourcesCtrl as sources">
             <form ng-repeat="source in sources.list" class="aui source">
                 <fieldset>
-                    <div class="field-group">
-                        <label>Source type</label>
-                        <select aui-select2 doc-options="sources.availableKinds" doc-disable-search="true" ng-model="source.sourceType" placeholder="Choose Source Type"></select>
+                    <div ng-show="source.deletionState==null">
+                        <div class="field-group">
+                            <label>Source type</label>
+                            <select aui-select2 doc-options="sources.availableKinds" doc-disable-search="true" ng-model="source.sourceType" placeholder="Choose Source Type"></select>
+                        </div>
+                        <div class="field-group">
+                            <label for="whatever">Source name</label>
+                            <input id="whatever" type="text" class="text" placeholder="Source name" ng-model="source.name">
+                        </div>
+                        <div class="field-group">
+                            <label>URL</label>
+                            <input type="text" class="text" placeholder="URL" ng-model="source.url">
+                        </div>
+                        <div class="field-group">
+                            <label>Username</label>
+                            <input type="text" class="text" placeholder="Username" ng-model="source.username">
+                        </div>
+                        <div class="field-group">
+                            <label>Password</label>
+                            <input type="password" class="password" placeholder="Password" ng-model="source.password">
+                        </div>
+
+
                     </div>
-                    <div class="field-group">
-                        <label for="whatever">Source name</label>
-                        <input id="whatever" type="text" class="text" placeholder="Source name" ng-model="source.name">
+                    <p ng-show="source.deletionState=='executing'">Deleting...</p>
+                    <div ng-show="source.deletionState=='confirming'" class="aui-message aui-message-error">
+                        <p ng-show="source.deletionState=='confirming'"><strong>Are you sure?</strong></p>
                     </div>
-                    <div class="field-group">
-                        <label>URL</label>
-                        <input type="text" class="text" placeholder="URL" ng-model="source.url">
+                    <div ng-show="source.deletionState=='confirming'" class="buttons-container">
+
+                        <button ng-click="sources.deleteExecute($index)" class="aui-button aui-button-primary">Confirm</button>
+                        <button ng-click="sources.cancelDeletion($index)" class="aui-button">Cancel</button>
                     </div>
-                    <div class="field-group">
-                        <label>Username</label>
-                        <input type="text" class="text" placeholder="Username" ng-model="source.username">
-                    </div>
-                    <div class="field-group">
-                        <label>Password</label>
-                        <input type="password" class="password" placeholder="Password" ng-model="source.password">
-                    </div>
-                    <div class="buttons-container">
-                        <button ng-hide="1" ng-click="sources.check($index)" ng-disabled="source.verified" class="aui-button">{{source.verified?'Verified':'Check'}}</button>
-                        <button ng-click="sources.remove($index)" class="aui-button aui-button-link">Remove</button>
+                    <div ng-show="source.deletionState==null" class="buttons-container">
+                        <button ng-click="sources.save($index)" ng-disabled="source.verified" class="aui-button aui-button-primary">{{source.verified?'Saved':'Save'}}</button>
+                        <button ng-click="sources.delete($index)" class="aui-button">Remove</button>
                     </div>
                 </fieldset>
 
             </form>
             <form class="aui">
                 <div class="buttons-container">
-                    <button ng-click="sources.save()" class="aui-button aui-button-primary">Save changes</button>
-                    <button ng-click="sources.cancel()" class="aui-button aui-button-link">Discard changes</button>
-                    <button ng-click="sources.add()" class="aui-button">Add source</button>
+                    <button ng-click="sources.add()" class="aui-button aui-button-primary">Add {{sources.list.length>0?'another ':''}}source</button>
                 </div>
             </form>
 
             <pre>{{sources.list|json}}</pre>
         </div>
-        <div class="tabs-pane active-pane" id="doc_config-branch">
+        <div class="tabs-pane" id="doc_config-branch">
             <div class="table">
                 <div class="table-row">
 
@@ -140,40 +161,25 @@
                                                     ng-model="branchSettings.settings.listensTo"
                                                     doc-options="branchSettings.listenToOptions"
                                             ></doc-aui-button-group>
-                                            <!--<div class="radio">
-                                                <input class="radio" type="radio" id="doc_config-branch-listensTo-none"
-                                                       name="doc_config-branch-listensTo{{$parent.$index}}" ng-model="schedules.settings.listensTo" value="none">
-                                                <label for="doc_config-branch-listensTo-none">None</label><br>
-                                                <input class="radio" type="radio" id="doc_config-branch-listensTo-git"
-                                                       name="doc_config-branch-listensTo{{$parent.$index}}" ng-model="schedules.settings.listensTo" value="git">
-                                                <label for="doc_config-branch-listensTo-git">Git event</label><br>
-                                                <input class="radio" type="radio" id="doc_config-branch-listensTo-schedule"
-                                                       name="doc_config-branch-listensTo" ng-model="schedules.settings.listensTo" value="schedule">
-                                                <label for="doc_config-branch-listensTo-schedule">Schedule</label>
-                                            </div>-->
+                                            <button
+                                                    class="aui-button aui-button-primary"
+                                                    ng-show="branchSettings.listensTo != 'none'"
+                                                    ng-click="branchSettings.settings.updateNow()"
+                                                    ng-disabled="branchSettings.settings.updateNowState != 'ready'"
+                                            >{{ branchSettings.settings.updateNowState == "initiated"?'Update initiated':(branchSettings.settings.updateNowState == "initiating"?'Initiating update...':'Update now')}}</button>
                                         </fieldset>
-                                        <div class="field-group" ng-show="branchSettings.settings.listensTo !== 'none'">
-                                            <label>Page</label>
-                                            <select aui-select2 ng-model="branchSettings.settings.page" doc-allow-empty="true" doc-options="branchSettings.pages"></select>
-                                        </div>
                                     </form>
                                     <div
                                             ng-controller="componentsCtrl as components"
                                             id="doc_config-branch-components"
+                                            ng-if="0"
                                             ng-show="branchSettings.settings.listensTo !== 'none'"
                                     >
                                         <h4>Components</h4>
                                         <form class="aui">
                                             <div ng-repeat="component in components.available" class="field-group">
-                                                <aui-label for="doc_config-branch_components-toggle-{{component.name}}">{{component.displayName}}</aui-label>
-                                                <aui-toggle
-                                                        id="doc_config-branch_components-toggle-{{component.name}}"
-                                                        label
-                                                        tooltip-off
-                                                        tooltip-on
-                                                        class="toggle"
-                                                        ng-checked="components.settings.components[component.name]"
-                                                        data-name="{{component.name}}"></aui-toggle>
+                                                <label for="doc_config-branch_components-toggle-{{component.name}}">{{component.displayName}}</label>
+                                                <div class="checkbox"><input id="doc_config-branch_components-toggle-{{component.name}}" type="checkbox" class="checkbox" ng-model="components.settings.components[component.name]"></div>
                                             </div>
                                         </form>
                                     </div>
@@ -205,8 +211,9 @@
                                                             <div ng-show="event.periodic">
                                                                 <fieldset class="group">
                                                                     <legend><span>Every</span></legend>
-                                                                    <input type="number" class="text short-field" ng-model="event.number">
-                                                                    <doc-aui-button-group doc-type="radio" ng-model="event.type" doc-options="schedules.types"></doc-aui-button-group>
+                                                                    <input type="number" min="1" max="10" class="text short-field" ng-model="event.number">
+                                                                    <doc-aui-button-group ng-hide="event.number>1" doc-type="radio" ng-model="event.type" doc-options="schedules.types.singular"></doc-aui-button-group>
+                                                                    <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-type="radio" ng-model="event.type" doc-options="schedules.types.plural"></doc-aui-button-group>
                                                                     <!--<div class="radio">
                                                                         <input class="radio"
                                                                                ng-repeat-start="type in schedules.types"
@@ -238,7 +245,7 @@
                                                                 <input type="text" class="text short-field" ng-model="event.time" ng-pattern="/([01]?[0-9]|2[0-3]):[0-5][0-9]/" placeholder="17:00">
                                                             </div>
                                                             <div class="buttons-container">
-                                                                <button ng-click="schedules.removeEvent($index)" class="aui-button aui-button-link">Remove</button>
+                                                                <button ng-click="schedules.removeEvent($index)" class="aui-button aui-button-link">Remove event</button>
                                                             </div>
 
                                                         </form>

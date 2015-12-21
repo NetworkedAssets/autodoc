@@ -144,9 +144,11 @@
 		<resource type="download" name="css/doc_config.css" location = "configurationResources/css/doc_config.css" />
 
 		<resource type="download" name="js/lib/angular.min.js" location = "configurationResources/js/lib/angular.min.js" />
+
 		<resource type="download" name="js/app.js" location = "configurationResources/js/app.js" />
 
 		<resource type="download" name="js/services/settingsData.js" location = "configurationResources/js/services/settingsData.js" />
+		<resource type="download" name="js/services/urlProvider.js" location = "configurationResources/js/services/urlProvider.js" />
 
 		<resource type="download" name="js/ctrl/branchSettings.js" location = "configurationResources/js/ctrl/branchSettings.js" />
 		<resource type="download" name="js/ctrl/components.js" location = "configurationResources/js/ctrl/components.js" />
@@ -160,11 +162,6 @@
 
 		<resource type="download" name="data/settings3.json" location = "configurationResources/data/settings3.json" />
 
-
-
-
-
-		<resource type="download" name="person.jpg" location="configurationResources/person.jpg" />
 	</web-resource>
 
     <xwork key="autodoc-configure-action" name="autodoc configure actions">

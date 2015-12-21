@@ -58,7 +58,7 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
     settingsData.registerCallback("menu",function() {
         processTree(settingsData.raw);
 
-        fakeChosen();
+        //fakeChosen();
         //menu.tree = settingsData.raw;
         //menu.initSources();
         /*setTimeout(function() {
@@ -91,8 +91,6 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
 
     }
     $scope.$watch("menu.chosen",function(newValue,oldValue) {
-        console.log(menu.chosen);
-
         if (newValue.sourceProject !== oldValue.sourceProject && (typeof newValue.sourceProject == "string")) {
             var arr = newValue.sourceProject.split('\uF000');
             menu.chosen.source = arr[0];

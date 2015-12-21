@@ -2,8 +2,6 @@ angular.module("DoC_Config").controller("branchSettingsCtrl",function($scope,$ht
 
     var branchSettings = this;
 
-    var url = "http://46.101.240.138:8090/rest/autodoc/1.0/configuration/TEST/pages";
-
     branchSettings.listenToOptions = {
         "mon": {
             label: "Off",
@@ -21,23 +19,5 @@ angular.module("DoC_Config").controller("branchSettingsCtrl",function($scope,$ht
 
     branchSettings.settings = settingsData;
 
-    branchSettings.pages = [];
-
-    $http.get(url).then(function(response) {
-        var pages = [];
-        angular.forEach(response.data,function(page) {
-            pages.push({
-                value: page.id,
-                label: page.title
-            });
-        });
-
-        branchSettings.pages = pages;
-    });
-
-    /*settingsData.registerCallback("branchSettingsCtrl",function() {
-        branchSettings.pages = [];
-        console.log(settingsData.get().pages);
-    })*/
 
 });

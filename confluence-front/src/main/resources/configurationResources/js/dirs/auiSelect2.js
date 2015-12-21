@@ -10,10 +10,15 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
 
                 optGroup.appendTo(elem);
             } else {
-                var option = $('<option>',{
+                var attrs = {
                     val: v.value,
                     text: v.label
-                });
+                };
+                if (v.selected) {
+                    attrs.selected = true;
+                }
+                var option = $('<option>',attrs);
+
                 option.appendTo(elem);
             }
 
@@ -36,15 +41,16 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
             $timeout(function() {
                 AJS.$(select).auiSelect2({
                     minimumResultsForSearch: attrs.docDisableSearch?(-1):(undefined)
-                }).on("select2-selecting",function(e) {
-                    //scope.model = e.val;
+                })
+                select.on("change",function(e) {
+                    //console.log("yep",e);
+                    scope.model = e.val;
                     ngModel.$setViewValue(e.val);
                     $timeout();
                 })
             });
-            scope.$watch("options",function() {
+            scope.$watch("options",function(options) {
                 select.empty();
-                console.log(scope.options);
                 if (attrs.docAllowEmpty && select.find("option:not([value])").length == 0) {
                     select.prepend("<option/>");
                 }
@@ -58,12 +64,17 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
             scope.$watch(function() {
                 return ngModel.$viewValue;
             },function(newValue,oldValue) {
-                if (newValue !== oldValue) {
-                    console.log("setting",newValue,oldValue);
+                //console.log(newValue,oldValue);
+                if (1 || newValue !== oldValue) {
+                    //console.log("setting",newValue,oldValue);
                     AJS.$(select).auiSelect2("val",ngModel.$viewValue);
                 }
 
             });
+
+            //select.attr("ng-model",attrs.ngModel);
+            //$compile(element)(scope);
+
         },
         scope: {
             options: "=docOptions",

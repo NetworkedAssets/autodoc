@@ -1,5 +1,7 @@
-angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,settingsData,$timeout) {
+angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,settingsData,$timeout,urlProvider) {
     var sources = this;
+
+    var url = urlProvider.getRestUrl("/configuration/source");
 
     sources.list = [];
 
@@ -19,8 +21,9 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
         if (settingsData.get().sources) {
 
         }
-        angular.forEach(settingsData.get().sources,function(source) {
+        angular.forEach(settingsData.get().sources,function(source,key) {
             sources.add({
+                sourceId: source.id,
                 name: source.name,
                 url: source.url,
                 sourceType: source.sourceType,
@@ -31,17 +34,9 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
         });
     });
 
-    sources.remove = function(index) {
+    sources.removeFromList = function(index) {
         sources.list.splice(index,1);
-    };
-
-    sources.check = function(index) {
-        //var source = sources.list[index];
-        var url = "data/checkCorrect.json";
-        var request = $http.get(url);
-        request.then(function(response) {
-            sources.list[index] = response.data;
-        });
+        $timeout();
     };
 
     sources.changed = function(source) {
@@ -52,13 +47,13 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
 
         if (!source) {
             source = {
+                "sourceId": null,
                 "name": "",
                 "url": "",
                 "sourceType": "STASH",
                 "username": "",
                 "password": "",
                 "hookKey": "",
-                "slug": "staszek",
                 "verified": false
             };
         }
@@ -69,15 +64,57 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
 
         $scope.$watch(function() {
             return source;
-        },function() {
-            if (source.initializing) {
-                $timeout(function() { source.initializing = false; });
-            } else {
+        },function(newValue,oldValue) {
+            if (newValue!==oldValue) {
                 sources.changed(source);
             }
-
         },true);
     };
+
+
+
+    sources.save = function(id) {
+        var source = sources.list[id];
+        var req;
+        if (source.sourceId === null) {
+            req = $http.post(url);
+        } else {
+            req = $http.put(url+"/"+sourceId);
+        }
+
+        req.then(function(resp) {
+            if (resp.status == "201") {
+                source = resp.data;
+            } else {
+                console.log("Some error: "+resp.data);
+            }
+        });
+
+    }
+
+    sources.delete = function(id) {
+        var source = sources.list[id];
+        if (source.sourceId === null) {
+            sources.removeFromList(id);
+        } else {
+            source.deletionState = "confirming";
+        }
+    }
+
+    sources.cancelDeletion = function(id) {
+        var source = sources.list[id];
+        source.deletionState = null;
+    }
+
+    sources.deleteExecute = function(id) {
+        var source = sources.list[id];
+        source.deletionState = "executing";
+        //$http.delete(url).then();
+        setTimeout(function() {
+            console.log("hm...");
+            sources.removeFromList(id);
+        },500);
+    }
 
 
 });
