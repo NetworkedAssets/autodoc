@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.List;
 import java.util.Properties;
 
 import javax.ws.rs.Consumes;
@@ -48,6 +49,22 @@ public class ConfigurationService {
 			Settings settings = transformerServer.getSettings();
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(OBJECT_MAPPER.writeValueAsString(settings)).build();
+		} catch (SettingsException | JsonProcessingException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
+
+	}
+
+	@Path("projects/listened")
+	@GET
+	public Response getListenedProjects() {
+		try {
+			List<Source> sources = transformerServer.getSettings().getSources();
+
+			// TODO: only branch isListened
+
+			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
+					.entity(String.format("{\"sources\":\"%s\"}", OBJECT_MAPPER.writeValueAsString(sources))).build();
 		} catch (SettingsException | JsonProcessingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
@@ -111,7 +128,6 @@ public class ConfigurationService {
 		} catch (SettingsException | JsonProcessingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
-		
 
 	}
 

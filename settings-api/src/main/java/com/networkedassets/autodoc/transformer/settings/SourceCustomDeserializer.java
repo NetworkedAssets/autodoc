@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.networkedassets.autodoc.transformer.settings.Source.SourceType;
 
-public class SourceCheckingDeserializer extends JsonDeserializer<Source> {
+public class SourceCustomDeserializer extends JsonDeserializer<Source> {
 	 
     @Override
     public Source deserialize(JsonParser jp, DeserializationContext ctxt) 

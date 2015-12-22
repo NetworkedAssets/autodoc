@@ -1,12 +1,9 @@
 package com.networkedassets.autodoc.transformer;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.ObjectMapper;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.networkedassets.autodoc.transformer.settings.Settings;
-import com.networkedassets.autodoc.transformer.settings.SettingsException;
-import com.networkedassets.autodoc.transformer.settings.Source;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContextBuilder;
@@ -15,12 +12,15 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.ws.rs.core.Response;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.networkedassets.autodoc.transformer.settings.Settings;
+import com.networkedassets.autodoc.transformer.settings.SettingsException;
+import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.settings.SourceCustomSerializer;
 
 public class TransformerServer {
 	public static final String SETTINGS = "/settings";
@@ -100,7 +100,7 @@ public class TransformerServer {
 		HttpResponse<Source> response;
 		try {
 
-			response = Unirest.get(url + SOURCES+"{id}").routeParam("id", id).asObject(Source.class);
+			response = Unirest.get(url + SOURCES + "{id}").routeParam("id", id).asObject(Source.class);
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
 		}
@@ -114,7 +114,8 @@ public class TransformerServer {
 		HttpResponse<Source> response;
 		try {
 
-			response = Unirest.post(url + SOURCES).header("Content-Type", "application/json").body(source).asObject(Source.class);
+			response = Unirest.post(url + SOURCES).header("Content-Type", "application/json").body(source)
+					.asObject(Source.class);
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
 		}
@@ -161,6 +162,10 @@ public class TransformerServer {
 			@Override
 			public String writeValue(Object value) {
 				try {
+
+					SimpleModule module = new SimpleModule();
+					module.addSerializer(new SourceCustomSerializer(Source.class));
+					jacksonObjectMapper.registerModule(module);
 					return jacksonObjectMapper.writeValueAsString(value);
 				} catch (IOException e) {
 					throw new RuntimeException(e);
