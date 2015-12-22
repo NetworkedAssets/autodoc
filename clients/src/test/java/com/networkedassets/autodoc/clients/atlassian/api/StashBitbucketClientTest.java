@@ -9,70 +9,74 @@ import org.junit.Test;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by mtulaza on 2015-12-16.
  */
 public class StashBitbucketClientTest {
-    private final String PROJECT_KEY = "TP";
-    private final String PROJECT_SLUG = "lol";
-    private final String PROJECT_HOOK_KEY = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
-    private final String CONFLUENCE_URL = "http://46.101.240.138:7990";
-    private final String CONFLUENCE_USERNAME = "kcala";
-    private final String CONFLUENCE_PASSWORD = "admin";
+	private final String PROJECT_KEY = "TP";
+	private final String PROJECT_SLUG = "lol";
+	private final String PROJECT_HOOK_KEY = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
+	private final String CONFLUENCE_URL = "http://46.101.240.138:7990";
+	private final String CONFLUENCE_USERNAME = "kcala";
+	private final String CONFLUENCE_PASSWORD = "admin";
 
-    private StashBitbucketClient client;
+	private StashBitbucketClient client;
 
-    @Before
-    public void initializeClient() throws MalformedURLException {
-        HttpClientConfig httpClientConfig = new HttpClientConfig(new URL(CONFLUENCE_URL), CONFLUENCE_USERNAME, CONFLUENCE_PASSWORD);
-        client = new StashBitbucketClient(httpClientConfig);
-    }
+	@Before
+	public void initializeClient() throws MalformedURLException {
+		HttpClientConfig httpClientConfig = new HttpClientConfig(new URL(CONFLUENCE_URL), CONFLUENCE_USERNAME,
+				CONFLUENCE_PASSWORD);
+		client = new StashBitbucketClient(httpClientConfig);
+	}
 
-    @Test
-    public void ensureClientNotNull() {
-        assertNotNull(client);
-    }
+	@Test
+	public void ensureClientNotNull() {
+		assertNotNull(client);
+	}
 
-    @Test(expected = NullPointerException.class)
-    public void testGetHookSettingsShouldThrowNullPointerException() throws UnirestException {
-        client.getHookSettings(null, null, null);
-    }
+	@Test(expected = NullPointerException.class)
+	public void testGetHookSettingsShouldThrowNullPointerException() throws UnirestException {
+		client.getHookSettings(null, null, null);
+	}
 
-    @Test(expected = UnirestException.class)
-    public void testWrongRequestUrlInGetHookSettingsMethod() throws UnirestException {
-        client.getHookSettings("/&asda=12331&addd=211", "&3334g=gg33g4&g34g34=43grgr", "///&asda=12331///&addd=211");
-    }
+	@Test(expected = UnirestException.class)
+	public void testWrongRequestUrlInGetHookSettingsMethod() throws UnirestException {
+		client.getHookSettings("/&asda=12331&addd=211", "&3334g=gg33g4&g34g34=43grgr", "///&asda=12331///&addd=211");
+	}
 
-    @Test
-    public void testProperArgumentsReturnProperHookSettingsInstance() throws UnirestException {
-        HookSettings hookSettings = client.getHookSettings(PROJECT_KEY, PROJECT_SLUG, PROJECT_HOOK_KEY);
-        assertNotNull(hookSettings);
-    }
+	@Test
+	public void testProperArgumentsReturnProperHookSettingsInstance() throws UnirestException {
+		HookSettings hookSettings = client.getHookSettings(PROJECT_KEY, PROJECT_SLUG, PROJECT_HOOK_KEY);
+		assertNotNull(hookSettings);
+	}
 
-    @Test(expected = NullPointerException.class)
-    public void testSetHookSettingsShouldThrowNullPointerException() throws UnirestException {
-        client.setHookSettings(null, null, null, null, null);
-    }
+	@Test(expected = NullPointerException.class)
+	public void testSetHookSettingsShouldThrowNullPointerException() throws UnirestException {
+		client.setHookSettings(null, null, null, null, null);
+	}
 
-    @Test(expected = UnirestException.class)
-    public void testWrongRequestUrlInSetHookSettingsMethod() throws UnirestException {
-        client.setHookSettings("/&asda=12331&addd=211", "&3334g=gg33g4&g34g34=43grgr", "///&asda=12331///&addd=211", "ENDP//OI&&NT=12", "###$#$T#$G#$");
-    }
+	@Test(expected = UnirestException.class)
+	public void testWrongRequestUrlInSetHookSettingsMethod() throws UnirestException {
+		client.setHookSettings("/&asda=12331&addd=211", "&3334g=gg33g4&g34g34=43grgr", "///&asda=12331///&addd=211",
+				"ENDP//OI&&NT=12", "###$#$T#$G#$");
+	}
 
-    @Test
-    public void testSetHookSettingsAndRestoreDefault() throws UnirestException {
-        final String testEndpointURL = "http://test.test:1234/test";
-        final String defaultEndpointURL = "http://localhost:8050/event";
-        final String connTimeout = "30000";
-        // test if hook's settings are changed properly
-        HookSettings testHookSettings = client.setHookSettings(PROJECT_KEY, PROJECT_SLUG, PROJECT_HOOK_KEY, testEndpointURL, connTimeout);
-        assertNotNull(testHookSettings);
+	@Test
+	public void testSetHookSettingsAndRestoreDefault() throws UnirestException {
+		final String testEndpointURL = "http://test.test:1234/test";
+		final String defaultEndpointURL = "http://localhost:8050/event";
+		final String connTimeout = "30000";
+		// test if hook's settings are changed properly
+		HookSettings testHookSettings = client.setHookSettings(PROJECT_KEY, PROJECT_SLUG, PROJECT_HOOK_KEY,
+				testEndpointURL, connTimeout);
+		assertNotNull(testHookSettings);
 
-        // restores default settings
-        HookSettings defaultHookSettings = client.setHookSettings(PROJECT_KEY, PROJECT_SLUG, PROJECT_HOOK_KEY, defaultEndpointURL, connTimeout);
-        assertNotNull(defaultHookSettings);
-    }
+		// restores default settings
+		HookSettings defaultHookSettings = client.setHookSettings(PROJECT_KEY, PROJECT_SLUG, PROJECT_HOOK_KEY,
+				defaultEndpointURL, connTimeout);
+		assertNotNull(defaultHookSettings);
+	}
 
 }
