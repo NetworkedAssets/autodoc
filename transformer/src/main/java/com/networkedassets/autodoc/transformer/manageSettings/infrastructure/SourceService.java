@@ -2,6 +2,7 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.google.common.base.Preconditions;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import org.slf4j.Logger;
@@ -23,12 +24,13 @@ public class SourceService {
     static final Logger log = LoggerFactory.getLogger(SourceService.class);
     private SourceProvider sourceProvider;
     private SourceCreator sourceCreator;
-
+    private SourceRemover sourceRemover;
 
     @Inject
-    public SourceService(SourceProvider sourceProvider, SourceCreator sourceCreator) {
+    public SourceService(SourceProvider sourceProvider, SourceCreator sourceCreator, SourceRemover sourceRemover) {
         this.sourceProvider = sourceProvider;
         this.sourceCreator = sourceCreator;
+        this.sourceRemover = sourceRemover;
     }
 
     @GET
@@ -61,6 +63,16 @@ public class SourceService {
         return Response.status(responseStatus)
                 .entity(resultSource)
                 .build();
+    }
+
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeSource(Source source){
+        Preconditions.checkNotNull(source);
+        log.info("DELETE request for source handled");
+        boolean wasDeleted = sourceRemover.removeSource(source);
+        Response.Status responseStatus = wasDeleted ? Response.Status.ACCEPTED : Response.Status.BAD_REQUEST;
+        return Response.status(responseStatus).build();
     }
 
 

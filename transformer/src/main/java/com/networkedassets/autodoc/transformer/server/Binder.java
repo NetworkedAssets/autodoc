@@ -9,6 +9,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.require.Documentat
 import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.DefaultDocumentationGeneratorFactory;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
@@ -38,6 +39,7 @@ public class Binder extends AbstractBinder {
         bind(settingsManager).to(SettingsProvider.class);
         bind(settingsManager).to(SourceProvider.class);
         bind(settingsManager).to(SourceCreator.class);
+        bind(settingsManager).to(SourceRemover.class);
         bind(docFactory).to(DocumentationGeneratorFactory.class);
         bind(sender).to(DocumentationSender.class);
         bind(codeProvider).to(CodeProvider.class);

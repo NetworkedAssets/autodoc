@@ -8,6 +8,7 @@ import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.Hoo
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
@@ -28,7 +29,7 @@ import java.util.*;
 /**
  * Handles the settings of the application
  */
-public class SettingsManager implements SettingsProvider, SettingsSaver, SourceProvider, SourceCreator {
+public class SettingsManager implements SettingsProvider, SettingsSaver, SourceProvider, SourceCreator, SourceRemover {
 
     public String settingsFilename;
 
@@ -220,8 +221,16 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         return source;
     }
 
+    @Override
+    public boolean removeSource(Source source) {
+        //remove if id or url match
+        return getSettings().getSources().removeIf(source1 ->
+                source1.getId() == source.getId() || source1.getUrl().equals(source.getUrl()));
+    }
+
     /**
      * Sets verification parameters of the source
+     *
      * @param source Source that will be checked for all conditions and proper flags will be set on it
      */
     private void verifySource(Source source) {
