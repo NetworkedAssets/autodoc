@@ -8,6 +8,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceChanger;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
@@ -23,26 +24,27 @@ import org.slf4j.LoggerFactory;
  */
 public class Binder extends AbstractBinder {
 
-    Logger log = LoggerFactory.getLogger(Binder.class);
+	Logger log = LoggerFactory.getLogger(Binder.class);
 
-    @Override
-    protected void configure() {
+	@Override
+	protected void configure() {
 
-        SettingsManager settingsManager = new SettingsManager();
-        DefaultDocumentationGeneratorFactory docFactory = new DefaultDocumentationGeneratorFactory();
-        ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
-        GitCodeProvider codeProvider = new GitCodeProvider();
-        DocumentationFromCodeGenerator docGen =
-                new DocumentationFromCodeGenerator(settingsManager, docFactory, sender, codeProvider);
+		SettingsManager settingsManager = new SettingsManager();
+		DefaultDocumentationGeneratorFactory docFactory = new DefaultDocumentationGeneratorFactory();
+		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
+		GitCodeProvider codeProvider = new GitCodeProvider();
+		DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
+				codeProvider);
 
-        bind(settingsManager).to(SettingsSaver.class);
-        bind(settingsManager).to(SettingsProvider.class);
-        bind(settingsManager).to(SourceProvider.class);
-        bind(settingsManager).to(SourceCreator.class);
-        bind(settingsManager).to(SourceRemover.class);
-        bind(docFactory).to(DocumentationGeneratorFactory.class);
-        bind(sender).to(DocumentationSender.class);
-        bind(codeProvider).to(CodeProvider.class);
-        bind(docGen).to(PushEventProcessor.class);
-    }
+		bind(settingsManager).to(SettingsSaver.class);
+		bind(settingsManager).to(SettingsProvider.class);
+		bind(settingsManager).to(SourceProvider.class);
+		bind(settingsManager).to(SourceCreator.class);
+		bind(settingsManager).to(SourceRemover.class);
+		bind(settingsManager).to(SourceChanger.class);
+		bind(docFactory).to(DocumentationGeneratorFactory.class);
+		bind(sender).to(DocumentationSender.class);
+		bind(codeProvider).to(CodeProvider.class);
+		bind(docGen).to(PushEventProcessor.class);
+	}
 }

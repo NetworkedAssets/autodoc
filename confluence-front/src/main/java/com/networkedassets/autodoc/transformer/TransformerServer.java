@@ -124,6 +124,35 @@ public class TransformerServer {
 
 	}
 
+	public HttpResponse<Source> changeSource(int sourceId, Source source) throws SettingsException {
+
+		HttpResponse<Source> response;
+		try {
+
+			response = Unirest.put(url + SOURCES + String.valueOf(sourceId)).header("Content-Type", "application/json")
+					.body(source).asObject(Source.class);
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		return response;
+
+	}
+
+	public HttpResponse<String> removeSource(Source source) throws SettingsException {
+
+		HttpResponse<String> response;
+		try {
+
+			response = Unirest.delete(url + SOURCES).header("Content-Type", "application/json").body(source).asString();
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		return response;
+
+	}
+
 	public String getUrl() {
 		return url;
 	}

@@ -18,7 +18,7 @@ public class ConfigureAction extends ConfluenceActionSupport {
 	public String getInnerHtml() throws IOException {
 		String html;
 		html = IOUtils
-				.toString(this.getClass().getClassLoader().getResourceAsStream("/configurationResources/index.html"));
+				.toString(this.getClass().getClassLoader().getResourceAsStream("/configurationResources/configuration.html"));
 		html = (html.split("<!--CUT-START-->")[1]).split("<!--CUT-END-->")[0];
 		return html;
 	}

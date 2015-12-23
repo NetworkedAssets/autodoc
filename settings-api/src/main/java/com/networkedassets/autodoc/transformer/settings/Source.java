@@ -124,6 +124,11 @@ public class Source implements Serializable {
         this.sourceType = sourceType;
     }
 
+    public void setId(int id) {
+        this.id=id;
+    }
+    
+    
     public int getId() {
         return id;
     }

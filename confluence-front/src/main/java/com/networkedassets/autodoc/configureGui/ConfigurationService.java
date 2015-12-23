@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -61,7 +63,8 @@ public class ConfigurationService {
 		try {
 			List<Source> sources = transformerServer.getSettings().getSources();
 
-			// TODO: only branch isListened
+			sources.stream().forEach(source -> source.projects.values().forEach(project -> project.repos.values()
+					.forEach(repo -> repo.branches.values().removeIf(branch -> !branch.isListened))));
 
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(String.format("{\"sources\":\"%s\"}", OBJECT_MAPPER.writeValueAsString(sources))).build();
@@ -73,6 +76,7 @@ public class ConfigurationService {
 
 	@Path("projects")
 	@POST
+	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String setProjects(Settings settings) {
 
@@ -103,17 +107,16 @@ public class ConfigurationService {
 
 	}
 
-	@Path("source/{id}")
-	@GET
-	public Response getSource(@PathParam("id") String id) {
+	@Path("source")
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response removeSource(Source source) {
 		try {
-			Source source = transformerServer.getSource(id);
-			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
-					.entity(OBJECT_MAPPER.writeValueAsString(source)).build();
-		} catch (SettingsException | JsonProcessingException e) {
+			HttpResponse<String> response = transformerServer.removeSource(source);
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).build();
+		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
-
 	}
 
 	@Path("source")
@@ -123,6 +126,21 @@ public class ConfigurationService {
 	public Response setSource(Source source) {
 		try {
 			HttpResponse<Source> response = transformerServer.setSource(source);
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
+					.entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
+		} catch (SettingsException | JsonProcessingException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
+
+	}
+
+	@Path("source/{id}")
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setSource(@PathParam("id") int sourceId, Source source) {
+		try {
+			HttpResponse<Source> response = transformerServer.changeSource(sourceId, source);
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
 					.entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
 		} catch (SettingsException | JsonProcessingException e) {

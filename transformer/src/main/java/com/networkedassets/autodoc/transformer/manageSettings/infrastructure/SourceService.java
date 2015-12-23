@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.google.common.base.Preconditions;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceChanger;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
@@ -25,12 +26,14 @@ public class SourceService {
     private SourceProvider sourceProvider;
     private SourceCreator sourceCreator;
     private SourceRemover sourceRemover;
+    private SourceChanger sourceChanger;
 
     @Inject
-    public SourceService(SourceProvider sourceProvider, SourceCreator sourceCreator, SourceRemover sourceRemover) {
+    public SourceService(SourceProvider sourceProvider, SourceCreator sourceCreator, SourceRemover sourceRemover, SourceChanger sourceChanger) {
         this.sourceProvider = sourceProvider;
         this.sourceCreator = sourceCreator;
         this.sourceRemover = sourceRemover;
+        this.sourceChanger = sourceChanger;
     }
 
     @GET
@@ -47,7 +50,28 @@ public class SourceService {
                         .build()
         ).orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
     }
-
+    
+    @PUT
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response changeSource(@PathParam("id") int sourceId, Source source) {
+    	 Preconditions.checkNotNull(source);
+        //TODO: check if source id exists
+         log.info("PUT request for source handled");
+         source.setId(sourceId);
+         Source resultSource = sourceChanger.changeSource(source);
+         Response.Status responseStatus;
+         if(resultSource.isCorrect()){
+             responseStatus = Response.Status.CREATED;
+         } else{
+             responseStatus = Response.Status.BAD_REQUEST;
+         }
+         return Response.status(responseStatus)
+                 .entity(resultSource)
+                 .build();
+     }
+    
+    
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response createSource(Source source) {
@@ -68,6 +92,8 @@ public class SourceService {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSource(Source source){
+    	
+    	//TODO: pass id not source
         Preconditions.checkNotNull(source);
         log.info("DELETE request for source handled");
         boolean wasDeleted = sourceRemover.removeSource(source);
