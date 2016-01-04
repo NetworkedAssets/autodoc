@@ -139,12 +139,12 @@ public class TransformerServer {
 
 	}
 
-	public HttpResponse<String> removeSource(Source source) throws SettingsException {
+	public HttpResponse<String> removeSource(int sourceId) throws SettingsException {
 
 		HttpResponse<String> response;
 		try {
 
-			response = Unirest.delete(url + SOURCES).header("Content-Type", "application/json").body(source).asString();
+			response = Unirest.delete(url + SOURCES + String.valueOf(sourceId)).asString();
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
 		}

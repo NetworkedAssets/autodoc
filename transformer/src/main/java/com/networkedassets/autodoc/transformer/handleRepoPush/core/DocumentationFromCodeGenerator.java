@@ -7,6 +7,8 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
+import com.networkedassets.autodoc.transformer.settings.Branch.ListenType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +41,9 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 		String repoSlug = pushEvent.getRepositorySlug();
 		String branchId = pushEvent.getBranchId();
 
-		if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl)
-				|| settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
-						.getRepoBySlug(repoSlug).getBranchById(branchId).isListened) {
+		if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl) || !settingsProvider
+				.getCurrentSettings().getSourceByUrl(sourceUrl).getProjectByKey(projectKey).getRepoBySlug(repoSlug)
+				.getBranchById(branchId).getListenTo().getListenTypeId().equals(ListenType.none)) {
 
 			Code code = codeProvider.getCode(settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl),
 					projectKey, repoSlug, branchId);
@@ -49,7 +51,7 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 			for (DocumentationType docType : DocumentationType.values()) {
 				Documentation documentation = docGeneratorFactory.createFor(docType).generateFrom(code);
 				documentation.setProjectInfo(projectKey, repoSlug, branchId);
-				documentationSender.send(documentation,settingsProvider.getCurrentSettings());
+				documentationSender.send(documentation, settingsProvider.getCurrentSettings());
 			}
 		}
 	}

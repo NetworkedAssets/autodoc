@@ -27,6 +27,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.networkedassets.autodoc.transformer.TransformerServer;
+import com.networkedassets.autodoc.transformer.settings.Branch.ListenType;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
@@ -63,8 +64,9 @@ public class ConfigurationService {
 		try {
 			List<Source> sources = transformerServer.getSettings().getSources();
 
-			sources.stream().forEach(source -> source.projects.values().forEach(project -> project.repos.values()
-					.forEach(repo -> repo.branches.values().removeIf(branch -> !branch.isListened))));
+			sources.stream().forEach(source -> source.projects.values()
+					.forEach(project -> project.repos.values().forEach(repo -> repo.branches.values()
+							.removeIf(branch -> branch.getListenTo().getListenTypeId().equals(ListenType.none)))));
 
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(String.format("{\"sources\":\"%s\"}", OBJECT_MAPPER.writeValueAsString(sources))).build();
@@ -108,12 +110,12 @@ public class ConfigurationService {
 
 	}
 
-	@Path("source")
+	@Path("source/{id}")
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removeSource(Source source) {
+	public Response removeSource(@PathParam("id") int sourceId) {
 		try {
-			HttpResponse<String> response = transformerServer.removeSource(source);
+			HttpResponse<String> response = transformerServer.removeSource(sourceId);
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).build();
 		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));

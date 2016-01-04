@@ -216,10 +216,8 @@ public class SettingsManager
 	}
 
 	@Override
-	public boolean removeSource(Source source) {
-		// remove if id or url match
-		return getSettings().getSources()
-				.removeIf(source1 -> source1.getId() == source.getId() || source1.getUrl().equals(source.getUrl()));
+	public boolean removeSource(int sourceId) {
+		return getSettings().getSources().removeIf(source -> source.getId() == sourceId);
 	}
 
 	@Override
