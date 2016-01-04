@@ -26,7 +26,7 @@ public class TransformerServer {
 	public static final String SETTINGS = "/settings";
 	public static final String SOURCES = "/sources/";
 	public static final String EVENT = "/event";
-	public static final String EVENT_JSON = "{\"repositorySlug\":\"%s\",\"projectKey\":\"%s\",\"changes\":[{\"refId\":\"%s\",\"type\":\"UPDATE\"}]}";
+	public static final String EVENT_JSON = "{\"sourceUrl\":\"%s\",\"projectKey\":\"%s\",\"repositorySlug\":\"%s\",\"branchId\":\"%s\"}";
 	public static final Logger log = LoggerFactory.getLogger(TransformerServer.class);
 	private static final CloseableHttpClient HTTP_CLIENT = setHttpClient();
 	private static final ObjectMapper OBJECT_MAPPER = setObjectMapper();
@@ -78,9 +78,9 @@ public class TransformerServer {
 		return response;
 	}
 
-	public HttpResponse<String> forceRegenerate(String projectKey, String repoSlug, String branchId)
+	public HttpResponse<String> forceRegenerate(String sourceUrl, String projectKey, String repoSlug, String branchId)
 			throws SettingsException {
-		String eventPayload = String.format(EVENT_JSON, repoSlug, projectKey, branchId);
+		String eventPayload = String.format(EVENT_JSON, sourceUrl, projectKey, repoSlug, branchId);
 		HttpResponse<String> response;
 		try {
 

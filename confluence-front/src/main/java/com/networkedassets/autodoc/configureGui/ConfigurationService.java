@@ -90,16 +90,17 @@ public class ConfigurationService {
 
 	}
 
-	@Path("event/{projectKey}/{repoSlug}/{branchId}")
+	@Path("event/{sourceUrl}/{projectKey}/{repoSlug}/{branchId}")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public String setForceGenerate(@PathParam("projectKey") String projectKey, @PathParam("repoSlug") String repoSlug,
-			@PathParam("branchId") String branchId) {
+	public String setForceGenerate(@PathParam("sourceUrl") String sourceUrl, @PathParam("projectKey") String projectKey,
+			@PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId) {
 
 		HttpResponse<String> response;
 		try {
-			response = transformerServer.forceRegenerate(URLDecoder.decode(projectKey, "UTF-8"),
-					URLDecoder.decode(repoSlug, "UTF-8"), URLDecoder.decode(branchId, "UTF-8"));
+			response = transformerServer.forceRegenerate(URLDecoder.decode(sourceUrl, "UTF-8"),
+					URLDecoder.decode(projectKey, "UTF-8"), URLDecoder.decode(repoSlug, "UTF-8"),
+					URLDecoder.decode(branchId, "UTF-8"));
 		} catch (SettingsException | UnsupportedEncodingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
