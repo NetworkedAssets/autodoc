@@ -170,20 +170,6 @@
                                             >{{ branchSettings.settings.updateNowState == "initiated"?'Update initiated':(branchSettings.settings.updateNowState == "initiating"?'Initiating update...':'Update now')}}</button>
                                         </fieldset>
                                     </form>
-                                    <div
-                                            ng-controller="componentsCtrl as components"
-                                            id="doc_config-branch-components"
-                                            ng-if="0"
-                                            ng-show="branchSettings.settings.listensTo !== 'none'"
-                                    >
-                                        <h4>Components</h4>
-                                        <form class="aui">
-                                            <div ng-repeat="component in components.available" class="field-group">
-                                                <label for="doc_config-branch_components-toggle-{{component.name}}">{{component.displayName}}</label>
-                                                <div class="checkbox"><input id="doc_config-branch_components-toggle-{{component.name}}" type="checkbox" class="checkbox" ng-model="components.settings.components[component.name]"></div>
-                                            </div>
-                                        </form>
-                                    </div>
                                 </div>
                                 <div ng-controller="schedulesCtrl as schedules">
                                     <div ng-show="schedules.settings.listensTo=='schedule'" >

@@ -36,6 +36,10 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         });
 
     settings.save = function() {
+        var chosen = settings.path;
+        var branchSettings = settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[chosen.branch];
+        branchSettings.scheduledEvents = settings.scheduledEvents;
+        branchSettings.listensTo = settings.listensTo;
         console.log(urlProvider.getRestUrl("/projects"),settings.raw);
         $http
             .post(urlProvider.getRestUrl("/projects"),settings.raw)
@@ -57,7 +61,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     settings.setBranch = function(chosen) {
         if (typeof chosen == "object") {
             var branchSettings = settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[chosen.branch];
-            settings.components = branchSettings.components;
             settings.scheduledEvents = branchSettings.scheduledEvents;
             settings.listensTo = branchSettings.listensTo;
             settings.path = chosen;
@@ -75,7 +78,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
     settings.resetBranch = function() {
         settings.path = null;
-        settings.components = null;
         settings.scheduledEvents = null;
         settings.listensTo = null;
         settings.updateNowState = "ready";
