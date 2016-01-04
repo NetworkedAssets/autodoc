@@ -6,10 +6,6 @@ angular.module("DoC")
 .controller("javadocCtrl",function($http,$state,urlProvider,javadocEntities,$timeout) {
     var vm = this;
 
-    /*
-    * TODO Active item indication
-    * */
-
     var parsePackageList = function(packageList) {
         var packages = {children:{}};
         angular.forEach(packageList,function(pack,key) {

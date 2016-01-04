@@ -1,13 +1,5 @@
 angular.module("DoC_Config").factory("urlProvider",function() {
     var urlProvider = {
-        getBaseUrl: function() {
-
-            if (AJS.params && AJS.params.baseUrl) {
-                return AJS.params.baseUrl;
-            } else {
-                return "http://atlas.networkedassets.net/confluence";
-            }
-        },
         getRestUrl: function(path) {
             if (!path) {
                 path = "";
@@ -19,6 +11,16 @@ angular.module("DoC_Config").factory("urlProvider",function() {
                 path = "";
             }
             return this.getBaseUrl()+"/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources"+path;
+        },
+        isLocal: function() {
+            return AJS.params && AJS.params.baseUrl;
+        },
+        getBaseUrl: function() {
+            if (this.isLocal()) {
+                return AJS.params.baseUrl;
+            } else {
+                return "http://atlas.networkedassets.net/confluence";
+            }
         }
     }
     return urlProvider;

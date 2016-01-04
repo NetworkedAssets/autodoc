@@ -3,6 +3,18 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
 
     var url = urlProvider.getRestUrl("/source");
 
+
+    var extractSourceDataForRest = function(original) {
+        var data = {};
+
+        data.name = original.name;
+        data.url = original.url;
+        data.sourceType = original.sourceType;
+        data.password = original.password;
+        data.username = original.username;
+        return data;
+    };
+
     sources.list = [];
 
     sources.availableKinds = [
@@ -29,7 +41,11 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
                 sourceType: source.sourceType,
                 username: source.username,
                 password: null,
-                verified: true
+                verified: true,
+                nameCorrect: true,
+                sourceExists: true,
+                credentialsCorrect: true,
+                dirty: false
             });
         });
     });
@@ -41,6 +57,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
 
     sources.changed = function(source) {
         source.verified = false;
+        source.dirty = true;
     };
 
     sources.add = function(source) {
@@ -54,7 +71,8 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
                 "username": "",
                 "password": "",
                 "hookKey": "",
-                "verified": false
+                "verified": false,
+                dirty: true
             };
         }
 
@@ -74,19 +92,29 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
 
 
     sources.save = function(id) {
-        var source = sources.list[id];
+        var original = sources.list[id];
+        var data = extractSourceDataForRest(original);
+
+        var sourceId = original.sourceId;
+
         var req;
-        if (source.sourceId === null) {
-            req = $http.post(url);
+        if (original.sourceId === null) {
+            req = $http.post(url,data);
         } else {
-            req = $http.put(url+"/"+sourceId);
+            req = $http.put(url+"/"+original.sourceId,data);
         }
 
         req.then(function(resp) {
-            if (resp.status == "201") {
-                source = resp.data;
-            } else {
-                console.log("Some error: "+resp.data);
+            sources.list[id] = resp.data;
+            sources.list[id].sourceId = resp.data.id;
+            sources.list[id].dirty = false;
+            sources.list[id].verified = true;
+        },function(resp) {
+            if (resp.status == "400") {
+                sources.list[id] = resp.data;
+                sources.list[id].sourceId = resp.data.id;
+                sources.list[id].dirty = false;
+                sources.list[id].verified = false;
             }
         });
 
@@ -109,11 +137,10 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
     sources.deleteExecute = function(id) {
         var source = sources.list[id];
         source.deletionState = "executing";
-        //$http.delete(url).then();
-        setTimeout(function() {
-            console.log("hm...");
+        $http.delete(url+"/"+source.sourceId).then(function(response) {
             sources.removeFromList(id);
-        },500);
+        });
+
     }
 
 

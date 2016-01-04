@@ -65,10 +65,12 @@
                         <div class="field-group">
                             <label for="whatever">Source name</label>
                             <input id="whatever" type="text" class="text" placeholder="Source name" ng-model="source.name">
+                            <div class="error" ng-hide="source.nameCorrect || source.dirty">Name is incorrect.</div>
                         </div>
                         <div class="field-group">
                             <label>URL</label>
                             <input type="text" class="text" placeholder="URL" ng-model="source.url">
+                            <div class="error" ng-hide="source.sourceExists || source.dirty">Source not found.</div>
                         </div>
                         <div class="field-group">
                             <label>Username</label>
@@ -77,6 +79,7 @@
                         <div class="field-group">
                             <label>Password</label>
                             <input type="password" class="password" placeholder="Password" ng-model="source.password">
+                            <div class="error" ng-hide="(!source.sourceExists || source.credentialsCorrect) || source.dirty">Incorrect username or password.</div>
                         </div>
 
 
@@ -91,8 +94,8 @@
                         <button ng-click="sources.cancelDeletion($index)" class="aui-button">Cancel</button>
                     </div>
                     <div ng-show="source.deletionState==null" class="buttons-container">
-                        <button ng-click="sources.save($index)" ng-disabled="source.verified" class="aui-button aui-button-primary">{{source.verified?'Saved':'Save'}}</button>
-                        <button ng-click="sources.delete($index)" class="aui-button">Remove</button>
+                        <button ng-click="sources.save($index)" ng-disabled="source.verified" class="aui-button aui-button-primary">{{source.verified?'Saved':'Check & Save'}}</button>
+                        <button ng-click="sources.delete($index)" class="aui-button">{{source.sourceId > 0?'Remove':'Cancel'}}</button>
                     </div>
                 </fieldset>
 
@@ -103,7 +106,7 @@
                 </div>
             </form>
 
-            <pre>{{sources.list|json}}</pre>
+            <pre ng-hide="1">{{sources.list|json}}</pre>
         </div>
         <div class="tabs-pane" id="doc_config-branch">
 
