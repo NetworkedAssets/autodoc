@@ -48,12 +48,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         return this.getData();
     }
 
-    $rootScope.$watch(function() {
-        return settings;
-    },function() {
-        //console.log(settings);
-    },true);
-
     settings.setBranch = function(chosen) {
         if (typeof chosen == "object") {
             var branchSettings = settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[chosen.branch];
@@ -68,9 +62,16 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         return settings.path;
     };
 
+    var getSourceUrlFromId = function(id) {
+        return settings.raw.sources[id].url;
+    };
+
     settings.getPathAsString = function() {
-        return settings.path.project+"/"+settings.path.repo+"/"+settings.path.branch;
-    }
+
+        var url = urlProvider.encodeComponent(getSourceUrlFromId(settings.path.source));
+        console.log(url);
+        return url+"/"+settings.path.project+"/"+settings.path.repo+"/"+urlProvider.encodeComponent(settings.path.branch);
+    };
 
     settings.resetBranch = function() {
         settings.path = null;
@@ -86,15 +87,33 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     settings.updateNow = function() {
         settings.updateNowState = "initiating";
         var callback = function() {
-            console.log("initiated?");
             settings.updateNowState = "initiated";
             $timeout();
         };
 
         console.log(settings.getPathAsString());
-        /*$http
-            .post(urlProvider.getRestUrl("/"+settingsData.getPathAsString()))
+        console.log(urlProvider.getRestUrl("/event/"+settings.getPathAsString()));
+
+        /* // @RequestBody
+        var data = {
+            source: getSourceUrlFromId(settings.getPath().source),
+            project: settings.getPath().project,
+            repo: settings.getPath().repo,
+            branch: settings.getPath().branch
+        };
+
+        $http
+            .post(urlProvider.getRestUrl("/event"),data)
             .then(callback);*/
+
+        // @PathParam
+        $http
+            .post(urlProvider.getRestUrl("/event/"+settings.getPathAsString()))
+            .then(callback);
+
+
+
+
 
         setTimeout(callback,1000);
     };
@@ -108,7 +127,25 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
     }
 
+    $rootScope.listenToOptions = {
+        "mon": {
+            label: "Off",
+            value: "none"
+        },
+        "tue": {
+            label: "Git event",
+            value: "git"
+        },
+        "wed": {
+            label: "Schedule",
+            value: "schedule"
+        }
+    };
+
     $rootScope.settings = settings;
+
+
+
 
     return settings;
 });

@@ -146,13 +146,13 @@
                         </form>
                     </div>
                     <div ng-controller="branchSettingsCtrl as branchSettings" id="doc_config-branch-container">
-                        <div ng-hide="branchSettings.settings.path != null" class="aui-message aui-message-info">
+                        <div ng-hide="$root.settings.path != null" class="aui-message aui-message-info">
                             <p class="title">
                                 <strong>Choose source, project, repository and branch.</strong>
                             </p>
                         </div>
 
-                        <div ng-show="branchSettings.settings.path != null">
+                        <div ng-show="$root.settings.path != null">
                             <h3>Options</h3>
                             <div>
                                 <div>
@@ -162,15 +162,15 @@
                                             <legend><span>Update on</span></legend>
                                             <doc-aui-button-group
                                                     doc-type="radio"
-                                                    ng-model="branchSettings.settings.listensTo"
-                                                    doc-options="branchSettings.listenToOptions"
+                                                    ng-model="$root.settings.listensTo"
+                                                    doc-options="$root.listenToOptions"
                                             ></doc-aui-button-group>
                                             <button
                                                     class="aui-button aui-button-primary"
-                                                    ng-show="branchSettings.listensTo != 'none'"
-                                                    ng-click="branchSettings.settings.updateNow()"
-                                                    ng-disabled="branchSettings.settings.updateNowState != 'ready'"
-                                            >{{ branchSettings.settings.updateNowState == "initiated"?'Update initiated':(branchSettings.settings.updateNowState == "initiating"?'Initiating update...':'Update now')}}</button>
+                                                    ng-show="$root.listensTo != 'none'"
+                                                    ng-click="$root.settings.updateNow()"
+                                                    ng-disabled="$root.settings.updateNowState != 'ready'"
+                                            >{{ $root.settings.updateNowState == "initiated"?'Update initiated':($root.settings.updateNowState == "initiating"?'Initiating update...':'Update now')}}</button>
                                         </fieldset>
                                     </form>
                                 </div>
@@ -255,7 +255,7 @@
                         </div>
                         <!--<aui-select2 doc-options="content.sources" placeholder="Placeholder"></aui-select2>-->
 
-                        <pre ng-show="0">{{branchSettings.settings | json}}</pre>
+                        <pre ng-show="0">{{$root.settings | json}}</pre>
 
                     </div>
                 </div>

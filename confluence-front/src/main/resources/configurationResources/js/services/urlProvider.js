@@ -12,6 +12,9 @@ angular.module("DoC_Config").factory("urlProvider",function() {
             }
             return this.getBaseUrl()+"/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources"+path;
         },
+        encodeComponent: function(string) {
+            return encodeURIComponent(string);
+        },
         isLocal: function() {
             return AJS.params && AJS.params.baseUrl;
         },
