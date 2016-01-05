@@ -10,8 +10,6 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
 
     menu.weekdays;
 
-
-
     var fakeChosen = function() {
         menu.chosen = {
             sourceProject: "staszek\uF000APD",
@@ -57,16 +55,11 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
 
     settingsData.registerCallback("menu",function() {
         processTree(settingsData.raw);
-
-        //fakeChosen();
-        //menu.tree = settingsData.raw;
-        //menu.initSources();
-        /*setTimeout(function() {
-            menu.setProject("AUT");
-        },100);*/
     });
 
     var auto = 0;
+
+
 
     menu.initSources = function() {
         var sources = [];
@@ -84,19 +77,36 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
         }
 
         menu.sources = sources;
+    };
 
+    menu.reset = function() {
+        menu.chosen = {
+            source: null,
+            project: null,
+            repo: null,
+            branch: null,
+            sourceProject: ""
+        };
+        $timeout();
+    };
 
-
-
-
-    }
     $scope.$watch("menu.chosen",function(newValue,oldValue) {
-        if (newValue.sourceProject !== oldValue.sourceProject && (typeof newValue.sourceProject == "string")) {
-            var arr = newValue.sourceProject.split('\uF000');
-            menu.chosen.source = arr[0];
-            menu.chosen.project = arr[1];
-            menu.chosen.repo = null;
-            menu.chosen.branch = null;
+        console.log(newValue,oldValue);
+        if (newValue.sourceProject !== oldValue.sourceProject) {
+            if (typeof newValue.sourceProject == "string") {
+                var arr = newValue.sourceProject.split('\uF000');
+                menu.chosen.source = arr[0];
+                menu.chosen.project = arr[1];
+                menu.chosen.repo = null;
+                menu.chosen.branch = null;
+            } else {
+                menu.chosen = {
+                    source: null,
+                    project: null,
+                    repo: null,
+                    branch: null
+                };
+            }
         }
 
         if (
@@ -112,9 +122,14 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
 
     },true);
 
-    $scope.$watch("menu.chosen.sourceProject",function(sourceProject) {
-
-    });
+    $scope.$watch(function() {
+        return settingsData.path;
+    },function(path) {
+        if (path === null) {
+            menu.chosen.branch = null;
+            $timeout();
+        }}
+    );
 
     $scope.$watch("menu.chosen.repo",function() {
         menu.chosen.branch = null;

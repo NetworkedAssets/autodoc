@@ -109,6 +109,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
             sources.list[id].sourceId = resp.data.id;
             sources.list[id].dirty = false;
             sources.list[id].verified = true;
+            settingsData.reload();
         },function(resp) {
             if (resp.status == "400") {
                 sources.list[id] = resp.data;
@@ -139,6 +140,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
         source.deletionState = "executing";
         $http.delete(url+"/"+source.sourceId).then(function(response) {
             sources.removeFromList(id);
+            settingsData.reload();
         });
 
     }

@@ -1,3 +1,3 @@
-angular.module("DoC_Config").controller("branchSettingsCtrl",function($scope,$http,settingsData,$rootScope) {
-    var branchSettings = this;
+angular.module("DoC_Config").controller("branchesCtrl",function($scope,$http,settingsData,$rootScope) {
+    var branches = this;
 });

@@ -52,7 +52,7 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
             scope.$watch("options",function(options) {
                 select.empty();
                 if (attrs.docAllowEmpty && select.find("option:not([value])").length == 0) {
-                    select.prepend("<option/>");
+                    select.prepend('<option value=""></option>');
                 }
                 if (scope.options) {
                     processOptions(scope.options,select)
@@ -67,7 +67,11 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
                 //console.log(newValue,oldValue);
                 if (1 || newValue !== oldValue) {
                     //console.log("setting",newValue,oldValue);
-                    AJS.$(select).auiSelect2("val",ngModel.$viewValue);
+                    var value = newValue;
+                    if (typeof value != "string") {
+                        value = "";
+                    }
+                    AJS.$(select).auiSelect2("val",value);
                 }
 
             });

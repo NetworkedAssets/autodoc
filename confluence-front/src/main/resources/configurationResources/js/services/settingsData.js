@@ -1,35 +1,44 @@
 angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$timeout,urlProvider){
     var settings = {
         path: null,
-        raw: {}
+        raw: {},
+        original: {}
     };
 
-    $rootScope.loading = true;
+
 
     var callbacks = {};
 
-    $http
-        .get(urlProvider.getRestUrl("/projects"))
-        //.get((urlProvider.isLocal())?urlProvider.getRestUrl("/projects"):urlProvider.getResourcesUrl("/data/settings3.json"))
-        .then(function(response) {
-            var sources = {};
-            response.data.sources.forEach(function(source) {
-                source.verified = true;
-                if (!source.name) {
-                    source.name = "(no name)";
-                }
-                sources[source.id] = source;
-            });
-            settings.raw = response.data;
-            settings.raw.sources = sources;
-            console.log("Original settings data: ",settings.raw.sources);
-            //settings.setBranch(0,"AUT","autodoc","refs/heads/master");
 
-            angular.forEach(callbacks,function(fn) {
-                fn();
+
+    settings.load = function() {
+        $rootScope.loading = true;
+        $http
+            .get(urlProvider.getRestUrl("/projects"))
+            //.get((urlProvider.isLocal())?urlProvider.getRestUrl("/projects"):urlProvider.getResourcesUrl("/data/settings3.json"))
+            .then(function(response) {
+                var sources = {};
+                response.data.sources.forEach(function(source) {
+                    source.verified = true;
+                    if (!source.name) {
+                        source.name = "(no name)";
+                    }
+                    sources[source.id] = source;
+                });
+                settings.raw = response.data;
+                settings.raw.sources = sources;
+                console.log("Original settings data: ",settings.raw.sources);
+
+                angular.forEach(callbacks,function(fn) {
+                    fn();
+                });
+                $rootScope.loading = false;
             });
-            $rootScope.loading = false;
-        });
+    };
+
+    settings.reload = function() {
+        return settings.load();
+    }
 
     settings.save = function() {
         var chosen = settings.path;
@@ -42,7 +51,11 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
             .then(function(response) {
                 console.log(response);
             });
-    }
+    };
+
+    settings.revert = function() {
+        settings.setBranch(settings.path);
+    };
 
     settings.get = function() {
         return this.getData();
@@ -145,7 +158,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     $rootScope.settings = settings;
 
 
-
+    settings.load();
 
     return settings;
 });
