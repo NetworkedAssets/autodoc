@@ -58,15 +58,16 @@ public class ConfigurationService {
 
 	}
 
-	@Path("projects/listened")
+	@Path("branches/listened")
 	@GET
-	public Response getListenedProjects() {
+	public Response getListenedBranches() {
 		try {
 			List<Source> sources = transformerServer.getSettings().getSources();
 
-			sources.stream().forEach(source -> source.projects.values()
-					.forEach(project -> project.repos.values().forEach(repo -> repo.branches.values()
-							.removeIf(branch -> branch.getListenTo().getListenTypeId().equals(ListenType.none)))));
+			sources.stream()
+					.forEach(source -> source.projects.values()
+							.forEach(project -> project.repos.values().forEach(repo -> repo.branches.values()
+									.removeIf(branch -> branch.getListenTo().equals(ListenType.none)))));
 
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(String.format("{\"sources\":\"%s\"}", OBJECT_MAPPER.writeValueAsString(sources))).build();
@@ -76,6 +77,15 @@ public class ConfigurationService {
 
 	}
 
+	@Path("branches/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
+	@POST
+	public Response setBranches(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
+			@PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId) {
+		// TODO: implement
+		return null;
+	}
+
+	// TODO: check if necessary
 	@Path("projects")
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)

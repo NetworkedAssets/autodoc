@@ -43,7 +43,7 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 
 		if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl) || !settingsProvider
 				.getCurrentSettings().getSourceByUrl(sourceUrl).getProjectByKey(projectKey).getRepoBySlug(repoSlug)
-				.getBranchById(branchId).getListenTo().getListenTypeId().equals(ListenType.none)) {
+				.getBranchById(branchId).getListenTo().equals(ListenType.none)) {
 
 			Code code = codeProvider.getCode(settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl),
 					projectKey, repoSlug, branchId);
