@@ -222,12 +222,23 @@ public class SettingsManager
 
 	@Override
 	public Source changeSource(Source source) {
+		if (Strings.isNullOrEmpty(source.getPassword())) {
+			getCorrectPassword(source);
+		}
 		verifySource(source);
 		if (source.isCorrect()) {
 			getSettings().getSources().removeIf(s -> s.getId() == source.getId());
 			getSettings().getSources().add(source);
 		}
 		return source;
+	}
+
+	private void getCorrectPassword(Source source) {
+		String previousPassword = this.settings.getSources().stream()
+				.filter(previousSources -> previousSources.getId() == source.getId()).map(Source::getPassword)
+				.findFirst().orElse(null);
+		source.setPassword(previousPassword);
+
 	}
 
 	/**
