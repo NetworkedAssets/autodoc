@@ -1,4 +1,5 @@
 #putMetadata('dashboardResourcePath', $resourcesPath)
 #putMetadata('dashboardProjectile', $paramproject)
+#requireResource("com.atlassian.auiplugin:aui-select2")
 #requireResource("com.networkedassets.autodoc.confluence-front:dashboard-resources")
 $dashboardSectionHtml

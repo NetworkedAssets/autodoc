@@ -1,9 +1,5 @@
 angular.module("DoC").controller("topCtrl",function($scope,$state) {
-    //var $scope = this;
-    $scope.activeState = {
-        name: null,
-        displayName: null
-    };
+
     $scope.states = {};
 
     $scope.projects = [
@@ -12,24 +8,41 @@ angular.module("DoC").controller("topCtrl",function($scope,$state) {
     ];
 
     var i = 0;
-    $state.get().forEach(function(state,index) {
+
+    $state.get().forEach(function(state) {
 
         if (state.name.indexOf('.') === -1 && state.displayName) {
 
             $scope.states[state.name] = {
-                name: state.name,
-                displayName: state.displayName
+                value: state.name,
+                label: state.displayName
             };
             if (i === 0) {
-                $scope.activeState = $scope.states[state.name];
+                $scope.chosenState = $scope.states[state.name];
             }
             i++;
         }
     });
 
-    $scope.changeState = function(state) {
-        console.log(state);
-        $scope.activeState = $scope.states[state];
-        $state.go(state);
-    };
+    $scope.$watch('$state.current.name', function(newValue) {
+        var rootState;
+        if (newValue && (newValue.indexOf('.') >= 0)) {
+            rootState = newValue.split(".")[0];
+        } else {
+            rootState = newValue;
+        }
+
+        if (rootState) {
+            $scope.chosenState = $scope.states[rootState];
+        }
+    },true);
+
+    $scope.$watch("chosenState",function(newValue,oldValue) {
+        console.log(newValue);
+        if (newValue != oldValue && newValue) {
+            $state.go(newValue.value);
+        }
+
+    },true);
+
 });

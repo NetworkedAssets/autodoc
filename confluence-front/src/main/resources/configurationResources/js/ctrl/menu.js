@@ -64,7 +64,6 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
     menu.initSources = function() {
         var sources = [];
         angular.forEach(menu.tree.sources,function(value,key) {
-            console.log(key,value);
             sources.push({
                 label: value.name,
                 value: key
@@ -91,7 +90,6 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
     };
 
     $scope.$watch("menu.chosen",function(newValue,oldValue) {
-        console.log(newValue,oldValue);
         if (newValue.sourceProject !== oldValue.sourceProject) {
             if (typeof newValue.sourceProject == "string") {
                 var arr = newValue.sourceProject.split('\uF000');

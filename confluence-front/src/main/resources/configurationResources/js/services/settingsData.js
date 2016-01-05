@@ -4,12 +4,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         raw: {},
         original: {}
     };
-
-
-
     var callbacks = {};
-
-
 
     settings.load = function() {
         $rootScope.loading = true;
@@ -44,11 +39,37 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         var chosen = settings.path;
         var branchSettings = settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[chosen.branch];
         branchSettings.scheduledEvents = settings.scheduledEvents;
-        branchSettings.listensTo = settings.listensTo;
-        console.log(urlProvider.getRestUrl("/projects"),settings.raw);
+        branchSettings.listenTo = settings.listenTo;
+
+        var data = {
+            scheduledEvents: settings.scheduledEvents,
+            listenTo: settings.listenTo,
+            displayId: branchSettings.displayId,
+            id: branchSettings.id
+        };
+
+        if (data.listenTo !== "schedule") {
+            delete data.scheduledEvents;
+        }
+
+        console.log(urlProvider.getRestUrlWithParams([
+                "branches",
+                chosen.source,
+                chosen.project,
+                chosen.branch
+            ])
+        );
+
+        console.log(data);
+
         $http
-            .post(urlProvider.getRestUrl("/projects"),settings.raw)
-            .then(function(response) {
+            .post(urlProvider.getRestUrlWithParams([
+                "branches",
+                chosen.source,
+                chosen.project,
+                chosen.branch
+            ]), data)
+            .then(function (response) {
                 console.log(response);
             });
     };
@@ -65,7 +86,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         if (typeof chosen == "object") {
             var branchSettings = settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[chosen.branch];
             settings.scheduledEvents = branchSettings.scheduledEvents;
-            settings.listensTo = branchSettings.listensTo;
+            settings.listenTo = branchSettings.listenTo;
             settings.path = chosen;
             settings.updateNowState = "ready";
         }
@@ -80,7 +101,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     };
 
     settings.getPathAsString = function() {
-
         var url = urlProvider.encodeComponent(getSourceUrlFromId(settings.path.source));
         console.log(url);
         return url+"/"+settings.path.project+"/"+settings.path.repo+"/"+urlProvider.encodeComponent(settings.path.branch);
@@ -89,7 +109,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     settings.resetBranch = function() {
         settings.path = null;
         settings.scheduledEvents = null;
-        settings.listensTo = null;
+        settings.listenTo = null;
         settings.updateNowState = "ready";
     };
 
@@ -105,7 +125,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         };
 
         console.log(settings.getPathAsString());
-        console.log(urlProvider.getRestUrl("/event/"+settings.getPathAsString()));
+        console.log(urlProvider.getRestUrl("/event/"+settings.getPathAsString())+"/");
 
         /* // @RequestBody
         var data = {
@@ -121,14 +141,14 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
         // @PathParam
         $http
-            .post(urlProvider.getRestUrl("/event/"+settings.getPathAsString()))
+            .post(urlProvider.getRestUrl("/event/"+settings.getPathAsString())+"/")
             .then(callback);
 
 
 
 
 
-        setTimeout(callback,1000);
+        //setTimeout(callback,1000);
     };
 
     settings.registerCallback = function(name,fn) {
@@ -158,7 +178,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     $rootScope.settings = settings;
 
 
-    settings.load();
 
+    settings.load();
     return settings;
 });

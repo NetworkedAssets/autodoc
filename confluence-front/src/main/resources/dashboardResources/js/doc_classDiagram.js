@@ -13,7 +13,7 @@ function ClassDiagram(options) {
         }
     };
 
-    var scopeLockSize = 20;
+    var scopeLockSize = 16;
 
     var settings;
 
@@ -319,7 +319,9 @@ function ClassDiagram(options) {
         });
 
         $.each(data.relations,function(key,relation) {
-            dagreGraph.setEdge(relation.source,relation.target);
+            dagreGraph.setEdge(relation.source,relation.target,{
+                lineInterpolate: "step-after"
+            });
         });
 
         var zoom = d3.behavior.zoom().on("zoom", function() {
@@ -439,7 +441,6 @@ function ClassDiagram(options) {
                     if (elem.static) {
                         tspan.classed("static",true);
                     }
-                    console.log(elem);
                     if (elem.scope == "public" || elem.scope == "private" || elem.scope == "protected") {
                         g.append("image")
                             .attr("x",textOffset.x-3)
@@ -500,10 +501,10 @@ function ClassDiagram(options) {
         render(inner, dagreGraph);
 
         // Center the graph
-        var initialScale = 0.75;
+        var initialScale = 0.5;
         zoom
-            //.translate([(svg.attr("width") - dagreGraph.graph().width * initialScale) / 2, 20])
-            .translate([-200, -400])
+            .translate([(svg.attr("width") - dagreGraph.graph().width * initialScale) / 2, 20])
+            //.translate([-200, -400])
             .scale(initialScale)
             .event(svg);
     };

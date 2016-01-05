@@ -6,7 +6,6 @@
 
 
     <!--  AUI Core -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui.js"></script>
     <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/css/aui.css" media="all">
 
@@ -164,12 +163,12 @@
                                                 <legend><span>Update on</span></legend>
                                                 <doc-aui-button-group
                                                         doc-type="radio"
-                                                        ng-model="$root.settings.listensTo"
+                                                        ng-model="$root.settings.listenTo"
                                                         doc-options="$root.listenToOptions"
                                                 ></doc-aui-button-group>
                                                 <button
                                                         class="aui-button aui-button-primary"
-                                                        ng-show="$root.listensTo != 'none'"
+                                                        ng-show="$root.listenTo != 'none'"
                                                         ng-click="$root.settings.updateNow()"
                                                         ng-disabled="$root.settings.updateNowState != 'ready'"
                                                 >{{ $root.settings.updateNowState == "initiated"?'Update initiated':($root.settings.updateNowState == "initiating"?'Initiating update...':'Update now')}}</button>
@@ -177,7 +176,7 @@
                                         </form>
                                     </div>
                                     <div ng-controller="schedulesCtrl as schedules">
-                                        <div ng-show="schedules.settings.listensTo=='schedule'" >
+                                        <div ng-show="schedules.settings.listenTo=='schedule'" >
                                             <h4>Schedule events</h4>
                                             <div id="doc_config-branch-schedules-events">
                                                 <div ng-repeat="event in schedules.settings.scheduledEvents" ng-class-even="'even'" class="doc_config-branch-event">

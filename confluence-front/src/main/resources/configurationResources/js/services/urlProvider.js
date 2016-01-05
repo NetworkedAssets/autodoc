@@ -6,6 +6,13 @@ angular.module("DoC_Config").factory("urlProvider",function() {
             }
             return this.getBaseUrl()+"/rest/autodoc/1.0/configuration"+path;
         },
+        getRestUrlWithParams: function(params) {
+            var paramString = "/";
+            angular.forEach(params,function(param) {
+                paramString += urlProvider.encodeComponent(param)+"/";
+            });
+            return this.getRestUrl(paramString);
+        },
         getResourcesUrl: function(path) {
             if (!path) {
                 path = "";
@@ -13,7 +20,7 @@ angular.module("DoC_Config").factory("urlProvider",function() {
             return this.getBaseUrl()+"/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources"+path;
         },
         encodeComponent: function(string) {
-            return encodeURIComponent(string);
+            return encodeURIComponent(encodeURIComponent(string));
         },
         isLocal: function() {
             return AJS.params && AJS.params.baseUrl;
