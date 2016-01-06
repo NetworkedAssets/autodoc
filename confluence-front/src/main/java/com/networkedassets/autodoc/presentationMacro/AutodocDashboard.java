@@ -5,6 +5,8 @@ import com.atlassian.confluence.macro.Macro;
 import com.atlassian.confluence.macro.MacroExecutionException;
 import com.atlassian.confluence.renderer.radeox.macros.MacroUtils;
 import com.atlassian.confluence.util.velocity.VelocityUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 
@@ -29,9 +31,12 @@ public class AutodocDashboard implements Macro {
         VelocityContext context = new VelocityContext(MacroUtils.defaultVelocityContext());
         context.put("dashboardSectionHtml", dashboardSection);
         context.put("resourcesPath", resourcesPath);
-        context.put("project", params.get("project"));
-        context.put("repo", params.get("repo"));
-        context.put("branch", params.get("branch"));
+
+        try {
+            context.put("paramsJson", new ObjectMapper().writeValueAsString(params));
+        } catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
         return VelocityUtils.getRenderedTemplate("/dashboardResources/dashboard.vm", context);
     }

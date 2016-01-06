@@ -1,4 +1,4 @@
-angular.module("DoC").controller("topCtrl",function($scope,$state) {
+angular.module("DoC").controller("topCtrl",function($scope,$state,macroParams) {
 
     $scope.states = {};
 
@@ -11,7 +11,7 @@ angular.module("DoC").controller("topCtrl",function($scope,$state) {
 
     $state.get().forEach(function(state) {
 
-        if (state.name.indexOf('.') === -1 && state.displayName) {
+        if (state.name.indexOf('.') === -1 && state.displayName && macroParams.get(state.name)) {
 
             $scope.states[state.name] = {
                 value: state.name,
@@ -22,6 +22,7 @@ angular.module("DoC").controller("topCtrl",function($scope,$state) {
             }
             i++;
         }
+
     });
 
     $scope.$watch('$state.current.name', function(newValue) {
@@ -33,12 +34,21 @@ angular.module("DoC").controller("topCtrl",function($scope,$state) {
         }
 
         if (rootState) {
-            $scope.chosenState = $scope.states[rootState];
+            if (!$scope.states[rootState]) {
+                /* Default state not available, switching to first available */
+                angular.forEach($scope.states,function(state) {
+                    $state.go(state.value);
+                    return false;
+                });
+
+            } else {
+                $scope.chosenState = $scope.states[rootState];
+            }
+
         }
     },true);
 
     $scope.$watch("chosenState",function(newValue,oldValue) {
-        console.log(newValue);
         if (newValue != oldValue && newValue) {
             $state.go(newValue.value);
         }

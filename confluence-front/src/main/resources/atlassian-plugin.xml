@@ -134,6 +134,7 @@
 		<resource type="download" name="js/dirs/auiSelect2.js" location = "dashboardResources/js/dirs/auiSelect2.js" />
 
 		<resource type="download" name="js/services/urlProvider.js" location = "dashboardResources/js/services/urlProvider.js" />
+		<resource type="download" name="js/services/macroParams.js" location = "dashboardResources/js/services/macroParams.js" />
 		<resource type="download" name="js/services/javadocEntities.js" location = "dashboardResources/js/services/javadocEntities.js" />
 
 		<resource type="download" name="js/filters/javadoc.menuItemSorter.js" location = "dashboardResources/js/filters/javadoc.menuItemSorter.js" />
