@@ -1,7 +1,6 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.BranchModifier;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
@@ -25,13 +24,11 @@ public class SettingsService extends RestService {
 
     static final Logger log = LoggerFactory.getLogger(SettingsService.class);
     private SettingsProvider settingsProvider;
-    private SettingsSaver settingsSetter;
     private BranchModifier branchModifier;
 
     @Inject
-    public SettingsService(SettingsProvider settingsProvider, SettingsSaver settingsSetter, BranchModifier branchModifier) {
+    public SettingsService(SettingsProvider settingsProvider, BranchModifier branchModifier) {
         this.settingsProvider = settingsProvider;
-        this.settingsSetter = settingsSetter;
         this.branchModifier = branchModifier;
     }
 
@@ -64,15 +61,4 @@ public class SettingsService extends RestService {
         }
 
     }
-
-    // TODO: check if necessary
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Settings setSettings(Settings settings) {
-        log.info("POST request for settings handled: " + settings.toString());
-        settingsSetter.setCurrentSettings(settings);
-        return settingsProvider.getCurrentSettings();
-    }
-
 }

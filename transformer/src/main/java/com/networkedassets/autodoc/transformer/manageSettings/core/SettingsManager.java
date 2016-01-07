@@ -30,7 +30,7 @@ import java.util.*;
  * Handles the settings of the application
  */
 public class SettingsManager
-        implements SettingsProvider, SettingsSaver, SourceProvider, SourceCreator, SourceRemover, SourceModifier, BranchModifier {
+        implements SettingsProvider, SourceProvider, SourceCreator, SourceRemover, SourceModifier, BranchModifier {
 
     public String settingsFilename;
 
@@ -56,22 +56,6 @@ public class SettingsManager
     public Settings getCurrentSettings() {
         updateSettings(this.settings);
         return settings;
-    }
-
-    @Override
-    public void setCurrentSettings(Settings settings) {
-        // look for null passwords and if they appear - preserve old ones!
-        settings.getSources().forEach(source -> {
-            if (Strings.isNullOrEmpty(source.getPassword())) {
-                String previousPassword = this.settings.getSources().stream()
-                        .filter(source1 -> source1.getUrl().equals(source.getUrl())).map(Source::getPassword)
-                        .findFirst().orElse(null);
-                source.setPassword(previousPassword);
-            }
-        });
-        updateSettings(settings);
-        this.settings = settings;
-        saveSettingsToFile(settingsFilename);
     }
 
     private void updateSettings(Settings givenSettings) {
