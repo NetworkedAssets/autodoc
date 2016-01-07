@@ -47,7 +47,6 @@ public class Branch implements Serializable {
 		}
 
 		public String getListenTypeId() {
-
 			return this.listenTypeId;
 		}
 

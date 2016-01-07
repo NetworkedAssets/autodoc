@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
 
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.Period;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Map;
 /**
  * Class representing a scheduled event - an event fired at particular times
  */
-public class ScheduledEvent {
+public class ScheduledEvent implements Serializable {
     private transient Instant scheduleStart = Instant.EPOCH;
     private transient Period period = Period.ZERO;
 

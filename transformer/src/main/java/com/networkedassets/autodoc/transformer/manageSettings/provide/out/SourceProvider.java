@@ -2,6 +2,7 @@ package com.networkedassets.autodoc.transformer.manageSettings.provide.out;
 
 import com.networkedassets.autodoc.transformer.settings.Source;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -9,4 +10,5 @@ import java.util.Optional;
  */
 public interface SourceProvider {
     Optional<Source> getSourceById(int id);
+    List<Source> getAllSources();
 }
