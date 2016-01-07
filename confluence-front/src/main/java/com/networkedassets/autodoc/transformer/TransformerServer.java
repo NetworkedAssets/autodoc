@@ -77,23 +77,7 @@ public class TransformerServer {
 		return response.getBody();
 	}
 
-	public HttpResponse<String> saveSettingsForSpace(Settings settings) throws SettingsException {
-		HttpResponse<String> response;
-		try {
-
-			response = Unirest.post(url + SETTINGS).header("Content-Type", "application/json").body(settings)
-					.asString();
-		} catch (UnirestException e) {
-			throw new SettingsException(e);
-		}
-
-		if (response.getStatus() != 200) {
-			throw new SettingsException("Could not save settings: " + response.getBody());
-		}
-
-		return response;
-	}
-
+	
 	public HttpResponse<String> forceRegenerate(String sourceUrl, String projectKey, String repoSlug, String branchId)
 			throws SettingsException {
 		String eventPayload = String.format(EVENT_JSON, sourceUrl, projectKey, repoSlug, branchId);

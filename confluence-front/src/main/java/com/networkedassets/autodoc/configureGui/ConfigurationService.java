@@ -57,8 +57,8 @@ public class ConfigurationService {
 
 			sources.forEach(s -> {
 				s.projects.forEach((kp, p) -> {
-					p.repos.forEach((kr, r) ->
-							r.branches.values().removeIf(b -> b.getListenTo() == Branch.ListenType.none));
+					p.repos.forEach(
+							(kr, r) -> r.branches.values().removeIf(b -> b.getListenTo() == Branch.ListenType.none));
 					p.repos.values().removeIf(r -> r.branches.isEmpty());
 				});
 				s.projects.values().removeIf(p -> p.repos.isEmpty());
@@ -77,36 +77,19 @@ public class ConfigurationService {
 	@POST
 	public Response setBranches(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
 			@PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
-        Branch modifiedBranch = null;
-        try {
-            projectKey = URLDecoder.decode(projectKey, "UTF-8");
-            repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
-            branchId = URLDecoder.decode(branchId, "UTF-8");
-            modifiedBranch = transformerServer.modifyBranch(sourceId, projectKey, repoSlug, branch);
-        } catch (SettingsException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return Response.status(Response.Status.OK).entity(modifiedBranch).build();
-	}
-
-	// TODO: check if necessary
-	@Path("projects")
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public String setProjects(Settings settings) {
-
-		HttpResponse<String> response;
+		Branch modifiedBranch = null;
 		try {
-			response = transformerServer.saveSettingsForSpace(settings);
+			projectKey = URLDecoder.decode(projectKey, "UTF-8");
+			repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
+			branchId = URLDecoder.decode(branchId, "UTF-8");
+			modifiedBranch = transformerServer.modifyBranch(sourceId, projectKey, repoSlug, branch);
 		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
-		return response.getBody();
 
+		return Response.status(Response.Status.OK).entity(modifiedBranch).build();
 	}
 
 	@Path("event/{sourceUrl}/{projectKey}/{repoSlug}/{branchId}")
