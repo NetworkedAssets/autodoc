@@ -33,7 +33,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
     settings.reload = function() {
         return settings.load();
-    }
+    };
 
     settings.save = function() {
         var chosen = settings.path;
@@ -82,7 +82,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
     settings.get = function() {
         return this.getData();
-    }
+    };
 
     settings.setBranch = function(chosen) {
         if (typeof chosen == "object") {
@@ -160,7 +160,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
         callbacks[name] = fn;
 
-    }
+    };
 
     $rootScope.listenToOptions = {
         "mon": {
