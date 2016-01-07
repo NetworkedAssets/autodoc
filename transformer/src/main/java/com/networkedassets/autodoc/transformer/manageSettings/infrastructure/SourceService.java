@@ -1,7 +1,7 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.google.common.base.Preconditions;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceChanger;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceModifier;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
@@ -26,15 +26,23 @@ public class SourceService {
 	private SourceProvider sourceProvider;
 	private SourceCreator sourceCreator;
 	private SourceRemover sourceRemover;
-	private SourceChanger sourceChanger;
+	private SourceModifier sourceModifier;
 
 	@Inject
 	public SourceService(SourceProvider sourceProvider, SourceCreator sourceCreator, SourceRemover sourceRemover,
-			SourceChanger sourceChanger) {
+			SourceModifier sourceModifier) {
 		this.sourceProvider = sourceProvider;
 		this.sourceCreator = sourceCreator;
 		this.sourceRemover = sourceRemover;
-		this.sourceChanger = sourceChanger;
+		this.sourceModifier = sourceModifier;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSources(){
+		log.info("GET request for source handled");
+		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
+				.entity(sourceProvider.getAllSources()).build();
 	}
 
 	@GET
@@ -52,12 +60,12 @@ public class SourceService {
 	@PUT
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response changeSource(@PathParam("id") int sourceId, Source source) {
+	public Response modifySource(@PathParam("id") int sourceId, Source source) {
 		Preconditions.checkNotNull(source);
 		// TODO: check if source id exists
 		log.info("PUT request for source handled");
 		source.setId(sourceId);
-		Source resultSource = sourceChanger.changeSource(source);
+		Source resultSource = sourceModifier.modifySource(source);
 		Response.Status responseStatus;
 		if (resultSource.isCorrect()) {
 			responseStatus = Response.Status.CREATED;

@@ -22,6 +22,10 @@ public class Settings implements Serializable {
 		return sources.stream().filter(source -> source.getUrl().equals(url)).findAny().orElse(null);
 	}
 
+	public Source getSourceById(int id) {
+		return sources.stream().filter(source -> source.getId() == id).findAny().orElse(null);
+	}
+
 	public boolean isSourceWithUrlExistent(String url) {
 		return sources.stream().anyMatch(source -> source.getUrl().equals(url));
 	}
