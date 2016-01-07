@@ -1,6 +1,3 @@
-/**
- * Created by mrobakowski on 12/17/2015.
- */
 (function ($) {
     // TODO Actual semi-dynamic, timeproof URL
     var url = "http://atlas.networkedassets.net/confluence/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources/data/settings3.json";
@@ -29,7 +26,7 @@
             $(this.select)
                 .empty()
                 .append(processOptions(vm.tree.sources,$("<select/>")).contents())
-                .prepend('<option value="">-- choose --</option>')
+                .prepend('<option value="">-- choose --</option>');
             $(this.select).off("change.branchChooser").on("change.branchChooser",function() {
                 that.set($(this).find("option:selected").val());
             }).change();
@@ -129,7 +126,7 @@
 
         });
         return elem;
-    }
+    };
 
     
     var processTree = function(raw) {

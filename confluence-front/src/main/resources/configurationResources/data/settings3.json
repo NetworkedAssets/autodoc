@@ -30,7 +30,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -48,7 +48,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -66,7 +66,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -84,7 +84,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -96,7 +96,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -108,13 +108,13 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               },
               "refs/heads/dev": {
                 "displayId": "dev",
                 "id": "refs/heads/dev",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -132,13 +132,13 @@
               "refs/heads/branch2": {
                 "displayId": "branch2",
                 "id": "refs/heads/branch2",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               },
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -171,7 +171,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -189,7 +189,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -207,7 +207,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -225,7 +225,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -237,7 +237,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -249,13 +249,13 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               },
               "refs/heads/dev": {
                 "displayId": "dev",
                 "id": "refs/heads/dev",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -273,13 +273,13 @@
               "refs/heads/branch2": {
                 "displayId": "branch2",
                 "id": "refs/heads/branch2",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               },
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -312,7 +312,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -330,7 +330,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -348,7 +348,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -366,7 +366,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -378,7 +378,7 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -390,13 +390,13 @@
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               },
               "refs/heads/dev": {
                 "displayId": "dev",
                 "id": "refs/heads/dev",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }
@@ -414,13 +414,13 @@
               "refs/heads/branch2": {
                 "displayId": "branch2",
                 "id": "refs/heads/branch2",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               },
               "refs/heads/master": {
                 "displayId": "master",
                 "id": "refs/heads/master",
-                "isListened": false,
+                "listenTo": "none",
                 "scheduledEvents": []
               }
             }

@@ -67,6 +67,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 "branches",
                 chosen.source,
                 chosen.project,
+                chosen.repo,
                 chosen.branch
             ]), data)
             .then(function (response) {
