@@ -26,7 +26,7 @@ import java.util.Map;
 })
 public class Source implements Serializable {
     @JsonIgnore
-    private static int totalId = 0;
+    public static int totalId = 0;
 
     private int id;
     private String name;
@@ -41,7 +41,6 @@ public class Source implements Serializable {
     public Map<String, Project> projects = new HashMap<>();
 
     public Source() {
-        id = totalId++;
     }
 
     public void addProject(Project p) {

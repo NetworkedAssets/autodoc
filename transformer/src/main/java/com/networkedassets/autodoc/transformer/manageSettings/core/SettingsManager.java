@@ -214,6 +214,8 @@ public class SettingsManager
     public Source addSource(Source source) {
         verifySource(source);
         if (source.isCorrect()) {
+            source.setId(Source.totalId);
+            Source.totalId++;
             getSettings().getSources().add(source);
         }
         saveSettingsToFile(settingsFilename);
