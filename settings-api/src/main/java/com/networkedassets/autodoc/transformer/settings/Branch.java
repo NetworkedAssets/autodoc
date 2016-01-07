@@ -1,12 +1,11 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 /**
  * Class representing a branch in a repo
@@ -37,23 +36,12 @@ public class Branch implements Serializable {
 		this.listenTo = listenTo;
 	}
 
-	public static enum ListenType implements Serializable {
-		none("none"), git("git"), schedule("schedule");
-
-		private String listenTypeId;
-
-		ListenType(String listenTypeId) {
-			this.listenTypeId = listenTypeId;
-		}
+	public enum ListenType implements Serializable {
+		none, git, schedule;
 
 		public String getListenTypeId() {
-			return this.listenTypeId;
+			return this.toString();
 		}
-
-		public void setListenTypeId(String listenTypeId) {
-			this.listenTypeId = listenTypeId;
-		}
-
 	}
 
 }
