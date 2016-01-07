@@ -5,10 +5,8 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import com.networkedassets.autodoc.transformer.settings.Settings;
-import com.networkedassets.autodoc.transformer.settings.SettingsException;
-import com.networkedassets.autodoc.transformer.settings.Source;
-import com.networkedassets.autodoc.transformer.settings.SourceCustomSerializer;
+import com.networkedassets.autodoc.transformer.settings.*;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -40,8 +38,27 @@ public class TransformerServer {
 
 		Unirest.setObjectMapper(OBJECT_MAPPER);
 		Unirest.setHttpClient(HTTP_CLIENT);
-
 	}
+
+	public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, Branch branch) throws SettingsException {
+        try {
+            HttpResponse<Branch> branchHttpResponse = Unirest.post(url + "/branches/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
+                    .routeParam("sourceId", Integer.toString(sourceId))
+                    .routeParam("projectKey", projectKey)
+                    .routeParam("repoSlug", repoSlug)
+                    .routeParam("branchId", branch.id)
+                    .header("Content-Type", "application/json")
+                    .body(branch)
+                    .asObject(Branch.class);
+            if (branchHttpResponse.getStatus() == 200) {
+                return branchHttpResponse.getBody();
+            } else {
+                throw new SettingsException("Could not modify branch: " + IOUtils.toString(branchHttpResponse.getRawBody()));
+            }
+        } catch (UnirestException | IOException e) {
+            throw new SettingsException(e);
+        }
+    }
 
 	public TransformerServer(String transformerUrl, String confluenceUrl) {
 		this(transformerUrl);
@@ -97,7 +114,6 @@ public class TransformerServer {
 	public Source getSource(String id) throws SettingsException {
 		HttpResponse<Source> response;
 		try {
-
 			response = Unirest.get(url + SOURCES + "{id}").routeParam("id", id).asObject(Source.class);
 		} catch (UnirestException e) {
 			throw new SettingsException(e);

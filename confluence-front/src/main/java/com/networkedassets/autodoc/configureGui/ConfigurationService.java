@@ -1,36 +1,27 @@
 package com.networkedassets.autodoc.configureGui;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.List;
-import java.util.Properties;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.core.util.ClassLoaderUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.networkedassets.autodoc.transformer.TransformerServer;
-import com.networkedassets.autodoc.transformer.settings.Branch.ListenType;
+import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.Properties;
 
 @Path("/configuration/")
 public class ConfigurationService {
@@ -64,10 +55,15 @@ public class ConfigurationService {
 		try {
 			List<Source> sources = transformerServer.getSettings().getSources();
 
-			sources.stream()
-					.forEach(source -> source.projects.values()
-							.forEach(project -> project.repos.values().forEach(repo -> repo.branches.values()
-									.removeIf(branch -> branch.getListenTo().equals(ListenType.none)))));
+			sources.forEach(s -> {
+				s.projects.forEach((kp, p) -> {
+					p.repos.forEach((kr, r) ->
+							r.branches.values().removeIf(b -> b.getListenTo() == Branch.ListenType.none));
+					p.repos.values().removeIf(r -> r.branches.isEmpty());
+				});
+				s.projects.values().removeIf(p -> p.repos.isEmpty());
+			});
+			sources.removeIf(s -> s.projects.isEmpty());
 
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(String.format("{\"sources\":\"%s\"}", OBJECT_MAPPER.writeValueAsString(sources))).build();
@@ -80,9 +76,15 @@ public class ConfigurationService {
 	@Path("branches/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
 	@POST
 	public Response setBranches(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
-			@PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId) {
-		// TODO: implement
-		return null;
+			@PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
+        Branch modifiedBranch;
+        try {
+             modifiedBranch = transformerServer.modifyBranch(sourceId, projectKey, repoSlug, branch);
+        } catch (SettingsException e) {
+            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+        }
+
+        return Response.status(Response.Status.OK).entity(modifiedBranch).build();
 	}
 
 	// TODO: check if necessary
