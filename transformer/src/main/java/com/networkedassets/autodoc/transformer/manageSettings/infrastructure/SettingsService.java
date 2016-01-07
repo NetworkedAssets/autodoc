@@ -13,6 +13,8 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * REST service providing and receiving settings
@@ -46,6 +48,14 @@ public class SettingsService extends RestService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
                                  @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
+        try {
+            projectKey = URLDecoder.decode(projectKey, "UTF-8");
+            repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
+            branchId = URLDecoder.decode(branchId, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
         Branch modifiedBranch = branchModifier.modifyBranch(sourceId, projectKey, repoSlug, branchId, branch);
         if (modifiedBranch != null) {
             return Response.status(Response.Status.OK).entity(modifiedBranch).build();

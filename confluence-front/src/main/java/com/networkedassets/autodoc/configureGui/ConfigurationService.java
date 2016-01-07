@@ -77,11 +77,16 @@ public class ConfigurationService {
 	@POST
 	public Response setBranches(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
 			@PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
-        Branch modifiedBranch;
+        Branch modifiedBranch = null;
         try {
-             modifiedBranch = transformerServer.modifyBranch(sourceId, projectKey, repoSlug, branch);
+            projectKey = URLDecoder.decode(projectKey, "UTF-8");
+            repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
+            branchId = URLDecoder.decode(branchId, "UTF-8");
+            modifiedBranch = transformerServer.modifyBranch(sourceId, projectKey, repoSlug, branch);
         } catch (SettingsException e) {
             throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
 
         return Response.status(Response.Status.OK).entity(modifiedBranch).build();

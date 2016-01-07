@@ -2,6 +2,8 @@ package com.networkedassets.autodoc.transformer.manageSettings.core;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
@@ -304,7 +306,8 @@ public class SettingsManager
         try{
             currentBranch = getCurrentSettings().getSourceById(sourceId).getProjectByKey(projectKey)
                     .getRepoBySlug(repoSlug).getBranchById(branchId);
-        }catch (NullPointerException e){
+            Verify.verifyNotNull(currentBranch);
+        }catch (NullPointerException | VerifyException e){
             //wrong data given
             return null;
         }

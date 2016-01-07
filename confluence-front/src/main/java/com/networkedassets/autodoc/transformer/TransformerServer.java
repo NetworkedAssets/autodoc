@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -42,11 +43,11 @@ public class TransformerServer {
 
 	public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, Branch branch) throws SettingsException {
         try {
-            HttpResponse<Branch> branchHttpResponse = Unirest.post(url + "/branches/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
+            HttpResponse<Branch> branchHttpResponse = Unirest.post(url + "/settings/branches/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
                     .routeParam("sourceId", Integer.toString(sourceId))
-                    .routeParam("projectKey", projectKey)
-                    .routeParam("repoSlug", repoSlug)
-                    .routeParam("branchId", branch.id)
+                    .routeParam("projectKey", URLEncoder.encode(projectKey, "UTF-8"))
+                    .routeParam("repoSlug", URLEncoder.encode(repoSlug, "UTF-8"))
+                    .routeParam("branchId", URLEncoder.encode(branch.id, "UTF-8"))
                     .header("Content-Type", "application/json")
                     .body(branch)
                     .asObject(Branch.class);
