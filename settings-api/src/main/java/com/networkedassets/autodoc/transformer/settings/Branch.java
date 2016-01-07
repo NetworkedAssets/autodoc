@@ -18,7 +18,6 @@ public class Branch implements Serializable {
 	public List<ScheduledEvent> scheduledEvents;
 
 	public Branch() {
-
 		scheduledEvents = new ArrayList<>();
 	}
 
@@ -26,12 +25,6 @@ public class Branch implements Serializable {
 		this();
 		this.displayId = displayId;
 		this.id = id;
-	}
-
-	public Branch(Branch otherBranch) {
-		this(otherBranch.displayId, otherBranch.id);
-		this.listenTo = otherBranch.listenTo;
-		this.scheduledEvents = new ArrayList<>(otherBranch.scheduledEvents);
 	}
 
 	@JsonGetter

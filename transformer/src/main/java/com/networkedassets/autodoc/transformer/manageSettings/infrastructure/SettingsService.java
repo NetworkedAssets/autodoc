@@ -50,7 +50,7 @@ public class SettingsService extends RestService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Settings setSettingsForSpace(Settings settings) {
+	public Settings setSettings(Settings settings) {
 		log.info("POST request for settings handled: " + settings.toString());
 		settingsSetter.setCurrentSettings(settings);
 		return settingsProvider.getCurrentSettings();
