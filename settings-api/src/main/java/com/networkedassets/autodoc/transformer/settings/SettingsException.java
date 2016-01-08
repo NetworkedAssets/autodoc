@@ -4,7 +4,10 @@ package com.networkedassets.autodoc.transformer.settings;
  * Exception used in settings-api module
  */
 public class SettingsException extends Exception {
-    public SettingsException() {
+    
+	private static final long serialVersionUID = -6940807414905117174L;
+
+	public SettingsException() {
         super();
     }
 

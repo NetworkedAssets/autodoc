@@ -8,6 +8,8 @@ import java.util.Map;
  * Class representing a repo in a stash project
  */
 public class Repo implements Serializable {
+
+	private static final long serialVersionUID = -8959782122446629856L;
 	public String name = "!!NO_NAME!!";
 	public String slug = "!!NO_NAME!!";
 	public Map<String, Branch> branches;

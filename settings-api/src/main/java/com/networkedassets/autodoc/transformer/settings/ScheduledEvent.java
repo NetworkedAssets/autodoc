@@ -3,82 +3,82 @@ package com.networkedassets.autodoc.transformer.settings;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableMap;
 
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.Period;
 import java.util.Map;
 
-
 /**
  * Class representing a scheduled event - an event fired at particular times
  */
 public class ScheduledEvent implements Serializable {
-    private transient Instant scheduleStart = Instant.EPOCH;
-    private transient Period period = Period.ZERO;
 
-    private String scheduleStartIso;
-    private String periodIso;
+	private static final long serialVersionUID = -1213178165118904796L;
+	private transient Instant scheduleStart = Instant.EPOCH;
+	private transient Period period = Period.ZERO;
 
-    public ScheduledEvent() {}
+	private String scheduleStartIso;
+	private String periodIso;
 
-    public ScheduledEvent(Instant scheduleStart, Period period) {
-        setScheduleStart(scheduleStart);
-        setPeriod(period);
-    }
+	public ScheduledEvent() {
+	}
 
-    @JsonIgnore
-    public Instant getScheduleStart() {
-        return scheduleStart;
-    }
+	public ScheduledEvent(Instant scheduleStart, Period period) {
+		setScheduleStart(scheduleStart);
+		setPeriod(period);
+	}
 
-    @JsonIgnore
-    public void setScheduleStart(Instant scheduleStart) {
-        this.scheduleStart = scheduleStart;
-        scheduleStartIso = scheduleStart.toString();
-    }
+	@JsonIgnore
+	public Instant getScheduleStart() {
+		return scheduleStart;
+	}
 
-    @JsonIgnore
-    public Period getPeriod() {
-        return period;
-    }
+	@JsonIgnore
+	public void setScheduleStart(Instant scheduleStart) {
+		this.scheduleStart = scheduleStart;
+		scheduleStartIso = scheduleStart.toString();
+	}
 
-    @JsonIgnore
-    public void setPeriod(Period period) {
-        this.period = period;
-        periodIso = period.toString();
-    }
+	@JsonIgnore
+	public Period getPeriod() {
+		return period;
+	}
 
-    public Map<String, String> toSoyData() {
-        return ImmutableMap.of(
-                "scheduleStartIso", getScheduleStartIso(),
-                "periodIso", getPeriodIso()
-        );
-    }
+	@JsonIgnore
+	public void setPeriod(Period period) {
+		this.period = period;
+		periodIso = period.toString();
+	}
 
-    public String getScheduleStartIso() {
-        if (scheduleStartIso == null) {
-            if (scheduleStart == null) return "ERROR";
-            scheduleStartIso = scheduleStart.toString();
-        }
-        return scheduleStartIso;
-    }
+	public Map<String, String> toSoyData() {
+		return ImmutableMap.of("scheduleStartIso", getScheduleStartIso(), "periodIso", getPeriodIso());
+	}
 
-    public void setScheduleStartIso(String scheduleStartIso) {
-        scheduleStart = Instant.parse(scheduleStartIso);
-        this.scheduleStartIso = scheduleStartIso;
-    }
+	public String getScheduleStartIso() {
+		if (scheduleStartIso == null) {
+			if (scheduleStart == null)
+				return "ERROR";
+			scheduleStartIso = scheduleStart.toString();
+		}
+		return scheduleStartIso;
+	}
 
-    public String getPeriodIso() {
-        if (periodIso == null) {
-            if (period == null) return "ERROR";
-            periodIso = period.toString();
-        }
-        return periodIso;
-    }
+	public void setScheduleStartIso(String scheduleStartIso) {
+		scheduleStart = Instant.parse(scheduleStartIso);
+		this.scheduleStartIso = scheduleStartIso;
+	}
 
-    public void setPeriodIso(String periodIso) {
-        period = Period.parse(periodIso);
-        this.periodIso = periodIso;
-    }
+	public String getPeriodIso() {
+		if (periodIso == null) {
+			if (period == null)
+				return "ERROR";
+			periodIso = period.toString();
+		}
+		return periodIso;
+	}
+
+	public void setPeriodIso(String periodIso) {
+		period = Period.parse(periodIso);
+		this.periodIso = periodIso;
+	}
 }

@@ -25,7 +25,10 @@ import java.util.Map;
         "projects"
 })
 public class Source implements Serializable {
-    @JsonIgnore
+    
+	private static final long serialVersionUID = -6404862914170481264L;
+
+	@JsonIgnore
     public static int totalId = 0;
 
     private int id;

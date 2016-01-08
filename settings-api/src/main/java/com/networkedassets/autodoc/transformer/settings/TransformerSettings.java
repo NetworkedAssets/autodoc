@@ -11,6 +11,7 @@ import java.io.Serializable;
  */
 public class TransformerSettings implements Serializable {
 
+	private static final long serialVersionUID = 2478995810617471316L;
 	// TODO: 19.11.2015 Remove default values and require user to enter them on
 	// first run in frontend
 	private int transformerPort = 8050;

@@ -11,6 +11,8 @@ import java.util.List;
  * Class representing a branch in a repo
  */
 public class Branch implements Serializable {
+
+	private static final long serialVersionUID = -8481858598787329017L;
 	public String displayId = "!!NO_NAME!!";
 	public String id = "!!NO_NAME!!";
 	private ListenType listenTo;
@@ -28,9 +30,9 @@ public class Branch implements Serializable {
 
 	@JsonGetter
 	public ListenType getListenTo() {
-		return this.listenTo==null?ListenType.none:listenTo;
+		return this.listenTo == null ? ListenType.none : listenTo;
 	}
-	
+
 	@JsonSetter
 	public void setListenTo(ListenType listenTo) {
 		this.listenTo = listenTo;
