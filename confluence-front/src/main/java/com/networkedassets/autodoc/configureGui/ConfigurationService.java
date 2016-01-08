@@ -66,7 +66,7 @@ public class ConfigurationService {
 			sources.removeIf(s -> s.projects.isEmpty());
 
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
-					.entity(String.format("{\"sources\":\"%s\"}", OBJECT_MAPPER.writeValueAsString(sources))).build();
+					.entity(String.format("{\"sources\": %s}", OBJECT_MAPPER.writeValueAsString(sources))).build();
 		} catch (SettingsException | JsonProcessingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}

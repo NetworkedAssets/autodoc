@@ -1,6 +1,9 @@
 (function ($) {
     // TODO Actual semi-dynamic, timeproof URL
-    var url = "http://atlas.networkedassets.net/confluence/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources/data/settings3.json";
+    // kinda sorta done, @JakubWojnowski please verify
+    var base_url = $("meta#confluence-base-url").attr("content");
+    var url = base_url + "/rest/autodoc/1.0/configuration/branches/listened";
+    //var url = "http://atlas.networkedassets.net/confluence/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources/data/settings3.json";
 
     var vm = {};
 
@@ -132,7 +135,7 @@
     var processTree = function(raw) {
         vm.tree = {};
         vm.tree.sources = {};
-        $.each(raw.sources,function(key,value) {
+        $.each(raw.sources ,function(key,value) {
             var source = vm.tree.sources[key] = {
                 value: key,
                 label: value.name,
@@ -161,7 +164,7 @@
             });
             source.options = source.projects;
         });
-    }
+    };
 
 
     var jsOverrides = {

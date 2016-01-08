@@ -32,6 +32,6 @@ angular.module("DoC_Config").factory("urlProvider",function() {
         encodeComponent: function(string) {
             return encodeURIComponent(encodeURIComponent(string));
         }
-    }
+    };
     return urlProvider;
 });

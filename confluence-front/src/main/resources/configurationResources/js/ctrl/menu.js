@@ -17,7 +17,7 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
             branch: "refs/heads/master"
         };
         $timeout();
-    }
+    };
 
     var processTree = function(raw) {
         menu.tree = {};
@@ -51,7 +51,7 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
             });
             source.options = source.projects;
         });
-    }
+    };
 
     settingsData.registerCallback("menu",function() {
         processTree(settingsData.raw);

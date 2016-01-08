@@ -119,7 +119,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
             }
         });
 
-    }
+    };
 
     sources.delete = function(id) {
         var source = sources.list[id];
@@ -128,12 +128,12 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
         } else {
             source.deletionState = "confirming";
         }
-    }
+    };
 
     sources.cancelDeletion = function(id) {
         var source = sources.list[id];
         source.deletionState = null;
-    }
+    };
 
     sources.deleteExecute = function(id) {
         var source = sources.list[id];
@@ -143,7 +143,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
             settingsData.reload();
         });
 
-    }
+    };
 
 
 });
