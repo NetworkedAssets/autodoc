@@ -21,124 +21,114 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
-/**
- * Hello world!
- */
 public class Transformer {
 
-    static final Logger log = LoggerFactory.getLogger(Transformer.class);
-    public static final String KEY_STORE_PASSWORD = "keyStorePassword";
-    private static Server jettyServer;
+	static final Logger log = LoggerFactory.getLogger(Transformer.class);
+	public static final String KEY_STORE_PASSWORD = "keyStorePassword";
+	private static Server jettyServer;
 
+	public static void main(String[] args) throws Exception {
 
-    public static void main(String[] args) throws Exception {
+		jettyServer = getServer(Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port", "8050")));
+		try {
+			jettyServer.start();
+			jettyServer.join();
+		} finally {
+			jettyServer.destroy();
+		}
+	}
 
-        jettyServer = getServer(Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port", "8050")));
-        try {
-            jettyServer.start();
-            jettyServer.join();
-        } finally {
-            jettyServer.destroy();
-        }
-    }
+	public static Server getServer(int port) {
+		if (jettyServer != null) {
+			return jettyServer;
+		} else {
 
+			Server newJettyServer = new Server();
+			configureSsl(newJettyServer, port);
 
-    public static Server getServer(int port) {
-        if (jettyServer != null) {
-            return jettyServer;
-        } else {
+			ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+			newJettyServer.setHandler(servletContextHandler);
 
-            Server newJettyServer = new Server();
-            configureSsl(newJettyServer, port);
+			ServletHolder jerseyServlet = servletContextHandler
+					.addServlet(org.glassfish.jersey.servlet.ServletContainer.class, "/*");
+			jerseyServlet.setInitOrder(0);
 
-            ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-            newJettyServer.setHandler(servletContextHandler);
+			jerseyServlet.setInitParameter("javax.ws.rs.Application", Application.class.getCanonicalName());
+			jettyServer = newJettyServer;
+			return newJettyServer;
+		}
+	}
 
-            ServletHolder jerseyServlet = servletContextHandler.addServlet(
-                    org.glassfish.jersey.servlet.ServletContainer.class, "/*"
-            );
-            jerseyServlet.setInitOrder(0);
+	private static void configureSsl(Server server, int port) {
+		String keyStore = findOrGenerateKeystore();
 
-            jerseyServlet.setInitParameter(
-                    "javax.ws.rs.Application",
-                    Application.class.getCanonicalName()
-            );
-            jettyServer = newJettyServer;
-            return newJettyServer;
-        }
-    }
+		SslContextFactory sslContextFactory = new SslContextFactory();
+		sslContextFactory.setKeyStorePath(keyStore);
+		sslContextFactory.setKeyStorePassword(KEY_STORE_PASSWORD);
 
-    private static void configureSsl(Server server, int port) {
-        String keyStore = findOrGenerateKeystore();
+		HttpConfiguration https_config = new HttpConfiguration();
+		https_config.setSecureScheme("https");
+		https_config.setSecurePort(port);
+		https_config.setOutputBufferSize(32768);
+		https_config.setRequestHeaderSize(8192);
+		https_config.setResponseHeaderSize(8192);
+		https_config.setSendServerVersion(true);
+		https_config.setSendDateHeader(false);
+		https_config.addCustomizer(new SecureRequestCustomizer());
 
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStorePath(keyStore);
-        sslContextFactory.setKeyStorePassword(KEY_STORE_PASSWORD);
+		ServerConnector sslConnector = new ServerConnector(server,
+				new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+				new HttpConnectionFactory(https_config));
+		sslConnector.setPort(port);
+		server.addConnector(sslConnector);
+	}
 
-        HttpConfiguration https_config = new HttpConfiguration();
-        https_config.setSecureScheme("https");
-        https_config.setSecurePort(port);
-        https_config.setOutputBufferSize(32768);
-        https_config.setRequestHeaderSize(8192);
-        https_config.setResponseHeaderSize(8192);
-        https_config.setSendServerVersion(true);
-        https_config.setSendDateHeader(false);
-        https_config.addCustomizer(new SecureRequestCustomizer());
+	private static String findOrGenerateKeystore() {
+		Path keyStorePath = Paths.get(".keystore");
+		if (Files.exists(keyStorePath)) {
+			return keyStorePath.toAbsolutePath().toString();
+		}
 
-        ServerConnector sslConnector = new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
-                new HttpConnectionFactory(https_config));
-        sslConnector.setPort(port);
-        server.addConnector(sslConnector);
-    }
+		try {
+			generateKeystore(keyStorePath);
+		} catch (Exception e) {
+			log.error("", e);
+		}
 
-    private static String findOrGenerateKeystore() {
-        Path keyStorePath = Paths.get(".keystore");
-        if (Files.exists(keyStorePath)) {
-            return keyStorePath.toAbsolutePath().toString();
-        }
+		return keyStorePath.toAbsolutePath().toString();
+	}
 
-        try {
-            generateKeystore(keyStorePath);
-        } catch (Exception e) {
-            log.error("", e);
-        }
+	private static void generateKeystore(Path keyStorePath) throws KeyStoreException, CertificateException,
+			NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException, SignatureException {
 
-        return keyStorePath.toAbsolutePath().toString();
-    }
+		final int keysize = 1024;
+		final String commonName = "dupa";
+		final String organizationalUnit = "DUPA";
+		final String organization = "dupa";
+		final String city = "dupa";
+		final String state = "dupa";
+		final String country = "DU";
+		final long validity = 1096; // 3 years
+		final String alias = "dupa";
+		final char[] keyPass = KEY_STORE_PASSWORD.toCharArray();
 
-    private static void generateKeystore(Path keyStorePath) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException, SignatureException {
+		KeyStore keyStore = KeyStore.getInstance("JKS");
+		keyStore.load(null, null);
 
-        final int keysize = 1024;
-        final String commonName = "dupa";
-        final String organizationalUnit = "DUPA";
-        final String organization = "dupa";
-        final String city = "dupa";
-        final String state = "dupa";
-        final String country = "DU";
-        final long validity = 1096; // 3 years
-        final String alias = "dupa";
-        final char[] keyPass = KEY_STORE_PASSWORD.toCharArray();
+		CertAndKeyGen keypair = new CertAndKeyGen("RSA", "SHA1WithRSA", null);
 
-        KeyStore keyStore = KeyStore.getInstance("JKS");
-        keyStore.load(null, null);
+		X500Name x500Name = new X500Name(commonName, organizationalUnit, organization, city, state, country);
 
-        CertAndKeyGen keypair = new CertAndKeyGen("RSA", "SHA1WithRSA", null);
+		keypair.generate(keysize);
+		PrivateKey privKey = keypair.getPrivateKey();
 
-        X500Name x500Name = new X500Name(commonName, organizationalUnit, organization, city, state, country);
+		X509Certificate[] chain = new X509Certificate[1];
 
-        keypair.generate(keysize);
-        PrivateKey privKey = keypair.getPrivateKey();
-      
-        
-        
-        X509Certificate[] chain = new X509Certificate[1];
+		chain[0] = keypair.getSelfCertificate(x500Name, new Date(), validity * 24 * 60 * 60);
 
-        chain[0] = keypair.getSelfCertificate(x500Name, new Date(), validity * 24 * 60 * 60);
+		keyStore.setKeyEntry(alias, privKey, keyPass, chain);
 
-        keyStore.setKeyEntry(alias, privKey, keyPass, chain);
+		keyStore.store(new FileOutputStream(keyStorePath.toAbsolutePath().toString()), keyPass);
 
-        keyStore.store(new FileOutputStream(keyStorePath.toAbsolutePath().toString()), keyPass);
-
-    }
+	}
 }

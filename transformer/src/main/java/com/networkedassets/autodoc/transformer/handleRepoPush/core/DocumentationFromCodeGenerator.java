@@ -14,9 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
-@SuppressWarnings("unused")
 public class DocumentationFromCodeGenerator implements PushEventProcessor {
-	@SuppressWarnings("unused")
 	public static Logger log = LoggerFactory.getLogger(DocumentationFromCodeGenerator.class);
 
 	private SettingsProvider settingsProvider;
@@ -41,16 +39,17 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 		String repoSlug = pushEvent.getRepositorySlug();
 		String branchId = pushEvent.getBranchId();
 
-		if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl) || !settingsProvider
-				.getCurrentSettings().getSourceByUrl(sourceUrl).getProjectByKey(projectKey).getRepoBySlug(repoSlug)
-				.getBranchById(branchId).getListenTo().equals(ListenType.none)) {
+		if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl)
+				|| !settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
+						.getRepoBySlug(repoSlug).getBranchById(branchId).getListenTo().equals(ListenType.none)) {
 
 			Code code = codeProvider.getCode(settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl),
 					projectKey, repoSlug, branchId);
 
 			for (DocumentationType docType : DocumentationType.values()) {
 				Documentation documentation = docGeneratorFactory.createFor(docType).generateFrom(code);
-				documentation.setProjectInfo(projectKey, repoSlug, branchId);
+				// TODO: change for branch ID
+				documentation.setProjectInfo(projectKey, repoSlug, "master");
 				documentationSender.send(documentation, settingsProvider.getCurrentSettings());
 			}
 		}

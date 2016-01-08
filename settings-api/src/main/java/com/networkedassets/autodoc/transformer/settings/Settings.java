@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 3847560203140549969L;
-	private String confluenceUrl = "http://46.101.240.138:8090/";
-	private String confluenceUsername = "mrobakowski";
+	private String confluenceUrl = "http://46.101.240.138:8090/confluence";
+	private String confluenceUsername = "admin";
 	private String confluencePassword = "admin";
 	private TransformerSettings transformerSettings = new TransformerSettings();
 	private List<Source> sources = new ArrayList<>();

@@ -5,56 +5,52 @@ import com.google.common.base.MoreObjects;
 /**
  * Represents event coming from Stash
  */
-@SuppressWarnings("unused")
+
 public class PushEvent {
-    private String sourceUrl;
-    private String projectKey;
-    private String repositorySlug;
-    private String branchId;
+	private String sourceUrl;
+	private String projectKey;
+	private String repositorySlug;
+	private String branchId;
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("repositorySlug", repositorySlug)
-                .add("projectKey", projectKey)
-                .add("branchId", branchId)
-                .toString();
-    }
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("repositorySlug", repositorySlug).add("projectKey", projectKey)
+				.add("branchId", branchId).toString();
+	}
 
-    public String getSourceUrl() {
-        return sourceUrl;
-    }
+	public String getSourceUrl() {
+		return sourceUrl;
+	}
 
-    public void setSourceUrl(String sourceUrl) {
-        this.sourceUrl = sourceUrl;
-    }
+	public void setSourceUrl(String sourceUrl) {
+		this.sourceUrl = sourceUrl;
+	}
 
-    public String getRepositorySlug() {
-        return repositorySlug;
-    }
+	public String getRepositorySlug() {
+		return repositorySlug;
+	}
 
-    public void setRepositorySlug(String repositorySlug) {
-        this.repositorySlug = repositorySlug;
-    }
+	public void setRepositorySlug(String repositorySlug) {
+		this.repositorySlug = repositorySlug;
+	}
 
-    public String getProjectKey() {
-        return projectKey;
-    }
+	public String getProjectKey() {
+		return projectKey;
+	}
 
-    public void setProjectKey(String projectKey) {
-        this.projectKey = projectKey;
-    }
+	public void setProjectKey(String projectKey) {
+		this.projectKey = projectKey;
+	}
 
-    public String getBranchId() {
-        return branchId;
-    }
+	public String getBranchId() {
+		return branchId;
+	}
 
-    public void setBranchId(String branchId) {
-        this.branchId = branchId;
-    }
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
 
-    public boolean isValidProjectChangeEvent() {
-        return sourceUrl != null && projectKey != null && repositorySlug != null && branchId != null;
-    }
+	public boolean isValidProjectChangeEvent() {
+		return sourceUrl != null && projectKey != null && repositorySlug != null && branchId != null;
+	}
 }
-

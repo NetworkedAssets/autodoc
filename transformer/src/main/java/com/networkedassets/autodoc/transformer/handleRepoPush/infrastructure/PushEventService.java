@@ -20,8 +20,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 @Path("/event")
 public class PushEventService {
 
-	static final Logger log = LoggerFactory.getLogger(PushEventService.class);
-
+	private static final Logger log = LoggerFactory.getLogger(PushEventService.class);
 	private final PushEventProcessor eventProcessor;
 
 	@Inject
