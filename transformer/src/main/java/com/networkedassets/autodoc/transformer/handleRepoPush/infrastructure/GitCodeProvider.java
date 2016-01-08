@@ -27,6 +27,7 @@ public class GitCodeProvider implements CodeProvider {
 		}
 
 		try {
+
 			getGitRepository(source).cloneRepository(temp, projectKey, repoSlug, branchId);
 		} catch (Exception e) {
 			throw new RuntimeException("Couldn't clone the repository!", e);
@@ -36,7 +37,9 @@ public class GitCodeProvider implements CodeProvider {
 	}
 
 	private GitRepository getGitRepository(Source source) throws MalformedURLException {
-		return new GitRepository(new URL(source.getUrl()), source.getUsername(), source.getPassword());
+		String url = source.getUrl();
+		url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+		return new GitRepository(new URL(url), source.getUsername(), source.getPassword());
 
 	}
 
