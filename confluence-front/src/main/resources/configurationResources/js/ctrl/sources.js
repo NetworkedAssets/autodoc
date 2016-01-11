@@ -35,7 +35,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
         }
         angular.forEach(settingsData.get().sources,function(source,key) {
             sources.add({
-                sourceId: source.id,
+                id: source.id,
                 name: source.name,
                 url: source.url,
                 sourceType: source.sourceType,
@@ -45,6 +45,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
                 nameCorrect: true,
                 sourceExists: true,
                 credentialsCorrect: true,
+                sourceTypeCorrect: true,
                 dirty: false
             });
         });
@@ -64,7 +65,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
 
         if (!source) {
             source = {
-                "sourceId": null,
+                "id": null,
                 "name": "",
                 "url": "",
                 "sourceType": "STASH",
@@ -91,55 +92,55 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
 
 
 
-    sources.save = function(id) {
-        var original = sources.list[id];
+    sources.save = function(index) {
+        var original = sources.list[index];
         var data = extractSourceDataForRest(original);
 
-        var sourceId = original.sourceId;
+        var id = original.id;
 
         var req;
-        if (original.sourceId === null) {
+        if (original.id === null) {
             req = $http.post(url,data);
         } else {
-            req = $http.put(url+"/"+original.sourceId,data);
+            req = $http.put(url+"/"+original.id,data);
         }
 
         req.then(function(resp) {
-            sources.list[id] = resp.data;
-            sources.list[id].sourceId = resp.data.id;
-            sources.list[id].dirty = false;
-            sources.list[id].verified = true;
+            sources.list[index] = resp.data;
+            sources.list[index].id = resp.data.id;
+            sources.list[index].dirty = false;
+            sources.list[index].verified = true;
             settingsData.reload();
         },function(resp) {
             if (resp.status == "400") {
-                sources.list[id] = resp.data;
-                sources.list[id].sourceId = resp.data.id;
-                sources.list[id].dirty = false;
-                sources.list[id].verified = false;
+                sources.list[index] = resp.data;
+                sources.list[index].id = null;
+                sources.list[index].dirty = false;
+                sources.list[index].verified = false;
             }
         });
 
     };
 
-    sources.delete = function(id) {
-        var source = sources.list[id];
-        if (source.sourceId === null) {
-            sources.removeFromList(id);
+    sources.delete = function(index) {
+        var source = sources.list[index];
+        if (source.id === null) {
+            sources.removeFromList(index);
         } else {
             source.deletionState = "confirming";
         }
     };
 
-    sources.cancelDeletion = function(id) {
-        var source = sources.list[id];
+    sources.cancelDeletion = function(index) {
+        var source = sources.list[index];
         source.deletionState = null;
     };
 
-    sources.deleteExecute = function(id) {
-        var source = sources.list[id];
+    sources.deleteExecute = function(index) {
+        var source = sources.list[index];
         source.deletionState = "executing";
-        $http.delete(url+"/"+source.sourceId).then(function(response) {
-            sources.removeFromList(id);
+        $http.delete(url+"/"+source.id).then(function(response) {
+            sources.removeFromList(index);
             settingsData.reload();
         });
 

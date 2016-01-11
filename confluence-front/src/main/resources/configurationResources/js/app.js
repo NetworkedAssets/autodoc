@@ -1,7 +1,3 @@
-/**
- * Created by Jakub on 30/11/15.
- */
-
 var doc_confluencePath = "";
 
 if (AJS.Data) {
@@ -16,4 +12,5 @@ if (AJS.Data) {
 angular.module("DoC_Config",[]);
 angular.element(document).ready(function() {
     $("#doc_config-loading").spin("large");
+    AJS.$($("#doc_config .spin.small")).spin("small");
 });

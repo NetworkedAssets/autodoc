@@ -5,6 +5,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         original: {}
     };
     var callbacks = {};
+    var listenForChanges = false;
 
     settings.load = function() {
         $rootScope.loading = true;
@@ -36,6 +37,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     };
 
     settings.save = function() {
+        listenForChanges = false;
         var chosen = settings.path;
         var branchSettings = settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[chosen.branch];
         branchSettings.scheduledEvents = settings.scheduledEvents;
@@ -52,17 +54,17 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
             delete data.scheduledEvents;
         }
 
-        console.log(urlProvider.getRestUrlWithParams([
+        /*console.log(urlProvider.getRestUrlWithParams([
                 "branches",
                 chosen.source,
                 chosen.project,
                 chosen.repo,
                 chosen.branch
             ])
-        );
+        );*/
 
-        console.log(data);
-
+        /*console.log(data);*/
+        settings.savingState = "saving";
         $http
             .post(urlProvider.getRestUrlWithParams([
                 "branches",
@@ -72,7 +74,12 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 chosen.branch
             ]), data)
             .then(function (response) {
-                console.log(response);
+                settings.savingState = "saved";
+                $timeout(function() {
+                    listenForChanges = true;
+                });
+            },function() {
+                settings.savingState = "dirty";
             });
     };
 
@@ -85,12 +92,19 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     };
 
     settings.setBranch = function(chosen) {
+        listenForChanges = false;
         if (typeof chosen == "object") {
             var branchSettings = settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[chosen.branch];
             settings.scheduledEvents = branchSettings.scheduledEvents;
             settings.listenTo = branchSettings.listenTo;
             settings.path = chosen;
             settings.updateNowState = "ready";
+            //settings.dirty = false;
+            settings.savingState = "saved";
+            $timeout(function() {
+                listenForChanges = true;
+            });
+
         }
     };
 
@@ -109,10 +123,15 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     };
 
     settings.resetBranch = function() {
+        listenForChanges = false;
         settings.path = null;
         settings.scheduledEvents = null;
         settings.listenTo = null;
         settings.updateNowState = "ready";
+        settings.savingState = "saved";
+        $timeout(function() {
+            listenForChanges = true;
+        });
     };
 
     settings.getData = function() {
@@ -120,14 +139,12 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     };
 
     settings.updateNow = function() {
-        settings.updateNowState = "initiating";
-        var callback = function() {
-            settings.updateNowState = "initiated";
-            $timeout();
-        };
+        listenForChanges = false;
+        settings.updateNowState = "updating";
+        listenForChanges = true;
 
-        console.log(settings.getPathAsString());
-        console.log(urlProvider.getRestUrl("/event/"+settings.getPathAsString())+"/");
+        /*console.log(settings.getPathAsString());
+        console.log(urlProvider.getRestUrl("/event/"+settings.getPathAsString())+"/");*/
 
         /* // @RequestBody
         var data = {
@@ -144,7 +161,19 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         // @PathParam
         $http
             .post(urlProvider.getRestUrl("/event/"+settings.getPathAsString())+"/")
-            .then(callback);
+            .then(function() {
+                listenForChanges = false;
+                settings.updateNowState = "updated";
+                $timeout(function() {
+                    listenForChanges = true;
+                });
+            },function() {
+                listenForChanges = false;
+                settings.updateNowState = "ready";
+                $timeout(function() {
+                    listenForChanges = true;
+                });
+            });
 
 
 
@@ -161,6 +190,16 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         callbacks[name] = fn;
 
     };
+
+    $rootScope.$watch(function() {
+        return settings;
+    },function() {
+        if (listenForChanges) {
+
+            settings.savingState = "dirty";
+            console.log("change?",settings);
+        }
+    },true);
 
     $rootScope.listenToOptions = {
         "mon": {

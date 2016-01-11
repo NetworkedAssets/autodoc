@@ -63,3 +63,9 @@
 #doc_config-branch-container h4 {
     margin-top: 1em;
 }
+
+#doc_config .spin {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}

@@ -158,6 +158,7 @@
 		<resource type="download" name="js/services/urlProvider.js" location = "configurationResources/js/services/urlProvider.js" />
 
 		<resource type="download" name="js/ctrl/branchSettings.js" location = "configurationResources/js/ctrl/branchSettings.js" />
+		<resource type="download" name="js/ctrl/confluenceConfig.js" location = "configurationResources/js/ctrl/confluenceConfig.js" />
 		<resource type="download" name="js/ctrl/components.js" location = "configurationResources/js/ctrl/components.js" />
 		<resource type="download" name="js/ctrl/menu.js" location = "configurationResources/js/ctrl/menu.js" />
 		<resource type="download" name="js/ctrl/schedules.js" location = "configurationResources/js/ctrl/schedules.js" />
