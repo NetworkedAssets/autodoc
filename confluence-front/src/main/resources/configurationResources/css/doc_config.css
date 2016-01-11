@@ -71,3 +71,17 @@
     padding-left: 10px;
     height: 5px;
 }
+
+span.doc_config-branch-menu-option span.indicator {
+    display: inline-block;
+    color: #ccc;
+    width: 10px;
+}
+
+span.doc_config-branch-menu-option.listened {
+    font-weight: bold;
+}
+
+span.doc_config-branch-menu-option.listened span.indicator {
+    color: #67ab49;
+}

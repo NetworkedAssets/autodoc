@@ -12,7 +12,8 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
             } else {
                 var attrs = {
                     val: v.value,
-                    text: v.label
+                    text: v.label,
+                    data: v
                 };
                 if (v.selected) {
                     attrs.selected = true;
@@ -38,10 +39,20 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
 
             }*/
 
+            var select2Options = {
+                minimumResultsForSearch: attrs.docDisableSearch?(-1):(undefined),
+            };
+
+            if (typeof scope.formatResult == "function") {
+                select2Options.formatResult = scope.formatResult;
+            }
+            if (typeof scope.formatSelection == "function") {
+                select2Options.formatSelection = scope.formatSelection;
+            }
+
             $timeout(function() {
-                AJS.$(select).auiSelect2({
-                    minimumResultsForSearch: attrs.docDisableSearch?(-1):(undefined)
-                })
+
+                AJS.$(select).auiSelect2(select2Options);
                 select.on("change",function(e) {
                     //console.log("yep",e);
                     scope.model = e.val;
@@ -59,7 +70,7 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
                 }
 
 
-                AJS.$(select).auiSelect2();
+                AJS.$(select).auiSelect2(select2Options);
             },true);
             scope.$watch(function() {
                 return ngModel.$viewValue;
@@ -82,7 +93,9 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
         },
         scope: {
             options: "=docOptions",
-            model: "=ngModel"
+            model: "=ngModel",
+            formatResult: "=docFormatResult",
+            formatSelection: "=docFormatSelection"
         }
     }
 })

@@ -195,9 +195,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         return settings;
     },function() {
         if (listenForChanges) {
-
             settings.savingState = "dirty";
-            console.log("change?",settings);
         }
     },true);
 

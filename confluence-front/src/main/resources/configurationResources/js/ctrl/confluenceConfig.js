@@ -40,7 +40,6 @@ angular.module("DoC_Config").controller("confluenceConfigCtrl",function($scope,$
     };
 
     confluenceConfig.setFromSettingsData = function() {
-        console.log(settingsData);
         confluenceConfig.savingState = "saved";
         confluenceConfig.username = settingsData.raw.confluenceUsername;
         confluenceConfig.password = null;

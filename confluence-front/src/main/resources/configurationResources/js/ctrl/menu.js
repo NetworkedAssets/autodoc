@@ -20,8 +20,9 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
     };
 
     var processTree = function(raw) {
-        menu.tree = {};
-        menu.tree.sources = {};
+        menu.tree = {
+            sources: {}
+        };
         angular.forEach(raw.sources,function(value,key) {
             var source = menu.tree.sources[key] = {
                 value: key,
@@ -42,14 +43,40 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
                         branches: {}
                     };
                     angular.forEach(value.branches,function(value,key) {
+                        var isListened = (value.listenTo != "none");
                         repo.branches[key] = {
                             value: key,
-                            label: value.displayId
+                            label: value.displayId,
+                            isListened: isListened
                         };
                     });
                 });
             });
+            menu.processListenToValues();
             source.options = source.projects;
+        });
+    };
+
+    menu.processListenToValues = function() {
+        angular.forEach(menu.tree.sources,function(source) {
+            source.isListened = false;
+            angular.forEach(source.projects,function(project) {
+                project.isListened = false;
+                angular.forEach(project.repos,function(repo) {
+                    repo.isListened = false;
+                    angular.forEach(repo.branches,function(branch) {
+                        if (branch.isListened) {
+                            repo.isListened = true;
+                        }
+                    });
+                    if (repo.isListened) {
+                        project.isListened = true;
+                    }
+                });
+                if (project.isListened) {
+                    source.isListened = true;
+                }
+            });
         });
     };
 
@@ -87,6 +114,21 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
             sourceProject: ""
         };
         $timeout();
+    };
+
+    menu.formatResult = function(data) {
+        var element = $(data.element);
+        if (element.is("option")) {
+            if (element.data("isListened")) {
+                return "<span class='doc_config-branch-menu-option listened'><span class='indicator'>&#x25cf;</span> "+data.text+"</span>";
+            } else {
+                return "<span class='doc_config-branch-menu-option'><span class='indicator'></span> "+data.text+"</span>";
+            }
+
+        } else {
+            return data.text;
+        }
+
     };
 
     $scope.$watch("menu.chosen",function(newValue,oldValue) {
