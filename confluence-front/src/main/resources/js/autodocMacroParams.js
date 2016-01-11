@@ -29,7 +29,8 @@
             $(this.select)
                 .empty()
                 .append(processOptions(vm.tree.sources,$("<select/>")).contents())
-                .prepend('<option value="">-- choose --</option>');
+                .prepend('<option value="">-- choose --</option>')
+                .prop("disabled",false);
             $(this.select).off("change.branchChooser").on("change.branchChooser",function() {
                 that.set($(this).find("option:selected").val());
             }).change();
@@ -175,6 +176,8 @@
                     var $select = $("select", paramDiv);
 
                     projects.select = $select;
+                    console.log($select);
+                    $($select).append("<option>Loading...</option>").prop("disabled",true);
                     $.getJSON(url).then(function(data) {
                         processTree(data);
                         projects.init();
@@ -183,9 +186,10 @@
                     var field = AJS.MacroBrowser.Field(paramDiv, $select, options);
                     return field;
                 } else if (params && params.name == "repo") {
+
                     var paramDiv = $(Confluence.Templates.MacroBrowser.macroParameterSelect());
                     var $select = $("select", paramDiv);
-
+                    $($select).append("<option>Loading...</option>").prop("disabled",true);
                     repos.select = $select;
 
                     var field = AJS.MacroBrowser.Field(paramDiv, $select, options);
@@ -193,7 +197,7 @@
                 } else if (params && params.name == "branch") {
                     var paramDiv = $(Confluence.Templates.MacroBrowser.macroParameterSelect());
                     var $select = $("select", paramDiv);
-
+                    $($select).append("<option>Loading...</option>").prop("disabled",true);
                     branches.select = $select;
 
                     var field = AJS.MacroBrowser.Field(paramDiv, $select, options);

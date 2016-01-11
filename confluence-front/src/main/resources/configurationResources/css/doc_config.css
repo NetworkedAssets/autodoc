@@ -66,6 +66,8 @@
 
 #doc_config .spin {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    /*width: 20px;
+    height: 20px;*/
+    padding-left: 10px;
+    height: 5px;
 }

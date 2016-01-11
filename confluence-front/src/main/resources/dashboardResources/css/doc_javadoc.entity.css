@@ -200,3 +200,7 @@
     cursor: pointer;
     color: #205081;
 }
+
+.doc .javadoc p {
+    margin: 0;
+}

@@ -26,6 +26,7 @@
 
 .doc .javadoc h2 {
     text-transform: capitalize;
+    margin-top: 0;
 }
 
 .doc_tree ul {
