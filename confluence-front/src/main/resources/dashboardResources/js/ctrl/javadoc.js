@@ -102,7 +102,9 @@ angular.module("DoC")
 
     }
 
-    $http.get(urlProvider.getRestUrl('/JAVADOC/index')).then(function(data) {
+    $http.get(urlProvider.getRestUrl('/JAVADOC/index'),{
+        cache: true
+    }).then(function(data) {
         parsePackageList(data.data.indexPackage);
     });
     vm.items = [];

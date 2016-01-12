@@ -7,8 +7,8 @@ angular.module("DoC_Config").controller("confluenceConfigCtrl",function($scope,$
 
     confluenceConfig.save = function() {
         var data = {
-            username: confluenceConfig.username,
-            password: confluenceConfig.password
+            confluenceUsername: confluenceConfig.username,
+            confluencePassword: confluenceConfig.password
         };
         var success = function() {
             confluenceConfig.savingState = "saved";

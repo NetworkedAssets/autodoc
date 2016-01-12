@@ -1,7 +1,11 @@
-angular.module("DoC").controller('classDiagramCtrl',function($scope,urlProvider) {
+angular.module("DoC").controller('classDiagramCtrl',function($scope,$http,urlProvider) {
     var cd = new ClassDiagram({
         elem: $("#doc_classDiagram_paper")
     });
-    console.log("again");
-    cd.load(urlProvider.getRestUrl("/UML/all/"));
+    $http.get(urlProvider.getRestUrl("/UML/all/"),{
+        cache: true
+    })
+        .then(function(response) {
+            cd.generate(response.data);
+        });
 });
