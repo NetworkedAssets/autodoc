@@ -2,7 +2,8 @@
     <div class="row">
         <aside class="doc_tree">
             <h2>Structure</h2>
-            <ul>
+            <div class="loadingSpinner" ng-show="vm.loading"></div>
+            <ul ng-hide="vm.loading">
                 <li ng-repeat="item in vm.items | javadocMenuItemSorter" class=""><ng-include src="vm.getMenuItemPartialPath()"></ng-include></li>
             </ul>
         </aside>

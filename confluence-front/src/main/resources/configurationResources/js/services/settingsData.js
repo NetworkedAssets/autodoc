@@ -9,7 +9,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     var processListenToValues = function() {
         var processParentChildListenTo = function(parent,child) {
             var rtn;
-            console.log(parent,child);
             if (child.listenTo !== "none") {
                 if (parent.listenTo !== "none") {
                     if (parent.listenTo !== child.listenTo) {
@@ -23,7 +22,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
             } else {
                 rtn = parent.listenTo;
             }
-            console.log(rtn);
             return rtn;
         };
         angular.forEach(settings.raw.sources,function(source) {
@@ -33,7 +31,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 angular.forEach(project.repos,function(repo) {
                     repo.listenTo = "none";
                     angular.forEach(repo.branches,function(branch) {
-                        console.log(branch.listenTo);
                         if (branch.listenTo !== "none") {
                             repo.listenTo = processParentChildListenTo(repo,branch);
                         }

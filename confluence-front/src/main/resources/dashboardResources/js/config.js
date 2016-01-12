@@ -28,4 +28,4 @@ angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
 
     .run(function ($state,$rootScope) {
         $rootScope.$state = $state;
-    })
+    });

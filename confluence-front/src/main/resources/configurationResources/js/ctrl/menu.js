@@ -123,7 +123,6 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
             } else if (string == "schedule") {
                 return "S";
             } else {
-                console.log("OOPS",string);
                 return "";
             }
         };
@@ -139,7 +138,6 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
 
         if (element.is("option")) {
             var listenTo = settingsData.getListenTo(type,id,chosenCopy);
-            console.log(listenTo);
             if (listenTo !== "none") {
                 return "<span class='doc_config-branch-menu-option listened'><span class='indicator'>"+listenToStringToChar(listenTo)+"</span> "+data.text+"</span>";
             } else {

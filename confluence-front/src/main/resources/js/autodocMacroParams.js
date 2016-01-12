@@ -1,9 +1,6 @@
 (function ($) {
-    // TODO Actual semi-dynamic, timeproof URL
-    // kinda sorta done, @JakubWojnowski please verify
     var base_url = $("meta#confluence-base-url").attr("content");
     var url = base_url + "/rest/autodoc/1.0/configuration/branches/listened";
-    //var url = "http://atlas.networkedassets.net/confluence/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources/data/settings3.json";
 
     var vm = {};
 
@@ -182,9 +179,7 @@
                         processTree(data);
                         projects.init();
                     });
-
-                    var field = AJS.MacroBrowser.Field(paramDiv, $select, options);
-                    return field;
+                    return AJS.MacroBrowser.Field(paramDiv, $select, options);
                 } else if (params && params.name == "repo") {
 
                     var paramDiv = $(Confluence.Templates.MacroBrowser.macroParameterSelect());
@@ -200,8 +195,7 @@
                     $($select).append("<option>Loading...</option>").prop("disabled",true);
                     branches.select = $select;
 
-                    var field = AJS.MacroBrowser.Field(paramDiv, $select, options);
-                    return field;
+                    return AJS.MacroBrowser.Field(paramDiv, $select, options);
                 }
 
                 return AJS.MacroBrowser.ParameterFields["enum"](params, options);

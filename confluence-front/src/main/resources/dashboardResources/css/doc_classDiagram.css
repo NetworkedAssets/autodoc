@@ -1,8 +1,10 @@
-#doc_classDiagram_paper {
+.doc_classDiagram .loadingSpinner {
     width: 100%;
+    height: 200px;
 }
 
-.doc_classDiagram {
+#doc_classDiagram_paper {
+    width: 100%;
     position: relative;
     cursor: move;
 }

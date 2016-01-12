@@ -1,8 +1,10 @@
 <div class="aui-page-panel">
     <div class="aui-page-panel-inner">
-        <section class="aui-page-panel-content">
-            <div id="doc_classDiagram_paper" class="doc_classDiagram">
-                <svg><g/><text id="textSizer"></text><defs>
+
+        <section class="aui-page-panel-content doc_classDiagram">
+            <div ng-show="loading" class="loadingSpinner"></div>
+            <div id="doc_classDiagram_paper">
+                <svg><g/><text id="textSizer" opacity="0"></text><defs>
                     <linearGradient id="HeaderGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                         <stop stop-color="#eeeeee" offset="0"/><stop stop-color="#cccccc" offset="1"/>
                     </linearGradient>

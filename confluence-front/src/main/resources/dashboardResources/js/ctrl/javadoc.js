@@ -1,14 +1,15 @@
-/**
- * Created by Jakub on 24/11/15.
- */
-
 angular.module("DoC")
-.controller("javadocCtrl",function($http,$state,urlProvider,javadocEntities,$timeout) {
+.controller("javadocCtrl",function($http,$state,$element,urlProvider,javadocEntities) {
     var vm = this;
+    vm.loading = true;
+
+    var initSpinner = function() {
+        AJS.$($element.find(".loadingSpinner")).spin("big");
+    };
 
     var parsePackageList = function(packageList) {
         var packages = {children:{}};
-        angular.forEach(packageList,function(pack,key) {
+        angular.forEach(packageList,function(pack) {
             if (!pack.name || pack.name == "") {
                 pack.name = "(default)";
                 return true;
@@ -37,7 +38,7 @@ angular.module("DoC")
             if (typeof currentPackage.children == "undefined") {
                 currentPackage.children = {};
             }
-
+            pack.type = "package";
             javadocEntities.push(pack);
 
             angular.forEach(pack.indexClass,function(cl) {
@@ -83,7 +84,7 @@ angular.module("DoC")
                 joinPackages(obj);
             }
 
-        }
+        };
 
         joinPackages(packages);
 
@@ -92,20 +93,21 @@ angular.module("DoC")
         javadocEntities.setTree(packages);
 
         if (rootPackage) {
-            var obj = {};
+            obj = {};
             obj[rootPackage.name] = rootPackage;
             vm.items = obj;
         } else {
             vm.items = packages.children;
         }
+        javadocEntities.setReady(true);
 
-
-    }
+    };
 
     $http.get(urlProvider.getRestUrl('/JAVADOC/index'),{
         cache: true
     }).then(function(data) {
         parsePackageList(data.data.indexPackage);
+        vm.loading = false;
     });
     vm.items = [];
     vm.toggleItem = function(item) {
@@ -123,26 +125,26 @@ angular.module("DoC")
         }
 
         return (active) || item.expanded;
-    }
+    };
 
     vm.go = function(item) {
         vm.expandItem(item);
-        console.log(item);
         if (item.type == "package") {
             return false;
         }
         $state.go("javadoc.entity",{
             name: item.name
         });
-    }
+    };
 
     vm.isActive = function(item) {
         return item.name===$state.params.name;
-    }
+    };
 
     vm.getMenuItemPartialPath = function() {
-        //console.log("partial requested!",doc_resourcePath+"partials/javadoc.menuitem.html");
         return doc_resourcePath+"partials/javadoc.menuitem.html";
-    }
+    };
+
+    initSpinner();
 
 });

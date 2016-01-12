@@ -2,13 +2,13 @@
  * Created by Jakub on 24/11/15.
  */
 
-angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,urlProvider,javadocEntities) {
-
+angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,$rootScope,$timeout,$element,urlProvider,javadocEntities) {
     var vm = this;
+    vm.loading = true;
 
     /*
-    * TODO Entity refactor into 'class'
-    * */
+     * TODO Entity refactor into 'class'
+     * */
 
     var parseModifiers = function(entity) {
         if (entity.modifier) {
@@ -16,7 +16,7 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
         } else {
             entity.modifiers = [];
         }
-    }
+    };
 
     var parseDetails = function(entity) {
         entity.details = {
@@ -33,53 +33,40 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
 
 
 
-    }
+    };
 
     var parseEntityFromJson = function(entity) {
+
         parseModifiers(entity);
 
         entity.package = entity.qualified.split(".");
 
         entity.package.pop();
-        return entity;
-    }
 
-    vm.toggleDetails = function(method) {
-        method.details.visible = !method.details.visible;
-    };
-
-    vm.entity = {};
-
-
-    $http.get(urlProvider.getRestUrl("/JAVADOC/"+$stateParams.name)).then(function(data) {
-
-
-        vm.entity = parseEntityFromJson(data.data);
-
-        vm.entity.packages = [];
-        vm.entity.package.forEach(function(package) {
-            vm.entity.packages.push({
+        entity.packages = [];
+        entity.package.forEach(function(package) {
+            entity.packages.push({
                 name: package
             });
         });
 
-        vm.entity.elements = [
+        entity.elements = [
             {
                 type: "constructor",
-                elements: (typeof vm.entity.constructor=="object")?vm.entity.constructor:[]
+                elements: (typeof entity.constructor=="object")?entity.constructor:[]
             },
             {
                 type: "field",
-                elements: vm.entity.field?vm.entity.field:[]
+                elements: entity.field?entity.field:[]
             },
             {
                 type: "method",
-                elements: vm.entity.method?vm.entity.method:[]
+                elements: entity.method?entity.method:[]
             }
         ];
 
-        if (vm.entity.elements) {
-            vm.entity.elements.forEach(function(elementGroup) {
+        if (entity.elements) {
+            entity.elements.forEach(function(elementGroup) {
                 if (typeof elementGroup.elements == "object") {
                     elementGroup.elements.forEach(function(element) {
                         if (element.return) {
@@ -97,17 +84,49 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
             });
         }
 
-        vm.entity.supers = [];
-        if (typeof vm.entity.class == "object") {
-            vm.entity.supers = [vm.entity.class];
+        entity.supers = [];
+        if (typeof entity.class == "object") {
+            entity.supers = [entity.class];
         }
-        vm.entity.interfaces = [];
-        if (vm.entity.interface) {
-            console.log(vm.entity.interface);
-            vm.entity.interfaces = vm.entity.interface;
+        entity.interfaces = [];
+        if (entity.interface) {
+            console.log(entity.interface);
+            entity.interfaces = entity.interface;
         }
+        console.log(entity);
+        return entity;
+    };
 
-    });
+    var initSpinner = function() {
+        AJS.$($element.find(".loadingSpinner")).spin("big");
+    };
+
+    vm.toggleDetails = function(method) {
+        method.details.visible = !method.details.visible;
+    };
+
+    var init = function() {
+        initSpinner();
+        if (javadocEntities.isPackage($stateParams.name)) {
+            vm.entity = parseEntityFromJson(javadocEntities.getCopyByName($stateParams.name));
+            vm.loading = false;
+        } else {
+            vm.loading = true;
+            $http.get(urlProvider.getRestUrl("/JAVADOC/"+$stateParams.name)).then(function(response) {
+                vm.entity = parseEntityFromJson(response.data);
+                vm.loading = false;
+            });
+        }
+    };
+
+    if (javadocEntities.isReady()) {
+        init();
+    } else {
+        $rootScope.$on("javadocEntities.ready",function() {
+            init();
+        });
+    }
+
 
 
 });
