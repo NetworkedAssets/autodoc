@@ -4,8 +4,31 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         raw: {},
         original: {}
     };
-    var callbacks = {};
     var listenForChanges = false;
+
+    var processListenToValues = function() {
+        angular.forEach(settings.raw.sources,function(source) {
+            source.isListened = false;
+            angular.forEach(source.projects,function(project) {
+                project.isListened = false;
+                angular.forEach(project.repos,function(repo) {
+                    repo.isListened = false;
+                    angular.forEach(repo.branches,function(branch) {
+                        branch.isListened = branch.listenTo !== "none";
+                        if (branch.isListened) {
+                            repo.isListened = true;
+                        }
+                    });
+                    if (repo.isListened) {
+                        project.isListened = true;
+                    }
+                });
+                if (project.isListened) {
+                    source.isListened = true;
+                }
+            });
+        });
+    };
 
     settings.load = function() {
         $rootScope.loading = true;
@@ -23,11 +46,11 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 });
                 settings.raw = response.data;
                 settings.raw.sources = sources;
+                processListenToValues();
                 console.log("Original settings data: ",settings.raw.sources);
 
-                angular.forEach(callbacks,function(fn) {
-                    fn();
-                });
+                $rootScope.$broadcast("settingsData.ready");
+
                 $rootScope.loading = false;
             });
     };
@@ -74,9 +97,11 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 chosen.branch
             ]), data)
             .then(function (response) {
+                processListenToValues();
                 settings.savingState = "saved";
                 $timeout(function() {
                     listenForChanges = true;
+                    $rootScope.$broadcast("settingsData.saved");
                 });
             },function() {
                 settings.savingState = "dirty";
@@ -182,13 +207,26 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         //setTimeout(callback,1000);
     };
 
-    settings.registerCallback = function(name,fn) {
-        if (typeof fn != "function") {
-            console.error("Callback must be a function.");
+    settings.getIsListened = function(type,id,chosen) {
+        try {
+            var obj;
+            if (type == "source") {
+                obj = settings.raw.sources[id];
+            } else if (type == "project") {
+                obj =  settings.raw.sources[chosen.source].projects[id];
+            } else if (type == "repo") {
+                obj =  settings.raw.sources[chosen.source].projects[chosen.project].repos[id];
+            } else if (type == "branch") {
+                obj =  settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[id];
+            }
+            if (typeof obj == "object") {
+                return obj.isListened;
+            }
+        } catch(e) {
+            if (!e instanceof TypeError) {
+                throw e;
+            }
         }
-
-        callbacks[name] = fn;
-
     };
 
     $rootScope.$watch(function() {

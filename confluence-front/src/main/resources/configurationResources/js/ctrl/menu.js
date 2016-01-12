@@ -1,4 +1,4 @@
-angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeout,settingsData) {
+angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$http,$timeout,settingsData) {
     var menu = this;
 
     menu.chosen = {
@@ -12,12 +12,24 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
 
     var fakeChosen = function() {
         menu.chosen = {
-            sourceProject: "staszek\uF000APD",
+            sourceProject: joinSourceProject("staszek","APD"),
             repo: "javadoc-plugin",
             branch: "refs/heads/master"
         };
         $timeout();
     };
+
+    var splitSourceProject = function(sourceProject) {
+        var arr = sourceProject.split('\uF000');
+        return {
+            source: arr[0],
+            project: arr[1]
+        };
+    };
+
+    var joinSourceProject = function(source,project) {
+        return source+'\uF000'+project;
+    }
 
     var processTree = function(raw) {
         menu.tree = {
@@ -32,7 +44,7 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
             };
             angular.forEach(value.projects,function(value,key) {
                 var project = source.projects[key] = {
-                    value: source.value+'\uF000'+key,
+                    value: joinSourceProject(source.value,key),
                     label: value.name,
                     repos: {}
                 };
@@ -52,36 +64,19 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
                     });
                 });
             });
-            menu.processListenToValues();
             source.options = source.projects;
         });
     };
 
-    menu.processListenToValues = function() {
-        angular.forEach(menu.tree.sources,function(source) {
-            source.isListened = false;
-            angular.forEach(source.projects,function(project) {
-                project.isListened = false;
-                angular.forEach(project.repos,function(repo) {
-                    repo.isListened = false;
-                    angular.forEach(repo.branches,function(branch) {
-                        if (branch.isListened) {
-                            repo.isListened = true;
-                        }
-                    });
-                    if (repo.isListened) {
-                        project.isListened = true;
-                    }
-                });
-                if (project.isListened) {
-                    source.isListened = true;
-                }
-            });
-        });
-    };
-
-    settingsData.registerCallback("menu",function() {
+    $scope.$on("settingsData.ready",function() {
         processTree(settingsData.raw);
+    });
+
+    $scope.$on("settingsData.saved",function() {
+        var select = $element.find("select");
+        select.each(function() {
+            $(this).auiSelect2("val",$(this).auiSelect2("val"));
+        });
     });
 
     var auto = 0;
@@ -118,8 +113,31 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
 
     menu.formatResult = function(data) {
         var element = $(data.element);
+
+        var parseType = function() {
+            var data = element.data();
+            if (typeof data.projects == "object") {
+                return "source";
+            } else if (typeof data.repos == "object") {
+                return "project";
+            } else if (typeof data.branches == "object") {
+                return "repo";
+            } else {
+                return "branch";
+            }
+        };
+
+        var id = data.id;
+        var type = parseType();
+        var chosenCopy = angular.copy(menu.chosen);
+        if (type == "project") {
+            var sourceProject = splitSourceProject(id);
+            id = sourceProject.project;
+            chosenCopy.source = sourceProject.source;
+        }
+
         if (element.is("option")) {
-            if (element.data("isListened")) {
+            if (settingsData.getIsListened(type,id,chosenCopy)) {
                 return "<span class='doc_config-branch-menu-option listened'><span class='indicator'>&#x25cf;</span> "+data.text+"</span>";
             } else {
                 return "<span class='doc_config-branch-menu-option'><span class='indicator'></span> "+data.text+"</span>";
@@ -134,9 +152,9 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$http,$timeou
     $scope.$watch("menu.chosen",function(newValue,oldValue) {
         if (newValue.sourceProject !== oldValue.sourceProject) {
             if (typeof newValue.sourceProject == "string") {
-                var arr = newValue.sourceProject.split('\uF000');
-                menu.chosen.source = arr[0];
-                menu.chosen.project = arr[1];
+                var sourceProject = splitSourceProject(newValue.sourceProject);
+                menu.chosen.source = sourceProject.source;
+                menu.chosen.project = sourceProject.project;
                 menu.chosen.repo = null;
                 menu.chosen.branch = null;
             } else {

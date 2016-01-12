@@ -1,7 +1,7 @@
 angular.module("DoC_Config").controller("confluenceConfigCtrl",function($scope,$http,$rootScope,settingsData,$timeout) {
     var confluenceConfig = this;
 
-    settingsData.registerCallback("confluenceConfig",function() {
+    $scope.$on("settingsData.ready",function() {
         confluenceConfig.setFromSettingsData();
     });
 

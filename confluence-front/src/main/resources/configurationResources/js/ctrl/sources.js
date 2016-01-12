@@ -28,7 +28,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($scope,$http,sett
         }
     ];
 
-    settingsData.registerCallback("sourcesCtrl",function() {
+    $scope.$on("settingsData.ready",function() {
         sources.list = [];
         if (settingsData.get().sources) {
 
