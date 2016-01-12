@@ -84,4 +84,5 @@ span.doc_config-branch-menu-option.listened {
 
 span.doc_config-branch-menu-option.listened span.indicator {
     color: #67ab49;
+    font-size: 12px;
 }

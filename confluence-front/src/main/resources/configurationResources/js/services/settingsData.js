@@ -7,24 +7,43 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     var listenForChanges = false;
 
     var processListenToValues = function() {
+        var processParentChildListenTo = function(parent,child) {
+            var rtn;
+            console.log(parent,child);
+            if (child.listenTo !== "none") {
+                if (parent.listenTo !== "none") {
+                    if (parent.listenTo !== child.listenTo) {
+                        rtn = "both";
+                    } else {
+                        rtn = child.listenTo;
+                    }
+                } else {
+                    rtn = child.listenTo;
+                }
+            } else {
+                rtn = parent.listenTo;
+            }
+            console.log(rtn);
+            return rtn;
+        };
         angular.forEach(settings.raw.sources,function(source) {
-            source.isListened = false;
+            source.listenTo = "none";
             angular.forEach(source.projects,function(project) {
-                project.isListened = false;
+                project.listenTo = "none";
                 angular.forEach(project.repos,function(repo) {
-                    repo.isListened = false;
+                    repo.listenTo = "none";
                     angular.forEach(repo.branches,function(branch) {
-                        branch.isListened = branch.listenTo !== "none";
-                        if (branch.isListened) {
-                            repo.isListened = true;
+                        console.log(branch.listenTo);
+                        if (branch.listenTo !== "none") {
+                            repo.listenTo = processParentChildListenTo(repo,branch);
                         }
                     });
-                    if (repo.isListened) {
-                        project.isListened = true;
+                    if (repo.listenTo !== "none") {
+                        project.listenTo = processParentChildListenTo(project,repo);
                     }
                 });
-                if (project.isListened) {
-                    source.isListened = true;
+                if (project.listenTo !== "none") {
+                    source.listenTo = processParentChildListenTo(source,project);
                 }
             });
         });
@@ -96,7 +115,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 chosen.repo,
                 chosen.branch
             ]), data)
-            .then(function (response) {
+            .then(function () {
                 processListenToValues();
                 settings.savingState = "saved";
                 $timeout(function() {
@@ -207,7 +226,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         //setTimeout(callback,1000);
     };
 
-    settings.getIsListened = function(type,id,chosen) {
+    settings.getListenTo = function(type,id,chosen) {
         try {
             var obj;
             if (type == "source") {
@@ -220,7 +239,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 obj =  settings.raw.sources[chosen.source].projects[chosen.project].repos[chosen.repo].branches[id];
             }
             if (typeof obj == "object") {
-                return obj.isListened;
+                return obj.listenTo;
             }
         } catch(e) {
             if (!e instanceof TypeError) {

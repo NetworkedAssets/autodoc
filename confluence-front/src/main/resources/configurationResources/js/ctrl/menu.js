@@ -8,16 +8,6 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
         branch: null
     };
 
-    menu.weekdays;
-
-    var fakeChosen = function() {
-        menu.chosen = {
-            sourceProject: joinSourceProject("staszek","APD"),
-            repo: "javadoc-plugin",
-            branch: "refs/heads/master"
-        };
-        $timeout();
-    };
 
     var splitSourceProject = function(sourceProject) {
         var arr = sourceProject.split('\uF000');
@@ -29,7 +19,7 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
 
     var joinSourceProject = function(source,project) {
         return source+'\uF000'+project;
-    }
+    };
 
     var processTree = function(raw) {
         menu.tree = {
@@ -55,11 +45,9 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
                         branches: {}
                     };
                     angular.forEach(value.branches,function(value,key) {
-                        var isListened = (value.listenTo != "none");
                         repo.branches[key] = {
                             value: key,
-                            label: value.displayId,
-                            isListened: isListened
+                            label: value.displayId
                         };
                     });
                 });
@@ -127,6 +115,19 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
             }
         };
 
+        var listenToStringToChar = function(string) {
+            if (string == "both") {
+                return "&#x25cf;";
+            } else if (string == "git") {
+                return "G";
+            } else if (string == "schedule") {
+                return "S";
+            } else {
+                console.log("OOPS",string);
+                return "";
+            }
+        };
+
         var id = data.id;
         var type = parseType();
         var chosenCopy = angular.copy(menu.chosen);
@@ -137,8 +138,10 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
         }
 
         if (element.is("option")) {
-            if (settingsData.getIsListened(type,id,chosenCopy)) {
-                return "<span class='doc_config-branch-menu-option listened'><span class='indicator'>&#x25cf;</span> "+data.text+"</span>";
+            var listenTo = settingsData.getListenTo(type,id,chosenCopy);
+            console.log(listenTo);
+            if (listenTo !== "none") {
+                return "<span class='doc_config-branch-menu-option listened'><span class='indicator'>"+listenToStringToChar(listenTo)+"</span> "+data.text+"</span>";
             } else {
                 return "<span class='doc_config-branch-menu-option'><span class='indicator'></span> "+data.text+"</span>";
             }
