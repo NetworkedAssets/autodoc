@@ -7,24 +7,24 @@ import com.google.common.base.VerifyException;
 import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
-import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
-import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
+import com.networkedassets.autodoc.transformer.util.SettingsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Handles the settings of the application
@@ -65,7 +65,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
 		givenSettings.getSources().forEach(source -> {
 			try {
-				updateProjectsFromRemoteSource(source);
+				SettingsUtils.updateProjectsFromRemoteSource(source);
 				HookActivator hookActivator = HookActivatorFactory.getInstance(source,
 						givenSettings.getTransformerSettings().getLocalhostAddress());
 				hookActivator.enableAllHooks();
@@ -133,61 +133,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 		return propertyHandler.getValue("settings.filename", defaultFilename);
 	}
 
-	@SuppressWarnings("CodeBlock2Expr")
-	private void updateProjectsFromRemoteSource(@Nonnull Source source) throws MalformedURLException {
-		// Get projects from source
-		ProjectsProvider projectsProvider = ProjectsProviderFactory.getInstance(source);
-
-		Map<String, Project> sourceProjects = projectsProvider.getProjects();
-
-		// Delete projects, repos and branches in settings, that don't exist in
-		// stash (anymore)
-		source.projects.values().removeIf(project -> !sourceProjects.containsKey(project.key));
-		source.projects.values().forEach(project -> project.repos.values()
-				.removeIf(repo -> !sourceProjects.get(project.key).repos.containsKey(repo.slug)));
-		source.projects.values()
-				.forEach(project -> project.repos.values()
-						.forEach(repo -> repo.branches.values()
-								.removeIf(branch -> !sourceProjects.get(project.key).repos.get(repo.slug).branches
-										.containsKey(branch.id))));
-
-		// Add new branches, repos, and projects from stash
-		sourceProjects.values().forEach(stashProject -> {
-			source.projects.putIfAbsent(stashProject.key, stashProject);
-		});
-		sourceProjects.values().forEach(stashProject -> {
-			stashProject.repos.values().forEach(stashRepo -> {
-				source.getProjectByKey(stashProject.key).repos.putIfAbsent(stashRepo.slug, stashRepo);
-			});
-		});
-		sourceProjects.values().forEach(stashProject -> {
-			stashProject.repos.values().forEach(stashRepo -> {
-				stashRepo.branches.values().forEach(stashBranch -> {
-					source.getProjectByKey(stashProject.key).getRepoBySlug(stashRepo.slug).branches
-							.putIfAbsent(stashBranch.id, stashBranch);
-				});
-			});
-		});
-
-		// Update changed non-indexing data
-		sourceProjects.values().forEach(stashProject -> {
-			Project project = source.getProjectByKey(stashProject.key);
-			if (!project.name.equals(stashProject.name)) {
-				project.name = stashProject.name;
-			}
-		});
-		sourceProjects.values().forEach(stashProject -> {
-			stashProject.repos.values().forEach(stashRepo -> {
-				stashRepo.branches.values().forEach(stashBranch -> {
-					Branch branch = source.getProjectByKey(stashProject.key).getRepoBySlug(stashRepo.slug)
-							.getBranchById(stashBranch.id);
-					if (!branch.displayId.equals(stashBranch.displayId)) {
-						branch.displayId = stashBranch.displayId;
-					}
-				});
-			});
-		});
-	}
 
 	@Override
 	public boolean setConfluenceCredentials(Settings settings) {
