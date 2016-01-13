@@ -8,7 +8,6 @@ import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.Hoo
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
-import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
@@ -43,39 +42,25 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
     public SettingsManager() {
         settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
         loadSettingsFromFile(settingsFilename);
-        updateSettings(this.settings);
+        updateAllSourcesAndEnableHooks();
     }
 
     @Override
     public Settings getCurrentSettings() {
-        updateSettings(this.settings);
+        updateAllSourcesAndEnableHooks();
         return settings;
     }
 
-    private void updateSettings(Settings givenSettings) {
-        // drop sources that aren't in the current settings
-        // (to add source - use special endpoint)
-        givenSettings.getSources().removeIf(s -> settings.getSourceByUrl(s.getUrl()) == null);
-
-        givenSettings.getSources().forEach(source -> {
+    private void updateAllSourcesAndEnableHooks() {
+        this.settings.getSources().forEach(source -> {
             try {
                 SettingsUtils.updateProjectsFromRemoteSource(source);
-                HookActivator hookActivator = HookActivatorFactory.getInstance(source,
-                        givenSettings.getTransformerSettings().getLocalhostAddress());
-                hookActivator.enableAllHooks();
+                HookActivatorFactory.getInstance(source, this.settings.getTransformerSettings().getLocalhostAddress())
+                        .enableAllHooks();
             } catch (MalformedURLException e) {
                 log.error("Source {} has malformed URL. Can't load projects: ", source.toString(), e);
             }
         });
-
-        // add sources from current settings that don't appear in givenOnes
-        List<Source> sourcesToAdd = new ArrayList<>();
-        settings.getSources().stream().forEach(source -> {
-            if (givenSettings.getSourceByUrl(source.getUrl()) == null) {
-                sourcesToAdd.add(source);
-            }
-        });
-        givenSettings.getSources().addAll(sourcesToAdd);
     }
 
     private boolean saveSettingsToFile(String filename) {
