@@ -1,27 +1,45 @@
 package com.networkedassets.autodoc.transformer.util;
 
+import com.google.common.base.Strings;
+import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
+import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
-import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Variable utils useful when dealing with transformer's settings
  */
 public final class SettingsUtils {
+
+    private static Logger log = LoggerFactory.getLogger(SettingsUtils.class);
+
     private SettingsUtils() {
     }
 
+    /**
+     * Gets projects from remote source, correlated with given one and integrate them into it
+     *
+     * @param source will have its projects changed to match remote source (added, removed or updated)
+     * @throws MalformedURLException in case source's url is malformed s
+     */
     public static void updateProjectsFromRemoteSource(@Nonnull Source source) throws MalformedURLException {
-        // Get projects from source
+        // Get projects from remote source
         ProjectsProvider projectsProvider = ProjectsProviderFactory.getInstance(source);
-
         Map<String, Project> sourceProjects = projectsProvider.getProjects();
+
+        //Integrate them into the local source
         constrainSourceWithGivenProjectsData(source, sourceProjects);
         addAndUpdateProjectsToSource(source, sourceProjects);
         updateSourceNonIndexingData(source, sourceProjects);
@@ -43,15 +61,13 @@ public final class SettingsUtils {
 
         source.projects.values().stream()
                 .filter(project -> projects.containsKey(project.key))
-                .forEach(project -> {
-                    project.repos.values().stream()
-                            .filter(repo -> projects.get(project.key).repos.containsKey(repo.slug))
-                            .forEach(repo -> repo.branches.values().stream()
-                                    .filter(branch -> projects.get(project.key)
-                                            .repos.get(repo.slug).branches.containsKey(branch.id))
-                                    .forEach(branch -> branch.displayId = projects.get(project.key)
-                                            .repos.get(repo.slug).branches.get(branch.id).displayId));
-                });
+                .forEach(project -> project.repos.values().stream()
+                        .filter(repo -> projects.get(project.key).repos.containsKey(repo.slug))
+                        .forEach(repo -> repo.branches.values().stream()
+                                .filter(branch -> projects.get(project.key)
+                                        .repos.get(repo.slug).branches.containsKey(branch.id))
+                                .forEach(branch -> branch.displayId = projects.get(project.key)
+                                        .repos.get(repo.slug).branches.get(branch.id).displayId)));
     }
 
     /**
@@ -100,5 +116,85 @@ public final class SettingsUtils {
                         .forEach(repo -> repo.branches.values()
                                 .removeIf(branch -> !projects.get(project.key).repos.get(repo.slug).branches
                                         .containsKey(branch.id))));
+    }
+
+    /**
+     * Returns settings filename from properties. If absent, default filename is returned.
+     *
+     * @return Settings filename from properties or default if absent
+     */
+    public static String getSettingsFilenameFromProperties() {
+
+        final String defaultFilename = "transformerSettings.ser";
+        PropertyHandler propertyHandler;
+        try {
+            propertyHandler = PropertyHandler.getInstance();
+        } catch (IOException e) {
+            log.error("Couldn't load the properties file", e);
+            return defaultFilename;
+        }
+        return propertyHandler.getValue("settings.filename", defaultFilename);
+    }
+
+    /**
+     * Determines and sets all verification flags on a given source
+     * <p>
+     * <ul>
+     * <li>Name should be unique and nonempty to be correct</li>
+     * <li>Function will try to connect and verify with source, setting exist and credentialsCorrect flags accordingly</li>
+     * <li><b>Source type can only be checked if credentials are correct. Otherwise it will always be false</b></li>
+     * </ul>
+     *
+     * @param source          will be checked for all conditions and proper flags will be set on it
+     * @param existingSources used to check whether source name is unique
+     */
+    public static void verifySource(Source source, List<Source> existingSources) {
+        source.setSourceExists(false);
+        source.setCredentialsCorrect(false);
+        source.setNameCorrect(false);
+        source.setSourceTypeCorrect(false);
+
+        // is name unique and not empty
+        if (!Strings.isNullOrEmpty(source.getName()) && !existingSources.stream()
+                .anyMatch(s -> s.getName().equals(source.getName()) && s.getId() != source.getId())) {
+            source.setNameCorrect(true);
+        }
+
+        try {
+            // check for connection data correctness
+            StashBitbucketClient stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+            if (stashBitbucketClient.isVerified()) {
+                source.setSourceExists(true);
+                source.setCredentialsCorrect(true);
+            } else if (stashBitbucketClient.doesExist()) {
+                source.setSourceExists(true);
+            }
+
+			/*
+             * check if sourceType matches what lays at the end of given url
+			 * link has to be verified user to get appProperties on bitbucket
+			 * (but not on stash)
+			 */
+            if (source.isCredentialsCorrect() && Objects.nonNull(source.getSourceType())) {
+                Boolean isSourceTypeRight = stashBitbucketClient.getApplicationProperties()
+                        .map(ap -> ap.getDisplayName().equalsIgnoreCase(source.getSourceType().toString()))
+                        .orElse(false);
+                source.setSourceTypeCorrect(isSourceTypeRight);
+            }
+        } catch (MalformedURLException ignored) {
+        }
+    }
+
+    /**
+     * Searches for propper password for the source in existing sources and sets it on the source
+     *
+     * @param source will have it source field set to correct password if possible. Otherwise it will be null
+     * @param existingSources sources in which the proper password should be searched for (by source id)
+     */
+    public static void setCorrectPasswordForSource(Source source, List<Source> existingSources) {
+        String previousPassword = existingSources.stream()
+                .filter(previousSources -> previousSources.getId() == source.getId()).map(Source::getPassword)
+                .findFirst().orElse(null);
+        source.setPassword(previousPassword);
     }
 }
