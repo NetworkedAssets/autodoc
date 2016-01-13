@@ -24,47 +24,43 @@ public final class SettingsUtils {
         Map<String, Project> sourceProjects = projectsProvider.getProjects();
         constrainSourceWithGivenProjectsData(source, sourceProjects);
         addAndUpdateProjectsToSource(source, sourceProjects);
-        updateSourceNonindexingData(source, sourceProjects);
+        updateSourceNonIndexingData(source, sourceProjects);
     }
 
     /**
      * Copies additional data from given projects to source
-     *
+     * <p>
      * Additional data means projects' names and branches' displayIds
      *
-     * @param source will be updated with given projects
-     * @param sourceProjects origin from which source will be updated
+     * @param source   will be updated with given projects
+     * @param projects origin from which source will be updated
      */
-    public static void updateSourceNonindexingData(@Nonnull Source source, Map<String, Project> sourceProjects) {
+    public static void updateSourceNonIndexingData(@Nonnull Source source, Map<String, Project> projects) {
 
-        //TODO change the order of stream
+        source.projects.values().stream()
+                .filter(project -> projects.containsKey(project.key))
+                .forEach(project -> project.name = projects.get(project.key).name);
 
-        sourceProjects.values().forEach(stashProject -> {
-            Project project = source.getProjectByKey(stashProject.key);
-            if (!project.name.equals(stashProject.name)) {
-                project.name = stashProject.name;
-            }
-        });
-        sourceProjects.values().forEach(stashProject -> {
-            stashProject.repos.values().forEach(stashRepo -> {
-                stashRepo.branches.values().forEach(stashBranch -> {
-                    Branch branch = source.getProjectByKey(stashProject.key).getRepoBySlug(stashRepo.slug)
-                            .getBranchById(stashBranch.id);
-                    if (!branch.displayId.equals(stashBranch.displayId)) {
-                        branch.displayId = stashBranch.displayId;
-                    }
+        source.projects.values().stream()
+                .filter(project -> projects.containsKey(project.key))
+                .forEach(project -> {
+                    project.repos.values().stream()
+                            .filter(repo -> projects.get(project.key).repos.containsKey(repo.slug))
+                            .forEach(repo -> repo.branches.values().stream()
+                                    .filter(branch -> projects.get(project.key)
+                                            .repos.get(repo.slug).branches.containsKey(branch.id))
+                                    .forEach(branch -> branch.displayId = projects.get(project.key)
+                                            .repos.get(repo.slug).branches.get(branch.id).displayId));
                 });
-            });
-        });
     }
 
     /**
      * Add given projects, repos and branches to the source
-     *
+     * <p>
      * Given projects that don't yet exist in the source will be added. The rest will be updated if they
      * have repos or branches missing
      *
-     * @param source will be updated with given projects
+     * @param source   will be updated with given projects
      * @param projects origin from which source will be updated
      */
     public static void addAndUpdateProjectsToSource(@Nonnull Source source, Map<String, Project> projects) {
@@ -89,9 +85,10 @@ public final class SettingsUtils {
 
     /**
      * Delete those projects, repos and branches, that don't appear in given projects, from the source
-     *
+     * <p>
      * Useful for updating source, when something on remote source may have been deleted since last update
-     * @param source origin from which projects/repos/branches will be removed if necessary
+     *
+     * @param source   origin from which projects/repos/branches will be removed if necessary
      * @param projects list of projects/repos/branches that are allowed to stay in source after update
      */
     public static void constrainSourceWithGivenProjectsData(@Nonnull Source source, Map<String, Project> projects) {
