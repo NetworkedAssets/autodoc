@@ -41,25 +41,26 @@ public class TransformerServer {
 		Unirest.setHttpClient(HTTP_CLIENT);
 	}
 
-	public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, Branch branch) throws SettingsException {
-        try {
-            HttpResponse<Branch> branchHttpResponse = Unirest.post(url + "/settings/branches/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
-                    .routeParam("sourceId", Integer.toString(sourceId))
-                    .routeParam("projectKey", URLEncoder.encode(projectKey, "UTF-8"))
-                    .routeParam("repoSlug", URLEncoder.encode(repoSlug, "UTF-8"))
-                    .routeParam("branchId", URLEncoder.encode(branch.id, "UTF-8"))
-                    .header("Content-Type", "application/json")
-                    .body(branch)
-                    .asObject(Branch.class);
-            if (branchHttpResponse.getStatus() == 200) {
-                return branchHttpResponse.getBody();
-            } else {
-                throw new SettingsException("Could not modify branch: " + IOUtils.toString(branchHttpResponse.getRawBody()));
-            }
-        } catch (UnirestException | IOException e) {
-            throw new SettingsException(e);
-        }
-    }
+	public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, Branch branch)
+			throws SettingsException {
+		try {
+			HttpResponse<Branch> branchHttpResponse = Unirest
+					.post(url + "/settings/branches/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
+					.routeParam("sourceId", Integer.toString(sourceId))
+					.routeParam("projectKey", URLEncoder.encode(projectKey, "UTF-8"))
+					.routeParam("repoSlug", URLEncoder.encode(repoSlug, "UTF-8"))
+					.routeParam("branchId", URLEncoder.encode(branch.id, "UTF-8"))
+					.header("Content-Type", "application/json").body(branch).asObject(Branch.class);
+			if (branchHttpResponse.getStatus() == 200) {
+				return branchHttpResponse.getBody();
+			} else {
+				throw new SettingsException(
+						"Could not modify branch: " + IOUtils.toString(branchHttpResponse.getRawBody()));
+			}
+		} catch (UnirestException | IOException e) {
+			throw new SettingsException(e);
+		}
+	}
 
 	public TransformerServer(String transformerUrl, String confluenceUrl) {
 		this(transformerUrl);
@@ -77,7 +78,6 @@ public class TransformerServer {
 		return response.getBody();
 	}
 
-	
 	public HttpResponse<String> forceRegenerate(String sourceUrl, String projectKey, String repoSlug, String branchId)
 			throws SettingsException {
 		String eventPayload = String.format(EVENT_JSON, sourceUrl, projectKey, repoSlug, branchId);
@@ -115,6 +115,21 @@ public class TransformerServer {
 
 			response = Unirest.post(url + SOURCES).header("Content-Type", "application/json").body(source)
 					.asObject(Source.class);
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		return response;
+
+	}
+
+	public HttpResponse<String> setConfluenceCredentials(Settings settings) throws SettingsException {
+
+		HttpResponse<String> response;
+		try {
+
+			response = Unirest.put(url + SETTINGS).header("Content-Type", "application/json").body(settings).asString();
+
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
 		}

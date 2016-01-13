@@ -5,8 +5,10 @@ import java.net.URLDecoder;
 import java.util.Optional;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.BranchModifier;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
@@ -32,11 +35,14 @@ public class SettingsService extends RestService {
 	static final Logger log = LoggerFactory.getLogger(SettingsService.class);
 	private SettingsProvider settingsProvider;
 	private BranchModifier branchModifier;
+	private SettingsSaver settingsSaver;
 
 	@Inject
-	public SettingsService(SettingsProvider settingsProvider, BranchModifier branchModifier) {
+	public SettingsService(SettingsProvider settingsProvider, SettingsSaver settingsSaver,
+			BranchModifier branchModifier) {
 		this.settingsProvider = settingsProvider;
 		this.branchModifier = branchModifier;
+		this.settingsSaver = settingsSaver;
 	}
 
 	@GET
@@ -44,6 +50,16 @@ public class SettingsService extends RestService {
 	public Settings getSettings() {
 		log.info("GET request for settings handled");
 		return settingsProvider.getCurrentSettings();
+	}
+
+	@Path("/confluence/credentials")
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setConfluenceCredentials(Settings settings) {
+
+		settingsSaver.setConfluenceCredentials(settings);
+		return Response.status(Response.Status.ACCEPTED).build();
 	}
 
 	@POST

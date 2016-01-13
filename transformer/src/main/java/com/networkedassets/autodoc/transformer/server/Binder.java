@@ -32,7 +32,7 @@ public class Binder extends AbstractBinder {
 		GitCodeProvider codeProvider = new GitCodeProvider();
 		DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
 				codeProvider);
-		
+		bind(settingsManager).to(SettingsSaver.class);
 		bind(settingsManager).to(SettingsProvider.class);
 		bind(settingsManager).to(SourceProvider.class);
 		bind(settingsManager).to(SourceCreator.class);

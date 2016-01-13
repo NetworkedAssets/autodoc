@@ -1,7 +1,30 @@
 package com.networkedassets.autodoc.configureGui;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.Properties;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.atlassian.confluence.setup.settings.SettingsManager;
+import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.core.util.ClassLoaderUtils;
+import com.atlassian.spring.container.ContainerManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
@@ -10,18 +33,6 @@ import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.List;
-import java.util.Properties;
 
 @Path("/configuration/")
 public class ConfigurationService {
@@ -149,6 +160,24 @@ public class ConfigurationService {
 		} catch (SettingsException | JsonProcessingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
+
+	}
+
+	// TODO: Implement configuration sources from AplicationLinks in Confluence
+	@Path("confluence/credentials")
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response setConfluenceCredentials(Settings settings) {
+
+		//TODO: check confluence credentials
+			try {
+				HttpResponse<String> response = transformerServer.setConfluenceCredentials(settings);
+				return Response.status(response.getStatus()).build();
+			} catch (SettingsException e) {
+				throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+			}
+		
 
 	}
 
