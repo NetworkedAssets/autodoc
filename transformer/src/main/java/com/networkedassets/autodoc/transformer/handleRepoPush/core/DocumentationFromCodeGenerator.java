@@ -7,6 +7,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
+import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Branch.ListenType;
 
 import org.slf4j.Logger;
@@ -33,12 +34,16 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 	}
 
 	@Override
-	public void process(PushEvent pushEvent) {
+	public void processEvent(PushEvent pushEvent) {
 		String sourceUrl = pushEvent.getSourceUrl();
 		String projectKey = pushEvent.getProjectKey();
 		String repoSlug = pushEvent.getRepositorySlug();
 		String branchId = pushEvent.getBranchId();
 
+		generateDocumentation(sourceUrl, projectKey, repoSlug, branchId);
+	}
+
+	public void generateDocumentation(String sourceUrl, String projectKey, String repoSlug, String branchId) {
 		if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl)
 				|| !settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
 						.getRepoBySlug(repoSlug).getBranchById(branchId).getListenTo().equals(ListenType.none)) {

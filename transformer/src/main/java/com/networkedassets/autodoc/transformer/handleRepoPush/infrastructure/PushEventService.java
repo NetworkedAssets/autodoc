@@ -35,7 +35,7 @@ public class PushEventService {
 		log.info("New EVENT information received: {}", pushEvent.toString());
 		try {
 
-			eventProcessor.process(pushEvent);
+			eventProcessor.processEvent(pushEvent);
 
 			return Response.status(Response.Status.OK).build();
 		} catch (Exception e) {

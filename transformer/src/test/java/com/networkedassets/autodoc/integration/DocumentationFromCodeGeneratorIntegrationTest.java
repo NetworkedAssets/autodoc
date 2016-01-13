@@ -9,7 +9,6 @@ import org.eclipse.jgit.util.StringUtils;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -62,7 +61,7 @@ public class DocumentationFromCodeGeneratorIntegrationTest {
 
     @Test
     public void testDocumentationFromCodeGenerator() throws IOException {
-        documentationFromCodeGenerator.process(createPushEventInstanceFromJSON());
+        documentationFromCodeGenerator.processEvent(createPushEventInstanceFromJSON());
     }
 
     @Test

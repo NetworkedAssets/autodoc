@@ -7,5 +7,5 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
  */
 @FunctionalInterface
 public interface PushEventProcessor {
-    void process(PushEvent event);
+    void processEvent(PushEvent event);
 }
