@@ -132,6 +132,7 @@
 		<resource type="download" name="js/JavadocEntity.js" location = "dashboardResources/js/JavadocEntity.js" />
 
 		<resource type="download" name="js/dirs/docQname.js" location = "dashboardResources/js/dirs/docQname.js" />
+		<resource type="download" name="js/dirs/docGeneric.js" location = "dashboardResources/js/dirs/docGeneric.js" />
 		<resource type="download" name="js/dirs/auiSelect2.js" location = "dashboardResources/js/dirs/auiSelect2.js" />
 
 		<resource type="download" name="js/services/urlProvider.js" location = "dashboardResources/js/services/urlProvider.js" />
