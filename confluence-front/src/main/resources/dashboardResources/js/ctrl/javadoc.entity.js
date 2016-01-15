@@ -34,7 +34,8 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
     var parseEntityFromJson = function(entity) {
         parseModifiers(entity);
 
-        entity.package = entity.qualified.split(".");
+        var qualified = entity.qualified?entity.qualified:entity.name;
+        entity.package = qualified.split(".");
 
         entity.package.pop();
 
@@ -88,8 +89,20 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
             entity.interfaces = entity.interface;
         }
 
-        if (typeof entity.indexClass == "object") {
+        entity.classes = [];
+        if (angular.isArray(entity.indexClass)) {
             entity.classes = entity.indexClass;
+        }
+
+        entity.packages = [];
+        if (entity.children) {
+            angular.forEach(entity.children,function(child) {
+                if (child.type == "package") {
+                    entity.packages.push(child);
+                } else {
+                    entity.classes.push(child);
+                }
+            });
         }
 
         return entity;
@@ -106,6 +119,7 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
     var init = function() {
         initSpinner();
         if (javadocEntities.isPackage($stateParams.name)) {
+            console.log(javadocEntities.getCopyByName($stateParams.name));
             vm.entity = parseEntityFromJson(javadocEntities.getCopyByName($stateParams.name));
             vm.loading = false;
         } else {

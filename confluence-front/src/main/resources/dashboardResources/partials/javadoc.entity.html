@@ -88,7 +88,7 @@
             </table>
         </div>
 
-        <div class="doc_panel entities packages" ng-show="vm.entity.packages.length > 0">
+        <div class="doc_panel entities elems packages" ng-show="vm.entity.packages.length > 0">
             <h3>Packages</h3>
             <table>
                 <thead>
@@ -98,29 +98,32 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="package in vm.entity.packages">
-                    <td><a href="#" doc-qname="package.name"></a></td>
-                    <td>{{package.summary}}</td>
+                <tr ng-repeat="package in vm.entity.packages" class="elem ng-class-even: 'even';">
+                    <td><span class="name"><a href="#" doc-qname="package.name"></a></span></td>
+                    <td>{{package.comment}}</td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="doc_panel entities classes" ng-show="vm.entity.classes.length > 0">
+        <div class="doc_panel entities elems classes" ng-show="vm.entity.classes.length > 0">
             <h3>Classes</h3>
             <table>
                 <thead>
                     <tr>
-                        <th>Type</th>
-                        <th>Name</th>
+                        <th>Type & Name</th>
                         <th>Summary</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="clazz in vm.entity.classes">
-                        <td><span class="entityType entityType{{clazz.type|capitalize}}">{{clazz.type}}</span></td>
-                        <td><span class="type" doc-qname="clazz.qualified"></span></td>
-                        <td>{{clazz.summary}}</td>
+                    <tr ng-repeat="clazz in vm.entity.classes" class="elem ng-class-even: 'even';">
+                        <td>
+                            <span class="entityType entityType{{clazz.type|capitalize}}">{{clazz.type}}</span><br>
+                            <span class="name">
+                                <span class="type" doc-qname="clazz.name"></span>
+                            </span>
+                        </td>
+                        <td>{{clazz.comment}}</td>
                     </tr>
                 </tbody>
             </table>

@@ -26,6 +26,7 @@ angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
             });
     })
 
-    .run(function ($state,$rootScope) {
+    .run(function ($state,$rootScope,$injector) {
         $rootScope.$state = $state;
+        debugInjector = $injector;
     });

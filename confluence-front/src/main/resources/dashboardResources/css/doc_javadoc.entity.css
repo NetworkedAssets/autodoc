@@ -206,7 +206,3 @@
 .doc .javadoc p {
     margin: 0;
 }
-
-.doc .javadoc .doc_panel.entities.packages a {
-    font-weight: bold;
-}
