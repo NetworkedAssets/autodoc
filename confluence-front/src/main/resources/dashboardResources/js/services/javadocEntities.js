@@ -134,7 +134,6 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
             return typeof map[name] != "undefined";
         },
         isPackage: function(name) {
-            console.log(name,map[name],map[name] && (map[name].type === "package"));
             return map[name] && (map[name].type === "package");
         },
         getByName: function(name) {
