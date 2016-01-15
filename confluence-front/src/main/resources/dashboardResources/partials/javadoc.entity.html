@@ -2,6 +2,13 @@
     <div class="loadingSpinner" ng-show="vm.loading"></div>
     <section class="elem" ng-hide="vm.loading">
 
+        <ol class="aui-nav aui-nav-breadcrumbs" ng-show="vm.packages.length > 0">
+            <li ng-repeat="package in vm.packages" ng-class="{'aui-nav-selected': $last}">
+                <a ng-if="!$last" href="#" ui-sref="javadoc.entity({name:package.qualified})">{{package.name}}</a>
+                <span ng-if="$last">{{package.name}}</span>
+            </li>
+        </ol>
+
         <h3 class="annotations" ng-show="vm.entity.annotation"><!--
             --><span class="annotation" ng-repeat="annotation in vm.entity.annotation">@<span doc-qname="annotation"></span>
             </span>
@@ -23,13 +30,6 @@
             <span>implements</span>
             <span class="type" ng-repeat="interface in vm.entity.interfaces" doc-qname="interface"></span>
         </div>
-
-        <ol class="aui-nav aui-nav-breadcrumbs" ng-show="vm.packages.length > 0">
-            <li ng-repeat="package in vm.packages" ng-class="{'aui-nav-selected': $last}">
-                <a ng-if="!$last" href="#" ui-sref="javadoc.entity({name:package.qualified})">{{package.name}}</a>
-                <span ng-if="$last">{{package.name}}</span>
-            </li>
-        </ol>
 
         <p>{{vm.entity.comment}}</p>
 

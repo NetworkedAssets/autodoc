@@ -84,7 +84,12 @@ function JavadocEntity(object) {
         }
 
         if (angular.isArray(object.interface)) {
-            entity.interfaces = object.interface;
+            if (entity.type == "interface") {
+                entity.supers = object.interface;
+            } else {
+                entity.interfaces = object.interface;
+            }
+
         }
 
         if (angular.isArray(object.indexClass)) {
@@ -94,7 +99,6 @@ function JavadocEntity(object) {
         if (object.children) {
             angular.forEach(object.children,function(child) {
                 if (child.type == "package") {
-                    console.log(child);
                     entity.nestedPackages.push(child);
                 } else {
                     entity.nestedClasses.push(child);
@@ -106,4 +110,4 @@ function JavadocEntity(object) {
     if (typeof object == "object") {
         this.parseFromObject(object);
     }
-};
+}

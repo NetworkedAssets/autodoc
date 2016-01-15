@@ -4,6 +4,20 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
 
     var map;
 
+    var treeToMap = function(obj) {
+        if (!obj) {
+            map = {};
+            obj = tree;
+        }
+        if (typeof obj.children == "object") {
+            angular.forEach(obj.children,function(child) {
+
+                map[child.name] = child;
+                treeToMap(child);
+            });
+        }
+    };
+
     var ready = false;
     var javadocEntities = {
         parse: function(packageList) {
@@ -39,38 +53,44 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
                 }
                 pack.type = "package";
 
+
+
+                pack.indexClass.sort(function(a,b) {
+                    /* needed for class/interface nesting below */
+                    if (a.name > b.name) {
+                        return 1;
+                    }
+                    if (a.name< b.name) {
+                        return -1;
+                    }
+                    return 0;
+                });
+
+                var currentEntity;
+                var lastEntity;
+                var lastLevel = 1;
+
                 angular.forEach(pack.indexClass,function(cl) {
-                    //var name = cl.qualified.replace(pack.name);
-                    //var arr = name.split(".");
-                    //arr.forEach(function(value) {
-                    //    if (typeof currentClass[value] == "undefined") {
-                    //        currentClass[value] = {};
-                    //    }
-                    //    currentClass = currentClass[value];
-                    //});
-                    currentPackage.children[cl.name] = {
+                    var arr = cl.name.split(".");
+                    var name = arr[arr.length-1];
+                    if (arr.length === 1) {
+                        currentEntity = currentPackage;
+                    } else {
+                        if (arr.length > lastLevel) {
+                            currentEntity = lastEntity;
+                        }
+                    }
+                    if (typeof currentEntity.children == "undefined") {
+                        currentEntity.children = {};
+                    }
+                    currentEntity.children[name] = {
                         name: cl.qualified,
                         type: cl.type
                     };
-                    //javadocEntities.push(cl);
+
+                    lastLevel = arr.length;
+                    lastEntity = currentEntity.children[name];
                 });
-
-                angular.forEach(pack.indexInterface,function(interf) {
-                    currentPackage.children[interf.name] = {
-                        name: interf.qualified,
-                        type: "interface"
-                    };
-                    //javadocEntities.push(interf);
-                });
-
-                /*pack.packages = [];
-                 angular.forEach(currentPackage.children,function(value) {
-                 if (value.type=="package") {
-                 pack.packages.push(value);
-                 }
-                 });*/
-                //javadocEntities.push(pack);
-
             });
 
             var rootPackage = null;
@@ -103,19 +123,6 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
         getTree: function() {
             return tree;
         },
-        treeToMap: function(obj) {
-            if (!obj) {
-                map = {};
-                obj = tree;
-            }
-            if (typeof obj.children == "object") {
-                angular.forEach(obj.children,function(child) {
-
-                    map[child.name] = child;
-                    javadocEntities.treeToMap(child);
-                });
-            }
-        },
         getMap: function() {
             return map;
         },
@@ -128,7 +135,7 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
         },
         setTree: function(newTree) {
             tree = newTree;
-            this.treeToMap();
+            treeToMap();
         },
         existsByName: function(name) {
             return typeof map[name] != "undefined";
