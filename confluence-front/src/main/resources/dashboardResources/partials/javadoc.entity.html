@@ -10,6 +10,7 @@
         <span class="modifiers" ng-show="vm.entity.modifiers && vm.entity.modifiers.length">
             <span ng-repeat="modifier in vm.entity.modifiers" class="modifier {{modifier}}">{{modifier}}</span>
         </span>
+        <span class="entityType entityType{{vm.entity.type|capitalize}}">{{vm.entity.type}}</span>
         <h1 class="aui-page-header-main name {{vm.entity.modifiers.join(' ')}}">{{vm.entity.name}}</h1>
 
         <ol class="aui-nav aui-nav-breadcrumbs">
@@ -30,10 +31,6 @@
 
         <p>{{vm.entity.comment}}</p>
 
-        <!--
-        TODO Entity elements' sorting – only by name or abstract/static first/last maybe?
-        TODO Annotations!
-        -->
         <div class="doc_panel elems {{elementGroup.type}}s"
              ng-repeat="elementGroup in vm.entity.elements"
              ng-show="elementGroup.elements.length">
@@ -51,7 +48,7 @@
                     </span>
                 </td>
                 <td>
-                <!--<span class="nameAndDescription">-->
+
                     <span class="toggle" ng-show="element.details.exist" title="Show/hide details"><span
                             class="aui-icon aui-icon-small aui-iconfont-arrow-{{element.details.visible?'up':'down'}}"
                             ng-click="vm.toggleDetails(element)"></span></span>
@@ -77,9 +74,7 @@
                         <span ng-if="!$last" class="comma" ng-repeat-end>, </span>
                     </span>
                     <p class="comment">{{element.comment}}</p>
-                <!--</span>-->
                     <div class="details" ng-show="element.details.visible">
-                        <!--<h6>Details</h6>-->
                         <div class="content">
                             <div class="tags" ng-repeat="tag in element.details.tags">
                                 <h5>{{tag.name}}</h5>
@@ -92,6 +87,46 @@
             </tr>
             </table>
         </div>
+
+        <div class="doc_panel entities packages" ng-show="vm.entity.packages.length > 0">
+            <h3>Packages</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Summary</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="package in vm.entity.packages">
+                    <td><a href="#" doc-qname="package.name"></a></td>
+                    <td>{{package.summary}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="doc_panel entities classes" ng-show="vm.entity.classes.length > 0">
+            <h3>Classes</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="clazz in vm.entity.classes">
+                        <td><span class="entityType entityType{{clazz.type|capitalize}}">{{clazz.type}}</span></td>
+                        <td><span class="type" doc-qname="clazz.qualified"></span></td>
+                        <td>{{clazz.summary}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <pre ng-show="0">{{vm.entity|json}}</pre>
 
     </section>
 </div>

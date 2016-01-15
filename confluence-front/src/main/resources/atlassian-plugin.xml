@@ -138,6 +138,7 @@
 		<resource type="download" name="js/services/javadocEntities.js" location = "dashboardResources/js/services/javadocEntities.js" />
 
 		<resource type="download" name="js/filters/javadoc.menuItemSorter.js" location = "dashboardResources/js/filters/javadoc.menuItemSorter.js" />
+		<resource type="download" name="js/filters/capitalize.js" location = "dashboardResources/js/filters/capitalize.js" />
 
 		<resource type="download" name="js/fn/common.js" location="dashboardResources/js/fn/common.js" />
 

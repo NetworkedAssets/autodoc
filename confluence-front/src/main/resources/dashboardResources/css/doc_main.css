@@ -12,22 +12,6 @@
     vertical-align: middle;
 }
 
-.doc_tree a span.type {
-    background: #ccc;
-    color: #000;
-    border-radius: 0.2em;
-    display: inline-block;
-    text-transform: uppercase;
-    text-align: center;
-    width: 1em;
-    height: 1em;
-    font-size: 0.8em;
-    line-height: 1em;
-    font-weight: bold;
-    padding: 0.1em;
-    margin-right: 0.2em;
-}
-
 #doc_stateSelector {
     float: right;
 }

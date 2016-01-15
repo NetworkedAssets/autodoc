@@ -39,7 +39,6 @@ angular.module("DoC")
                 currentPackage.children = {};
             }
             pack.type = "package";
-            javadocEntities.push(pack);
 
             angular.forEach(pack.indexClass,function(cl) {
                 //var name = cl.qualified.replace(pack.name);
@@ -65,7 +64,13 @@ angular.module("DoC")
                 javadocEntities.push(interf);
             });
 
-
+            /*pack.packages = [];
+            angular.forEach(currentPackage.children,function(value) {
+                if (value.type=="package") {
+                    pack.packages.push(value);
+                }
+            });*/
+            javadocEntities.push(pack);
 
         });
 

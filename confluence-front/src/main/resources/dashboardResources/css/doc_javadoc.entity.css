@@ -3,9 +3,8 @@
     height: 200px;
 }
 
-
-.doc .javadoc .elems {
-    /*padding: 1em;*/
+.doc .javadoc h1 span.entityType, .doc .javadoc h1 span.modifier {
+    font-size: 0.4em;
 }
 
 .doc .javadoc .supers, .doc .javadoc .interfaces {
@@ -27,7 +26,6 @@
 }
 
 .doc .javadoc .elems .elem {
-    /*display: block;*/
     padding: 0.5em;
 }
 
@@ -49,8 +47,6 @@
     border-radius: 1em;
     margin: 0.2em 0;
     vertical-align: 0;
-    /*margin-top: 0.5em;*/
-    /*margin-right: 0.5em;*/
     padding: 0 0.75em;
 }
 
@@ -209,4 +205,8 @@
 
 .doc .javadoc p {
     margin: 0;
+}
+
+.doc .javadoc .doc_panel.entities.packages a {
+    font-weight: bold;
 }

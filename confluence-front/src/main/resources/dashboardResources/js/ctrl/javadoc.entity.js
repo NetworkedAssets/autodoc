@@ -1,7 +1,3 @@
-/**
- * Created by Jakub on 24/11/15.
- */
-
 angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,$rootScope,$timeout,$element,urlProvider,javadocEntities) {
     var vm = this;
     vm.loading = true;
@@ -36,19 +32,18 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
     };
 
     var parseEntityFromJson = function(entity) {
-
         parseModifiers(entity);
 
         entity.package = entity.qualified.split(".");
 
         entity.package.pop();
 
-        entity.packages = [];
+        /*entity.packages = [];
         entity.package.forEach(function(package) {
             entity.packages.push({
                 name: package
             });
-        });
+        });*/
 
         entity.elements = [
             {
@@ -90,10 +85,13 @@ angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sani
         }
         entity.interfaces = [];
         if (entity.interface) {
-            console.log(entity.interface);
             entity.interfaces = entity.interface;
         }
-        console.log(entity);
+
+        if (typeof entity.indexClass == "object") {
+            entity.classes = entity.indexClass;
+        }
+
         return entity;
     };
 

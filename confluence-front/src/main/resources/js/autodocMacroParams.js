@@ -173,7 +173,6 @@
                     var $select = $("select", paramDiv);
 
                     projects.select = $select;
-                    console.log($select);
                     $($select).append("<option>Loading...</option>").prop("disabled",true);
                     $.getJSON(url).then(function(data) {
                         processTree(data);

@@ -70,17 +70,34 @@
     font-weight: bold;
 }
 
-.doc_tree a span.type.package {
+span.entityType {
+    background: #ccc;
+    color: #000;
+    border-radius: 0.2em;
+    display: inline-block;
+    font-family: sans-serif!important;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 1em;
+    height: 1em;
+    font-size: 0.8em;
+    line-height: 1em;
+    font-weight: bold;
+    padding: 0.3em 0.2em 0.1em 0.2em;
+    margin-right: 0.2em;
+}
+
+span.entityType.entityTypePackage {
     background: #666;
     color: #fff;
 }
 
-.doc_tree a span.type.class {
+span.entityType.entityTypeClass {
     background: #8eb021;
     color: #fff;
 }
 
-.doc_tree a span.type.interface {
+span.entityType.entityTypeInterface {
     background: #59afe1;
     font-family: serif;
     color: #fff;
