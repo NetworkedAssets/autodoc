@@ -1,15 +1,20 @@
 angular.module("DoC")
-    .directive('docGeneric', function ($compile, javadocEntities) {
+    .directive('docGeneric', function ($compile) {
         return {
-            link: function (scope, element, attr) {
+            link: function (scope, element) {
                 var html = '';
                 html += '&lt;';
+
                 scope.docGeneric.forEach(function (generic, i) {
                     if (i > 0) {
                         html += '<span>, </span>';
                     }
-                    //console.log(generic,generic.qualified);
-                    html += '<span doc-qname="\'' + generic.qualified + '\'"></span>'
+                    var qualified = generic.qualified;
+                    if (!qualified && generic.name) {
+                        qualified = generic.name;
+                    }
+
+                    html += '<span doc-qname="\'' + qualified + '\'"></span>';
                     if (generic.wildcard) {
                         var processBound = function (bound, text) {
                             bound.forEach(function (bound, j) {

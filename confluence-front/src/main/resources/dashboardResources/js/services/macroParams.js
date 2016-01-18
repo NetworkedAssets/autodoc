@@ -4,14 +4,26 @@ angular.module("DoC").factory("macroParams",function() {
     if (AJS && AJS.params && typeof AJS.params.dashboardParamsJson == "string") {
         params = angular.fromJson(AJS.params.dashboardParamsJson);
     } else {
-        params = {
-            source: "1",
-            project: "AUT",
-            repo: "autodoc",
-            branch: "master",
-            javadoc: true,
-            classDiagram: true
-        };
+        var guava = true;
+        if (guava) {
+            params = {
+                source: "1",
+                project: "GUAV",
+                repo: "guava",
+                branch: "master",
+                javadoc: true,
+                classDiagram: true
+            };
+        } else {
+            params = {
+                source: "1",
+                project: "AUT",
+                repo: "autodoc",
+                branch: "master",
+                javadoc: true,
+                classDiagram: true
+            };
+        }
     }
 
     var macroParams = {

@@ -17,7 +17,7 @@
             <span ng-repeat="modifier in vm.entity.modifiers" class="modifier {{modifier}}">{{modifier}}</span>
         </span>
         <span class="entityType entityType{{vm.entity.type|capitalize}}">{{vm.entity.type}}</span>
-        <h1 class="aui-page-header-main name {{vm.entity.modifiers.join(' ')}}">{{vm.entity.name}}</h1>
+        <h1 class="aui-page-header-main name {{vm.entity.modifiers.join(' ')}}">{{vm.entity.name}}<span ng-if="vm.entity.generic" doc-generic="vm.entity.generic"></span></h1>
 
 
         <div ng-show="vm.entity.supers.length" class="supers">
@@ -31,7 +31,7 @@
             <span class="type" ng-repeat="interface in vm.entity.interfaces" doc-qname="interface"></span>
         </div>
 
-        <p>{{vm.entity.comment}}</p>
+        <p ng-bind-html="vm.$sanitize(vm.entity.comment)"></p>
 
         <div class="doc_panel elems {{elementGroup.type}}s"
              ng-repeat="elementGroup in vm.entity.elements"
@@ -44,7 +44,7 @@
                 <td>
                     <span class="modifiers"><!--
                         --><span ng-repeat="modifier in element.modifiers" class="modifier {{modifier}}">{{modifier}}</span><!--
-                    --></span><!--
+                    --></span><span ng-if="element.generic" class="generic" doc-generic="vm.entity.generic"></span><!--
                     --><span class="typeWrapper">
                         <span class="type" ng-show="element.type" doc-qname="element.type"></span>
                     </span>
@@ -75,7 +75,7 @@
                         <span ng-repeat-start="exception in element.exception" doc-qname="exception" class="type"></span>
                         <span ng-if="!$last" class="comma" ng-repeat-end>, </span>
                     </span>
-                    <p class="comment">{{element.comment}}</p>
+                    <p class="comment" ng-bind-html="vm.$sanitize(element.comment)"></p>
                     <div class="details" ng-show="element.details.visible">
                         <div class="content">
                             <div class="tags" ng-repeat="tag in element.details.tags">

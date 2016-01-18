@@ -1,12 +1,11 @@
 angular.module("DoC").factory("urlProvider",function(macroParams) {
 
     var getRestPathParamsString = function() {
-        var pathString = "/"
+        return "/"
             //+ urlProvider.encodeComponent(macroParams.get("source")) + "/"
             + urlProvider.encodeComponent(macroParams.get("project")) + "/"
             + urlProvider.encodeComponent(macroParams.get("repo")) + "/"
             + urlProvider.encodeComponent(macroParams.get("branch"));
-        return pathString;
     };
 
     var urlProvider = {
@@ -28,11 +27,11 @@ angular.module("DoC").factory("urlProvider",function(macroParams) {
             if (!path) {
                 path = "";
             }
-            return this.getBaseUrl()+"/download/resources/com.networkedassets.autodoc.confluence-front:configuration-resources/configurationResources"+path;
+            return this.getBaseUrl()+"/download/resources/com.networkedassets.autodoc.confluence-front:dashboard-resources/dashboardResources"+path;
         },
         encodeComponent: function(string) {
             return encodeURIComponent(encodeURIComponent(string));
         }
-    }
+    };
     return urlProvider;
 });

@@ -3,6 +3,8 @@ function JavadocEntity(object) {
 
     this.scope = null;
     this.name = null;
+    this.comment = null;
+    this.generic = null;
     this.packageArray = [];
     this.elements = [];
     this.supers = [];
@@ -61,6 +63,7 @@ function JavadocEntity(object) {
 
                     element.modifiers = parseModifiers(element);
                     element.details = parseDetails(element);
+                    console.log(element.generic);
                 });
             }
         });
@@ -70,6 +73,9 @@ function JavadocEntity(object) {
         entity.modifiers = parseModifiers(object);
         entity.type = object.type;
         entity.scope = object.scope;
+
+        entity.comment = object.comment;
+        entity.generic = object.generic;
 
         entity.qualified = object.qualified?object.qualified:object.name;
 

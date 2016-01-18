@@ -1,6 +1,3 @@
-/**
- * Created by Jakub on 30/11/15.
- */
 angular.module("DoC_Config").controller("schedulesCtrl",function($scope,settingsData) {
     var schedules = this;
     schedules.types = {
@@ -52,18 +49,18 @@ angular.module("DoC_Config").controller("schedulesCtrl",function($scope,settings
         "sun": {
             label: "Sun",
             value: "sun"
-        },
+        }
     };
 
     schedules.settings = settingsData;
 
     schedules.log = function() {
         console.log(schedules.settings.schedule);
-    }
+    };
 
     schedules.removeEvent = function(id) {
         schedules.settings.scheduledEvents.splice(id,1);
-    }
+    };
 
     schedules.addEvent = function() {
         schedules.settings.scheduledEvents.push(
@@ -88,5 +85,5 @@ angular.module("DoC_Config").controller("schedulesCtrl",function($scope,settings
 
 
 
-})
+});
 
