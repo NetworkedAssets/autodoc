@@ -1,5 +1,5 @@
 angular.module("DoC")
-.controller("javadocCtrl",function($http,$state,$element,$timeout,urlProvider,javadocEntities) {
+.controller("javadocCtrl",function($http,$state,$stateParams,$element,$timeout,$rootScope,urlProvider,javadocEntities) {
     var vm = this;
     vm.loading = true;
 
@@ -36,12 +36,31 @@ angular.module("DoC")
 
     vm.tree = {
         q: "",
-        expanded: [],
+        expandedNodes: [],
         onSelection: function (node) {
-            //console.log(node,vm.tree.expanded);
             vm.go(node);
-            this.expanded.push(node);
+            this.expandedNodes.push(node);
             $timeout();
+        },
+        updateSelectedNode: function(node) {
+            if (node != vm.tree.selectedNode) {
+                vm.tree.selectedNode = node;
+                this.updateExpandedRecursively(node);
+            }
+        },
+        updateSelectedNodeByName: function(name) {
+            vm.tree.updateSelectedNode(javadocEntities.getByName(name));
+        },
+        updateExpandedRecursively: function(node) {
+            var arr = node.name.split(".");
+            arr.pop();
+            if (arr.length > 0) {
+                this.updateExpandedRecursively(javadocEntities.getByName(arr.join(".")));
+            }
+            this.expandedNodes.push(node);
+            if (this.expandedNodes.length > 16) {
+                this.expandedNodes = this.expandedNodes.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]);
+            }
         },
         options: {
             nodeChildren: "children",
@@ -60,11 +79,21 @@ angular.module("DoC")
         }
     };
 
+    $rootScope.$on('$stateChangeSuccess',
+        function(event, toState, toParams){
+            $timeout(function() {
+                vm.tree.updateSelectedNodeByName(toParams.name);
+            },50);
+        });
+
+
+    if ($state.params.name) {
+        $rootScope.$on("javadocEntities.ready",function() {
+            vm.tree.updateSelectedNodeByName($state.params.name);
+        });
+    }
+
     vm.go = function(item) {
-        vm.expandItem(item);
-        if (item.type == "package") {
-            return false;
-        }
         $state.go("javadoc.entity",{
             name: item.name
         });
@@ -72,10 +101,6 @@ angular.module("DoC")
 
     vm.isActive = function(item) {
         return item.name===$state.params.name;
-    };
-
-    vm.getMenuItemPartialPath = function() {
-        return doc_resourcePath+"partials/javadoc.menuitem.html";
     };
 
     initSpinner();

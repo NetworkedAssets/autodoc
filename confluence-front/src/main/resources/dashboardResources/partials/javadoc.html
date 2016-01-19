@@ -12,8 +12,9 @@
                  tree-model="vm.items"
                  options="vm.tree.options"
                  on-selection="vm.tree.onSelection(node)"
+                 selected-node="vm.tree.selectedNode"
                  filter-expression="vm.tree.q"
-                 expanded-nodes="vm.tree.expanded">
+                 expanded-nodes="vm.tree.expandedNodes">
                 <span class="entityType entityType{{node.type|capitalize}}">{{node.type[0]}}</span><!--
                 --><span class="name" doc-qname="node.name"></span>
             </div>

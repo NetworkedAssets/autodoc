@@ -153,7 +153,7 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
         getTree: function() {
             return tree;
         },
-        getTreeUsingArrays: function() {//TODO should be private and used while parsing
+        getTreeUsingArrays: function() {//TODO Refactor: should be private and used while parsing
             var arr = [];
             objectToArray(tree.children,arr);
             return arr;
