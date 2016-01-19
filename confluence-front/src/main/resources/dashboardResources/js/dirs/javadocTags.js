@@ -8,7 +8,8 @@ angular.module("DoC")
                         var tagProcessors = [
                             function() {
                                 if (typeof scope.content == "string") {
-                                    var regExp = /{@link(plain)? (([^}#]+)?(#([^}]+))?)}/gi;
+                                    var regExp = /{@link(plain)?\s*(([^}]+)?(#([^}]+))?)}/gi;
+
                                     scope.content = scope.content.replace(regExp,function(match,$1,clazz,$3,element) {
                                         if (!clazz) {
                                             // TODO Scrolling to specific method
@@ -20,12 +21,9 @@ angular.module("DoC")
                                         }
 
                                         if (javadocEntities.existsByName(pack+"."+clazz)) {
-                                            //return '<a href="#" ui-sref="javadoc.entities({name:\''+clazz+'\'})">'+clazz+'</a>';
                                             return '<span class="type" doc-qname="\''+pack+"."+clazz+'\'"></span>';
-                                        } else if (javadocEntities.existsByName(clazz)) {
-                                            return '<span class="type" doc-qname="\''+clazz+'\'"></span>';
                                         } else {
-                                            return $1;
+                                            return '<span class="type" doc-qname="\''+clazz+'\'"></span>';
                                         }
 
                                     });
@@ -40,7 +38,7 @@ angular.module("DoC")
                             function() {
                                 var debug = false;
                                 if (!debug && typeof scope.content == "string") {
-                                    var regExp = /{@[\w]+ ([^}]+)}/gi;
+                                    var regExp = /{@[\w]+\s*([^}]+)}/gi;
                                     scope.content = scope.content.replace(regExp,"$1");
                                 }
                             }/*
