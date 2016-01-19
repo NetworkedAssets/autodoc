@@ -9,4 +9,4 @@ if (AJS.Data) {
 }
 
 
-angular.module('DoC',['ui.router','ngSanitize']);
+angular.module('DoC',['ui.router','ngSanitize','treeControl']);

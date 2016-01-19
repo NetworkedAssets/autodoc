@@ -18,6 +18,36 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
         }
     };
 
+    var objectToArray = function(obj,arr) {
+        angular.forEach(obj,function(value) {
+            var innerArr = [];
+            if (value.children) {
+                objectToArray(value.children,innerArr);
+                innerArr.sort(function(a,b) {
+                    if (a.type === b.type) {
+                        if (a.name === b.name) {
+                            return 0;
+                        } else if (a.name > b.name) {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                    } else {
+                        if (a.type === b.type) {
+                            return 0;
+                        } else if (a.type > b.type) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    }
+                });
+                value.children = innerArr;
+            }
+            arr.push(value);
+        });
+    };
+
     var ready = false;
     var javadocEntities = {
         parse: function(packageList) {
@@ -123,8 +153,10 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
         getTree: function() {
             return tree;
         },
-        getMap: function() {
-            return map;
+        getTreeUsingArrays: function() {//TODO should be private and used while parsing
+            var arr = [];
+            objectToArray(tree.children,arr);
+            return arr;
         },
         push: function(entity) {
             map[entity.qualified] = entity;

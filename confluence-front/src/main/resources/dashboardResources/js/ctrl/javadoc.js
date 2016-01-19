@@ -1,5 +1,5 @@
 angular.module("DoC")
-.controller("javadocCtrl",function($http,$state,$element,urlProvider,javadocEntities) {
+.controller("javadocCtrl",function($http,$state,$element,$timeout,urlProvider,javadocEntities) {
     var vm = this;
     vm.loading = true;
 
@@ -10,7 +10,9 @@ angular.module("DoC")
     $http.get(urlProvider.getRestUrl('/JAVADOC/index'),{
         cache: true
     }).then(function(data) {
-        vm.items = javadocEntities.parse(data.data.indexPackage);
+        javadocEntities.parse(data.data.indexPackage);
+        vm.items = javadocEntities.getTreeUsingArrays();
+
         vm.loading = false;
     });
 
@@ -30,6 +32,32 @@ angular.module("DoC")
         }
 
         return (active) || item.expanded;
+    };
+
+    vm.tree = {
+        q: "",
+        expanded: [],
+        onSelection: function (node) {
+            //console.log(node,vm.tree.expanded);
+            vm.go(node);
+            this.expanded.push(node);
+            $timeout();
+        },
+        options: {
+            nodeChildren: "children",
+            dirSelectable: true,
+            injectClasses: {
+                ul: "a1",
+                li: "a2",
+                liSelected: "a7",
+                iExpanded: "aui-icon aui-icon-small aui-iconfont-arrow-up",
+                iCollapsed: "aui-icon aui-icon-small aui-iconfont-arrow-down",
+                iLeaf: "a5",
+                label: "a6",
+                labelSelected: "a8"
+            },
+            allowDeselect: false
+        }
     };
 
     vm.go = function(item) {

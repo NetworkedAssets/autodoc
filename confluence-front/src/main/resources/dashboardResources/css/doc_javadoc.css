@@ -28,7 +28,7 @@
     height: 270px;
 }
 
-.doc .javadoc aside > ul, #doc_javadoc_content {
+.doc .javadoc aside > .doc_tree, #doc_javadoc_content {
     min-height: 270px;
     max-height: 470px;
     overflow-y: scroll;
@@ -59,7 +59,7 @@
     width: 285px;
 }
 
-.doc_tree a {
+/*.doc_tree a {
     text-decoration: none !important;
     white-space: nowrap;
     cursor: pointer;
@@ -68,7 +68,7 @@
 
 .doc_tree a.active span.name {
     font-weight: bold;
-}
+}*/
 
 span.entityType {
     background: #ccc;
@@ -101,4 +101,37 @@ span.entityType.entityTypeInterface {
     background: #59afe1;
     font-family: serif;
     color: #fff;
+}
+
+[treecontrol] li {
+    white-space: nowrap;
+}
+
+[treecontrol] div.tree-label:hover {
+    position:relative;
+    z-index: 100;
+    background: white;
+}
+
+[treecontrol] i, [treecontrol] div.tree-label {
+    display: inline-block;
+    cursor: pointer;
+}
+
+[treecontrol] div.tree-selected {
+    font-weight: 600;
+}
+
+[treecontrol] .tree-leaf i {
+    color: transparent;
+}
+
+.doc .javadoc aside form.aui {
+    margin-top: 0;
+}
+
+.doc .javadoc aside form.aui input {
+    max-width: 280px;
+    width: 280px;
+    margin: 10px;
 }

@@ -63,7 +63,6 @@ function JavadocEntity(object) {
 
                     element.modifiers = parseModifiers(element);
                     element.details = parseDetails(element);
-                    console.log(element.generic);
                 });
             }
         });
