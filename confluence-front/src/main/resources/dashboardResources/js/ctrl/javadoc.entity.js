@@ -1,8 +1,6 @@
-angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$stateParams,$rootScope,$timeout,$element,urlProvider,javadocEntities) {
+angular.module("DoC").controller("javadocEntityCtrl",function($scope,$http,$sanitize,$filter,$stateParams,$rootScope,$timeout,$element,urlProvider,javadocEntities) {
     var vm = this;
     vm.loading = true;
-
-    vm.$sanitize = $sanitize;
 
     var initSpinner = function() {
         AJS.$($element.find(".loadingSpinner")).spin("big");

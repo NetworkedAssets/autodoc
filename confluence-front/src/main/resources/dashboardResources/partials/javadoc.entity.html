@@ -31,7 +31,7 @@
             <span class="type" ng-repeat="interface in vm.entity.interfaces" doc-qname="interface"></span>
         </div>
 
-        <p ng-bind-html="vm.$sanitize(vm.entity.comment)"></p>
+        <p javadoc-tags="vm.entity.comment" my-attribute="vm.entity"></p>
 
         <div class="doc_panel elems {{elementGroup.type}}s"
              ng-repeat="elementGroup in vm.entity.elements"
@@ -75,7 +75,7 @@
                         <span ng-repeat-start="exception in element.exception" doc-qname="exception" class="type"></span>
                         <span ng-if="!$last" class="comma" ng-repeat-end>, </span>
                     </span>
-                    <p class="comment" ng-bind-html="vm.$sanitize(element.comment)"></p>
+                    <p class="comment" javadoc-tags="element.comment"></p>
                     <div class="details" ng-show="element.details.visible">
                         <div class="content">
                             <div class="tags" ng-repeat="tag in element.details.tags">

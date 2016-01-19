@@ -135,6 +135,7 @@
 		<resource type="download" name="js/dirs/docGeneric.js" location = "dashboardResources/js/dirs/docGeneric.js" />
 		<resource type="download" name="js/dirs/auiSelect2.js" location = "dashboardResources/js/dirs/auiSelect2.js" />
 		<resource type="download" name="js/dirs/angular-tree-control.js" location = "dashboardResources/js/dirs/angular-tree-control.js" />
+		<resource type="download" name="js/dirs/javadocTags.js" location = "dashboardResources/js/dirs/javadocTags.js" />
 
 		<resource type="download" name="js/services/urlProvider.js" location = "dashboardResources/js/services/urlProvider.js" />
 		<resource type="download" name="js/services/macroParams.js" location = "dashboardResources/js/services/macroParams.js" />
