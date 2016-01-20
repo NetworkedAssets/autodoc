@@ -8,12 +8,16 @@ import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ScheduledEventJob;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
-import com.networkedassets.autodoc.transformer.settings.*;
+import com.networkedassets.autodoc.transformer.settings.Branch;
+import com.networkedassets.autodoc.transformer.settings.Project;
+import com.networkedassets.autodoc.transformer.settings.Settings;
+import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
@@ -25,7 +29,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.util.*;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
@@ -33,7 +36,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * Handles the settings of the application
  */
 public class SettingsManager implements SettingsProvider, SettingsSaver, SourceProvider, SourceCreator, SourceRemover,
-        SourceModifier, BranchModifier {
+        SourceModifier, BranchModifier, EventScheduler {
 
     public String settingsFilename;
     public Scheduler scheduler;
@@ -326,40 +329,41 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         currentBranch.setListenTo(branch.getListenTo());
         currentBranch.scheduledEvents = new ArrayList<>(branch.scheduledEvents);
 
-        try {
-            scheduler.shutdown(true);
-            scheduler.clear();
-            scheduleEvents(currentBranch, sourceId, projectKey, repoSlug, branchId);
-            scheduler.start();
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
-
         saveSettingsToFile(settingsFilename);
         return currentBranch;
     }
 
-    private void scheduleEvents(Branch currentBranch, int sourceId,
-                                String projectKey, String repoSlug, String branchId) throws SchedulerException {
+    public void scheduleEvents(Branch currentBranch, int sourceId,
+                               String projectKey, String repoSlug, String branchId) {
 
-        for (int i = 0; i < currentBranch.scheduledEvents.size(); ++i) {
-            ScheduledEvent event = currentBranch.scheduledEvents.get(i);
+        Preconditions.checkNotNull(currentBranch);
 
-            JobDetail job = newJob(ScheduledEventJob.class)
-                    .withIdentity("scheduledEventJob", "event" + i)
-                    .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
-                    .usingJobData("projectKey", projectKey)
-                    .usingJobData("repoSlug", repoSlug)
-                    .usingJobData("branchId", branchId)
-                    .build();
+        currentBranch.scheduledEvents.stream().forEach(event -> {
+            try {
+                scheduler.shutdown(true);
+                scheduler.clear();
+                JobDetail job = newJob(ScheduledEventJob.class)
+                        .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
+                        .usingJobData("projectKey", projectKey)
+                        .usingJobData("repoSlug", repoSlug)
+                        .usingJobData("branchId", branchId)
+                        .build();
 
-            Trigger trigger = newTrigger()
-                    .withIdentity("scheduledEventTrigger", "event" + i)
-                    .startNow()
-                    .withSchedule(event.getCronSchedule())
-                    .build();
+                Trigger trigger = newTrigger()
+                        .startNow()
+                        .withSchedule(event.getCronSchedule())
+                        .build();
 
-            scheduler.scheduleJob(job, trigger);
+                scheduler.scheduleJob(job, trigger);
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            }
+        });
+        try{
+            scheduler.start();
+        } catch (SchedulerException e){
+            e.printStackTrace();
         }
+
     }
 }

@@ -1,12 +1,17 @@
-package com.networkedassets.autodoc.transformer.manageSettings.core;
+package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
+import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.DefaultDocumentationGeneratorFactory;
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationFromCodeGenerator;
 import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.ConfluenceDocumentationSender;
 import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.GitCodeProvider;
+import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
+import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+
+import javax.inject.Inject;
 
 /**
  * Created by mgilewicz on 2016-01-14.
@@ -17,19 +22,22 @@ public class ScheduledEventJob implements Job {
     private String repoSlug;
     private String branchId;
 
-    public ScheduledEventJob() {
+    private PushEventProcessor eventProcessor;
+
+    @Inject
+    public ScheduledEventJob(PushEventProcessor eventProcessor) {
+        this.eventProcessor = eventProcessor;
     }
     public void execute(JobExecutionContext context)
             throws JobExecutionException
     {
-        SettingsManager settingsManager = new SettingsManager();
-        DefaultDocumentationGeneratorFactory docFactory = new DefaultDocumentationGeneratorFactory();
-        ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
-        GitCodeProvider codeProvider = new GitCodeProvider();
-        DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
-                codeProvider);
+        PushEvent event = new PushEvent();
+        event.setBranchId(branchId);
+        event.setProjectKey(projectKey);
+        event.setRepositorySlug(repoSlug);
+        event.setSourceUrl(sourceUrl);
 
-        docGen.generateDocumentation(sourceUrl, projectKey, repoSlug, branchId);
+        eventProcessor.processEvent(event);
     }
 
     public void setSourceUrl(String sourceUrl) {
