@@ -1,25 +1,27 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
-import com.google.common.base.Preconditions;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceModifier;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
-import com.networkedassets.autodoc.transformer.settings.Source;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-
-import java.util.Optional;
+import com.google.common.base.Preconditions;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceModifier;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
+import com.networkedassets.autodoc.transformer.settings.Source;
 
 /**
  * REST service intended to check whether given source exists
