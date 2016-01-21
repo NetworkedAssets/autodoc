@@ -123,7 +123,7 @@
                                             <fieldset class="group">
                                                 <legend><span>Update on</span></legend>
                                                 <doc-aui-button-group
-                                                        doc-type="radio"
+                                                        doc-periodType="radio"
                                                         ng-model="$root.settings.listenTo"
                                                         doc-options="$root.listenToOptions"
                                                 ></doc-aui-button-group>
@@ -148,7 +148,7 @@
                                                                 <fieldset class="group">
                                                                     <legend><span>Event type</span></legend>
                                                                     <doc-aui-button-group
-                                                                            doc-type="radio"
+                                                                            doc-periodType="radio"
                                                                             ng-model="event.periodic"
                                                                             doc-options="[{value:false,label:'One time'},{value:true,label:'Periodic'}]"
                                                                     ></doc-aui-button-group>
@@ -165,8 +165,8 @@
                                                                     <fieldset class="group">
                                                                         <legend><span>Every</span></legend>
                                                                         <input type="number" min="1" max="10" class="text short-field" ng-model="event.number">
-                                                                        <doc-aui-button-group ng-hide="event.number>1" doc-type="radio" ng-model="event.type" doc-options="schedules.types.singular"></doc-aui-button-group>
-                                                                        <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-type="radio" ng-model="event.type" doc-options="schedules.types.plural"></doc-aui-button-group>
+                                                                        <doc-aui-button-group ng-hide="event.number>1" doc-periodType="radio" ng-model="event.type" doc-options="schedules.types.singular"></doc-aui-button-group>
+                                                                        <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-periodType="radio" ng-model="event.type" doc-options="schedules.types.plural"></doc-aui-button-group>
                                                                         <!--<div class="radio">
                                                                             <input class="radio"
                                                                                    ng-repeat-start="type in schedules.types"
@@ -181,7 +181,7 @@
                                                                     <fieldset ng-show="event.type=='week'" class="group">
                                                                         <legend><span>Days of week</span></legend>
                                                                         <doc-aui-button-group
-                                                                                doc-type="checkbox"
+                                                                                doc-periodType="checkbox"
                                                                                 ng-model="event.weekdays"
                                                                                 doc-options="schedules.weekdayOptions"
                                                                         ></doc-aui-button-group>
