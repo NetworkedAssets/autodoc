@@ -8,6 +8,7 @@ import net.java.ao.Query;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -25,7 +26,7 @@ public class DocumentationService {
 
     @Path("{project}/{repo}/{branch}/{doctype}")
     @GET
-    public String getDocumentationPiecesForProject(
+    public Response getDocumentationPiecesForProject(
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
@@ -38,19 +39,21 @@ public class DocumentationService {
         if ("uml".equalsIgnoreCase(doctypeDec)) return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
         return ao.executeInTransaction(() ->
                 getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
-                        .map(d -> "{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
+                        .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
                                 .join(Arrays.asList(d.getDocumentationPieces())
                                         .stream()
                                         .map(dp -> "{\"type\": \"" + dp.getPieceType() + "\","
                                                 + "\"name\": \"" + dp.getPieceName() + "\"}")
                                         .collect(Collectors.toList()))
-                                + "]}")
-                        .orElse("{\"success\": false, \"message\": \"Could not find requested documentation!\"}"));
+                                + "]}"))
+                        .orElse(Response.status(404).entity(
+                                "{\"success\": false, \"message\": \"Could not find requested documentation!\"}"
+                        ))).build();
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
     @GET
-    public String getDocumentationPiece(
+    public Response getDocumentationPiece(
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
@@ -65,7 +68,10 @@ public class DocumentationService {
                 getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
                         .flatMap(d -> getDocumentationPiece(d, docPieceNameDec))
                         .map(this::makeDocPieceJson)
-                        .orElse("{\"success\": false, \"message\": \"Could not find requested documentation!\"}"));
+                        .map(Response::ok)
+                        .orElse(Response.status(404).entity(
+                                "{\"success\": false, \"message\": \"Could not find requested documentation!\"}"
+                        ))).build();
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
@@ -90,7 +96,7 @@ public class DocumentationService {
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
-    public String postDocPiece(
+    public Response postDocPiece(
             @Context
             @PathParam("project") String project,
             @PathParam("repo") String repo,
@@ -112,7 +118,7 @@ public class DocumentationService {
             piece.save();
             doc.save();
 
-            return "{\"success\": true}";
+            return Response.ok("{\"success\": true}").build();
         });
     }
 
