@@ -33,10 +33,11 @@ public class SettingsService extends RestService {
 
 	@Inject
 	public SettingsService(SettingsProvider settingsProvider, SettingsSaver settingsSaver,
-			BranchModifier branchModifier) {
+			BranchModifier branchModifier, EventScheduler eventScheduler) {
 		this.settingsProvider = settingsProvider;
 		this.branchModifier = branchModifier;
 		this.settingsSaver = settingsSaver;
+		this.eventScheduler = eventScheduler;
 	}
 
 	@GET

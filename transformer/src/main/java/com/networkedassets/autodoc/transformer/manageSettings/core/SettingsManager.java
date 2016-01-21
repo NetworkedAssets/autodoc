@@ -19,12 +19,15 @@ import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.*;
@@ -39,6 +42,8 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         SourceModifier, BranchModifier, EventScheduler {
 
     public String settingsFilename;
+
+    @Inject
     public Scheduler scheduler;
 
     public Settings getSettings() {
@@ -57,13 +62,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         settingsFilename = getSettingsFilenameFromProperties();
         loadSettingsFromFile(settingsFilename);
         updateSettings(this.settings);
-
-        try {
-            SchedulerFactory factory = new StdSchedulerFactory();
-            scheduler = factory.getScheduler();
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -337,6 +335,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
                                String projectKey, String repoSlug, String branchId) {
 
         Preconditions.checkNotNull(currentBranch);
+        Preconditions.checkNotNull(scheduler);
 
         currentBranch.scheduledEvents.stream().forEach(event -> {
             try {

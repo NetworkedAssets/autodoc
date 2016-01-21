@@ -7,9 +7,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
-import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Branch.ListenType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
