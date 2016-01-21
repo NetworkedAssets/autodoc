@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 import javax.ws.rs.Consumes;
@@ -18,13 +20,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.httpclient.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.atlassian.applinks.api.ApplicationLink;
+import com.atlassian.applinks.api.ApplicationLinkRequest;
+import com.atlassian.applinks.api.ApplicationLinkRequestFactory;
+import com.atlassian.applinks.api.ApplicationLinkService;
+import com.atlassian.applinks.api.CredentialsRequiredException;
+import com.atlassian.applinks.api.application.stash.StashApplicationType;
 import com.atlassian.confluence.setup.settings.SettingsManager;
-import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.core.util.ClassLoaderUtils;
-import com.atlassian.spring.container.ContainerManager;
+import com.atlassian.sal.api.net.Request.MethodType;
+import com.atlassian.sal.api.net.ResponseException;
+import com.atlassian.sal.api.net.ReturningResponseHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
@@ -33,6 +43,7 @@ import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.settings.Source.SourceType;
 
 @Path("/configuration/")
 public class ConfigurationService {
@@ -40,16 +51,20 @@ public class ConfigurationService {
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
 	private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	private TransformerServer transformerServer;
+	private final ApplicationLinkService appLinkService;
 
-	public ConfigurationService(SettingsManager settingsManager) {
+	public ConfigurationService(SettingsManager settingsManager, final ApplicationLinkService appLinkService) {
 
+		this.appLinkService = appLinkService;
 		this.transformerServer = new TransformerServer(getTransformerUrl(),
 				settingsManager.getGlobalSettings().getBaseUrl());
+
 	}
 
 	@Path("projects")
 	@GET
 	public Response getProjects() {
+
 		try {
 			Settings settings = transformerServer.getSettings();
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
@@ -57,6 +72,45 @@ public class ConfigurationService {
 		} catch (SettingsException | JsonProcessingException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
+
+	}
+
+	@POST
+	@Path("applinks/sources")
+	public Response setSourcesFromAppLinks() {
+
+		List<String> sources = new ArrayList<String>();
+		List<Integer> statusCode = new ArrayList<Integer>();
+		statusCode.add(Response.Status.ACCEPTED.getStatusCode());
+
+		appLinkService.getApplicationLinks(StashApplicationType.class).forEach(appLinks -> {
+
+			Optional<SourceType> sourceType = getAppLinkSourceType(appLinks);
+			if (sourceType.isPresent()) {
+
+				Source source = new Source();
+				source.setName(appLinks.getName());
+				source.setUrl(appLinks.getRpcUrl().toString());
+				source.setSourceType(sourceType.get());
+
+				try {
+					HttpResponse<Source> response = transformerServer.setSource(source);
+					sources.add(OBJECT_MAPPER.writeValueAsString(response.getBody()));
+					statusCode.set(0,
+							response.getStatus() != statusCode.get(0) ? response.getStatus() : statusCode.get(0));
+				} catch (Exception e) {
+					throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+				}
+			}
+
+		});
+
+		Optional<List<String>> returnSources = Optional.of(sources);
+
+		return returnSources.filter(s -> !s.isEmpty())
+				.map(g -> Response.status(statusCode.get(0)).type(MediaType.APPLICATION_JSON)
+						.entity(String.format("{\"sources\": %s}", g)).build())
+				.orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
 
 	}
 
@@ -163,24 +217,6 @@ public class ConfigurationService {
 
 	}
 
-	// TODO: Implement configuration sources from AplicationLinks in Confluence
-	@Path("confluence/credentials")
-	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response setConfluenceCredentials(Settings settings) {
-
-		//TODO: check confluence credentials
-			try {
-				HttpResponse<String> response = transformerServer.setConfluenceCredentials(settings);
-				return Response.status(response.getStatus()).build();
-			} catch (SettingsException e) {
-				throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-			}
-		
-
-	}
-
 	private String getTransformerUrl() {
 		InputStream properties = ClassLoaderUtils.getResourceAsStream("autodoc_confluence.properties", getClass());
 		Properties props = new Properties();
@@ -190,6 +226,37 @@ public class ConfigurationService {
 			log.error("Couldn't load the configuration file", e);
 		}
 		return props.getProperty("transformerUrl", "https://localhost:8050/");
+	}
+
+	private Optional<SourceType> getAppLinkSourceType(ApplicationLink appLink) {
+		String requestUrl = "/rest/api/1.0/application-properties";
+		Optional<SourceType> sourceType = Optional.empty();
+
+		ApplicationLinkRequestFactory requestFactory = appLink.createAuthenticatedRequestFactory();
+
+		try {
+			ApplicationLinkRequest request = requestFactory.createRequest(MethodType.GET, requestUrl);
+			sourceType = request.executeAndReturn(
+					new ReturningResponseHandler<com.atlassian.sal.api.net.Response, Optional<SourceType>>() {
+						@Override
+						public Optional<SourceType> handle(com.atlassian.sal.api.net.Response response)
+								throws ResponseException {
+							if (response.isSuccessful() || response.getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+								return Optional.of(response.getResponseBodyAsString().contains("Stash")
+										? SourceType.STASH : SourceType.BITBUCKET);
+							}
+							throw new ResponseException(
+									String.format("Execute applink with error! [statusCode=%s, statusText=%s]",
+											response.getStatusCode(), response.getStatusText()));
+						}
+					});
+
+		} catch (CredentialsRequiredException | ResponseException e) {
+			log.error("Couldn't get appLinks", e);
+		}
+
+		return sourceType;
+
 	}
 
 }

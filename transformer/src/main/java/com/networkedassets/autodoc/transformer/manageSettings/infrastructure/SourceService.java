@@ -10,9 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import java.util.Optional;
 
 /**
@@ -39,7 +45,7 @@ public class SourceService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSources(){
+	public Response getSources() {
 		log.info("GET request for source handled");
 		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 				.entity(sourceProvider.getAllSources()).build();

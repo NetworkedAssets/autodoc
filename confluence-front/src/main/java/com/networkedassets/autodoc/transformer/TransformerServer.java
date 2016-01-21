@@ -1,11 +1,11 @@
 package com.networkedassets.autodoc.transformer;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.ObjectMapper;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
-import com.networkedassets.autodoc.transformer.settings.*;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContextBuilder;
@@ -14,11 +14,16 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.ObjectMapper;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import com.networkedassets.autodoc.transformer.settings.Branch;
+import com.networkedassets.autodoc.transformer.settings.Settings;
+import com.networkedassets.autodoc.transformer.settings.SettingsException;
+import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.settings.SourceCustomSerializer;
 
 public class TransformerServer {
 	public static final String SETTINGS = "/settings";
@@ -34,7 +39,6 @@ public class TransformerServer {
 
 	public TransformerServer(String url) {
 		log.debug("Transformer server constructing");
-
 		this.url = url;
 
 		Unirest.setObjectMapper(OBJECT_MAPPER);
@@ -67,9 +71,11 @@ public class TransformerServer {
 		setConfluenceUrl(confluenceUrl);
 	}
 
+	
 	public Settings getSettings() throws SettingsException {
 		HttpResponse<Settings> response;
 		try {
+
 			response = Unirest.get(url + SETTINGS).asObject(Settings.class);
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
@@ -115,21 +121,6 @@ public class TransformerServer {
 
 			response = Unirest.post(url + SOURCES).header("Content-Type", "application/json").body(source)
 					.asObject(Source.class);
-		} catch (UnirestException e) {
-			throw new SettingsException(e);
-		}
-
-		return response;
-
-	}
-
-	public HttpResponse<String> setConfluenceCredentials(Settings settings) throws SettingsException {
-
-		HttpResponse<String> response;
-		try {
-
-			response = Unirest.put(url + SETTINGS).header("Content-Type", "application/json").body(settings).asString();
-
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
 		}
