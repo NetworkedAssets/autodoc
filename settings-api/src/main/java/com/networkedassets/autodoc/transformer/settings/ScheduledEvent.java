@@ -14,12 +14,19 @@ public class ScheduledEvent implements Serializable {
 
 	private static final long serialVersionUID = -1213178165118904796L;
 
+	private boolean periodic;
+	private PeriodType periodType;
+	private int number;
+	private HashMap<String, Boolean> weekdays;
+	private Date oneTimeDate;
+	private String time;
+
 	public void setPeriodic(boolean periodic) {
 		this.periodic = periodic;
 	}
 
-	public void setType(String type) {
-		this.type = EventType.valueOf(type);
+	public void setPeriodType(String periodType) {
+		this.periodType = PeriodType.valueOf(periodType);
 	}
 
 	public void setNumber(int number) {
@@ -37,35 +44,23 @@ public class ScheduledEvent implements Serializable {
 	public void setTime(String time) {
 		this.time = time;
 	}
-//	private transient Instant scheduleStart = Instant.EPOCH;
-//	private transient Period period = Period.ZERO;
-//
-//	private String scheduleStartIso;
-//	private String periodIso;
 
-	public enum EventType{
+	public enum PeriodType {
 		DAY ("day"), WEEK("week");
 
 		private final String type;
-
-		EventType(String type){
+		PeriodType(String type){
 			this.type = type;
 		}
 	}
-	private boolean periodic;
-	private EventType type;
-	private int number;
-	private HashMap<String, Boolean> weekdays;
-	private Date oneTimeDate;
-	private String time;
 
 	public ScheduledEvent() {
 	}
 
-	public ScheduledEvent(boolean periodic, String type, int number,
+	public ScheduledEvent(boolean periodic, String periodType, int number,
 						  HashMap<String, Boolean> weekdays, Date oneTimeDate, String time) {
 		setPeriodic(periodic);
-		setType(type);
+		setPeriodType(periodType);
 		setNumber(number);
 		setWeekdays(weekdays);
 		setOneTimeDate(oneTimeDate);
@@ -83,7 +78,7 @@ public class ScheduledEvent implements Serializable {
 	private String getCronDays() {
 		String date;
 		if(periodic) {
-			if(type == EventType.WEEK) {
+			if(periodType == PeriodType.WEEK) {
 				String days = "";
 				// Get a set of the entries
 				Set set = weekdays.entrySet();
@@ -108,63 +103,4 @@ public class ScheduledEvent implements Serializable {
 			date = oneTimeDate.getDay()+ " " + oneTimeDate.getMonth() + " * " + oneTimeDate.getYear();
 		return date;
 	}
-
-//	public ScheduledEvent(Instant scheduleStart, Period period) {
-//		setScheduleStart(scheduleStart);
-//		setPeriod(period);
-//	}
-
-//	@JsonIgnore
-//	public Instant getScheduleStart() {
-//		return scheduleStart;
-//	}
-//
-//	@JsonIgnore
-//	public void setScheduleStart(Instant scheduleStart) {
-//		this.scheduleStart = scheduleStart;
-//		scheduleStartIso = scheduleStart.toString();
-//	}
-//
-//	@JsonIgnore
-//	public Period getPeriod() {
-//		return period;
-//	}
-//
-//	@JsonIgnore
-//	public void setPeriod(Period period) {
-//		this.period = period;
-//		periodIso = period.toString();
-//	}
-//
-//	public Map<String, String> toSoyData() {
-//		return ImmutableMap.of("scheduleStartIso", getScheduleStartIso(), "periodIso", getPeriodIso());
-//	}
-//
-//	public String getScheduleStartIso() {
-//		if (scheduleStartIso == null) {
-//			if (scheduleStart == null)
-//				return "ERROR";
-//			scheduleStartIso = scheduleStart.toString();
-//		}
-//		return scheduleStartIso;
-//	}
-//
-//	public void setScheduleStartIso(String scheduleStartIso) {
-//		scheduleStart = Instant.parse(scheduleStartIso);
-//		this.scheduleStartIso = scheduleStartIso;
-//	}
-//
-//	public String getPeriodIso() {
-//		if (periodIso == null) {
-//			if (period == null)
-//				return "ERROR";
-//			periodIso = period.toString();
-//		}
-//		return periodIso;
-//	}
-//
-//	public void setPeriodIso(String periodIso) {
-//		period = Period.parse(periodIso);
-//		this.periodIso = periodIso;
-//	}
 }
