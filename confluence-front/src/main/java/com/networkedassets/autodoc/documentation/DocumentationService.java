@@ -6,7 +6,6 @@ import com.networkedassets.util.functional.Optionals;
 import net.java.ao.Query;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
@@ -97,7 +96,6 @@ public class DocumentationService {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     public Response postDocPiece(
-            @Context
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
