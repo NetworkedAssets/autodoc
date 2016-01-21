@@ -1,29 +1,22 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.BranchModifier;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.EventScheduler;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.util.RestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Optional;
 
 /**
  * REST service providing and receiving settings
@@ -36,13 +29,15 @@ public class SettingsService extends RestService {
 	private SettingsProvider settingsProvider;
 	private BranchModifier branchModifier;
 	private SettingsSaver settingsSaver;
+	private EventScheduler eventScheduler;
 
 	@Inject
 	public SettingsService(SettingsProvider settingsProvider, SettingsSaver settingsSaver,
-			BranchModifier branchModifier) {
+			BranchModifier branchModifier, EventScheduler eventScheduler) {
 		this.settingsProvider = settingsProvider;
 		this.branchModifier = branchModifier;
 		this.settingsSaver = settingsSaver;
+		this.eventScheduler = eventScheduler;
 	}
 
 	@GET
@@ -79,6 +74,8 @@ public class SettingsService extends RestService {
 
 		Optional<Branch> modifiedBranch = Optional
 				.ofNullable(branchModifier.modifyBranch(sourceId, projectKey, repoSlug, branchId, branch));
+
+		eventScheduler.scheduleEvents(modifiedBranch.get(), sourceId, projectKey, repoSlug, branchId);
 		return modifiedBranch
 				.map(b -> Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(b).build())
 				.orElseGet(() -> Response.status(Response.Status.BAD_REQUEST).entity("Wrong parameters").build());
