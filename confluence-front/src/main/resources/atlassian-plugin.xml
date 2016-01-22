@@ -47,23 +47,22 @@
 		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
 
 	<!-- Link to the serverConfig screen -->
-	<!--<web-item name="Autodoc" i18n-name-key="autodoc-configuration-link.name"-->
-		<!--key="autodoc-configuration-link" section="system.space.tools/addons"-->
-		<!--weight="1000">-->
-		<!--<description key="autodoc-configuration-link.description">The Autodoc Configuration Link Plugin-->
-		<!--</description>-->
-		<!--<label key="autodoc-configuration-link.label" />-->
-		<!--<link linkId="autodoc-configuration-link-id">/plugins/servlet/${project.artifactId}/configure-autodoc?key=$generalUtil.urlEncode($helper.spaceKey)-->
-		<!--</link>-->
-		<!--<condition-->
-			<!--class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">-->
-			<!--<param name="permission">administer</param>-->
-		<!--</condition>-->
-	<!--</web-item>-->
+	<web-item name="Autodoc" i18n-name-key="autodoc-configuration-link.name"
+		key="autodoc-configuration-link" section="system.space.tools/addons"
+		weight="1000">
+		<description key="autodoc-configuration-link.description">The Autodoc Configuration Link Plugin</description>
+		<label key="autodoc-configuration-link.label" />
+		<link linkId="autodoc-configuration-link-id">/plugins/servlet/${project.artifactId}/configure-autodoc?key=$generalUtil.urlEncode($helper.spaceKey)
+		</link>
+		<condition
+			class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
+			<param name="permission">administer</param>
+		</condition>
+	</web-item>
 
-    <!--<servlet name="Autodoc Configure Screen" key="autodocConf" class="com.networkedassets.autodoc.configureGui.ConfigureServlet">-->
-        <!--<url-pattern>/${project.artifactId}/configure-autodoc</url-pattern>-->
-    <!--</servlet>-->
+    <servlet name="Autodoc Configure Screen" key="autodocConf" class="com.networkedassets.autodoc.configureGui.SpaceToolsConfigureServlet">
+        <url-pattern>/${project.artifactId}/configure-autodoc</url-pattern>
+    </servlet>
 
 	<component-import key="ao" name="Active Objects service" interface="com.atlassian.activeobjects.external.ActiveObjects">
 		<description>Component to access Active Objects functionality from the plugin</description>
@@ -180,12 +179,12 @@
         <package extends="default" name="autodoc-configure-action" namespace="/admin/plugins/autodoc">
             <default-interceptor-ref name="defaultStack"/>
             <action class="com.networkedassets.autodoc.configureGui.ConfigureAction" method="load" name="config">
-                <result name="error" type="velocity">/configurationResources/configuration.vm</result>
-                <result name="success" type="velocity">/configurationResources/configuration.vm</result>
+                <result name="error" type="velocity">/configurationResources/adminConfiguration.vm</result>
+                <result name="success" type="velocity">/configurationResources/adminConfiguration.vm</result>
             </action>
             <action class="com.networkedassets.autodoc.configureGui.ConfigureAction" method="save" name="save">
                 <interceptor-ref name="validatingStack"/>
-                <result name="error" type="velocity">/configurationResources/configuration.vm</result>
+                <result name="error" type="velocity">/configurationResources/adminConfiguration.vm</result>
                 <result name="success" type="redirect">/admin/plugins/autodoc/config.action</result>
             </action>
         </package>

@@ -44,9 +44,8 @@
 <body>
 <!--CUT-START-->
 <section ng-app="DoC_Config" id="doc_config">
-
     <div class="aui-tabs horizontal-tabs">
-        <ul class="tabs-menu">
+        <ul class="tabs-menu" ng-if="$root.location == 'local'">
             <li class="menu-item active-tab">
                 <a href="#doc_config-sources">Sources</a>
             </li>
@@ -57,63 +56,7 @@
                 <a href="#doc_config-confluenceConfig">Confluence config</a>
             </li>
         </ul>
-        <div class="tabs-pane active-pane" id="doc_config-sources" ng-controller="sourcesCtrl as sources">
-            <div ng-hide="$root.loading">
-                <form ng-repeat="source in sources.list" class="aui source">
-                    <fieldset>
-                        <div ng-show="source.deletionState==null">
-                            <div class="field-group">
-                                <label>Source type</label>
-                                <select aui-select2 doc-options="sources.availableKinds" doc-disable-search="true" ng-model="source.sourceType" placeholder="Choose Source Type"></select>
-                                <div class="error" ng-hide="source.sourceTypeCorrect || source.dirty">Source type is incorrect.</div>
-                            </div>
-                            <div class="field-group">
-                                <label for="whatever">Source name</label>
-                                <input id="whatever" type="text" class="text" placeholder="Source name" ng-model="source.name">
-                                <div class="error" ng-hide="source.nameCorrect || source.dirty">Name is incorrect.</div>
-                            </div>
-                            <div class="field-group">
-                                <label>URL</label>
-                                <input type="text" class="text" placeholder="URL" ng-model="source.url">
-                                <div class="error" ng-hide="source.sourceExists || source.dirty">Source not found.</div>
-                            </div>
-                            <div class="field-group">
-                                <label>Username</label>
-                                <input type="text" class="text" placeholder="Username" ng-model="source.username">
-                            </div>
-                            <div class="field-group">
-                                <label>Password</label>
-                                <input type="password" class="password" placeholder="Password" ng-model="source.password">
-                                <div class="error" ng-hide="(!source.sourceExists || source.credentialsCorrect) || source.dirty">Incorrect username or password.</div>
-                            </div>
-
-
-                        </div>
-                        <p ng-show="source.deletionState=='executing'">Deleting...</p>
-                        <div ng-show="source.deletionState=='confirming'" class="aui-message aui-message-error">
-                            <p ng-show="source.deletionState=='confirming'"><strong>Are you sure?</strong></p>
-                        </div>
-                        <div ng-show="source.deletionState=='confirming'" class="buttons-container">
-
-                            <button ng-click="sources.deleteExecute($index)" class="aui-button aui-button-primary">Confirm</button>
-                            <button ng-click="sources.cancelDeletion($index)" class="aui-button">Cancel</button>
-                        </div>
-                        <div ng-show="source.deletionState==null" class="buttons-container">
-                            <button ng-click="sources.save($index)" ng-disabled="source.verified" class="aui-button aui-button-primary">{{source.verified?'Saved':'Check & Save'}}</button>
-                            <button ng-click="sources.delete($index)" class="aui-button">{{source.id > 0?'Remove':'Cancel'}}</button>
-                        </div>
-                    </fieldset>
-
-                </form>
-                <form class="aui">
-                    <div class="buttons-container">
-                        <button ng-click="sources.add()" class="aui-button aui-button-primary">Add {{sources.list.length>0?'another ':''}}source</button>
-                    </div>
-                </form>
-                <pre ng-hide="1">{{sources.list|json}}</pre>
-            </div>
-        </div>
-        <div class="tabs-pane" id="doc_config-branch" ng-controller="branchesCtrl as branches">
+        <div ng-show="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch" ng-controller="branchesCtrl as branches">
             <div ng-hide="$root.loading">
                 <div class="table">
                     <div class="table-row">
@@ -297,7 +240,63 @@
 
 
         </div>
-        <div class="tabs-pane" id="doc_config-confluenceConfig" ng-controller="confluenceConfigCtrl as confluenceConfig">
+        <div ng-show="$root.location == 'admin' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane active-pane':''}}" id="doc_config-sources" ng-controller="sourcesCtrl as sources">
+            <div ng-hide="$root.loading">
+                <form ng-repeat="source in sources.list" class="aui source">
+                    <fieldset>
+                        <div ng-show="source.deletionState==null">
+                            <div class="field-group">
+                                <label>Source type</label>
+                                <select aui-select2 doc-options="sources.availableKinds" doc-disable-search="true" ng-model="source.sourceType" placeholder="Choose Source Type"></select>
+                                <div class="error" ng-hide="source.sourceTypeCorrect || source.dirty">Source type is incorrect.</div>
+                            </div>
+                            <div class="field-group">
+                                <label for="whatever">Source name</label>
+                                <input id="whatever" type="text" class="text" placeholder="Source name" ng-model="source.name">
+                                <div class="error" ng-hide="source.nameCorrect || source.dirty">Name is incorrect.</div>
+                            </div>
+                            <div class="field-group">
+                                <label>URL</label>
+                                <input type="text" class="text" placeholder="URL" ng-model="source.url">
+                                <div class="error" ng-hide="source.sourceExists || source.dirty">Source not found.</div>
+                            </div>
+                            <div class="field-group">
+                                <label>Username</label>
+                                <input type="text" class="text" placeholder="Username" ng-model="source.username">
+                            </div>
+                            <div class="field-group">
+                                <label>Password</label>
+                                <input type="password" class="password" placeholder="Password" ng-model="source.password">
+                                <div class="error" ng-hide="(!source.sourceExists || source.credentialsCorrect) || source.dirty">Incorrect username or password.</div>
+                            </div>
+
+
+                        </div>
+                        <p ng-show="source.deletionState=='executing'">Deleting...</p>
+                        <div ng-show="source.deletionState=='confirming'" class="aui-message aui-message-error">
+                            <p ng-show="source.deletionState=='confirming'"><strong>Are you sure?</strong></p>
+                        </div>
+                        <div ng-show="source.deletionState=='confirming'" class="buttons-container">
+
+                            <button ng-click="sources.deleteExecute($index)" class="aui-button aui-button-primary">Confirm</button>
+                            <button ng-click="sources.cancelDeletion($index)" class="aui-button">Cancel</button>
+                        </div>
+                        <div ng-show="source.deletionState==null" class="buttons-container">
+                            <button ng-click="sources.save($index)" ng-disabled="source.verified" class="aui-button aui-button-primary">{{source.verified?'Saved':'Check & Save'}}</button>
+                            <button ng-click="sources.delete($index)" class="aui-button">{{source.id > 0?'Remove':'Cancel'}}</button>
+                        </div>
+                    </fieldset>
+
+                </form>
+                <form class="aui">
+                    <div class="buttons-container">
+                        <button ng-click="sources.add()" class="aui-button aui-button-primary">Add {{sources.list.length>0?'another ':''}}source</button>
+                    </div>
+                </form>
+                <pre ng-hide="1">{{sources.list|json}}</pre>
+            </div>
+        </div>
+        <div ng-show="$root.location == 'admin' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-confluenceConfig" ng-controller="confluenceConfigCtrl as confluenceConfig">
             <div ng-hide="$root.loading">
                 <form class="aui">
                     <fieldset>

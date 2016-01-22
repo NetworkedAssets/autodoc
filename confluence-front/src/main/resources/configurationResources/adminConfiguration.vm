@@ -3,17 +3,18 @@
 <head>
     <title>Configure Autodoc</title>
     <meta name="decorator" content="atl.admin"/>
+
     #requireResource("confluence.web.resources:ajs")
     #requireResource("com.atlassian.auiplugin:aui-select")
     #requireResource("com.atlassian.auiplugin:aui-toggle")
     #requireResource("com.atlassian.auiplugin:dialog2")
     #requireResource("com.networkedassets.autodoc.confluence-front:configuration-resources")
+    #putMetadata('configLocation', "admin")
 </head>
 
 <body>
     #parse ( "/template/includes/actionmessages.vm" )
     #parse ( "/template/includes/actionerrors.vm" )
-
     $innerHtml
 </body>
 </html>

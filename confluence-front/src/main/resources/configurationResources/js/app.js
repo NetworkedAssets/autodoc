@@ -10,7 +10,16 @@ if (AJS.Data) {
 
 
 angular.module("DoC_Config",[]);
+
+angular.module("DoC_Config").run(function($rootScope) {
+    if (AJS && AJS.params && AJS.params.configLocation) {
+        $rootScope.location = AJS.params.configLocation;
+    } else {
+        $rootScope.location = "local";
+    }
+    console.log($rootScope);
+});
 angular.element(document).ready(function() {
     $("#doc_config-loading").spin("large");
-    AJS.$($("#doc_config .spin.small")).spin("small");
+    AJS.$("#doc_config .spin.small").spin("small");
 });
