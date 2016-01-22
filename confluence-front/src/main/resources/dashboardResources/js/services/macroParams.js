@@ -10,7 +10,7 @@ angular.module("DoC").factory("macroParams",function() {
                 source: "1",
                 project: "GUAV",
                 repo: "guava",
-                branch: "master",
+                branch: "refs/heads/master",
                 javadoc: true,
                 classDiagram: true
             };
@@ -19,7 +19,7 @@ angular.module("DoC").factory("macroParams",function() {
                 source: "1",
                 project: "AUT",
                 repo: "autodoc",
-                branch: "master",
+                branch: "refs/heads/master",
                 javadoc: true,
                 classDiagram: true
             };

@@ -154,7 +154,7 @@
                     };
                     $.each(value.branches,function(key,value) {
                         repo.branches[key] = {
-                            value: value.displayId,
+                            value: value.id,
                             label: value.displayId
                         };
                     });
