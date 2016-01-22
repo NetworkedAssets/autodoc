@@ -25,8 +25,14 @@
     width: 200px;
 }
 
+.doc .javadoc .elems table {
+    border: 2px solid #f5f5f5;
+    border-spacing: 0;
+}
+
 .doc .javadoc .elems .elem {
     padding: 0.5em;
+    background: #fff;
 }
 
 .doc .javadoc .elems .elem.even {
@@ -145,11 +151,21 @@
 }
 
 .doc .javadoc .elem .toggle {
+    cursor: pointer;
     float: right;
 }
 
+.doc .javadoc .elem .toggle {
+    border-radius: 0.2em;
+    padding: 0.2em;
+    background: #eee;
+}
+
+.doc .javadoc .elem.even .toggle {
+    background: white;
+}
+
 .doc .javadoc .elem .details {
-    /*background: #fff;*/
     border-radius: 0.2em;
     padding: 0.5em;
     margin-top: 0.5em;
@@ -199,7 +215,11 @@
 
 .doc .javadoc span.type.clickable {
     cursor: pointer;
-    color: #205081;
+    color: #3572b0;
+}
+
+.doc .javadoc span.type.clickable:hover {
+    text-decoration: underline;
 }
 
 .doc .javadoc p {
