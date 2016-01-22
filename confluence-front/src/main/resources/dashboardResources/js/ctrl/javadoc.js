@@ -83,6 +83,7 @@ angular.module("DoC")
         function(event, toState, toParams){
             $timeout(function() {
                 vm.tree.updateSelectedNodeByName(toParams.name);
+                window.scrollTo(0,0);
             },50);
         });
 
