@@ -71,7 +71,6 @@ public class TransformerServer {
 		setConfluenceUrl(confluenceUrl);
 	}
 
-	
 	public Settings getSettings() throws SettingsException {
 		HttpResponse<Settings> response;
 		try {
@@ -82,6 +81,17 @@ public class TransformerServer {
 		}
 
 		return response.getBody();
+	}
+
+	public HttpResponse<String> getSources() throws SettingsException {
+		HttpResponse<String> response;
+		try {
+			response = Unirest.get(url + SOURCES).asString();
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+
+		return response;
 	}
 
 	public HttpResponse<String> forceRegenerate(String sourceUrl, String projectKey, String repoSlug, String branchId)

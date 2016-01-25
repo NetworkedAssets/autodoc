@@ -1,5 +1,10 @@
 package com.networkedassets.autodoc.transformer.handleRepoPush.core;
 
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
@@ -8,10 +13,6 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvid
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch.ListenType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 
 public class DocumentationFromCodeGenerator implements PushEventProcessor {
 	public static Logger log = LoggerFactory.getLogger(DocumentationFromCodeGenerator.class);
@@ -51,8 +52,7 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 
 			for (DocumentationType docType : DocumentationType.values()) {
 				Documentation documentation = docGeneratorFactory.createFor(docType).generateFrom(code);
-				// TODO: change for branch ID
-				documentation.setProjectInfo(projectKey, repoSlug, "master");
+				documentation.setProjectInfo(projectKey, repoSlug, branchId);
 				documentationSender.send(documentation, settingsProvider.getCurrentSettings());
 			}
 		}

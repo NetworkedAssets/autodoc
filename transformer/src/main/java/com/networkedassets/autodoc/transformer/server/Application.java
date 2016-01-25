@@ -1,5 +1,7 @@
 package com.networkedassets.autodoc.transformer.server;
 
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.message.filtering.EntityFilteringFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 
@@ -24,6 +26,9 @@ public class Application extends ResourceConfig {
 
         // register binder for dependency injection
         register(new Binder());
+        // filltering pojo fields
+        register(EntityFilteringFeature.class);
+        register(JacksonFeature.class);
 
 
     }
