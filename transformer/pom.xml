@@ -56,6 +56,11 @@
 			<version>2.21</version>
 		</dependency>
 		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-entity-filtering</artifactId>
+			<version>2.21</version>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.1.3</version>
@@ -261,8 +266,8 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<!-- Plugin excludes classes marked @Category(IntegrationTest.class) from
-					maven 'test' and 'integration-test' phases	-->
+			<!-- Plugin excludes classes marked @Category(IntegrationTest.class) from 
+				maven 'test' and 'integration-test' phases -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

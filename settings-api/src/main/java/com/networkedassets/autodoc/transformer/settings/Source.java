@@ -2,9 +2,11 @@ package com.networkedassets.autodoc.transformer.settings;
 
 import com.fasterxml.jackson.annotation.*;
 
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Represents code source like Stash, Bitbucket, Github and so on
@@ -37,6 +39,7 @@ public class Source implements Serializable {
     private SourceType sourceType;
     private String username;
     private String password;
+   
     private boolean sourceExists;
     private boolean credentialsCorrect;
     private boolean nameCorrect;

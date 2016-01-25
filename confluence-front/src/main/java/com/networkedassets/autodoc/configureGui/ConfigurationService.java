@@ -80,8 +80,6 @@ public class ConfigurationService {
 	public Response setSourcesFromAppLinks() {
 
 		List<String> sources = new ArrayList<String>();
-		List<Integer> statusCode = new ArrayList<Integer>();
-		statusCode.add(Response.Status.ACCEPTED.getStatusCode());
 
 		appLinkService.getApplicationLinks(StashApplicationType.class).forEach(appLinks -> {
 
@@ -96,8 +94,6 @@ public class ConfigurationService {
 				try {
 					HttpResponse<Source> response = transformerServer.setSource(source);
 					sources.add(OBJECT_MAPPER.writeValueAsString(response.getBody()));
-					statusCode.set(0,
-							response.getStatus() != statusCode.get(0) ? response.getStatus() : statusCode.get(0));
 				} catch (Exception e) {
 					throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 				}
@@ -108,7 +104,7 @@ public class ConfigurationService {
 		Optional<List<String>> returnSources = Optional.of(sources);
 
 		return returnSources.filter(s -> !s.isEmpty())
-				.map(g -> Response.status(statusCode.get(0)).type(MediaType.APPLICATION_JSON)
+				.map(g -> Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 						.entity(String.format("{\"sources\": %s}", g)).build())
 				.orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
 
@@ -197,6 +193,20 @@ public class ConfigurationService {
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
 					.entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
 		} catch (SettingsException | JsonProcessingException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
+
+	}
+
+	@Path("sources")
+	@GET
+	public Response getSources() {
+
+		try {
+			HttpResponse<String> response = transformerServer.getSources();
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
+					.build();
+		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
 

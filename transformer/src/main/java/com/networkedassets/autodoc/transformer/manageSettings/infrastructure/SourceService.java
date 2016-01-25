@@ -23,6 +23,7 @@ import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceR
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.settings.Source;
 
+
 /**
  * REST service intended to check whether given source exists
  */
