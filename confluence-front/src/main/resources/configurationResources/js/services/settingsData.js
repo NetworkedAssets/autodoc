@@ -93,16 +93,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
             delete data.scheduledEvents;
         }
 
-        /*console.log(urlProvider.getRestUrlWithParams([
-                "branches",
-                chosen.source,
-                chosen.project,
-                chosen.repo,
-                chosen.branch
-            ])
-        );*/
-
-        /*console.log(data);*/
         settings.savingState = "saving";
         $http
             .post(urlProvider.getRestUrlWithParams([

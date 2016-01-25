@@ -9,7 +9,7 @@ if (AJS.Data) {
 }
 
 
-angular.module("DoC_Config",[]);
+angular.module("DoC_Config",['ngResource']);
 
 angular.module("DoC_Config").run(function($rootScope) {
     if (AJS && AJS.params && AJS.params.configLocation) {
@@ -17,7 +17,6 @@ angular.module("DoC_Config").run(function($rootScope) {
     } else {
         $rootScope.location = "local";
     }
-    console.log($rootScope);
 });
 angular.element(document).ready(function() {
     $("#doc_config-loading").spin("large");

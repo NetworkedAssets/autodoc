@@ -2,6 +2,7 @@
 <head>
     <meta charset="utf-8">
     <script src="js/lib/angular.min.js"></script>
+    <script src="js/lib/angular-resource.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 
 
@@ -275,8 +276,20 @@
                         </div>
                         <div ng-show="vm.sources.length > 0">
                             <div ng-repeat="source in vm.sources" class="source" ng-class-even="'even'" ng-class-odd="'odd'">
-                                <h3 class="title">{{source.name}} <span class="aui-lozenge aui-lozenge-complete">{{source.sourceType|uppercase}}</span></h3>
-                                <p class="url">{{source.url}}</p>
+                                <button class="aui-button delete" ng-click="vm.delete($index)">Delete</button>
+                                <h3 class="title">
+                                    {{source.name}}
+                                    <span class="aui-lozenge aui-lozenge-complete">{{source.sourceType|uppercase}}</span>
+                                </h3>
+                                <p class="url" ng-hide="source.inEdit">
+                                    {{source.url}}
+                                    – <button ng-click="vm.edit($index)" class="aui-button aui-button-link">edit</button>
+                                </p>
+                                <form class="aui url" ng-show="source.inEdit">
+                                    <input ng-model="source.url" type="text" class="text">
+                                    <button ng-click="vm.save($index)" class="aui-button aui-button-primary">Save</button><!--
+                                    --><button ng-click="vm.revert($index)" class="aui-button">Revert</button>
+                                </form>
                                 <div class="aui-message aui-message-warning">
                                     <p class="title">
                                         <strong>Errors:</strong>
@@ -290,7 +303,9 @@
 
                             </div>
                         </div>
-
+                        <div class="addFromAppLinksCntr">
+                            <button class="aui-button aui-button-primary" ng-click="vm.addFromAppLinks()">Add from Application Links</button>
+                        </div>
                     </div>
                 </div>
             </div>

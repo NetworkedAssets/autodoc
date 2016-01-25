@@ -1,21 +1,19 @@
-angular.module("DoC_Config").controller("sourcesCtrl",function($http,urlProvider) {
+angular.module("DoC_Config").controller("sourcesCtrl",function($resource,urlProvider) {
     var vm = this;
 
-    vm.sources = [];
-
-    var load = function() {
-        var success = function(response) {
-            vm.sources = response.data.sources;
-        };
-        var error = function(response) {
-            var sources = [];
-        };
-        setTimeout(function() {
-            var response = {
-                data: {
-                    "sources": [
+    var Source = $resource(
+        urlProvider.getRestUrlWithParams(["source"])+":id",
+        {
+            id: '@id'
+        },
+        {
+            query: {
+                method: 'POST',
+                isArray: true,
+                transformResponse: function(data,headersGetter,status) {
+                    return [
                         {
-                            "id": 0,
+                            "id": 1,
                             "credentialsCorrect": false,
                             "hookKey": "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener",
                             "projects": {
@@ -31,7 +29,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($http,urlProvider
                             "name": "AtlasDev Stash"
                         },
                         {
-                            "id": 0,
+                            "id": 2,
                             "credentialsCorrect": false,
                             "hookKey": "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener",
                             "projects": {
@@ -46,17 +44,57 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($http,urlProvider
                             "sourceExists": true,
                             "name": "Bitbucket"
                         }
-                    ]
+                    ];
+                }
+            },
+            update: {
+                transformRequest: function(data,headers) {
+                    console.log(data);
+                    var obj = {
+                        id: data.id,
+                        name: data.name,
+                        url: data.url,
+                        sourceType: data.sourceType
+                    };
+                    return JSON.stringify(obj);
                 },
-                status: "OK"
+                method: 'PUT'
+            },
+            delete: {
+                method: 'DELETE'
+            },
+            add: function() {
+                method: 'POST'
             }
-            success.call(this,response);
-        },500);
-        /*
-        $http
-            .get(urlProvider.getRestUrlWithParams(["applinks","sources"]))
-            .then(success,error);*/
+        }
+    );
+
+    vm.sources = Source.query();
+
+    vm.edit = function(index) {
+        vm.sources[index].inEdit = true;
+        vm.sources[index].originalUrl = vm.sources[index].url;
     };
 
-    load();
+    vm.save = function(index) {
+        vm.sources[index].$update();
+    };
+
+    vm.revert = function(index) {
+        vm.sources[index].inEdit = false;
+        if (vm.sources[index].originalUrl) {
+            vm.sources[index].url = vm.sources[index].originalUrl;
+            delete vm.sources[index].originalUrl;
+        }
+    };
+
+    vm.delete = function(index) {
+        vm.sources[index].$delete(function() {
+            //console.log(vm.sources[index]);
+        });
+    };
+
+    vm.addFromAppLinks = function() {
+        Source.add();
+    };
 });

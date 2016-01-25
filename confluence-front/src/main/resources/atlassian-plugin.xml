@@ -175,6 +175,7 @@
 		<resource type="download" name="css/doc_config.css" location = "configurationResources/css/doc_config.css" />
 
 		<resource type="download" name="js/lib/angular.min.js" location = "configurationResources/js/lib/angular.min.js" />
+		<resource type="download" name="js/lib/angular-resource.min.js" location = "configurationResources/js/lib/angular-resource.min.js" />
 
 		<resource type="download" name="js/app.js" location = "configurationResources/js/app.js" />
 

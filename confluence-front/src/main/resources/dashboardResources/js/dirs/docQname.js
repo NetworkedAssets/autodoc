@@ -2,10 +2,6 @@ angular.module("DoC")
     .directive('docQname', function($compile,javadocEntities) {
         return {
             link: function(scope,element,attr) {
-                /*
-                * TODO Generics
-                * TODO Aui label instead of plain title attr
-                * */
 
                 scope.name = qName(scope.source);
                 scope.qualified = qName(scope.source,true);
@@ -16,7 +12,7 @@ angular.module("DoC")
                     isGeneric = true;
                 }
 
-                var html = '<span title="{{qualified}}"';
+                var html = '<span class="tooltip" ';
                 if (javadocEntities.existsByName(scope.qualified)) {
                     html += 'ui-sref="javadoc.entity({name:qualified})"';
                     element.addClass("clickable");
@@ -28,6 +24,15 @@ angular.module("DoC")
                 }
                 html += '</span>';
                 element.html(html);
+
+                if (typeof attr.noTooltip == "undefined") {
+                    element.find("span.tooltip").tooltip({
+                        gravity: 's',
+                        title: function() {
+                            return scope.qualified;
+                        }
+                    });
+                }
 
                 $compile(element.contents())(scope);
 

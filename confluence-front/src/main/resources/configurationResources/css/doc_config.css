@@ -116,3 +116,16 @@ span.doc_config-branch-menu-option.listened span.indicator {
     color: #666;
     margin: 0;
 }
+
+#doc_config-confluenceConfig div.source button.delete {
+    float: right;
+}
+
+#doc_config-confluenceConfig div.source h3 {
+    margin: 0;
+}
+
+#doc_config-confluenceConfig .addFromAppLinksCntr {
+    padding-top: 1em;
+    text-align: center;
+}
