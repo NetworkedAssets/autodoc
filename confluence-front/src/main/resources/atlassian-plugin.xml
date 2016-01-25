@@ -46,23 +46,43 @@
 	<component-import key="soyTemplateRenderer"
 		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
 
-	<!-- Link to the serverConfig screen -->
-	<web-item name="Autodoc" i18n-name-key="autodoc-configuration-link.name"
-		key="autodoc-configuration-link" section="system.space.tools/addons"
-		weight="1000">
-		<description key="autodoc-configuration-link.description">The Autodoc Configuration Link Plugin</description>
-		<label key="autodoc-configuration-link.label" />
-		<link linkId="autodoc-configuration-link-id">/plugins/servlet/${project.artifactId}/configure-autodoc?key=$generalUtil.urlEncode($helper.spaceKey)
-		</link>
-		<condition
-			class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
-			<param name="permission">administer</param>
-		</condition>
+	<!-- Item in Space Tools -->
+	<web-item key="space-tools-autodoc-config" name="Autodoc in Space Admin" section="system.space.tools/addons" weight="100">
+		<label key="Autodoc Configuration" />
+		<link linkId="space-admin-quick-link-manager-id">/plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)</link>
+		<conditions type="AND">
+			<condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
+				<param name="permission">administer</param>
+			</condition>
+			<condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition"/>
+		</conditions>
+	</web-item>
+	<!-- Item in Space Admin (for Doc Theme) -->
+	<web-item key="space-tools-autodoc-config-2" name="Quick Link Manager in Space Admin" section="system.space.admin/addons" weight="100">
+		<label key="Autodoc Configuration" />
+		<link linkId="space-admin-quick-link-manager-id">/plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)</link>
+		<conditions type="AND">
+			<condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
+				<param name="permission">administer</param>
+			</condition>
+			<condition class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition" invert="true"/>
+		</conditions>
 	</web-item>
 
-    <servlet name="Autodoc Configure Screen" key="autodocConf" class="com.networkedassets.autodoc.configureGui.SpaceToolsConfigureServlet">
+    <!--<servlet name="Autodoc Configure Screen" key="autodocConf" class="com.networkedassets.autodoc.configureGui.SpaceToolsConfigureServlet">
         <url-pattern>/${project.artifactId}/configure-autodoc</url-pattern>
-    </servlet>
+    </servlet>-->
+
+	<xwork name="Example Actions" key="example-actions">
+		<description>Examples of actions</description>
+		<package name="autodoc-config" extends="default" namespace="/plugins/${project.artifactId}">
+			<default-interceptor-ref name="validatingStack"/>
+			<action name="autodoc-config" class="com.networkedassets.autodoc.configureGui.BranchSelectionAdminAction">
+				<result name="input" type="velocity">/configurationResources/spaceToolsConfiguration.vm</result>
+				<result name="success" type="velocity">/configurationResources/spaceToolsConfiguration.vm</result>
+			</action>
+		</package>
+	</xwork>
 
 	<component-import key="ao" name="Active Objects service" interface="com.atlassian.activeobjects.external.ActiveObjects">
 		<description>Component to access Active Objects functionality from the plugin</description>
