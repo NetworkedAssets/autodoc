@@ -8,24 +8,29 @@ angular.module("DoC")
                         var tagProcessors = [
                             function() {
                                 if (typeof scope.content == "string") {
-                                    var regExp = /{@link(plain)?\s*(([^}]+)?(#([^}]+))?)}/gi;
-
-                                    scope.content = scope.content.replace(regExp,function(match,$1,clazz,$3,element) {
+                                    var regExp = /{@link(plain)?\s+([^}\s#]+)?(#([^}\(]+(\([^)}]+\))?))?\s*([^}]+)?}/gi;
+                                    scope.content = scope.content.replace(regExp,function(match,$1,clazz,$3,element,elementSignature,label) {
                                         if (!clazz) {
                                             // TODO Scrolling to specific method
-                                            return '<code>'+$1+'</code>';
+                                            return '<code>'+element+'</code>';
                                         }
+
                                         var pack = "";
                                         if ($stateParams.name && $stateParams.name.indexOf(".")) {
                                             pack = $stateParams.name.substring(0,$stateParams.name.lastIndexOf("."));
                                         }
 
+                                        var qualified;
                                         if (javadocEntities.existsByName(pack+"."+clazz)) {
-                                            return '<span class="type" doc-qname="\''+pack+"."+clazz+'\'"></span>';
+                                            qualified = pack+"."+clazz;
                                         } else {
-                                            return '<span class="type" doc-qname="\''+clazz+'\'"></span>';
+                                            qualified = clazz;
                                         }
-
+                                        if (!label) {
+                                            return '<span class="type" doc-qname="\''+qualified+'\'"></span>';
+                                        } else {
+                                            return '<a href="#" ui-sref="javadoc.entity({name:\''+qualified+'\'})">'+label+'</a>';
+                                        }
                                     });
                                 }
                             },
@@ -36,6 +41,7 @@ angular.module("DoC")
                                 }
                             },
                             function() {
+                                /* includes {@literal text}*/
                                 var debug = false;
                                 if (!debug && typeof scope.content == "string") {
                                     var regExp = /{@[\w]+\s*([^}]+)}/gi;
@@ -53,7 +59,6 @@ angular.module("DoC")
 
                         $compile(element.contents())(scope);
                     }
-
                 });
             },
             scope: {
