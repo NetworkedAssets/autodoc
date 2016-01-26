@@ -1,4 +1,4 @@
-angular.module("DoC").factory('javadocEntities',function($rootScope) {
+angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,urlProvider) {
 
     var tree;
 
@@ -11,7 +11,6 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
         }
         if (typeof obj.children == "object") {
             angular.forEach(obj.children,function(child) {
-
                 map[child.name] = child;
                 treeToMap(child);
             });
@@ -50,8 +49,24 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
 
     var ready = false;
     var javadocEntities = {
+        fetch: function() {
+            return $q(function(resolve,reject) {
+                if (!angular.isUndefined(tree)) {
+                    $http.get(urlProvider.getRestUrl('/JAVADOC/index'), {
+                        cache: true
+                    }).then(function (data) {
+                        javadocEntities.parse(data.data.indexPackage);
+                        resolve();
+                    },function() {
+                        reject();
+                    });
+                } else {
+                    resolve();
+                }
+            });
+        },
         parse: function(packageList) {
-            var packages = {children:{}};
+            var packages = {children:{},level:0};
             angular.forEach(packageList,function(pack) {
                 if (!pack.name || pack.name == "") {
                     pack.name = "(default)";
@@ -67,14 +82,15 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
                         currentPackage.children[value] = {
                             name: value,
                             type: "package",
-                            children: {}
+                            children: {},
+                            level: 0
                         };
                         if (currentPackage.name) {
                             currentPackage.children[value].name = currentPackage.name+'.'+value;
                         } else {
                             currentPackage.children[value].name = value;
                         }
-
+                        currentPackage.children[value].level = currentPackage.level+1;
                     }
                     currentPackage = currentPackage.children[value];
                 });
@@ -115,7 +131,8 @@ angular.module("DoC").factory('javadocEntities',function($rootScope) {
                     }
                     currentEntity.children[name] = {
                         name: cl.qualified,
-                        type: cl.type
+                        type: cl.type,
+                        level: currentEntity.level+1
                     };
 
                     lastLevel = arr.length;

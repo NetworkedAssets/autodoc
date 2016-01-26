@@ -116,6 +116,7 @@
 			</parameter>
             <parameter name="javadoc" type="boolean" />
             <parameter name="classDiagram" type="boolean" />
+			<parameter name="structureGraph" type="boolean" />
         </parameters>
 	</xhtml-macro>
 
@@ -140,12 +141,14 @@
 		<resource type="download" name="css/doc_javadoc.css" location = "dashboardResources/css/doc_javadoc.css" />
 		<resource type="download" name="css/doc_javadoc.entity.css" location = "dashboardResources/css/doc_javadoc.entity.css" />
 		<resource type="download" name="css/doc_classDiagram.css" location = "dashboardResources/css/doc_classDiagram.css" />
+		<resource type="download" name="css/doc_structureGraph.css" location = "dashboardResources/css/doc_structureGraph.css" />
 		<resource type="download" name="css/doc_main.css" location = "dashboardResources/css/doc_main.css" />
 
-		<resource type="download" name="js/ctrl/javadoc.entity.js" location = "dashboardResources/js/ctrl/javadoc.entity.js" />
-		<resource type="download" name="js/ctrl/javadoc.js" location = "dashboardResources/js/ctrl/javadoc.js" />
-		<resource type="download" name="js/ctrl/classDiagram.js" location = "dashboardResources/js/ctrl/classDiagram.js" />
-		<resource type="download" name="js/ctrl/top.js" location = "dashboardResources/js/ctrl/top.js" />
+		<resource type="download" name="js/ctrl/JavadocEntityCtrl.js" location = "dashboardResources/js/ctrl/JavadocEntityCtrl.js" />
+		<resource type="download" name="js/ctrl/JavadocCtrl.js" location = "dashboardResources/js/ctrl/JavadocCtrl.js" />
+		<resource type="download" name="js/ctrl/ClassDiagramCtrl.js" location = "dashboardResources/js/ctrl/ClassDiagramCtrl.js" />
+		<resource type="download" name="js/ctrl/StructureGraphCtrl.js" location = "dashboardResources/js/ctrl/StructureGraphCtrl.js" />
+		<resource type="download" name="js/ctrl/TopCtrl.js" location = "dashboardResources/js/ctrl/TopCtrl.js" />
 
 		<resource type="download" name="js/doc_classDiagram.js" location = "dashboardResources/js/doc_classDiagram.js" />
 		<resource type="download" name="js/JavadocEntity.js" location = "dashboardResources/js/JavadocEntity.js" />
