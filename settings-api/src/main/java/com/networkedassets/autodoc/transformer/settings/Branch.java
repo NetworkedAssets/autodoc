@@ -13,8 +13,8 @@ import java.util.List;
 public class Branch implements Serializable {
 
 	private static final long serialVersionUID = -8481858598787329017L;
-	public String displayId = "!!NO_NAME!!";
-	public String id = "!!NO_NAME!!";
+	private String displayId;
+	private String id;
 	private ListenType listenTo;
 	public List<ScheduledEvent> scheduledEvents;
 
@@ -24,8 +24,8 @@ public class Branch implements Serializable {
 
 	public Branch(String displayId, String id) {
 		this();
-		this.displayId = displayId;
-		this.id = id;
+		this.setDisplayId(displayId);
+		this.setId(id);
 	}
 
 	@JsonGetter
@@ -36,6 +36,26 @@ public class Branch implements Serializable {
 	@JsonSetter
 	public void setListenTo(ListenType listenTo) {
 		this.listenTo = listenTo;
+	}
+
+	@JsonGetter
+	public String getDisplayId() {
+		return displayId;
+	}
+
+	@JsonSetter
+	public void setDisplayId(String displayId) {
+		this.displayId = displayId;
+	}
+
+	@JsonGetter
+	public String getId() {
+		return id;
+	}
+
+	@JsonSetter
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public enum ListenType implements Serializable {

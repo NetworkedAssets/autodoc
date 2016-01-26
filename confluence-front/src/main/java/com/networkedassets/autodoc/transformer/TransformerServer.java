@@ -53,7 +53,7 @@ public class TransformerServer {
 					.routeParam("sourceId", Integer.toString(sourceId))
 					.routeParam("projectKey", URLEncoder.encode(projectKey, "UTF-8"))
 					.routeParam("repoSlug", URLEncoder.encode(repoSlug, "UTF-8"))
-					.routeParam("branchId", URLEncoder.encode(branch.id, "UTF-8"))
+					.routeParam("branchId", URLEncoder.encode(branch.getId(), "UTF-8"))
 					.header("Content-Type", "application/json").body(branch).asObject(Branch.class);
 			if (branchHttpResponse.getStatus() == 200) {
 				return branchHttpResponse.getBody();

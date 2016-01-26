@@ -65,9 +65,9 @@ public final class SettingsUtils {
                         .filter(repo -> projects.get(project.key).repos.containsKey(repo.slug))
                         .forEach(repo -> repo.branches.values().stream()
                                 .filter(branch -> projects.get(project.key)
-                                        .repos.get(repo.slug).branches.containsKey(branch.id))
-                                .forEach(branch -> branch.displayId = projects.get(project.key)
-                                        .repos.get(repo.slug).branches.get(branch.id).displayId)));
+                                        .repos.get(repo.slug).branches.containsKey(branch.getId()))
+                                .forEach(branch -> branch.setDisplayId(projects.get(project.key)
+                                        .repos.get(repo.slug).branches.get(branch.getId()).getDisplayId()))));
     }
 
     /**
@@ -93,7 +93,7 @@ public final class SettingsUtils {
             stashProject.repos.values().forEach(stashRepo -> {
                 stashRepo.branches.values().forEach(stashBranch -> {
                     source.getProjectByKey(stashProject.key).getRepoBySlug(stashRepo.slug).branches
-                            .putIfAbsent(stashBranch.id, stashBranch);
+                            .putIfAbsent(stashBranch.getId(), stashBranch);
                 });
             });
         });
@@ -115,7 +115,7 @@ public final class SettingsUtils {
                 .forEach(project -> project.repos.values()
                         .forEach(repo -> repo.branches.values()
                                 .removeIf(branch -> !projects.get(project.key).repos.get(repo.slug).branches
-                                        .containsKey(branch.id))));
+                                        .containsKey(branch.getId()))));
     }
 
     /**
