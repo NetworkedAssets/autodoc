@@ -1,7 +1,7 @@
 package com.networkedassets.autodoc.transformer.settings;
 
 import com.fasterxml.jackson.annotation.*;
-
+import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -34,10 +34,15 @@ public class Source implements Serializable {
     public static int totalId = 1;
 
     private int id;
+    @JsonView(Views.PublicView.class)
     private String name;
+    @JsonView(Views.PublicView.class)
     private String url;
+    @JsonView(Views.PublicView.class)
     private SourceType sourceType;
+    @JsonView(Views.PublicView.class)
     private String username;
+    @JsonView(Views.PublicView.class)
     private String password;
    
     private boolean sourceExists;

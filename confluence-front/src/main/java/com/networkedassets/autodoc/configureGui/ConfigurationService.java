@@ -204,8 +204,8 @@ public class ConfigurationService {
 
 		try {
 			HttpResponse<String> response = transformerServer.getSources();
-			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
-					.build();
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
+					.entity(String.format("{\"sources\": %s}", response.getBody())).build();
 		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}

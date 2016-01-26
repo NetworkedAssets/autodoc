@@ -1,6 +1,8 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -16,13 +18,17 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.base.Preconditions;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceModifier;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.settings.Source;
-
+import com.networkedassets.autodoc.transformer.settings.view.Views;
+import com.networkedassets.util.functional.Throwing;
 
 /**
  * REST service intended to check whether given source exists
@@ -36,6 +42,7 @@ public class SourceService {
 	private SourceCreator sourceCreator;
 	private SourceRemover sourceRemover;
 	private SourceModifier sourceModifier;
+	private static final ObjectMapper OBJECT_MAPPER = setObjectMapper();
 
 	@Inject
 	public SourceService(SourceProvider sourceProvider, SourceCreator sourceCreator, SourceRemover sourceRemover,
@@ -50,8 +57,13 @@ public class SourceService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSources() {
 		log.info("GET request for source handled");
-		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
-				.entity(sourceProvider.getAllSources()).build();
+
+		List<String> sources = sourceProvider.getAllSources()
+				.stream().map(Throwing.rethrowAsRuntimeException(s -> OBJECT_MAPPER
+						.writerWithView(Views.PublicView.class).writeValueAsString(s)))
+				.collect(Collectors.toList());
+
+		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(sources).build();
 	}
 
 	@GET
@@ -108,6 +120,13 @@ public class SourceService {
 		boolean wasDeleted = sourceRemover.removeSource(sourceId);
 		Response.Status responseStatus = wasDeleted ? Response.Status.ACCEPTED : Response.Status.BAD_REQUEST;
 		return Response.status(responseStatus).build();
+	}
+
+	private static ObjectMapper setObjectMapper() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		return objectMapper;
 	}
 
 }
