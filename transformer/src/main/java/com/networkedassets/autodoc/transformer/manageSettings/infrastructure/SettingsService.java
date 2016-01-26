@@ -1,11 +1,13 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.BranchModifier;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.EventScheduler;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
+import com.networkedassets.autodoc.transformer.settings.view.Views;
 import com.networkedassets.autodoc.transformer.util.RestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,8 @@ public class SettingsService extends RestService {
 		this.eventScheduler = eventScheduler;
 	}
 
+	//TODO: Remove. Add rest getallsources with project to SourceService
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Settings getSettings() {
@@ -47,13 +51,13 @@ public class SettingsService extends RestService {
 		return settingsProvider.getCurrentSettings();
 	}
 
-	@Path("/confluence/credentials")
-	@PUT
+	@Path("/credentials")
+	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response setConfluenceCredentials(Settings settings) {
+	@JsonView(Views.PublicView.class)
+	public Response setCredentials(Settings settings) {
 
-		settingsSaver.setConfluenceCredentials(settings);
+		settingsSaver.setCredentials(settings);
 		return Response.status(Response.Status.ACCEPTED).build();
 	}
 

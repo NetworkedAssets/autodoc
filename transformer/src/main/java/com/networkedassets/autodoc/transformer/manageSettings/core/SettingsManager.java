@@ -113,7 +113,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
 
     @Override
-    public boolean setConfluenceCredentials(Settings settings) {
+    public boolean setCredentials(Settings settings) {
 
         this.settings.setConfluencePassword(settings.getConfluencePassword());
         this.settings.setConfluenceUrl(settings.getConfluenceUrl());

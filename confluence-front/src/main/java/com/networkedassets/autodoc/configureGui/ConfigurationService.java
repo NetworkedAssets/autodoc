@@ -31,19 +31,23 @@ import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.applinks.api.CredentialsRequiredException;
 import com.atlassian.applinks.api.application.stash.StashApplicationType;
 import com.atlassian.confluence.setup.settings.SettingsManager;
+import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.core.util.ClassLoaderUtils;
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ReturningResponseHandler;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
+import com.networkedassets.autodoc.configureGui.data.Credentials;
 import com.networkedassets.autodoc.transformer.TransformerServer;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.settings.Source.SourceType;
+import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 @Path("/configuration/")
 public class ConfigurationService {
@@ -52,10 +56,15 @@ public class ConfigurationService {
 	private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	private TransformerServer transformerServer;
 	private final ApplicationLinkService appLinkService;
+	private final UserAccessor userAccesor;
+	private final SettingsManager settingsManager;
 
-	public ConfigurationService(SettingsManager settingsManager, final ApplicationLinkService appLinkService) {
+	public ConfigurationService(SettingsManager settingsManager, UserAccessor userAccessor,
+			final ApplicationLinkService appLinkService) {
 
 		this.appLinkService = appLinkService;
+		this.userAccesor = userAccessor;
+		this.settingsManager = settingsManager;
 		this.transformerServer = new TransformerServer(getTransformerUrl(),
 				settingsManager.getGlobalSettings().getBaseUrl());
 
@@ -70,6 +79,30 @@ public class ConfigurationService {
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(OBJECT_MAPPER.writeValueAsString(settings)).build();
 		} catch (SettingsException | JsonProcessingException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
+
+	}
+
+	@POST
+	@Path("/credentials")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response setCredentials(Credentials credentials) {
+
+		try {
+
+			if (userAccesor.authenticate(credentials.getConfluenceUsername(), credentials.getConfluencePassword())) {
+				Settings settings = new Settings();
+				settings.setConfluenceUsername(credentials.getConfluenceUsername());
+				settings.setConfluencePassword(credentials.getConfluencePassword());
+				settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
+				HttpResponse<String> response = transformerServer.setCredentials(settings);
+				return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).build();
+			} else
+				return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.APPLICATION_JSON)
+						.entity(String.format("{\"error\":\"%s\"}", "Incorrect username or password")).build();
+
+		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
 

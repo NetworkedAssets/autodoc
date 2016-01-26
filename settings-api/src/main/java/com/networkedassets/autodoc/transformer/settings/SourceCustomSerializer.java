@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+//TODO: Remove object mapper will be in transformer
 public class SourceCustomSerializer extends StdSerializer<Source> {
 
 	private static final long serialVersionUID = 1L;

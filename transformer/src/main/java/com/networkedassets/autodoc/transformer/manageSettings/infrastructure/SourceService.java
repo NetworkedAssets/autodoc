@@ -53,6 +53,8 @@ public class SourceService {
 		this.sourceModifier = sourceModifier;
 	}
 
+	//TODO: Add rest for source with projects
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSources() {
@@ -66,6 +68,8 @@ public class SourceService {
 		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(sources).build();
 	}
 
+	//TODO:add Object mapper writer with view
+	
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -78,6 +82,8 @@ public class SourceService {
 				.orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
 	}
 
+	
+	//TODO:add Object mapper writer with view
 	@PUT
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -96,6 +102,7 @@ public class SourceService {
 		return Response.status(responseStatus).entity(resultSource).build();
 	}
 
+	//TODO: add json view
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createSource(Source source) {

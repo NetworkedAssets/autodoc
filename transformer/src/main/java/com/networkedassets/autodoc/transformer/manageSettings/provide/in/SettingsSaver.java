@@ -4,5 +4,5 @@ package com.networkedassets.autodoc.transformer.manageSettings.provide.in;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 
 public interface SettingsSaver {
-	boolean setConfluenceCredentials(Settings settings);
+	boolean setCredentials(Settings settings);
 }
