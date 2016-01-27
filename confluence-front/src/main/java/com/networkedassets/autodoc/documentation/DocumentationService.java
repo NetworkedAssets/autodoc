@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.documentation;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.json.jsonorg.JSONObject;
 import com.google.common.base.Joiner;
 import com.networkedassets.util.functional.Optionals;
 import net.java.ao.Query;
@@ -35,7 +36,7 @@ public class DocumentationService {
         String branchDec = URLDecoder.decode(branch, "UTF-8");
         String doctypeDec = URLDecoder.decode(doctype, "UTF-8");
 
-        if ("uml".equalsIgnoreCase(doctypeDec)) return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
+        if ("uml".equalsIgnoreCase(doctypeDec)) return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all", "");
         return ao.executeInTransaction(() ->
                 getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
                         .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
@@ -50,27 +51,45 @@ public class DocumentationService {
                         ))).build();
     }
 
-    @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
+    @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}{attribute:(/[^/]+?)?}")
     @GET
     public Response getDocumentationPiece(
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
             @PathParam("doctype") String docType,
-            @PathParam("docPieceName") String docPieceName) throws UnsupportedEncodingException {
+            @PathParam("docPieceName") String docPieceName,
+            @PathParam("attribute") String attribute) throws UnsupportedEncodingException {
         String projectDec = URLDecoder.decode(project, "UTF-8");
         String repoDec = URLDecoder.decode(repo, "UTF-8");
         String branchDec = URLDecoder.decode(branch, "UTF-8");
         String doctypeDec = URLDecoder.decode(docType, "UTF-8");
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
-        return ao.executeInTransaction(() ->
+        String attributeDec = URLDecoder.decode(attribute, "UTF-8");
+
+        Optional<DocumentationPiece> documentationPiece = ao.executeInTransaction(() ->
                 getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
                         .flatMap(d -> getDocumentationPiece(d, docPieceNameDec))
-                        .map(this::makeDocPieceJson)
-                        .map(Response::ok)
-                        .orElse(Response.status(404).entity(
-                                "{\"success\": false, \"message\": \"Could not find requested documentation!\"}"
-                        ))).build();
+        );
+        Response response;
+
+        if(!attributeDec.equals("")){
+            final String finalAttributeDec = attributeDec.substring(1, attributeDec.length()); //attribute starts with reduntant /
+            response = documentationPiece
+                    .map(d -> makeDocPieceAttributeJson(finalAttributeDec, d))
+                    .map(Response::ok)
+                    .orElse(Response.status(404).entity(
+                            "{\"success\": false, \"message\": \"Could not find requested attribute!\"}"
+                    )).build();
+        }else{
+            response = documentationPiece
+                    .map(this::makeDocPieceJson)
+                    .map(Response::ok)
+                    .orElse(Response.status(404).entity(
+                            "{\"success\": false, \"message\": \"Could not find requested documentation!\"}"
+                    )).build();
+        }
+        return response;
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
@@ -90,6 +109,11 @@ public class DocumentationService {
 
     private String makeDocPieceJson(DocumentationPiece dp) {
         return dp.getContent();
+    }
+
+    public String makeDocPieceAttributeJson(final String attribute, DocumentationPiece dp) {
+        JSONObject jsonObject = new JSONObject(dp.getContent());
+        return jsonObject.getString(attribute);
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
