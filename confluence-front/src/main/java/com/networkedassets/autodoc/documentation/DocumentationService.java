@@ -115,7 +115,7 @@ public class DocumentationService {
     public String makeDocPieceAttributeJson(final String attribute, DocumentationPiece dp) {
         JSONObject jsonObject = new JSONObject(dp.getContent());
         try {
-            return jsonObject.getString(attribute);
+            return String.format("{\"%s\": \"%s\"}", attribute, jsonObject.getString(attribute));
         } catch (JSONException e) {
             return null;
         }
