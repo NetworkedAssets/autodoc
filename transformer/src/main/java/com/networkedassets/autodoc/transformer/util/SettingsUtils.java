@@ -143,11 +143,11 @@ public final class SettingsUtils {
      * <li>Function will try to connect and verify with source, setting exist and credentialsCorrect flags accordingly</li>
      * <li><b>Source type can only be checked if credentials are correct. Otherwise it will always be false</b></li>
      * </ul>
-     *
-     * @param source          will be checked for all conditions and proper flags will be set on it
-     * @param existingSources used to check whether source name is unique
+     *  @param source          will be checked for all conditions and proper flags will be set on it
+     *  @param existingSources used to check whether source name is unique
+     *  @return whether source is correct after all checks
      */
-    public static void verifySource(Source source, List<Source> existingSources) {
+    public static boolean verifySource(Source source, List<Source> existingSources) {
         source.setSourceExists(false);
         source.setCredentialsCorrect(false);
         source.setNameCorrect(false);
@@ -182,6 +182,7 @@ public final class SettingsUtils {
             }
         } catch (MalformedURLException ignored) {
         }
+        return source.isCorrect();
     }
 
     /**
