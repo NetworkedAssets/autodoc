@@ -1,6 +1,5 @@
 angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
 // For any unmatched url, redirect to /state1
-        $urlRouterProvider.otherwise("/javadoc");
 
         // Now set up the states
         $stateProvider
@@ -9,21 +8,29 @@ angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
                 name: "Javadoc",
                 displayName: "Javadoc",
                 templateUrl: doc_resourcePath + "partials/javadoc.html",
-                controller: "javadocCtrl as vm"
+                controller: "JavadocCtrl as vm"
             })
             .state('javadoc.entity', {
-                url: "/entity/{name}",
+                url: "/entity/:name",
                 templateUrl: doc_resourcePath + "partials/javadoc.entity.html?",
-                controller: "javadocEntityCtrl as vm"
+                controller: "JavadocEntityCtrl as vm"
             })
             .state('classDiagram', {
                 url: "/classDiagram",
-                displayName: "ClassDiagram",
+                displayName: "Class Diagram",
                 templateUrl: function() {
                     return doc_resourcePath + "partials/classDiagram.html";
                 },
-                controller: 'classDiagramCtrl'
+                controller: 'ClassDiagramCtrl'
+            })
+            .state('structureGraph',{
+                url: "/structureGraph",
+                displayName: "Structure Graph",
+                template: '<div id="doc_structureGraph"></div>',
+                controller: 'StructureGraphCtrl'
             });
+
+        $urlRouterProvider.otherwise("/javadoc");
     })
 
     .run(function ($state,$rootScope,$injector) {

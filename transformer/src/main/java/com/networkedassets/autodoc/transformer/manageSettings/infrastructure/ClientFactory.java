@@ -13,9 +13,9 @@ import java.net.URL;
 /**
  * Created by kamil on 18.11.2015.
  */
-public class ClientConfigurator {
+public class ClientFactory {
 
-    private static Logger log = LoggerFactory.getLogger(ClientConfigurator.class);
+    private static Logger log = LoggerFactory.getLogger(ClientFactory.class);
 
     public static StashBitbucketClient getConfiguredStashBitbucketClient(Source source) throws MalformedURLException {
         URL stashUrl = new URL(source.getUrl());
@@ -27,7 +27,5 @@ public class ClientConfigurator {
         log.debug("Stash client created");
         return stashBitbucketClient;
     }
-
-
 }
 

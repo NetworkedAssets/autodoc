@@ -1,11 +1,6 @@
-angular.module("DoC").controller("topCtrl",function($scope,$state,macroParams) {
+angular.module("DoC").controller("TopCtrl",function($scope,$state,macroParams) {
 
     $scope.states = {};
-
-    $scope.projects = [
-        "Project1",
-        "Project2"
-    ];
 
     var i = 0;
 

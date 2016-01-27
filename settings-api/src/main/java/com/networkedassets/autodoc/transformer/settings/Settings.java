@@ -4,16 +4,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 /**
  * Contains settings of the application
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 3847560203140549969L;
+	@JsonView(Views.PublicView.class)
 	private String confluenceUrl = "http://46.101.240.138:8090/confluence";
+	@JsonView(Views.PublicView.class)
 	private String confluenceUsername = "admin";
+	@JsonView(Views.PublicView.class)
 	private String confluencePassword = "admin";
 	private TransformerSettings transformerSettings = new TransformerSettings();
 	private List<Source> sources = new ArrayList<>();

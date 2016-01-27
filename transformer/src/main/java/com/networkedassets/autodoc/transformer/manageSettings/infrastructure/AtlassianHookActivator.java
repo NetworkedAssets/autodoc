@@ -23,7 +23,7 @@ public class AtlassianHookActivator implements HookActivator {
     public AtlassianHookActivator(Source source, String localhostAddress) throws MalformedURLException {
         this.localhostAddress = localhostAddress;
         this.source = source;
-        stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+        stashBitbucketClient = ClientFactory.getConfiguredStashBitbucketClient(source);
     }
 
 

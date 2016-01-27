@@ -2,8 +2,7 @@ package com.networkedassets.autodoc.transformer.util;
 
 import com.google.common.base.Strings;
 import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
-import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
 import com.networkedassets.autodoc.transformer.settings.Project;
@@ -144,11 +143,11 @@ public final class SettingsUtils {
      * <li>Function will try to connect and verify with source, setting exist and credentialsCorrect flags accordingly</li>
      * <li><b>Source type can only be checked if credentials are correct. Otherwise it will always be false</b></li>
      * </ul>
-     *
-     * @param source          will be checked for all conditions and proper flags will be set on it
-     * @param existingSources used to check whether source name is unique
+     *  @param source          will be checked for all conditions and proper flags will be set on it
+     *  @param existingSources used to check whether source name is unique
+     *  @return whether source is correct after all checks
      */
-    public static void verifySource(Source source, List<Source> existingSources) {
+    public static boolean verifySource(Source source, List<Source> existingSources) {
         source.setSourceExists(false);
         source.setCredentialsCorrect(false);
         source.setNameCorrect(false);
@@ -162,7 +161,7 @@ public final class SettingsUtils {
 
         try {
             // check for connection data correctness
-            StashBitbucketClient stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+            StashBitbucketClient stashBitbucketClient = ClientFactory.getConfiguredStashBitbucketClient(source);
             if (stashBitbucketClient.isVerified()) {
                 source.setSourceExists(true);
                 source.setCredentialsCorrect(true);
@@ -183,6 +182,7 @@ public final class SettingsUtils {
             }
         } catch (MalformedURLException ignored) {
         }
+        return source.isCorrect();
     }
 
     /**

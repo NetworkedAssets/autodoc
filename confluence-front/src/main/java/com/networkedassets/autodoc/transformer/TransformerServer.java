@@ -27,6 +27,7 @@ import com.networkedassets.autodoc.transformer.settings.SourceCustomSerializer;
 
 public class TransformerServer {
 	public static final String SETTINGS = "/settings";
+	public static final String CREDENTIALS = "/settings/credentials";
 	public static final String SOURCES = "/sources/";
 	public static final String EVENT = "/event";
 	public static final String EVENT_JSON = "{\"sourceUrl\":\"%s\",\"projectKey\":\"%s\",\"repositorySlug\":\"%s\",\"branchId\":\"%s\"}";
@@ -43,6 +44,25 @@ public class TransformerServer {
 
 		Unirest.setObjectMapper(OBJECT_MAPPER);
 		Unirest.setHttpClient(HTTP_CLIENT);
+	}
+
+	public TransformerServer(String transformerUrl, String confluenceUrl) {
+		this(transformerUrl);
+		setConfluenceUrl(confluenceUrl);
+	}
+
+	public HttpResponse<String> setCredentials(Settings settings) throws SettingsException {
+
+		HttpResponse<String> response;
+		try {
+
+			response = Unirest.post(url + CREDENTIALS).header("Content-Type", "application/json").body(settings)
+					.asString();
+		} catch (UnirestException e) {
+			throw new SettingsException(e);
+		}
+		return response;
+
 	}
 
 	public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, Branch branch)
@@ -64,11 +84,6 @@ public class TransformerServer {
 		} catch (UnirestException | IOException e) {
 			throw new SettingsException(e);
 		}
-	}
-
-	public TransformerServer(String transformerUrl, String confluenceUrl) {
-		this(transformerUrl);
-		setConfluenceUrl(confluenceUrl);
 	}
 
 	public Settings getSettings() throws SettingsException {

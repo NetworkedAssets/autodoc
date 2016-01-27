@@ -1,5 +1,5 @@
 angular.module("DoC")
-.controller("javadocCtrl",function($http,$state,$stateParams,$element,$timeout,$rootScope,urlProvider,javadocEntities) {
+.controller("JavadocCtrl",function($scope,$http,$state,$stateParams,$element,$timeout,$rootScope,urlProvider,javadocEntities) {
     var vm = this;
     vm.loading = true;
 
@@ -7,14 +7,14 @@ angular.module("DoC")
         AJS.$($element.find(".loadingSpinner")).spin("big");
     };
 
-    $http.get(urlProvider.getRestUrl('/JAVADOC/index'),{
-        cache: true
-    }).then(function(data) {
-        javadocEntities.parse(data.data.indexPackage);
-        vm.items = javadocEntities.getTreeUsingArrays();
+    javadocEntities
+        .fetch()
+        .then(function() {
+            vm.items = javadocEntities.getTreeUsingArrays();
+            vm.loading = false;
+        });
 
-        vm.loading = false;
-    });
+
 
     vm.items = [];
     vm.toggleItem = function(item) {
@@ -79,16 +79,23 @@ angular.module("DoC")
         }
     };
 
-    $rootScope.$on('$stateChangeSuccess',
+    var onStateChangeSuccess = $rootScope.$on('$stateChangeSuccess',
         function(event, toState, toParams){
+            console.log("changeEnd",arguments);
             $timeout(function() {
+                console.log("changeEndTimeout:",toParams);
                 vm.tree.updateSelectedNodeByName(toParams.name);
                 window.scrollTo(0,0);
             },50);
         });
 
 
+    $scope.$on('$destroy', function() {
+        onStateChangeSuccess();
+    });
+
     if ($state.params.name) {
+        // TODO is concurring with $stateChangeSuccess
         $rootScope.$on("javadocEntities.ready",function() {
             vm.tree.updateSelectedNodeByName($state.params.name);
         });

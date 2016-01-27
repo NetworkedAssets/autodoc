@@ -1,4 +1,4 @@
-angular.module("DoC").controller('classDiagramCtrl',function($scope,$http,$element,$timeout,urlProvider) {
+angular.module("DoC").controller('ClassDiagramCtrl',function($scope,$http,$element,$timeout,urlProvider) {
     $scope.loading = true;
     var cd = new ClassDiagram({
         elem: $("#doc_classDiagram_paper")
