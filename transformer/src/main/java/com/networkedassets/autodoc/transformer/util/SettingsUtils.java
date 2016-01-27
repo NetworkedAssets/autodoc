@@ -2,8 +2,7 @@ package com.networkedassets.autodoc.transformer.util;
 
 import com.google.common.base.Strings;
 import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
-import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
 import com.networkedassets.autodoc.transformer.settings.Project;
@@ -162,7 +161,7 @@ public final class SettingsUtils {
 
         try {
             // check for connection data correctness
-            StashBitbucketClient stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+            StashBitbucketClient stashBitbucketClient = ClientFactory.getConfiguredStashBitbucketClient(source);
             if (stashBitbucketClient.isVerified()) {
                 source.setSourceExists(true);
                 source.setCredentialsCorrect(true);

@@ -28,7 +28,7 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
 
     public AtlassianProjectsProvider(Source source) throws MalformedURLException {
         this.source = source;
-        stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+        stashBitbucketClient = ClientFactory.getConfiguredStashBitbucketClient(source);
     }
 
     @Override
