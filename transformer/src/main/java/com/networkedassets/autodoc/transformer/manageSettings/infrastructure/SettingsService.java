@@ -43,7 +43,6 @@ public class SettingsService extends RestService {
 	}
 
 	//TODO: Remove. Add rest getallsources with project to SourceService
-	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Settings getSettings() {
