@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.documentation;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.json.jsonorg.JSONException;
 import com.atlassian.json.jsonorg.JSONObject;
 import com.google.common.base.Joiner;
 import com.networkedassets.util.functional.Optionals;
@@ -113,7 +114,11 @@ public class DocumentationService {
 
     public String makeDocPieceAttributeJson(final String attribute, DocumentationPiece dp) {
         JSONObject jsonObject = new JSONObject(dp.getContent());
-        return jsonObject.getString(attribute);
+        try {
+            return jsonObject.getString(attribute);
+        } catch (JSONException e) {
+            return null;
+        }
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
