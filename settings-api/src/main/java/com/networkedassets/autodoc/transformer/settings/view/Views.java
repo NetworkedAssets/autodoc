@@ -8,6 +8,9 @@ public class Views {
 	public static class ExtendedView extends PublicView {
 	}
 
+	public static class VerificationView extends ExtendedView {
+	}
+
 	public static class InternalView extends ExtendedView {
 	}
 }

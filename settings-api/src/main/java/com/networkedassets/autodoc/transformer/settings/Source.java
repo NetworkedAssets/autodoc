@@ -33,6 +33,7 @@ public class Source implements Serializable {
 	@JsonIgnore
     public static int totalId = 1;
 
+	@JsonView(Views.InternalView.class)
     private int id;
     @JsonView(Views.PublicView.class)
     private String name;
@@ -44,11 +45,17 @@ public class Source implements Serializable {
     private String username;
     @JsonView(Views.PublicView.class)
     private String password;
-   
+    @JsonView(Views.PublicView.class)
+    private String appLinksId;
+    @JsonView(Views.VerificationView.class)
     private boolean sourceExists;
+    @JsonView(Views.VerificationView.class)
     private boolean credentialsCorrect;
+    @JsonView(Views.VerificationView.class)
     private boolean nameCorrect;
+    @JsonView(Views.VerificationView.class)
     private boolean sourceTypeCorrect;
+    @JsonView(Views.InternalView.class)
     public Map<String, Project> projects = new HashMap<>();
 
     public Source() {
@@ -84,6 +91,14 @@ public class Source implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public String getAppLinksId() {
+        return appLinksId;
+    }
+
+    public void setAppLinksId(String appLinksId) {
+        this.appLinksId = appLinksId;
     }
 
     public String getUrl() {
@@ -161,6 +176,7 @@ public class Source implements Serializable {
         this.sourceTypeCorrect = sourceTypeCorrect;
     }
 
+    @JsonView(Views.VerificationView.class)
     public boolean isCorrect() {
         return isSourceExists()
                 && isCredentialsCorrect()
@@ -171,7 +187,7 @@ public class Source implements Serializable {
     public static enum SourceType implements Serializable {
         STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"), BITBUCKET(
                 "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
-
+    	@JsonView(Views.InternalView.class)
         private String hookKey;
 
         SourceType(String hookKey) {

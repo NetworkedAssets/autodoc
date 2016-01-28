@@ -22,7 +22,9 @@ public class Settings implements Serializable {
 	private String confluenceUsername = "admin";
 	@JsonView(Views.PublicView.class)
 	private String confluencePassword = "admin";
+	@JsonView(Views.InternalView.class)
 	private TransformerSettings transformerSettings = new TransformerSettings();
+	@JsonView(Views.ExtendedView.class)
 	private List<Source> sources = new ArrayList<>();
 
 	public Source getSourceByUrl(String url) {

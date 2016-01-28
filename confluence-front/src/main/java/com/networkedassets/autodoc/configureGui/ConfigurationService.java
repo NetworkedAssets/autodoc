@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -36,7 +37,6 @@ import com.atlassian.core.util.ClassLoaderUtils;
 import com.atlassian.sal.api.net.Request.MethodType;
 import com.atlassian.sal.api.net.ResponseException;
 import com.atlassian.sal.api.net.ReturningResponseHandler;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
@@ -47,7 +47,6 @@ import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.settings.Source.SourceType;
-import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 @Path("/configuration/")
 public class ConfigurationService {
@@ -70,15 +69,15 @@ public class ConfigurationService {
 
 	}
 
-	@Path("projects")
+	@Path("sources")
 	@GET
-	public Response getProjects() {
+	public Response getSettings() {
 
 		try {
-			Settings settings = transformerServer.getSettings();
-			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
-					.entity(OBJECT_MAPPER.writeValueAsString(settings)).build();
-		} catch (SettingsException | JsonProcessingException e) {
+			HttpResponse<String> response = transformerServer.getSettings();
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
+					.build();
+		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
 
@@ -107,6 +106,8 @@ public class ConfigurationService {
 		}
 
 	}
+	
+	//TODO: PUT for update by Admin and get source Id by appLinksID an use ready rest  put "source/{id}")
 
 	@POST
 	@Path("applinks/sources")
@@ -123,6 +124,7 @@ public class ConfigurationService {
 				source.setName(appLinks.getName());
 				source.setUrl(appLinks.getRpcUrl().toString());
 				source.setSourceType(sourceType.get());
+				source.setAppLinksId(appLinks.getId().toString());
 
 				try {
 					HttpResponse<Source> response = transformerServer.setSource(source);
@@ -147,7 +149,8 @@ public class ConfigurationService {
 	@GET
 	public Response getListenedBranches() {
 		try {
-			List<Source> sources = transformerServer.getSettings().getSources();
+			List<Source> sources = Arrays
+					.asList(OBJECT_MAPPER.readValue(transformerServer.getSources().getBody(), Source[].class));
 
 			sources.forEach(s -> {
 				s.projects.forEach((kp, p) -> {
@@ -161,7 +164,7 @@ public class ConfigurationService {
 
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(String.format("{\"sources\": %s}", OBJECT_MAPPER.writeValueAsString(sources))).build();
-		} catch (SettingsException | JsonProcessingException e) {
+		} catch (SettingsException | IOException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
 
@@ -230,21 +233,7 @@ public class ConfigurationService {
 		}
 
 	}
-
-	@Path("sources")
-	@GET
-	public Response getSources() {
-
-		try {
-			HttpResponse<String> response = transformerServer.getSources();
-			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
-					.entity(String.format("{\"sources\": %s}", response.getBody())).build();
-		} catch (SettingsException e) {
-			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-		}
-
-	}
-
+	
 	@Path("source/{id}")
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -259,6 +248,23 @@ public class ConfigurationService {
 		}
 
 	}
+	
+
+	@Path("projects")
+	@GET
+	public Response getSources() {
+
+		try {
+			HttpResponse<String> response = transformerServer.getSources();
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
+					.entity(String.format("{\"sources\": %s}", response.getBody())).build();
+		} catch (SettingsException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
+
+	}
+
+	
 
 	private String getTransformerUrl() {
 		InputStream properties = ClassLoaderUtils.getResourceAsStream("autodoc_confluence.properties", getClass());

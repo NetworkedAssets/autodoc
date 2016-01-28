@@ -14,7 +14,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
@@ -23,7 +22,6 @@ import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
-import com.networkedassets.autodoc.transformer.settings.SourceCustomSerializer;
 
 public class TransformerServer {
 	public static final String SETTINGS = "/settings";
@@ -86,16 +84,16 @@ public class TransformerServer {
 		}
 	}
 
-	public Settings getSettings() throws SettingsException {
-		HttpResponse<Settings> response;
+	public HttpResponse<String> getSettings() throws SettingsException {
+		HttpResponse<String> response;
 		try {
 
-			response = Unirest.get(url + SETTINGS).asObject(Settings.class);
+			response = Unirest.get(url + SETTINGS).asString();
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
 		}
 
-		return response.getBody();
+		return response;
 	}
 
 	public HttpResponse<String> getSources() throws SettingsException {
@@ -221,10 +219,6 @@ public class TransformerServer {
 			@Override
 			public String writeValue(Object value) {
 				try {
-
-					SimpleModule module = new SimpleModule();
-					module.addSerializer(new SourceCustomSerializer(Source.class));
-					jacksonObjectMapper.registerModule(module);
 					return jacksonObjectMapper.writeValueAsString(value);
 				} catch (IOException e) {
 					throw new RuntimeException(e);

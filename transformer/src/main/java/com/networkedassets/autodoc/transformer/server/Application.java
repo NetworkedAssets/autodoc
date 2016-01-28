@@ -1,12 +1,11 @@
 package com.networkedassets.autodoc.transformer.server;
 
-import org.glassfish.jersey.jackson.JacksonFeature;
-import org.glassfish.jersey.message.filtering.EntityFilteringFeature;
+import javax.ws.rs.ApplicationPath;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 
-import javax.ws.rs.ApplicationPath;
-
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 /**
  * Jersey application serverConfig
@@ -14,24 +13,23 @@ import javax.ws.rs.ApplicationPath;
 @SuppressWarnings("unused")
 @ApplicationPath("/")
 public class Application extends ResourceConfig {
-    public Application() {
+	public Application() {
 
-        // scan for classes providing REST services
-        packages(true, "com.networkedassets.autodoc.transformer");
+		// scan for classes providing REST services
+		packages(true, "com.networkedassets.autodoc.transformer");
 
-        // enable jersey logging for requests and responses
-        property("com.sun.jersey.spi.container.ContainerRequestFilters", "com.sun.jersey.api.container.filter.LoggingFilter");
-        property("com.sun.jersey.spi.container.ContainerResponseFilters", "com.sun.jersey.api.container.filter.LoggingFilter");
-        property(ServerProperties.TRACING, "ALL");
+		// enable jersey logging for requests and responses
+		property("com.sun.jersey.spi.container.ContainerRequestFilters",
+				"com.sun.jersey.api.container.filter.LoggingFilter");
+		property("com.sun.jersey.spi.container.ContainerResponseFilters",
+				"com.sun.jersey.api.container.filter.LoggingFilter");
+		property(ServerProperties.TRACING, "ALL");
 
-        // register binder for dependency injection
-        register(new Binder());
-        // filltering pojo fields
-        register(EntityFilteringFeature.class);
-        register(JacksonFeature.class);
+		// register binder for dependency injection
+		register(new Binder());
+		register(JacksonFeature.class);
+		register(JacksonJsonProvider.class);
 
-
-    }
-
+	}
 
 }
