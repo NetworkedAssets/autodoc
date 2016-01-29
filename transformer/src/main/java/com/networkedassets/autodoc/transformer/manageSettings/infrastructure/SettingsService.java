@@ -64,7 +64,6 @@ public class SettingsService extends RestService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@JsonView(Views.PublicView.class)
 	public Response setCredentials(Settings settings) {
-
 		settingsSaver.setCredentials(settings);
 		return Response.status(Response.Status.ACCEPTED).build();
 	}
