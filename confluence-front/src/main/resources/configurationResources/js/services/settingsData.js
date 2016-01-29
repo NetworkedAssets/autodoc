@@ -95,13 +95,13 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
         settings.savingState = "saving";
         $http
-            .post(urlProvider.getRestUrlWithParams([
+            .post(urlProvider.getRestUrlWithParams(
                 "branches",
                 chosen.source,
                 chosen.project,
                 chosen.repo,
                 chosen.branch
-            ]), data)
+            ), data)
             .then(function () {
                 processListenToValues();
                 settings.savingState = "saved";

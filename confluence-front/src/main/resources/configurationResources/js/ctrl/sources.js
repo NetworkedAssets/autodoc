@@ -2,48 +2,14 @@ angular.module("DoC_Config").controller("sourcesCtrl", function ($resource, urlP
     var vm = this;
 
     var Source = $resource(
-        urlProvider.getRestUrlWithParams(["applinks", "sources"]) + ":id",
+        urlProvider.getRestUrlWithParams("sources") + ":id",
         {
             id: '@id'
         },
         {
             query: {
-                method: 'POST',
-                isArray: true,
-                transformResponse: function (data, headersGetter, status) {
-                    return [
-                        {
-                            "id": 1,
-                            "credentialsCorrect": false,
-                            "hookKey": "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener",
-                            "projects": {},
-                            "sourceType": "STASH",
-                            "url": "http://atlas.networkedassets.net:7990",
-                            "nameCorrect": true,
-                            "password": null,
-                            "correct": false,
-                            "username": null,
-                            "sourceTypeCorrect": false,
-                            "sourceExists": true,
-                            "name": "AtlasDev Stash"
-                        },
-                        {
-                            "id": 2,
-                            "credentialsCorrect": false,
-                            "hookKey": "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener",
-                            "projects": {},
-                            "sourceType": "BITBUCKET",
-                            "url": "http://atlas.networkedassets.net:7991",
-                            "nameCorrect": true,
-                            "password": null,
-                            "correct": false,
-                            "username": null,
-                            "sourceTypeCorrect": false,
-                            "sourceExists": true,
-                            "name": "Bitbucket"
-                        }
-                    ];
-                }
+                method: 'GET',
+                isArray: true
             },
             update: {
                 transformRequest: function (data, headers) {
@@ -61,7 +27,8 @@ angular.module("DoC_Config").controller("sourcesCtrl", function ($resource, urlP
             delete: {
                 method: 'DELETE'
             },
-            add: function () {
+            addFromApplinks: {
+                url: urlProvider.getRestUrlWithParams("applinks","sources"),
                 method: 'POST'
             }
         }
@@ -93,6 +60,7 @@ angular.module("DoC_Config").controller("sourcesCtrl", function ($resource, urlP
     };
 
     vm.addFromAppLinks = function () {
-        Source.add();
+        console.log("");
+        Source.addFromAppLinks();
     };
 });

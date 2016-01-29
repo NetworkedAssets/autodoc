@@ -6,7 +6,8 @@ angular.module("DoC_Config").factory("urlProvider",function() {
             }
             return this.getBaseUrl()+"/rest/autodoc/1.0/configuration"+path;
         },
-        getRestUrlWithParams: function(params) {
+        getRestUrlWithParams: function() {
+            var params = arguments;
             var paramString = "/";
             angular.forEach(params,function(param) {
                 paramString += urlProvider.encodeComponent(param)+"/";

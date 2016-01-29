@@ -48,6 +48,17 @@ angular.module("DoC_Config").controller("confluenceConfigCtrl",function($scope,$
         confluenceConfig.credentialsCorrect = true;
     };
 
+    confluenceConfig.get = function() {
+        $http
+            .get(urlProvider.getRestUrlWithParams("credentials"))
+            .then(function(response) {
+                confluenceConfig.savingState = "saved";
+                confluenceConfig.username = response.data.confluenceUsername;
+                confluenceConfig.password = null;
+                confluenceConfig.credentialsCorrect = true;
+            });
+    };
+
     confluenceConfig.revert = function() {
         this.setFromSettingsData();
     };
@@ -56,4 +67,5 @@ angular.module("DoC_Config").controller("confluenceConfigCtrl",function($scope,$
         confluenceConfig.savingState = "dirty";
     };
 
+    confluenceConfig.get();
 });

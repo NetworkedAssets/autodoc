@@ -283,18 +283,18 @@
                                 </h3>
                                 <p class="url" ng-hide="source.inEdit">
                                     {{source.url}}
-                                    – <button ng-click="vm.edit($index)" class="aui-button aui-button-link">edit</button>
+                                    &ndash; <button ng-click="vm.edit($index)" class="aui-button aui-button-link">edit</button>
                                 </p>
                                 <form class="aui url" ng-show="source.inEdit">
                                     <input ng-model="source.url" type="text" class="text">
                                     <button ng-click="vm.save($index)" class="aui-button aui-button-primary">Save</button><!--
                                     --><button ng-click="vm.revert($index)" class="aui-button">Revert</button>
                                 </form>
-                                <div class="aui-message aui-message-warning">
+                                <div class="aui-message aui-message-warning" ng-hide="source.correct">
                                     <p class="title">
                                         <strong>Errors:</strong>
                                     </p>
-                                    <ul ng-hide="source.correct">
+                                    <ul>
                                         <li ng-hide="source.sourceTypeCorrect">Incorrect source type</li>
                                         <li ng-hide="!source.sourceTypeExists">Source doesn't exist</li>
                                         <li ng-hide="source.credentialsCorrect">Credentials incorrect</li>
