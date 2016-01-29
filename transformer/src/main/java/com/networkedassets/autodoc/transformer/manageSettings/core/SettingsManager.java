@@ -13,6 +13,7 @@ import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.util.SettingsUtils;
+import net.sourceforge.plantuml.creole.Sea;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -20,9 +21,17 @@ import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.*;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.inject.Inject;
 import java.io.*;
 import java.net.MalformedURLException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.util.*;
 
 import static org.quartz.JobBuilder.newJob;
@@ -35,6 +44,14 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         SourceModifier, BranchModifier, EventScheduler {
 
     private Settings settings = new Settings();
+
+    //TODO Change place to store password
+    private final char[] password =
+            "Nobody Expects the Spanish Inquisition".toCharArray();
+    private final byte[] salt = "a9v5n38s".getBytes();
+    private SecretKey secret;
+    private Cipher cipher, decipher;
+
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
 
     public String settingsFilename;
@@ -53,6 +70,27 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     public SettingsManager() {
         settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
+        // Create key
+        KeySpec spec = new PBEKeySpec(password, salt, 1024, 128);
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            SecretKey tmp = factory.generateSecret(spec);
+            secret = new SecretKeySpec(tmp.getEncoded(), "AES");
+
+            cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, secret);
+            decipher = Cipher.getInstance("AES");
+            decipher.init(Cipher.DECRYPT_MODE, secret);
+        } catch (InvalidKeySpecException e) {
+            log.error("Invalid key spec", e);
+        } catch (NoSuchAlgorithmException e) {
+            log.error("No such algorithm as given to SecretKeyFactory", e);
+        } catch (NoSuchPaddingException e) {
+            log.error("No such padding as given to Ciper.getInstance()", e);
+        } catch (InvalidKeyException e) {
+            log.error("Invalid key", e);
+        }
+
         loadSettingsFromFile(settingsFilename);
         updateAllSourcesAndEnableHooks();
     }
@@ -79,7 +117,10 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         File settingsFile = new File(filename);
         try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
-            objectOut.writeObject(settings);
+
+            SealedObject sealedObject = new SealedObject(settings, cipher);
+
+            objectOut.writeObject(sealedObject);
             log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.error("Can't save settings to {} - file was not found: ", settingsFile.getAbsolutePath(), e);
@@ -87,7 +128,9 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         } catch (IOException e) {
             log.error("Can't save settings to {} - general IO problem: ", settingsFile.getAbsolutePath(), e);
             return false;
-
+        } catch (IllegalBlockSizeException e) {
+            log.error("Illegal block size during sealing settings", e);
+            return false;
         }
 
         return true;
@@ -96,8 +139,10 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
     private void loadSettingsFromFile(String filename) {
         File settingsFile = new File(filename);
         try (FileInputStream fileIn = new FileInputStream(settingsFile);
-             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
-            settings = (Settings) objectIn.readObject();
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileIn)) {
+            SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
+
+            settings = (Settings) sealedObject.getObject(decipher);
             log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.error("Can't load settings from {} - file not found. Creating new default settings...",
@@ -108,10 +153,12 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
                     settingsFile.getAbsolutePath());
         } catch (IOException e) {
             log.error("Can't load settings from {}: ", settingsFile.getAbsolutePath(), e);
+        } catch (BadPaddingException e) {
+            log.error("Bad padding during unsealing settings", e);
+        } catch (IllegalBlockSizeException e) {
+            log.error("Illegal block size during unsealing settings", e);
         }
     }
-
-
    
     @Override
     public boolean setCredentials(Settings settings) {
