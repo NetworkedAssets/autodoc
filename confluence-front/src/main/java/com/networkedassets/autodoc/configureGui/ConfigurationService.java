@@ -69,20 +69,6 @@ public class ConfigurationService {
 
 	}
 
-	@Path("sources")
-	@GET
-	public Response getSources() {
-
-		try {
-			HttpResponse<String> response = transformerServer.getSources();
-			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
-					.build();
-		} catch (SettingsException e) {
-			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-		}
-
-	}
-
 	@POST
 	@Path("/credentials")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -118,7 +104,7 @@ public class ConfigurationService {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
 	}
-	
+
 	//TODO: PUT for update by Admin and get source Id by appLinksID an use ready rest  put "source/{id}")
 
 	@POST
@@ -219,7 +205,21 @@ public class ConfigurationService {
 
 	}
 
-	@Path("source/{id}")
+	@Path("sources")
+	@GET
+	public Response getSources() {
+
+		try {
+			HttpResponse<String> response = transformerServer.getSources();
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
+					.build();
+		} catch (SettingsException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
+
+	}
+
+	@Path("sources/{id}")
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeSource(@PathParam("id") int sourceId) {
@@ -231,7 +231,7 @@ public class ConfigurationService {
 		}
 	}
 
-	@Path("source")
+	@Path("sources")
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -246,7 +246,7 @@ public class ConfigurationService {
 
 	}
 	
-	@Path("source/{id}")
+	@Path("sources/{id}")
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
