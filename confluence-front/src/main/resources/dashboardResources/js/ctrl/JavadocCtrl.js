@@ -49,7 +49,9 @@ angular.module("DoC")
             }
         },
         updateSelectedNodeByName: function(name) {
-            vm.tree.updateSelectedNode(javadocEntities.getByName(name));
+            if (name) {
+                vm.tree.updateSelectedNode(javadocEntities.getByName(name));
+            }
         },
         updateExpandedRecursively: function(node) {
             var arr = node.name.split(".");
@@ -79,18 +81,24 @@ angular.module("DoC")
         }
     };
 
+    var onStateChangeStart = $rootScope.$on('$stateChangeStart',function(event,toState,toParams,fromState,fromParams) {
+        if (toState.name == "javadoc" && (!toParams || !toParams.name) && fromParams && fromParams.name) {
+            /* TODO Rewrite to something less crappy */
+            event.preventDefault();
+            $state.go("javadoc.entity",fromParams);
+        }
+    });
+
     var onStateChangeSuccess = $rootScope.$on('$stateChangeSuccess',
         function(event, toState, toParams){
-            console.log("changeEnd",arguments);
             $timeout(function() {
-                console.log("changeEndTimeout:",toParams);
                 vm.tree.updateSelectedNodeByName(toParams.name);
                 window.scrollTo(0,0);
             },50);
         });
 
-
     $scope.$on('$destroy', function() {
+        onStateChangeStart();
         onStateChangeSuccess();
     });
 

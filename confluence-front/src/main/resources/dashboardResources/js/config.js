@@ -12,6 +12,9 @@ angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
             })
             .state('javadoc.entity', {
                 url: "/entity/:name",
+                params: {
+                    name: ""
+                },
                 templateUrl: doc_resourcePath + "partials/javadoc.entity.html?",
                 controller: "JavadocEntityCtrl as vm"
             })
@@ -26,13 +29,12 @@ angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
             .state('structureGraph',{
                 url: "/structureGraph",
                 displayName: "Structure Graph",
-                template: '<div id="doc_structureGraph"></div>',
+                template: '<a ui-sref="javadoc.entity({name:\'com.networkedassets\'})">click</a><div id="doc_structureGraph"></div>',
                 controller: 'StructureGraphCtrl'
             });
 
         $urlRouterProvider.otherwise("/javadoc");
     })
-
     .run(function ($state,$rootScope,$injector) {
         $rootScope.$state = $state;
         debugInjector = $injector;
