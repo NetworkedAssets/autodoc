@@ -41,7 +41,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.networkedassets.autodoc.configureGui.data.Credentials;
-import com.networkedassets.autodoc.transformer.TransformerServer;
+import com.networkedassets.autodoc.transformer.TransformerClient;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
@@ -53,7 +53,7 @@ public class ConfigurationService {
 
 	private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
 	private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-	private TransformerServer transformerServer;
+	private TransformerClient transformerClient;
 	private final ApplicationLinkService appLinkService;
 	private final UserAccessor userAccesor;
 	private final SettingsManager settingsManager;
@@ -64,7 +64,7 @@ public class ConfigurationService {
 		this.appLinkService = appLinkService;
 		this.userAccesor = userAccessor;
 		this.settingsManager = settingsManager;
-		this.transformerServer = new TransformerServer(getTransformerUrl(),
+		this.transformerClient = new TransformerClient(getTransformerUrl(),
 				settingsManager.getGlobalSettings().getBaseUrl());
 
 	}
@@ -81,7 +81,7 @@ public class ConfigurationService {
 				settings.setConfluenceUsername(credentials.getConfluenceUsername());
 				settings.setConfluencePassword(credentials.getConfluencePassword());
 				settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
-				HttpResponse<String> response = transformerServer.setCredentials(settings);
+				HttpResponse<String> response = transformerClient.setCredentials(settings);
 				return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).build();
 			} else
 				return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.APPLICATION_JSON)
@@ -97,7 +97,7 @@ public class ConfigurationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCredentials(){
 		try {
-			HttpResponse<String> response = transformerServer.getSettings();
+			HttpResponse<String> response = transformerClient.getSettings();
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
 					.build();
 		} catch (SettingsException e) {
@@ -125,7 +125,7 @@ public class ConfigurationService {
 				source.setAppLinksId(appLinks.getId().toString());
 
 				try {
-					HttpResponse<Source> response = transformerServer.setSource(source);
+					HttpResponse<Source> response = transformerClient.setSource(source);
 					sources.add(OBJECT_MAPPER.writeValueAsString(response.getBody()));
 				} catch (Exception e) {
 					throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
@@ -148,7 +148,7 @@ public class ConfigurationService {
 	public Response getListenedBranches() {
 		try {
 			List<Source> sources = Arrays
-					.asList(OBJECT_MAPPER.readValue(transformerServer.getSources().getBody(), Source[].class));
+					.asList(OBJECT_MAPPER.readValue(transformerClient.getSources().getBody(), Source[].class));
 
 			sources.forEach(s -> {
 				s.getProjects().forEach((kp, p) -> {
@@ -177,7 +177,7 @@ public class ConfigurationService {
 			projectKey = URLDecoder.decode(projectKey, "UTF-8");
 			repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
 			branchId = URLDecoder.decode(branchId, "UTF-8");
-			modifiedBranch = transformerServer.modifyBranch(sourceId, projectKey, repoSlug, branch);
+			modifiedBranch = transformerClient.modifyBranch(sourceId, projectKey, repoSlug, branch);
 		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		} catch (UnsupportedEncodingException e) {
@@ -195,7 +195,7 @@ public class ConfigurationService {
 
 		HttpResponse<String> response;
 		try {
-			response = transformerServer.forceRegenerate(URLDecoder.decode(sourceUrl, "UTF-8"),
+			response = transformerClient.forceRegenerate(URLDecoder.decode(sourceUrl, "UTF-8"),
 					URLDecoder.decode(projectKey, "UTF-8"), URLDecoder.decode(repoSlug, "UTF-8"),
 					URLDecoder.decode(branchId, "UTF-8"));
 		} catch (SettingsException | UnsupportedEncodingException e) {
@@ -210,7 +210,7 @@ public class ConfigurationService {
 	public Response getSources() {
 
 		try {
-			HttpResponse<String> response = transformerServer.getSources();
+			HttpResponse<String> response = transformerClient.getSources();
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
 					.build();
 		} catch (SettingsException e) {
@@ -224,7 +224,7 @@ public class ConfigurationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeSource(@PathParam("id") int sourceId) {
 		try {
-			HttpResponse<String> response = transformerServer.removeSource(sourceId);
+			HttpResponse<String> response = transformerClient.removeSource(sourceId);
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).build();
 		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
@@ -237,7 +237,7 @@ public class ConfigurationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response setSource(Source source) {
 		try {
-			HttpResponse<Source> response = transformerServer.setSource(source);
+			HttpResponse<Source> response = transformerClient.setSource(source);
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
 					.entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
 		} catch (SettingsException | JsonProcessingException e) {
@@ -252,7 +252,7 @@ public class ConfigurationService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response setSource(@PathParam("id") int sourceId, Source source) {
 		try {
-			HttpResponse<Source> response = transformerServer.changeSource(sourceId, source);
+			HttpResponse<Source> response = transformerClient.changeSource(sourceId, source);
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
 					.entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
 		} catch (SettingsException | JsonProcessingException e) {
@@ -267,7 +267,7 @@ public class ConfigurationService {
 	public Response getDetailedSources() {
 
 		try {
-			HttpResponse<String> response = transformerServer.getSources();
+			HttpResponse<String> response = transformerClient.getSources();
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
 					.entity(String.format("{\"sources\": %s}", response.getBody())).build();
 		} catch (SettingsException e) {

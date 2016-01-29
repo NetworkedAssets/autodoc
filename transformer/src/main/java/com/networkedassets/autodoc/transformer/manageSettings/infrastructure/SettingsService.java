@@ -28,69 +28,47 @@ import com.networkedassets.autodoc.transformer.settings.view.Views;
 import com.networkedassets.autodoc.transformer.util.RestService;
 
 /**
- * REST service providing and receiving settings
+ * REST service providing and receiving global settings
  */
 
 @Path("/settings")
 public class SettingsService extends RestService {
 
-	static final Logger log = LoggerFactory.getLogger(SettingsService.class);
-	private SettingsProvider settingsProvider;
-	private BranchModifier branchModifier;
-	private SettingsSaver settingsSaver;
-	private EventScheduler eventScheduler;
+    static final Logger log = LoggerFactory.getLogger(SettingsService.class);
+    private SettingsProvider settingsProvider;
+    private SettingsSaver settingsSaver;
 
-	@Inject
-	public SettingsService(SettingsProvider settingsProvider, SettingsSaver settingsSaver,
-			BranchModifier branchModifier, EventScheduler eventScheduler) {
-		this.settingsProvider = settingsProvider;
-		this.branchModifier = branchModifier;
-		this.settingsSaver = settingsSaver;
-		this.eventScheduler = eventScheduler;
-	}
+    @Inject
+    public SettingsService(SettingsProvider settingsProvider, SettingsSaver settingsSaver) {
+        this.settingsProvider = settingsProvider;
+        this.settingsSaver = settingsSaver;
+    }
 
-	@JsonView(Views.PublicView.class)
-	@GET
-	public Response getSettings() {
-		log.info("GET request for settings handled");
+    @JsonView(Views.PublicView.class)
+    @GET
+    public Response getSettings() {
+        log.info("GET request for settings handled");
 
-		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
-				.entity(settingsProvider.getCurrentSettings()).build();
+        return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
+                .entity(settingsProvider.getCurrentSettings()).build();
 
-	}
+    }
 
-	@Path("/credentials")
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@JsonView(Views.PublicView.class)
-	public Response setCredentials(Settings settings) {
-		settingsSaver.setCredentials(settings);
-		return Response.status(Response.Status.ACCEPTED).build();
-	}
+    @Path("/credentials")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCredentials() {
+        //// TODO: 29.01.2016 Don't return null, lol
+        return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
+                .entity(null).build();
+    }
 
-	@POST
-	@Path("/branches/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
-			@PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
-		try {
-			projectKey = URLDecoder.decode(projectKey, "UTF-8");
-			repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
-			branchId = URLDecoder.decode(branchId, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			log.error("Error while modifying branch: ", e);
-			throw new SettingsServiceException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-		}
-
-		Optional<Branch> modifiedBranch = Optional
-				.ofNullable(branchModifier.modifyBranch(sourceId, projectKey, repoSlug, branchId, branch));
-
-		eventScheduler.scheduleEvents(modifiedBranch.get(), sourceId, projectKey, repoSlug, branchId);
-		return modifiedBranch
-				.map(b -> Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(b).build())
-				.orElseGet(() -> Response.status(Response.Status.BAD_REQUEST).entity("Wrong parameters").build());
-
-	}
-
+    @Path("/credentials")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @JsonView(Views.PublicView.class)
+    public Response setCredentials(Settings settings) {
+        settingsSaver.setCredentials(settings);
+        return Response.status(Response.Status.ACCEPTED).build();
+    }
 }
