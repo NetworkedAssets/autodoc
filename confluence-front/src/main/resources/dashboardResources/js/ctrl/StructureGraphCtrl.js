@@ -1,4 +1,4 @@
-angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,$state,$filter,$timeout,javadocEntities) {
+angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,$state,$filter,$timeout,$location,javadocEntities) {
     var root;
     var margin = {top: -5, right: -5, bottom: -5, left: -5};
     var width = 1000 - margin.left - margin.right,
@@ -135,11 +135,8 @@ angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,
             }
             update();
         } else {
-            return false; // TODO
-            d3.event.stopPropagation();
-
-            $state.transitionTo("javadoc.entity",{
-                name: "com.networkedassets"
+            $state.go("javadoc.entity",{
+                name: d.name
             });
         }
 

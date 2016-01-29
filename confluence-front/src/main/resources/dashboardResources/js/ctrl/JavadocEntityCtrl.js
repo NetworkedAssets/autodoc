@@ -1,4 +1,6 @@
-angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$sanitize,$filter,$stateParams,$rootScope,$timeout,$element,urlProvider,javadocEntities) {
+angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$state,$sanitize,
+                                                              $filter,$stateParams,$rootScope,
+                                                              $timeout,$element,urlProvider,javadocEntities) {
     var vm = this;
     vm.loading = true;
 
