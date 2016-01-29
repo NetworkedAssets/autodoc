@@ -29,9 +29,11 @@ public class TransformerClient {
 	public static final String SOURCES = "/sources/";
 	public static final String EVENT = "/event";
 	public static final String EVENT_JSON = "{\"sourceUrl\":\"%s\",\"projectKey\":\"%s\",\"repositorySlug\":\"%s\",\"branchId\":\"%s\"}";
+
 	public static final Logger log = LoggerFactory.getLogger(TransformerClient.class);
-	private static final CloseableHttpClient HTTP_CLIENT = setHttpClient();
-	private static final ObjectMapper OBJECT_MAPPER = setObjectMapper();
+
+	private static final CloseableHttpClient HTTP_CLIENT = setupHttpClient();
+	private static final ObjectMapper OBJECT_MAPPER = setupObjectMapper();
 
 	private String url;
 	private String confluenceUrl;
@@ -192,7 +194,7 @@ public class TransformerClient {
 		this.confluenceUrl = confluenceUrl;
 	}
 
-	private static CloseableHttpClient setHttpClient() {
+	private static CloseableHttpClient setupHttpClient() {
 		try {
 			return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier())
 					.setSslcontext(new SSLContextBuilder().loadTrustMaterial(null, (_1, _2) -> true).build()).build();
@@ -201,7 +203,7 @@ public class TransformerClient {
 		}
 	}
 
-	private static ObjectMapper setObjectMapper() {
+	private static ObjectMapper setupObjectMapper() {
 
 		return new ObjectMapper() {
 			private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
