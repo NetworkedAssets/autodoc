@@ -16,10 +16,10 @@ public class Branch implements Serializable {
 	private String displayId;
 	private String id;
 	private ListenType listenTo;
-	public List<ScheduledEvent> scheduledEvents;
+	private List<ScheduledEvent> scheduledEvents;
 
 	public Branch() {
-		scheduledEvents = new ArrayList<>();
+		setScheduledEvents(new ArrayList<>());
 	}
 
 	public Branch(String displayId, String id) {
@@ -28,34 +28,37 @@ public class Branch implements Serializable {
 		this.setId(id);
 	}
 
-	@JsonGetter
 	public ListenType getListenTo() {
 		return this.listenTo == null ? ListenType.none : listenTo;
 	}
 
-	@JsonSetter
 	public void setListenTo(ListenType listenTo) {
 		this.listenTo = listenTo;
 	}
 
-	@JsonGetter
 	public String getDisplayId() {
 		return displayId;
 	}
 
-	@JsonSetter
 	public void setDisplayId(String displayId) {
 		this.displayId = displayId;
 	}
 
-	@JsonGetter
 	public String getId() {
 		return id;
 	}
 
-	@JsonSetter
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public List<ScheduledEvent> getScheduledEvents() {
+		return scheduledEvents;
+	}
+
+	@JsonSetter
+	public void setScheduledEvents(List<ScheduledEvent> scheduledEvents) {
+		this.scheduledEvents = scheduledEvents;
 	}
 
 	public enum ListenType implements Serializable {

@@ -37,6 +37,8 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
         return projects;
     }
 
+    
+    //TODO :@Kamil please refactor this
     private void getDataFromStash() {
 
         List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project> sourceProjects
@@ -56,9 +58,9 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
         //get repos for projects
         projects.values().stream().forEach(project -> {
             try {
-                List<Repository> sourceRepositories = stashBitbucketClient.getRepositoriesForProject(project.key);
+                List<Repository> sourceRepositories = stashBitbucketClient.getRepositoriesForProject(project.getKey());
                 sourceRepositories.stream().forEach(sourceRepository -> {
-                    project.repos.put(sourceRepository.getSlug(), new Repo(sourceRepository.getName(), sourceRepository.getSlug()));
+                    project.getRepos().put(sourceRepository.getSlug(), new Repo(sourceRepository.getName(), sourceRepository.getSlug()));
                 });
             } catch (UnirestException e) {
                 e.printStackTrace();
@@ -67,12 +69,12 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
 
         //get branches for repos
         projects.values().stream().forEach(project -> {
-            project.repos.values().forEach(repo -> {
+            project.getRepos().values().forEach(repo -> {
                 try {
                     List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Branch> sourceBranches
-                            = stashBitbucketClient.getBranchesforRepository(project.key, repo.slug);
+                            = stashBitbucketClient.getBranchesforRepository(project.getKey(), repo.getSlug());
                     sourceBranches.forEach(sourceBranch -> {
-                        project.repos.get(repo.slug).branches.put(sourceBranch.getId(),
+                        project.getRepos().get(repo.getSlug()).getBranches().put(sourceBranch.getId(),
                                 new Branch(sourceBranch.getDisplayId(), sourceBranch.getId()));
                     });
                 } catch (UnirestException e) {

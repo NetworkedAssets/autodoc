@@ -153,14 +153,14 @@ public class ConfigurationService {
 					.asList(OBJECT_MAPPER.readValue(transformerServer.getSources().getBody(), Source[].class));
 
 			sources.forEach(s -> {
-				s.projects.forEach((kp, p) -> {
-					p.repos.forEach(
-							(kr, r) -> r.branches.values().removeIf(b -> b.getListenTo() == Branch.ListenType.none));
-					p.repos.values().removeIf(r -> r.branches.isEmpty());
+				s.getProjects().forEach((kp, p) -> {
+					p.getRepos().forEach(
+							(kr, r) -> r.getBranches().values().removeIf(b -> b.getListenTo() == Branch.ListenType.none));
+					p.getRepos().values().removeIf(r -> r.getBranches().isEmpty());
 				});
-				s.projects.values().removeIf(p -> p.repos.isEmpty());
+				s.getProjects().values().removeIf(p -> p.getRepos().isEmpty());
 			});
-			sources.removeIf(s -> s.projects.isEmpty());
+			sources.removeIf(s -> s.getProjects().isEmpty());
 
 			return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
 					.entity(String.format("{\"sources\": %s}", OBJECT_MAPPER.writeValueAsString(sources))).build();

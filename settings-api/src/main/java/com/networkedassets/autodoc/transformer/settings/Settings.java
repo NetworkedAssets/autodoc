@@ -17,11 +17,11 @@ public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 3847560203140549969L;
 	@JsonView(Views.PublicView.class)
-	private String confluenceUrl = "http://46.101.240.138:8090/confluence";
+	private String confluenceUrl;
 	@JsonView(Views.PublicView.class)
-	private String confluenceUsername = "admin";
+	private String confluenceUsername;
 	@JsonView(Views.PublicView.class)
-	private String confluencePassword = "admin";
+	private String confluencePassword ;
 	@JsonView(Views.InternalView.class)
 	private TransformerSettings transformerSettings = new TransformerSettings();
 	@JsonView(Views.ExtendedView.class)

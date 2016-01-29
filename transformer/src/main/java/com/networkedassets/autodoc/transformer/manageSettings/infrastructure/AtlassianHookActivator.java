@@ -30,22 +30,22 @@ public class AtlassianHookActivator implements HookActivator {
     @SuppressWarnings("Duplicates")
     @Override
     public void enableAllHooks() {
-        source.projects.values().stream().forEach(project -> project.repos.values().stream().forEach(repo -> {
+        source.getProjects().values().stream().forEach(project -> project.getRepos().values().stream().forEach(repo -> {
             try {
                 stashBitbucketClient.setHookSettings(
-                        project.key,
-                        repo.slug,
+                        project.getKey(),
+                        repo.getSlug(),
                         source.getHookKey(),
                         localhostAddress,
                         "30000");
                 stashBitbucketClient.enableHook(
-                        project.key,
-                        repo.slug,
+                        project.getKey(),
+                        repo.getSlug(),
                         source.getHookKey()
                 );
 
             } catch (UnirestException e) {
-                log.error("Error while activating hooks for {}/{}: ", project.name, repo.slug, e);
+                log.error("Error while activating hooks for {}/{}: ", project.getName(), repo.getSlug(), e);
             }
         }));
     }

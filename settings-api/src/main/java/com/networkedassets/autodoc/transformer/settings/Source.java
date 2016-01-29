@@ -56,13 +56,15 @@ public class Source implements Serializable {
     @JsonView(Views.VerificationView.class)
     private boolean sourceTypeCorrect;
     @JsonView(Views.InternalView.class)
-    public Map<String, Project> projects = new HashMap<>();
+    private Map<String, Project> projects = new HashMap<>();
 
-    public Source() {
+   
+
+	public Source() {
     }
 
     public void addProject(Project p) {
-        projects.put(p.key, p);
+        projects.put(p.getKey(), p);
     }
 
     public boolean isSourceExists() {
@@ -183,6 +185,14 @@ public class Source implements Serializable {
                 && isNameCorrect()
                 && isSourceTypeCorrect();
     }
+    
+    public Map<String, Project> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(Map<String, Project> projects) {
+		this.projects = projects;
+	}
 
     public static enum SourceType implements Serializable {
         STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"), BITBUCKET(

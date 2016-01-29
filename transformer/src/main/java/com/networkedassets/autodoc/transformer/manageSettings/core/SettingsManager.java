@@ -187,7 +187,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         }
 
         currentBranch.setListenTo(branch.getListenTo());
-        currentBranch.scheduledEvents = new ArrayList<>(branch.scheduledEvents);
+        currentBranch.setScheduledEvents(new ArrayList<>(branch.getScheduledEvents()));
         saveSettingsToFile(settingsFilename);
         return currentBranch;
     }
@@ -198,7 +198,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         Preconditions.checkNotNull(currentBranch);
         Preconditions.checkNotNull(scheduler);
 
-        currentBranch.scheduledEvents.stream().forEach(event -> {
+        currentBranch.getScheduledEvents().stream().forEach(event -> {
             try {
                 scheduler.shutdown(true);
                 scheduler.clear();
