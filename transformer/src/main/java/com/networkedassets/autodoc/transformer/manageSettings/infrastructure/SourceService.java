@@ -54,6 +54,7 @@ public class SourceService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @JsonView(Views.GetProjectsView.class)
     public Response getSources() {
         log.info("GET request for source handled");
 
@@ -63,7 +64,7 @@ public class SourceService {
 
     @GET
     @Path("{id}")
-    @JsonView(Views.PublicView.class)
+    @JsonView(Views.GetProjectsView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSource(@PathParam("id") int sourceId) {
         log.info("GET request for source handled");
@@ -76,8 +77,8 @@ public class SourceService {
 
     @PUT
     @Path("{id}")
+    @JsonView(Views.AddProjectPasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(Views.VerificationView.class)
     public Response modifySource(@PathParam("id") int sourceId, Source source) {
         Preconditions.checkNotNull(source);
         log.info("PUT request for source handled");
@@ -100,8 +101,8 @@ public class SourceService {
     }
 
     @POST
+    @JsonView(Views.AddProjectPasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(Views.VerificationView.class)
     public Response createSource(Source source) {
         Preconditions.checkNotNull(source);
         log.info("POST request for source handled");
@@ -117,6 +118,7 @@ public class SourceService {
 
     @DELETE
     @Path("{id}")
+    @JsonView(Views.AddProjectPasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSource(@PathParam("id") int sourceId) {
 
@@ -128,6 +130,7 @@ public class SourceService {
 
     @PUT
     @Path("{sourceId}/{projectKey}/{repoSlug}/{branchId}")
+    @JsonView(Views.GetProjectsView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
                                  @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {

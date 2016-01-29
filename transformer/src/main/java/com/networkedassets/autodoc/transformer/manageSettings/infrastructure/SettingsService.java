@@ -44,8 +44,8 @@ public class SettingsService extends RestService {
         this.settingsSaver = settingsSaver;
     }
 
-    @JsonView(Views.PublicView.class)
     @GET
+    @JsonView(Views.GetSettingsView.class)
     public Response getSettings() {
         log.info("GET request for settings handled");
 
@@ -54,8 +54,9 @@ public class SettingsService extends RestService {
 
     }
 
-    @Path("/credentials")
     @GET
+    @Path("/credentials")
+    @JsonView(Views.GetCredentialsView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCredentials() {
         //// TODO: 29.01.2016 Don't return null, lol
@@ -63,10 +64,10 @@ public class SettingsService extends RestService {
                 .entity(null).build();
     }
 
-    @Path("/credentials")
     @POST
+    @Path("/credentials")
+    @JsonView(Views.SetCredentialsView.class)
     @Consumes(MediaType.APPLICATION_JSON)
-    @JsonView(Views.PublicView.class)
     public Response setCredentials(Settings settings) {
         settingsSaver.setCredentials(settings);
         return Response.status(Response.Status.ACCEPTED).build();

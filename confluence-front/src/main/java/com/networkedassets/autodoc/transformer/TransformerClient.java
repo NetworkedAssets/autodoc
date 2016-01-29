@@ -32,23 +32,13 @@ public class TransformerClient {
 
 	public static final Logger log = LoggerFactory.getLogger(TransformerClient.class);
 
-	private static final CloseableHttpClient HTTP_CLIENT = setupHttpClient();
-	private static final ObjectMapper OBJECT_MAPPER = setupObjectMapper();
-
 	private String url;
-	private String confluenceUrl;
 
 	public TransformerClient(String url) {
 		log.debug("Transformer server constructing");
 		this.url = url;
-
-		Unirest.setObjectMapper(OBJECT_MAPPER);
-		Unirest.setHttpClient(HTTP_CLIENT);
-	}
-
-	public TransformerClient(String transformerUrl, String confluenceUrl) {
-		this(transformerUrl);
-		setConfluenceUrl(confluenceUrl);
+		Unirest.setObjectMapper(getConfiguredObjectMapper());
+		Unirest.setHttpClient(getConfiguredHttpClient());
 	}
 
 	public HttpResponse<String> setCredentials(Settings settings) throws SettingsException {
@@ -190,11 +180,7 @@ public class TransformerClient {
 		this.url = url;
 	}
 
-	public void setConfluenceUrl(String confluenceUrl) {
-		this.confluenceUrl = confluenceUrl;
-	}
-
-	private static CloseableHttpClient setupHttpClient() {
+	private static CloseableHttpClient getConfiguredHttpClient() {
 		try {
 			return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier())
 					.setSslcontext(new SSLContextBuilder().loadTrustMaterial(null, (_1, _2) -> true).build()).build();
@@ -203,7 +189,7 @@ public class TransformerClient {
 		}
 	}
 
-	private static ObjectMapper setupObjectMapper() {
+	private static ObjectMapper getConfiguredObjectMapper() {
 
 		return new ObjectMapper() {
 			private com.fasterxml.jackson.databind.ObjectMapper jacksonObjectMapper = new com.fasterxml.jackson.databind.ObjectMapper();

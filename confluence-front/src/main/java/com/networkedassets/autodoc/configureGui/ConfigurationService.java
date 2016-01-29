@@ -64,8 +64,7 @@ public class ConfigurationService {
 		this.appLinkService = appLinkService;
 		this.userAccesor = userAccessor;
 		this.settingsManager = settingsManager;
-		this.transformerClient = new TransformerClient(getTransformerUrl(),
-				settingsManager.getGlobalSettings().getBaseUrl());
+		this.transformerClient = new TransformerClient(getTransformerUrl());
 
 	}
 
