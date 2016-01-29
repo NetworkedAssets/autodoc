@@ -1,8 +1,8 @@
-angular.module("DoC_Config").controller("sourcesCtrl",function($resource,urlProvider) {
+angular.module("DoC_Config").controller("sourcesCtrl", function ($resource, urlProvider) {
     var vm = this;
 
     var Source = $resource(
-        urlProvider.getRestUrlWithParams(["source"])+":id",
+        urlProvider.getRestUrlWithParams(["applinks", "sources"]) + ":id",
         {
             id: '@id'
         },
@@ -10,14 +10,13 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($resource,urlProv
             query: {
                 method: 'POST',
                 isArray: true,
-                transformResponse: function(data,headersGetter,status) {
+                transformResponse: function (data, headersGetter, status) {
                     return [
                         {
                             "id": 1,
                             "credentialsCorrect": false,
                             "hookKey": "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener",
-                            "projects": {
-                            },
+                            "projects": {},
                             "sourceType": "STASH",
                             "url": "http://atlas.networkedassets.net:7990",
                             "nameCorrect": true,
@@ -32,8 +31,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($resource,urlProv
                             "id": 2,
                             "credentialsCorrect": false,
                             "hookKey": "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener",
-                            "projects": {
-                            },
+                            "projects": {},
                             "sourceType": "BITBUCKET",
                             "url": "http://atlas.networkedassets.net:7991",
                             "nameCorrect": true,
@@ -48,7 +46,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($resource,urlProv
                 }
             },
             update: {
-                transformRequest: function(data,headers) {
+                transformRequest: function (data, headers) {
                     console.log(data);
                     var obj = {
                         id: data.id,
@@ -63,7 +61,7 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($resource,urlProv
             delete: {
                 method: 'DELETE'
             },
-            add: function() {
+            add: function () {
                 method: 'POST'
             }
         }
@@ -71,16 +69,16 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($resource,urlProv
 
     vm.sources = Source.query();
 
-    vm.edit = function(index) {
+    vm.edit = function (index) {
         vm.sources[index].inEdit = true;
         vm.sources[index].originalUrl = vm.sources[index].url;
     };
 
-    vm.save = function(index) {
+    vm.save = function (index) {
         vm.sources[index].$update();
     };
 
-    vm.revert = function(index) {
+    vm.revert = function (index) {
         vm.sources[index].inEdit = false;
         if (vm.sources[index].originalUrl) {
             vm.sources[index].url = vm.sources[index].originalUrl;
@@ -88,13 +86,13 @@ angular.module("DoC_Config").controller("sourcesCtrl",function($resource,urlProv
         }
     };
 
-    vm.delete = function(index) {
-        vm.sources[index].$delete(function() {
+    vm.delete = function (index) {
+        vm.sources[index].$delete(function () {
             //console.log(vm.sources[index]);
         });
     };
 
-    vm.addFromAppLinks = function() {
+    vm.addFromAppLinks = function () {
         Source.add();
     };
 });

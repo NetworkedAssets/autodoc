@@ -1,4 +1,4 @@
-angular.module("DoC_Config").controller("confluenceConfigCtrl",function($scope,$http,$rootScope,settingsData,$timeout) {
+angular.module("DoC_Config").controller("confluenceConfigCtrl",function($scope,$http,$rootScope,settingsData,$timeout,urlProvider) {
     var confluenceConfig = this;
 
     $scope.$on("settingsData.ready",function() {
@@ -25,18 +25,20 @@ angular.module("DoC_Config").controller("confluenceConfigCtrl",function($scope,$
         console.log(data);
         confluenceConfig.savingState = "saving";
 
-        /*
         // TODO Swap to this, when confluenceCredentials endpoint is ready
-        $http.put(urlProvider.getRestUrl("/confluenceCredentials"))
-            .then(success,error);*/
+        $http.post(urlProvider.getRestUrl("/credentials"), {
+            confluenceUsername: confluenceConfig.username,
+            confluencePassword: confluenceConfig.password
+        })
+            .then(success,error);
 
-        setTimeout(function() {
-            if (false) {
-                success();
-            } else {
-                error();
-            }
-        },1000);
+        //setTimeout(function() {
+        //    if (false) {
+        //        success();
+        //    } else {
+        //        error();
+        //    }
+        //},1000);
     };
 
     confluenceConfig.setFromSettingsData = function() {
