@@ -23,20 +23,20 @@ import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
 
-public class TransformerServer {
+public class TransformerClient {
 	public static final String SETTINGS = "/settings";
 	public static final String CREDENTIALS = "/settings/credentials";
 	public static final String SOURCES = "/sources/";
 	public static final String EVENT = "/event";
 	public static final String EVENT_JSON = "{\"sourceUrl\":\"%s\",\"projectKey\":\"%s\",\"repositorySlug\":\"%s\",\"branchId\":\"%s\"}";
-	public static final Logger log = LoggerFactory.getLogger(TransformerServer.class);
+	public static final Logger log = LoggerFactory.getLogger(TransformerClient.class);
 	private static final CloseableHttpClient HTTP_CLIENT = setHttpClient();
 	private static final ObjectMapper OBJECT_MAPPER = setObjectMapper();
 
 	private String url;
 	private String confluenceUrl;
 
-	public TransformerServer(String url) {
+	public TransformerClient(String url) {
 		log.debug("Transformer server constructing");
 		this.url = url;
 
@@ -44,7 +44,7 @@ public class TransformerServer {
 		Unirest.setHttpClient(HTTP_CLIENT);
 	}
 
-	public TransformerServer(String transformerUrl, String confluenceUrl) {
+	public TransformerClient(String transformerUrl, String confluenceUrl) {
 		this(transformerUrl);
 		setConfluenceUrl(confluenceUrl);
 	}
