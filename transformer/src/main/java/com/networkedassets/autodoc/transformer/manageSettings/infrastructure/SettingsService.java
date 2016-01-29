@@ -49,7 +49,7 @@ public class SettingsService extends RestService {
 		this.eventScheduler = eventScheduler;
 	}
 
-	@JsonView(Views.ExtendedView.class)
+	@JsonView(Views.PublicView.class)
 	@GET
 	public Response getSettings() {
 		log.info("GET request for settings handled");

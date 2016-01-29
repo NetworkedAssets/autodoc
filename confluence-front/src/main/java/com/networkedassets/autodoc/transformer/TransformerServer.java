@@ -60,7 +60,6 @@ public class TransformerServer {
 			throw new SettingsException(e);
 		}
 		return response;
-
 	}
 
 	public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, Branch branch)

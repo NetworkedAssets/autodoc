@@ -71,10 +71,10 @@ public class ConfigurationService {
 
 	@Path("sources")
 	@GET
-	public Response getSettings() {
+	public Response getSources() {
 
 		try {
-			HttpResponse<String> response = transformerServer.getSettings();
+			HttpResponse<String> response = transformerServer.getSources();
 			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
 					.build();
 		} catch (SettingsException e) {
@@ -104,7 +104,19 @@ public class ConfigurationService {
 		} catch (SettingsException e) {
 			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
 		}
+	}
 
+	@GET
+	@Path("/credentials")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCredentials(){
+		try {
+			HttpResponse<String> response = transformerServer.getSettings();
+			return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
+					.build();
+		} catch (SettingsException e) {
+			throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+		}
 	}
 	
 	//TODO: PUT for update by Admin and get source Id by appLinksID an use ready rest  put "source/{id}")
@@ -252,7 +264,7 @@ public class ConfigurationService {
 
 	@Path("projects")
 	@GET
-	public Response getSources() {
+	public Response getDetailedSources() {
 
 		try {
 			HttpResponse<String> response = transformerServer.getSources();
