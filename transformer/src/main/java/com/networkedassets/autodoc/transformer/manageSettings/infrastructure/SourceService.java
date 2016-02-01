@@ -13,14 +13,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ContextResolver;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import org.slf4j.Logger;
@@ -60,7 +57,7 @@ public class SourceService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(Views.GetProjectsView.class)
+    @JsonView(Views.GetSourcesView.class)
     public Response getSources() {
         log.info("GET request for source handled");
 
@@ -68,9 +65,19 @@ public class SourceService {
         return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(sources).build();
     }
 
+
+    @GET
+    @Path("expanded")
+    @JsonView(Views.GetExpandedSourcesView.class)
+    public Response getExpandedSources() {
+        log.info("GET request for expanded sources handled");
+        List<Source> sources = sourceProvider.getAllSources();
+        return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(sources).build();
+    }
+
     @GET
     @Path("{id}")
-    @JsonView(Views.GetProjectsView.class)
+    @JsonView(Views.GetExpandedSourcesView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSource(@PathParam("id") int sourceId) {
         log.info("GET request for source handled");
@@ -83,7 +90,7 @@ public class SourceService {
 
     @PUT
     @Path("{id}")
-    @JsonView(Views.AddProjectPasswordView.class)
+    @JsonView(Views.AddSourcePasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifySource(@PathParam("id") int sourceId, Source source) throws JsonProcessingException {
         Preconditions.checkNotNull(source);
@@ -107,7 +114,7 @@ public class SourceService {
     }
 
     @POST
-    @JsonView(Views.AddProjectPasswordView.class)
+    @JsonView(Views.AddSourcePasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createSource(Source source) throws JsonProcessingException {
 
@@ -126,7 +133,7 @@ public class SourceService {
 
     @DELETE
     @Path("{id}")
-    @JsonView(Views.AddProjectPasswordView.class)
+    @JsonView(Views.AddSourcePasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeSource(@PathParam("id") int sourceId) {
 
@@ -138,7 +145,7 @@ public class SourceService {
 
     @PUT
     @Path("{sourceId}/{projectKey}/{repoSlug}/{branchId}")
-    @JsonView(Views.GetProjectsView.class)
+    @JsonView(Views.GetExpandedSourcesView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
                                  @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
@@ -163,7 +170,7 @@ public class SourceService {
 
     private String getSourceWithProjectReturnView(Source resultSource) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writerWithView(Views.AddProjectReturnView.class)
+        return objectMapper.writerWithView(Views.AddSourceReturnView.class)
                 .forType(Source.class).writeValueAsString(resultSource);
     }
 

@@ -69,7 +69,7 @@ public class ConfigurationService {
     }
 
     @POST
-    @Path("/credentials")
+    @Path("credentials")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response setCredentials(Credentials credentials) {
 
@@ -92,7 +92,7 @@ public class ConfigurationService {
     }
 
     @GET
-    @Path("/credentials")
+    @Path("credentials")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCredentials() {
         try {
@@ -200,20 +200,6 @@ public class ConfigurationService {
             throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
         }
         return response.getBody();
-
-    }
-
-    @Path("sources")
-    @GET
-    public Response getSources() {
-
-        try {
-            HttpResponse<String> response = transformerClient.getSources();
-            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
-                    .build();
-        } catch (SettingsException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-        }
 
     }
 

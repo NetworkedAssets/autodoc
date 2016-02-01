@@ -33,29 +33,29 @@ public class Source implements Serializable {
     @JsonIgnore
     public static int totalId = 1;
 
-    @JsonView(Views.GetSettingsView.class)
+    @JsonView(Views.GetSourcesView.class)
     private int id;
-    @JsonView(Views.GetSettingsView.class)
+    @JsonView(Views.GetSourcesView.class)
     private String name;
-    @JsonView(Views.GetSettingsView.class)
+    @JsonView(Views.GetSourcesView.class)
     private String url;
-    @JsonView(Views.GetSettingsView.class)
+    @JsonView(Views.GetSourcesView.class)
     private SourceType sourceType;
-    @JsonView(Views.GetSettingsView.class)
+    @JsonView(Views.GetSourcesView.class)
     private String username;
-    @JsonView(Views.AddProjectPasswordView.class)
+    @JsonView(Views.AddSourcePasswordView.class)
     private String password;
-    @JsonView(Views.GetSettingsView.class)
+    @JsonView(Views.GetSourcesView.class)
     private String appLinksId;
-    @JsonView(Views.AddProjectReturnView.class)
+    @JsonView(Views.SourceCorrectView.class)
     private boolean sourceExists;
-    @JsonView(Views.AddProjectReturnView.class)
+    @JsonView(Views.SourceCorrectView.class)
     private boolean credentialsCorrect;
-    @JsonView(Views.AddProjectReturnView.class)
+    @JsonView(Views.SourceCorrectView.class)
     private boolean nameCorrect;
-    @JsonView(Views.AddProjectReturnView.class)
+    @JsonView(Views.SourceCorrectView.class)
     private boolean sourceTypeCorrect;
-    @JsonView(Views.GetProjectsView.class)
+    @JsonView(Views.GetExpandedSourcesView.class)
     private Map<String, Project> projects = new HashMap<>();
 
 
@@ -165,7 +165,7 @@ public class Source implements Serializable {
         this.sourceTypeCorrect = sourceTypeCorrect;
     }
 
-    @JsonView(Views.AddProjectReturnView.class)
+    @JsonView(Views.GetSourcesView.class)
     public boolean isCorrect() {
         return isSourceExists()
                 && isCredentialsCorrect()

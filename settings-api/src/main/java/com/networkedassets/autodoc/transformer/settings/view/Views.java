@@ -21,18 +21,26 @@ public class Views {
     public interface GetSettingsView extends GetCredentialsView {
     }
 
-    public interface GetProjectsView extends GetCredentialsView, GetSettingsView {
-    }
-
-    public interface AddProjectReturnView extends GetProjectsView {
+    public interface GetSourcesView extends BasicView, SourceCorrectView {
 
     }
 
-    public interface AddProjectPasswordView extends AddProjectReturnView {
+    public interface GetExpandedSourcesView extends GetCredentialsView, GetSourcesView {
+    }
+
+    public interface SourceCorrectView {
 
     }
 
-    public interface InternalView extends AddProjectPasswordView, SetCredentialsView {
+    public interface AddSourceReturnView extends GetExpandedSourcesView, SourceCorrectView {
+
+    }
+
+    public interface AddSourcePasswordView extends AddSourceReturnView {
+
+    }
+
+    public interface InternalView extends AddSourcePasswordView, SetCredentialsView {
 
     }
 

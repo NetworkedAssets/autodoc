@@ -16,7 +16,7 @@ import com.networkedassets.autodoc.transformer.settings.view.Views;
 public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 3847560203140549969L;
-	@JsonView(Views.BasicView.class)
+	@JsonView(Views.GetSettingsView.class)
 	private String confluenceUrl;
 	@JsonView(Views.GetCredentialsView.class)
 	private String confluenceUsername;
@@ -24,7 +24,7 @@ public class Settings implements Serializable {
 	private String confluencePassword ;
 	@JsonView(Views.GetSettingsView.class)
 	private TransformerSettings transformerSettings = new TransformerSettings();
-	@JsonView(Views.GetSettingsView.class)
+	@JsonView(Views.GetSourcesView.class)
 	private List<Source> sources = new ArrayList<>();
 
 	public Source getSourceByUrl(String url) {
