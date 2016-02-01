@@ -13,9 +13,14 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ContextResolver;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import org.slf4j.Logger;
@@ -33,6 +38,7 @@ import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 @Path("/sources/")
 public class SourceService {
+
 
     static final Logger log = LoggerFactory.getLogger(SourceService.class);
     private SourceProvider sourceProvider;
@@ -79,7 +85,7 @@ public class SourceService {
     @Path("{id}")
     @JsonView(Views.AddProjectPasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response modifySource(@PathParam("id") int sourceId, Source source) {
+    public Response modifySource(@PathParam("id") int sourceId, Source source) throws JsonProcessingException {
         Preconditions.checkNotNull(source);
         log.info("PUT request for source handled");
         Response.Status responseStatus;
@@ -93,7 +99,7 @@ public class SourceService {
             } else {
                 responseStatus = Response.Status.BAD_REQUEST;
             }
-            return Response.status(responseStatus).entity(resultSource).build();
+            return Response.status(responseStatus).entity(getSourceWithProjectReturnView(resultSource)).build();
         } else {
             responseStatus = Response.Status.BAD_REQUEST;
             return Response.status(responseStatus).build();
@@ -103,7 +109,8 @@ public class SourceService {
     @POST
     @JsonView(Views.AddProjectPasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSource(Source source) {
+    public Response createSource(Source source) throws JsonProcessingException {
+
         Preconditions.checkNotNull(source);
         log.info("POST request for source handled");
         Source resultSource = sourceCreator.addSource(source);
@@ -113,7 +120,8 @@ public class SourceService {
         } else {
             responseStatus = Response.Status.BAD_REQUEST;
         }
-        return Response.status(responseStatus).entity(resultSource).build();
+
+        return Response.status(responseStatus).entity(getSourceWithProjectReturnView(resultSource)).build();
     }
 
     @DELETE
@@ -151,6 +159,12 @@ public class SourceService {
         return modifiedBranch
                 .map(b -> Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(b).build())
                 .orElseGet(() -> Response.status(Response.Status.BAD_REQUEST).entity("Wrong parameters").build());
+    }
+
+    private String getSourceWithProjectReturnView(Source resultSource) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writerWithView(Views.AddProjectReturnView.class)
+                .forType(Source.class).writeValueAsString(resultSource);
     }
 
 }
