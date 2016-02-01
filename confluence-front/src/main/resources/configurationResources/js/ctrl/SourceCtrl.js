@@ -1,5 +1,6 @@
-angular.module("DoC_Config").controller("sourcesCtrl", function ($resource, urlProvider) {
+angular.module("DoC_Config").controller("SourceCtrl", function ($resource, urlProvider) {
     var vm = this;
+    vm.loading = true;
 
     var Source = $resource(
         urlProvider.getRestUrlWithParams("sources") + ":id",
@@ -27,14 +28,21 @@ angular.module("DoC_Config").controller("sourcesCtrl", function ($resource, urlP
             delete: {
                 method: 'DELETE'
             },
-            addFromApplinks: {
+            addFromAppLinks: {
                 url: urlProvider.getRestUrlWithParams("applinks","sources"),
                 method: 'POST'
             }
         }
     );
 
-    vm.sources = Source.query();
+    vm.get = function() {
+        vm.loading = true;
+        vm.sources = Source.query();
+        vm.sources.$promise.then(function() {
+            vm.loading = false;
+        });
+    };
+
 
     vm.edit = function (index) {
         vm.sources[index].inEdit = true;
@@ -63,4 +71,6 @@ angular.module("DoC_Config").controller("sourcesCtrl", function ($resource, urlP
         console.log("");
         Source.addFromAppLinks();
     };
+
+    vm.get();
 });

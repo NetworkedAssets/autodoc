@@ -21,4 +21,5 @@ angular.module("DoC_Config").run(function($rootScope) {
 angular.element(document).ready(function() {
     $("#doc_config-loading").spin("large");
     AJS.$("#doc_config .spin.small").spin("small");
+    AJS.$("#doc_config .spin:not(.small)").spin();
 });

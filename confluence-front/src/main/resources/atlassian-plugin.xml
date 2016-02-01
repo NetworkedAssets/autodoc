@@ -249,16 +249,16 @@
 
 		<resource type="download" name="js/ctrl/branchSettings.js"
 			location="configurationResources/js/ctrl/branchSettings.js" />
-		<resource type="download" name="js/ctrl/confluenceConfig.js"
-			location="configurationResources/js/ctrl/confluenceConfig.js" />
+		<resource type="download" name="js/ctrl/ConfluenceCredentialsCtrl.js"
+			location="configurationResources/js/ctrl/ConfluenceCredentialsCtrl.js" />
 		<resource type="download" name="js/ctrl/components.js"
 			location="configurationResources/js/ctrl/components.js" />
 		<resource type="download" name="js/ctrl/menu.js"
 			location="configurationResources/js/ctrl/menu.js" />
 		<resource type="download" name="js/ctrl/schedules.js"
 			location="configurationResources/js/ctrl/schedules.js" />
-		<resource type="download" name="js/ctrl/sources.js"
-			location="configurationResources/js/ctrl/sources.js" />
+		<resource type="download" name="js/ctrl/SourceCtrl.js"
+			location="configurationResources/js/ctrl/SourceCtrl.js" />
 
 		<resource type="download" name="js/dirs/auiSelect2.js"
 			location="configurationResources/js/dirs/auiSelect2.js" />
