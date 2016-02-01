@@ -1,7 +1,7 @@
-angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($scope,$resource,$rootScope,settingsData,$timeout,urlProvider) {
+angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($scope,$resource,$rootScope,settingsService,$timeout,urlService) {
     var cc = this;
 
-    var Credentials = $resource(urlProvider.getRestUrl("/credentials"),{},{
+    var Credentials = $resource(urlService.getRestUrl("/credentials"),{},{
         get: {
             method: "GET",
             transformResponse: function(data) {
@@ -10,7 +10,6 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
                     username: data.confluenceUsername,
                     password: null
                 };
-                console.log(obj);
                 return obj;
             }
         },

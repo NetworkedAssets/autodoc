@@ -1,5 +1,5 @@
-angular.module("DoC_Config").factory("urlProvider",function() {
-    var urlProvider = {
+angular.module("DoC_Config").factory("urlService",function() {
+    var urlService = {
         getRestUrl: function(path) {
             if (!path) {
                 path = "";
@@ -10,7 +10,7 @@ angular.module("DoC_Config").factory("urlProvider",function() {
             var params = arguments;
             var paramString = "/";
             angular.forEach(params,function(param) {
-                paramString += urlProvider.encodeComponent(param)+"/";
+                paramString += urlService.encodeComponent(param)+"/";
             });
             return this.getRestUrl(paramString);
         },
@@ -34,5 +34,5 @@ angular.module("DoC_Config").factory("urlProvider",function() {
             return encodeURIComponent(encodeURIComponent(string));
         }
     };
-    return urlProvider;
+    return urlService;
 });

@@ -1,4 +1,4 @@
-angular.module("DoC_Config").controller("schedulesCtrl",function($scope,settingsData) {
+angular.module("DoC_Config").controller("SchedulesCtrl",function($scope,settingsService) {
     var schedules = this;
     schedules.types = {
         singular: [
@@ -52,7 +52,7 @@ angular.module("DoC_Config").controller("schedulesCtrl",function($scope,settings
         }
     };
 
-    schedules.settings = settingsData;
+    schedules.settings = settingsService;
 
     schedules.log = function() {
         console.log(schedules.settings.schedule);

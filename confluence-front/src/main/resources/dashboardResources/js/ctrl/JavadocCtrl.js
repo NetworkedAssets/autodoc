@@ -1,5 +1,5 @@
 angular.module("DoC")
-.controller("JavadocCtrl",function($scope,$http,$state,$stateParams,$element,$timeout,$rootScope,urlProvider,javadocEntities) {
+.controller("JavadocCtrl",function($scope,$http,$state,$stateParams,$element,$timeout,$rootScope,urlService,javadocEntities) {
     var vm = this;
     vm.loading = true;
 

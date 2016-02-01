@@ -22,14 +22,12 @@
 
 
     <script src="js/app.js"></script>
-    <script src="js/ctrl/branchSettings.js"></script>
     <script src="js/ctrl/ConfluenceCredentialsCtrl.js"></script>
-    <script src="js/ctrl/menu.js"></script>
-    <script src="js/ctrl/components.js"></script>
-    <script src="js/ctrl/schedules.js"></script>
+    <script src="js/ctrl/MenuCtrl.js"></script>
+    <script src="js/ctrl/SchedulesCtrl.js"></script>
     <script src="js/ctrl/SourceCtrl.js"></script>
-    <script src="js/services/settingsData.js"></script>
-    <script src="js/services/urlProvider.js"></script>
+    <script src="js/services/settingsService.js"></script>
+    <script src="js/services/urlService.js"></script>
     <script src="js/dirs/docAuiDatePicker.js"></script>
     <script src="js/dirs/auiSelect2.js"></script>
     <script src="js/dirs/docAuiButtonGroup.js"></script>
@@ -54,12 +52,12 @@
                 <a href="#doc_config-cc">Config</a>
             </li>
         </ul>
-        <div ng-show="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch" ng-controller="branchesCtrl as branches">
+        <div ng-show="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch">
             <div ng-hide="$root.loading">
                 <div class="table">
                     <div class="table-row">
 
-                        <div ng-controller="menuCtrl as menu" id="doc_config-branch-menu">
+                        <div ng-controller="MenuCtrl as menu" id="doc_config-branch-menu">
                             <form class="aui">
                                 <div>
                                     <label>Project</label>
@@ -137,7 +135,7 @@
                                             </fieldset>
                                         </form>
                                     </div>
-                                    <div ng-controller="schedulesCtrl as schedules">
+                                    <div ng-controller="SchedulesCtrl as schedules">
                                         <div ng-show="schedules.settings.listenTo=='schedule'" >
                                             <h4>Schedule events</h4>
                                             <div id="doc_config-branch-schedules-events">
@@ -277,14 +275,14 @@
                             </div>
                             <div ng-show="vm.sources.length > 0">
                                 <div ng-repeat="source in vm.sources" class="source" ng-class-even="'even'" ng-class-odd="'odd'">
-                                    <button class="aui-button delete" ng-click="vm.delete($index)">Delete</button>
+                                    <!--<button class="aui-button delete" ng-click="vm.delete($index)">Delete</button>-->
                                     <h3 class="title">
                                         {{source.name}}
                                         <span class="aui-lozenge aui-lozenge-complete">{{source.sourceType|uppercase}}</span>
                                     </h3>
                                     <p class="url" ng-hide="source.inEdit">
-                                        {{source.url}}
-                                        &ndash; <button ng-click="vm.edit($index)" class="aui-button aui-button-link">edit</button>
+                                        {{source.url}}<!--
+                                        &ndash; <button ng-click="vm.edit($index)" class="aui-button aui-button-link">edit</button>-->
                                     </p>
                                     <form class="aui url" ng-show="source.inEdit">
                                         <input ng-model="source.url" type="text" class="text">
@@ -305,7 +303,8 @@
                                 </div>
                             </div>
                             <div class="addFromAppLinksCntr">
-                                <button class="aui-button aui-button-primary" ng-click="vm.addFromAppLinks()">Add from Application Links</button>
+                                <button class="aui-button aui-button-primary" ng-disabled="vm.addFromAppLinksSavingState=='saving'" ng-click="vm.addFromAppLinks()">{{(vm.sources.length > 0)?'Update':'Add'}} from Application Links</button>
+                                <span class="button-spinner spin small" ng-show="vm.addFromAppLinksSavingState=='saving'"></span>
                             </div>
                         </div>
                         <div ng-show="vm.loading" class="spin block"></div>

@@ -1,4 +1,4 @@
-angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$http,$timeout,settingsData) {
+angular.module("DoC_Config").controller("MenuCtrl",function($scope,$element,$http,$timeout,settingsService) {
     var menu = this;
 
     menu.chosen = {
@@ -56,11 +56,11 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
         });
     };
 
-    $scope.$on("settingsData.ready",function() {
-        processTree(settingsData.raw);
+    $scope.$on("settingsService.ready",function() {
+        processTree(settingsService.raw);
     });
 
-    $scope.$on("settingsData.saved",function() {
+    $scope.$on("settingsService.saved",function() {
         var select = $element.find("select");
         select.each(function() {
             $(this).auiSelect2("val",$(this).auiSelect2("val"));
@@ -137,7 +137,7 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
         }
 
         if (element.is("option")) {
-            var listenTo = settingsData.getListenTo(type,id,chosenCopy);
+            var listenTo = settingsService.getListenTo(type,id,chosenCopy);
             if (listenTo !== "none") {
                 return "<span class='doc_config-branch-menu-option listened'><span class='indicator'>"+listenToStringToChar(listenTo)+"</span> "+data.text+"</span>";
             } else {
@@ -174,15 +174,15 @@ angular.module("DoC_Config").controller("menuCtrl",function($scope,$element,$htt
             menu.chosen.repo != null &&
             menu.chosen.branch != null
         ) {
-            settingsData.setBranch(menu.chosen);
+            settingsService.setBranch(menu.chosen);
         } else {
-            settingsData.resetBranch();
+            settingsService.resetBranch();
         }
 
     },true);
 
     $scope.$watch(function() {
-        return settingsData.path;
+        return settingsService.path;
     },function(path) {
         if (path === null) {
             menu.chosen.branch = null;

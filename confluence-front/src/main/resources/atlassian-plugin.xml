@@ -208,8 +208,8 @@
 		<resource type="download" name="js/dirs/javadocTags.js"
 			location="dashboardResources/js/dirs/javadocTags.js" />
 
-		<resource type="download" name="js/services/urlProvider.js"
-			location="dashboardResources/js/services/urlProvider.js" />
+		<resource type="download" name="js/services/urlService.js"
+			location="dashboardResources/js/services/urlService.js" />
 		<resource type="download" name="js/services/macroParams.js"
 			location="dashboardResources/js/services/macroParams.js" />
 		<resource type="download" name="js/services/javadocEntities.js"
@@ -242,21 +242,17 @@
 		<resource type="download" name="js/app.js"
 			location="configurationResources/js/app.js" />
 
-		<resource type="download" name="js/services/settingsData.js"
-			location="configurationResources/js/services/settingsData.js" />
-		<resource type="download" name="js/services/urlProvider.js"
-			location="configurationResources/js/services/urlProvider.js" />
+		<resource type="download" name="js/services/settingsService.js"
+			location="configurationResources/js/services/settingsService.js" />
+		<resource type="download" name="js/services/urlService.js"
+			location="configurationResources/js/services/urlService.js" />
 
-		<resource type="download" name="js/ctrl/branchSettings.js"
-			location="configurationResources/js/ctrl/branchSettings.js" />
 		<resource type="download" name="js/ctrl/ConfluenceCredentialsCtrl.js"
 			location="configurationResources/js/ctrl/ConfluenceCredentialsCtrl.js" />
-		<resource type="download" name="js/ctrl/components.js"
-			location="configurationResources/js/ctrl/components.js" />
-		<resource type="download" name="js/ctrl/menu.js"
-			location="configurationResources/js/ctrl/menu.js" />
-		<resource type="download" name="js/ctrl/schedules.js"
-			location="configurationResources/js/ctrl/schedules.js" />
+		<resource type="download" name="js/ctrl/MenuCtrl.js"
+			location="configurationResources/js/ctrl/MenuCtrl.js" />
+		<resource type="download" name="js/ctrl/SchedulesCtrl.js"
+			location="configurationResources/js/ctrl/SchedulesCtrl.js" />
 		<resource type="download" name="js/ctrl/SourceCtrl.js"
 			location="configurationResources/js/ctrl/SourceCtrl.js" />
 
