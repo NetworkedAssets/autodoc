@@ -1,6 +1,6 @@
 angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$state,$sanitize,
                                                               $filter,$stateParams,$rootScope,
-                                                              $timeout,$element,urlProvider,javadocEntities) {
+                                                              $timeout,$element,urlService,javadocEntities) {
     var vm = this;
     vm.loading = true;
 
@@ -42,7 +42,7 @@ angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$stat
             vm.loading = false;
         } else {
             vm.loading = true;
-            $http.get(urlProvider.getRestUrl("/JAVADOC/"+$stateParams.name)).then(function(response) {
+            $http.get(urlService.getRestUrl("/JAVADOC/"+$stateParams.name)).then(function(response) {
                 vm.entity = new JavadocEntity(response.data);
                 parseBreadcrumb();
                 vm.loading = false;

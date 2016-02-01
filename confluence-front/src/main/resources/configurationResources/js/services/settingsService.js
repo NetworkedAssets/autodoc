@@ -1,4 +1,4 @@
-angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$timeout,urlProvider){
+angular.module('DoC_Config').factory('settingsService', function($http,$rootScope,$timeout,urlService){
     var settings = {
         path: null,
         raw: {},
@@ -49,8 +49,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     settings.load = function() {
         $rootScope.loading = true;
         $http
-            .get(urlProvider.getRestUrl("/projects"))
-            //.get((urlProvider.isLocal())?urlProvider.getRestUrl("/projects"):urlProvider.getResourcesUrl("/data/settings3.json"))
+            .get(urlService.getRestUrlWithParams("sources","extended"))
             .then(function(response) {
                 var sources = {};
                 response.data.sources.forEach(function(source) {
@@ -65,7 +64,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 processListenToValues();
                 console.log("Original settings data: ",settings.raw.sources);
 
-                $rootScope.$broadcast("settingsData.ready");
+                $rootScope.$broadcast("settingsService.ready");
 
                 $rootScope.loading = false;
             });
@@ -95,8 +94,8 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
 
         settings.savingState = "saving";
         $http
-            .post(urlProvider.getRestUrlWithParams(
-                "branches",
+            .put(urlService.getRestUrlWithParams(
+                "sources",
                 chosen.source,
                 chosen.project,
                 chosen.repo,
@@ -107,7 +106,7 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                 settings.savingState = "saved";
                 $timeout(function() {
                     listenForChanges = true;
-                    $rootScope.$broadcast("settingsData.saved");
+                    $rootScope.$broadcast("settingsService.saved");
                 });
             },function() {
                 settings.savingState = "dirty";
@@ -148,9 +147,9 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
     };
 
     settings.getPathAsString = function() {
-        var url = urlProvider.encodeComponent(getSourceUrlFromId(settings.path.source));
+        var url = urlService.encodeComponent(getSourceUrlFromId(settings.path.source));
         console.log(url);
-        return url+"/"+settings.path.project+"/"+settings.path.repo+"/"+urlProvider.encodeComponent(settings.path.branch);
+        return url+"/"+settings.path.project+"/"+settings.path.repo+"/"+urlService.encodeComponent(settings.path.branch);
     };
 
     settings.resetBranch = function() {
@@ -174,24 +173,8 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
         settings.updateNowState = "updating";
         listenForChanges = true;
 
-        /*console.log(settings.getPathAsString());
-        console.log(urlProvider.getRestUrl("/event/"+settings.getPathAsString())+"/");*/
-
-        /* // @RequestBody
-        var data = {
-            source: getSourceUrlFromId(settings.getPath().source),
-            project: settings.getPath().project,
-            repo: settings.getPath().repo,
-            branch: settings.getPath().branch
-        };
-
         $http
-            .post(urlProvider.getRestUrl("/event"),data)
-            .then(callback);*/
-
-        // @PathParam
-        $http
-            .post(urlProvider.getRestUrl("/event/"+settings.getPathAsString())+"/")
+            .post(urlService.getRestUrl("/event/"+settings.getPathAsString())+"/")
             .then(function() {
                 listenForChanges = false;
                 settings.updateNowState = "updated";
@@ -205,12 +188,6 @@ angular.module('DoC_Config').factory('settingsData', function($http,$rootScope,$
                     listenForChanges = true;
                 });
             });
-
-
-
-
-
-        //setTimeout(callback,1000);
     };
 
     settings.getListenTo = function(type,id,chosen) {

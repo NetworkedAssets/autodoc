@@ -1,9 +1,11 @@
-angular.module("DoC_Config").controller("SourceCtrl", function ($resource, urlProvider) {
+angular.module("DoC_Config").controller("SourceCtrl", function ($resource, $timeout, urlService) {
     var vm = this;
     vm.loading = true;
+    vm.addFromAppLinksSavingState = "ready";
+
 
     var Source = $resource(
-        urlProvider.getRestUrlWithParams("sources") + ":id",
+        urlService.getRestUrlWithParams("sources") + ":id",
         {
             id: '@id'
         },
@@ -29,7 +31,7 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($resource, urlPr
                 method: 'DELETE'
             },
             addFromAppLinks: {
-                url: urlProvider.getRestUrlWithParams("applinks","sources"),
+                url: urlService.getRestUrlWithParams("applinks","sources"),
                 method: 'POST'
             }
         }
@@ -62,14 +64,16 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($resource, urlPr
     };
 
     vm.delete = function (index) {
-        vm.sources[index].$delete(function () {
-            //console.log(vm.sources[index]);
-        });
+        vm.sources[index].$delete();
     };
 
     vm.addFromAppLinks = function () {
-        console.log("");
-        Source.addFromAppLinks();
+        vm.addFromAppLinksSavingState = "saving";
+        Source.addFromAppLinks().$promise.then(function() {
+            vm.addFromAppLinksSavingState = "ready";
+            vm.get();
+        });
+
     };
 
     vm.get();

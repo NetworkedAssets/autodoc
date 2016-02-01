@@ -1,14 +1,14 @@
-angular.module("DoC").factory("urlProvider",function(macroParams) {
+angular.module("DoC").factory("urlService",function(macroParams) {
 
     var getRestPathParamsString = function() {
         return "/"
-            //+ urlProvider.encodeComponent(macroParams.get("source")) + "/"
-            + urlProvider.encodeComponent(macroParams.get("project")) + "/"
-            + urlProvider.encodeComponent(macroParams.get("repo")) + "/"
-            + urlProvider.encodeComponent(macroParams.get("branch"));
+            //+ urlService.encodeComponent(macroParams.get("source")) + "/"
+            + urlService.encodeComponent(macroParams.get("project")) + "/"
+            + urlService.encodeComponent(macroParams.get("repo")) + "/"
+            + urlService.encodeComponent(macroParams.get("branch"));
     };
 
-    var urlProvider = {
+    var urlService = {
         getBaseUrl: function() {
 
             if (AJS.params && AJS.params.baseUrl) {
@@ -33,5 +33,5 @@ angular.module("DoC").factory("urlProvider",function(macroParams) {
             return encodeURIComponent(encodeURIComponent(string));
         }
     };
-    return urlProvider;
+    return urlService;
 });
