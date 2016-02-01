@@ -17,10 +17,10 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
         update: {
             method: "POST",
             transformRequest: function(data) {
-                return {
+                return JSON.stringify({
                     confluenceUsername: data.username,
                     confluencePassword: data.password
-                }
+                });
             }
         }
     });
@@ -28,7 +28,7 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
     cc.save = function() {
         cc.savingState = "saving";
 
-        cc.credentials.$save().then(function() {
+        cc.credentials.$update().then(function() {
             cc.get();
         },function() {
             cc.credentialsCorrect = false;

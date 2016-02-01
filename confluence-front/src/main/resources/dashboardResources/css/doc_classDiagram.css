@@ -80,7 +80,26 @@
     stroke-width: 3px;
 }
 
-.doc_classDiagram g.edgePath:hover path.path {
+.doc_classDiagram g.edgePath:hover path.path, .doc_classDiagram g.edgePath:hover marker polygon {
     stroke: #06c;
     stroke-width: 3px;
+}
+
+.doc_classDiagram svg marker polygon {
+    fill: #fff;
+    stroke: #999;
+    stroke-width: 2;
+    stroke-dasharray: 1,0;
+}
+
+.doc_classDiagram svg .edgePath.aggregation marker polygon {
+    fill: #fff;
+}
+
+.doc_classDiagram svg .edgePath.composition marker polygon {
+    fill: #999;
+}
+
+.doc_classDiagram svg .edgePath.realization path.path, .doc_classDiagram svg .edgePath.dependency path.path {
+    stroke-dasharray: 10, 5;
 }

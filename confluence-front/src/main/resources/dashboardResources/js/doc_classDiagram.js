@@ -319,8 +319,12 @@ function ClassDiagram(options) {
         });
 
         $.each(data.relations,function(key,relation) {
-            dagreGraph.setEdge(relation.source,relation.target,{
-                lineInterpolate: "step-after"
+            var type = relation.type;
+            //type = "dependency";
+            dagreGraph.setEdge(relation.target,relation.source,{
+                //lineInterpolate: "step-after",
+                class: type,
+                arrowhead: type
             });
         });
 
@@ -330,12 +334,86 @@ function ClassDiagram(options) {
         });
         svg.call(zoom);
 
-        // Create the renderer
         render = new dagreD3.render();
 
-        render.shapes().class = function(parent, bbox, node) {
-            //console.log(node);
+        render.arrows().aggregation = function(parent, id, edge, type) {
+            var marker = parent.append("marker")
+                .attr("id", id)
+                .attr("viewBox", "0 0 50 50")
+                .attr("refX", 20)
+                .attr("refY", 10)
+                .attr("markerWidth", 20)
+                .attr("markerHeight", 20)
+                .attr("orient", "auto")
+                .classed("aggregation",true);
 
+            var polygon = marker.append("polygon")
+                .attr("points","0,10 10,5 20,10 10,15");
+        };
+
+        render.arrows().composition = function(parent, id, edge, type) {
+            var marker = parent.append("marker")
+                .attr("id", id)
+                .attr("viewBox", "0 0 50 50")
+                .attr("refX", 20)
+                .attr("refY", 10)
+                .attr("markerWidth", 20)
+                .attr("markerHeight", 20)
+                .attr("orient", "auto")
+                .classed("composition",true);
+
+            var polygon = marker.append("polygon")
+                .attr("points","0,10 10,5 20,10 10,15");
+        };
+
+        render.arrows().association = function(parent, id, edge, type) {};
+
+        render.arrows().dependency = function(parent, id, edge, type) {
+            var marker = parent.append("marker")
+                .attr("id", id)
+                .attr("viewBox", "0 0 50 50")
+                .attr("refX", 20)
+                .attr("refY", 10)
+                .attr("markerWidth", 20)
+                .attr("markerHeight", 20)
+                .attr("orient", "auto")
+                .classed("composition",true);
+
+            var polygon = marker.append("polygon")
+                .attr("points","10,5 20,10 10,15 19.9999,10");
+        };
+
+        render.arrows().realization = function(parent, id, edge, type) {
+            var marker = parent.append("marker")
+                .attr("id", id)
+                .attr("viewBox", "0 0 50 50")
+                .attr("refX", 20)
+                .attr("refY", 10)
+                .attr("markerWidth", 20)
+                .attr("markerHeight", 20)
+                .attr("orient", "auto")
+                .classed("realization",true);
+
+            var polygon = marker.append("polygon")
+                .attr("points","10,5 20,10 10,15");
+        };
+
+        render.arrows().generalization = function(parent, id, edge, type) {
+            var marker = parent.append("marker")
+                .attr("id", id)
+                .attr("viewBox", "0 0 50 50")
+                .attr("refX", 20)
+                .attr("refY", 10)
+                .attr("markerWidth", 20)
+                .attr("markerHeight", 20)
+                .attr("orient", "auto")
+                .classed("composition",true);
+
+            var polygon = marker.append("polygon")
+                .attr("points","10,5 20,10 10,15");
+        };
+
+        render.shapes().class = function(parent, bbox, node) {
             var headerRows = 1;
 
             if (node.data.type == "interface") {
