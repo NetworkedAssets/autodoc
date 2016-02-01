@@ -107,7 +107,7 @@ public class TransformerClient {
         return response;
     }
 
-    public HttpResponse<String> forceRegenerate(String sourceUrl, String projectKey, String repoSlug, String branchId)
+    public HttpResponse<String> forceGenerate(String sourceUrl, String projectKey, String repoSlug, String branchId)
             throws SettingsException {
         String eventPayload = String.format(EVENT_JSON, sourceUrl, projectKey, repoSlug, branchId);
         HttpResponse<String> response;
