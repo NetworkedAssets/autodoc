@@ -260,12 +260,12 @@ public class ConfigurationService {
     }
 
 
-    @Path("projects")
+    @Path("sources/extended")
     @GET
-    public Response getDetailedSources() {
+    public Response getExtendedSources() {
 
         try {
-            HttpResponse<String> response = transformerClient.getSources();
+            HttpResponse<String> response = transformerClient.getExtendedSources();
             return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
                     .entity(String.format("{\"sources\": %s}", response.getBody())).build();
         } catch (SettingsException e) {

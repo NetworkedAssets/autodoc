@@ -27,6 +27,7 @@ public class TransformerClient {
     public static final String SETTINGS = "/settings";
     public static final String CREDENTIALS = "/settings/credentials";
     public static final String SOURCES = "/sources/";
+    public static final String EXTENDED_SOURCES = "/sources/extended/";
     public static final String EVENT = "/event";
     public static final String EVENT_JSON = "{\"sourceUrl\":\"%s\",\"projectKey\":\"%s\",\"repositorySlug\":\"%s\",\"branchId\":\"%s\"}";
 
@@ -106,6 +107,18 @@ public class TransformerClient {
 
         return response;
     }
+
+    public HttpResponse<String> getExtendedSources() throws SettingsException {
+        HttpResponse<String> response;
+        try {
+            response = Unirest.get(url + EXTENDED_SOURCES).asString();
+        } catch (UnirestException e) {
+            throw new SettingsException(e);
+        }
+
+        return response;
+    }
+
 
     public HttpResponse<String> forceGenerate(String sourceUrl, String projectKey, String repoSlug, String branchId)
             throws SettingsException {

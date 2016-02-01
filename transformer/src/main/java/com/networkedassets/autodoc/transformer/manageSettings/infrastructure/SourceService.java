@@ -67,9 +67,9 @@ public class SourceService {
 
 
     @GET
-    @Path("expanded")
+    @Path("exptended")
     @JsonView(Views.GetExpandedSourcesView.class)
-    public Response getExpandedSources() {
+    public Response getExtendedSources() {
         log.info("GET request for expanded sources handled");
         List<Source> sources = sourceProvider.getAllSources();
         return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(sources).build();
