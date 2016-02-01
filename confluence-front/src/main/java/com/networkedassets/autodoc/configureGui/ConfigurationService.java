@@ -203,6 +203,20 @@ public class ConfigurationService {
 
     }
 
+    @Path("sources")
+    @GET
+    public Response getSources() {
+
+        try {
+            HttpResponse<String> response = transformerClient.getSources();
+            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
+                    .build();
+        } catch (SettingsException e) {
+            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+        }
+
+    }
+
     @Path("sources/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
