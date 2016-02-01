@@ -1,7 +1,4 @@
 angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
-// For any unmatched url, redirect to /state1
-
-        // Now set up the states
         $stateProvider
             .state('javadoc', {
                 url: "/javadoc",

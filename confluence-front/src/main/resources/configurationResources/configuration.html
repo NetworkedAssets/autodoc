@@ -23,11 +23,11 @@
 
     <script src="js/app.js"></script>
     <script src="js/ctrl/branchSettings.js"></script>
-    <script src="js/ctrl/confluenceConfig.js"></script>
+    <script src="js/ctrl/ConfluenceCredentialsCtrl.js"></script>
     <script src="js/ctrl/menu.js"></script>
     <script src="js/ctrl/components.js"></script>
     <script src="js/ctrl/schedules.js"></script>
-    <script src="js/ctrl/sources.js"></script>
+    <script src="js/ctrl/SourceCtrl.js"></script>
     <script src="js/services/settingsData.js"></script>
     <script src="js/services/urlProvider.js"></script>
     <script src="js/dirs/docAuiDatePicker.js"></script>
@@ -51,7 +51,7 @@
                 <a href="#doc_config-branch">Space Tools</a>
             </li>
             <li class="menu-item active-tab">
-                <a href="#doc_config-confluenceConfig">Config</a>
+                <a href="#doc_config-cc">Config</a>
             </li>
         </ul>
         <div ng-show="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch" ng-controller="branchesCtrl as branches">
@@ -235,83 +235,85 @@
                     </div>
                 </div>
             </div>
-
-
+            <div id="doc_config-loading" ng-show="$root.loading"></div>
         </div>
-        <div ng-show="$root.location == 'admin' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane active-pane':''}}" id="doc_config-confluenceConfig" ng-controller="confluenceConfigCtrl as confluenceConfig">
-            <div ng-hide="$root.loading">
+        <div ng-show="$root.location == 'admin' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane active-pane':''}}" id="doc_config-admin" ng-controller="ConfluenceCredentialsCtrl as cc">
+            <div>
                 <div class="table">
                     <div class="table-cell">
                         <h3>Confluence credentials</h3>
-                        <form class="aui">
+                        <form class="aui" ng-hide="cc.loading">
                             <fieldset>
                                 <div class="field-group">
                                     <label>Username</label>
-                                    <input ng-change="confluenceConfig.setAsDirty()" ng-model="confluenceConfig.username" class="text" placeholder="Username">
+                                    <input ng-change="cc.setAsDirty()" ng-model="cc.credentials.username" class="text" placeholder="Username">
                                 </div>
                                 <div class="field-group">
                                     <label>Password</label>
-                                    <input type="password" ng-change="confluenceConfig.setAsDirty()" ng-model="confluenceConfig.password" class="password" placeholder="Password">
-                                    <div class="error" ng-show="!confluenceConfig.credentialsCorrect && confluenceConfig.savingState == 'dirty'">Incorrect username or password.</div>
+                                    <input type="password" ng-change="cc.setAsDirty()" ng-model="cc.credentials.password" class="password" placeholder="Password">
+                                    <div class="error" ng-show="!cc.credentialsCorrect && cc.savingState == 'dirty'">Incorrect username or password.</div>
                                 </div>
                             </fieldset>
                             <div class="buttons-container">
                                 <button
-                                        ng-click="confluenceConfig.save()"
+                                        ng-click="cc.save()"
                                         class="aui-button aui-button-primary"
-                                        ng-disabled="confluenceConfig.savingState != 'dirty'"
-                                >{{confluenceConfig.savingState=="dirty"?'Check & Save':(confluenceConfig.savingState=="saving"?"Saving...":"Saved")}}</button>
-                                <span class="button-spinner spin small" ng-show="confluenceConfig.savingState=='saving'"></span>
-                                <button ng-click="confluenceConfig.revert()" class="aui-button">Revert</button>
+                                        ng-disabled="cc.savingState != 'dirty'"
+                                >{{cc.savingState=="dirty"?'Check & Save':(cc.savingState=="saving"?"Saving...":"Saved")}}</button>
+                                <span class="button-spinner spin small" ng-show="cc.savingState=='saving'"></span>
+                                <button ng-click="cc.revert()" ng-disabled="cc.savingState != 'dirty'" class="aui-button">Revert</button>
                             </div>
                         </form>
+                        <div ng-show="cc.loading" class="spin block"></div>
                     </div>
-                    <div class="table-cell" ng-controller="sourcesCtrl as vm">
+                    <div class="table-cell" ng-controller="SourceCtrl as vm">
                         <h3>Configured sources</h3>
-                        <div class="aui-message aui-message-warning" ng-hide="vm.sources.length > 0">
-                            <p class="title">
-                                <strong>No sources found</strong>
-                            </p>
-                            <p>Sources will be added automatically after Application Link configuration.</p>
-                        </div>
-                        <div ng-show="vm.sources.length > 0">
-                            <div ng-repeat="source in vm.sources" class="source" ng-class-even="'even'" ng-class-odd="'odd'">
-                                <button class="aui-button delete" ng-click="vm.delete($index)">Delete</button>
-                                <h3 class="title">
-                                    {{source.name}}
-                                    <span class="aui-lozenge aui-lozenge-complete">{{source.sourceType|uppercase}}</span>
-                                </h3>
-                                <p class="url" ng-hide="source.inEdit">
-                                    {{source.url}}
-                                    &ndash; <button ng-click="vm.edit($index)" class="aui-button aui-button-link">edit</button>
+                        <div ng-hide="vm.loading">
+                            <div class="aui-message aui-message-warning" ng-hide="vm.sources.length > 0">
+                                <p class="title">
+                                    <strong>No sources found</strong>
                                 </p>
-                                <form class="aui url" ng-show="source.inEdit">
-                                    <input ng-model="source.url" type="text" class="text">
-                                    <button ng-click="vm.save($index)" class="aui-button aui-button-primary">Save</button><!--
-                                    --><button ng-click="vm.revert($index)" class="aui-button">Revert</button>
-                                </form>
-                                <div class="aui-message aui-message-warning" ng-hide="source.correct">
-                                    <p class="title">
-                                        <strong>Errors:</strong>
+                                <p>Sources will be added automatically after Application Link configuration.</p>
+                            </div>
+                            <div ng-show="vm.sources.length > 0">
+                                <div ng-repeat="source in vm.sources" class="source" ng-class-even="'even'" ng-class-odd="'odd'">
+                                    <button class="aui-button delete" ng-click="vm.delete($index)">Delete</button>
+                                    <h3 class="title">
+                                        {{source.name}}
+                                        <span class="aui-lozenge aui-lozenge-complete">{{source.sourceType|uppercase}}</span>
+                                    </h3>
+                                    <p class="url" ng-hide="source.inEdit">
+                                        {{source.url}}
+                                        &ndash; <button ng-click="vm.edit($index)" class="aui-button aui-button-link">edit</button>
                                     </p>
-                                    <ul>
-                                        <li ng-hide="source.sourceTypeCorrect">Incorrect source type</li>
-                                        <li ng-hide="!source.sourceTypeExists">Source doesn't exist</li>
-                                        <li ng-hide="source.credentialsCorrect">Credentials incorrect</li>
-                                    </ul>
-                                </div>
+                                    <form class="aui url" ng-show="source.inEdit">
+                                        <input ng-model="source.url" type="text" class="text">
+                                        <button ng-click="vm.save($index)" class="aui-button aui-button-primary">Save</button><!--
+                                    --><button ng-click="vm.revert($index)" class="aui-button">Revert</button>
+                                    </form>
+                                    <div class="aui-message aui-message-warning" ng-hide="source.correct">
+                                        <p class="title">
+                                            <strong>Errors:</strong>
+                                        </p>
+                                        <ul>
+                                            <li ng-hide="source.sourceTypeCorrect">Incorrect source type</li>
+                                            <li ng-hide="!source.sourceTypeExists">Source doesn't exist</li>
+                                            <li ng-hide="source.credentialsCorrect">Credentials incorrect</li>
+                                        </ul>
+                                    </div>
 
+                                </div>
+                            </div>
+                            <div class="addFromAppLinksCntr">
+                                <button class="aui-button aui-button-primary" ng-click="vm.addFromAppLinks()">Add from Application Links</button>
                             </div>
                         </div>
-                        <div class="addFromAppLinksCntr">
-                            <button class="aui-button aui-button-primary" ng-click="vm.addFromAppLinks()">Add from Application Links</button>
-                        </div>
+                        <div ng-show="vm.loading" class="spin block"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="doc_config-loading" ng-show="$root.loading"></div>
 </section>
 <!--CUT-END-->
 </body>
