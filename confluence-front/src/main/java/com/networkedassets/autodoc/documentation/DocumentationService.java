@@ -37,7 +37,7 @@ public class DocumentationService {
         String branchDec = URLDecoder.decode(branch, "UTF-8");
         String doctypeDec = URLDecoder.decode(doctype, "UTF-8");
 
-        if ("uml".equalsIgnoreCase(doctypeDec)) return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all", "");
+        if ("uml".equalsIgnoreCase(doctypeDec)) return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
         return ao.executeInTransaction(() ->
                 getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
                         .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
@@ -72,25 +72,32 @@ public class DocumentationService {
                 getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
                         .flatMap(d -> getDocumentationPiece(d, docPieceNameDec))
         );
-        Response response;
+        final String finalAttributeDec = (!attributeDec.equals("")) ? attributeDec.substring(1, attributeDec.length()) : attributeDec; //attribute starts with reduntant /
+        return buildDocumentationPieceResponse(documentationPiece, finalAttributeDec);
+    }
 
-        if(!attributeDec.equals("")){
-            final String finalAttributeDec = attributeDec.substring(1, attributeDec.length()); //attribute starts with reduntant /
-            response = documentationPiece
-                    .map(d -> makeDocPieceAttributeJson(finalAttributeDec, d))
-                    .map(Response::ok)
-                    .orElse(Response.status(404).entity(
-                            "{\"success\": false, \"message\": \"Could not find requested attribute!\"}"
-                    )).build();
+    private Response getDocumentationPiece(String project, String repo, String branch, String docType, String docPieceName) throws UnsupportedEncodingException {
+        return getDocumentationPiece(project, repo, branch, docType, docPieceName, "");
+    }
+
+    private Response buildDocumentationPieceResponse(Optional<DocumentationPiece> documentationPiece, String attribute) {
+        Optional<String> jsonOptional = documentationPiece.map(d -> makeDocPieceJson(d, attribute));
+        return jsonOptional
+                .map(n -> Response.ok(n).build())
+                .orElse(Response.status(404).entity("{\"success\": false, \"message\": \"Could not find requested documentation!\"}").build());
+    }
+
+    private String makeDocPieceJson(DocumentationPiece dp, String attribute) {
+        if(attribute.isEmpty()){
+            return dp.getContent();
         }else{
-            response = documentationPiece
-                    .map(this::makeDocPieceJson)
-                    .map(Response::ok)
-                    .orElse(Response.status(404).entity(
-                            "{\"success\": false, \"message\": \"Could not find requested documentation!\"}"
-                    )).build();
+            JSONObject jsonObject = new JSONObject(dp.getContent());
+            try {
+                return String.format("{\"%s\": \"%s\"}", attribute, jsonObject.getString(attribute));
+            } catch (JSONException e) {
+                return null;
+            }
         }
-        return response;
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
@@ -106,19 +113,6 @@ public class DocumentationService {
                 .where("DOCUMENTATION_ID = ? AND PIECE_NAME = ?", doc.getID(), docPieceName));
 
         return Optionals.fromArrayOfOne(pieces);
-    }
-
-    private String makeDocPieceJson(DocumentationPiece dp) {
-        return dp.getContent();
-    }
-
-    public String makeDocPieceAttributeJson(final String attribute, DocumentationPiece dp) {
-        JSONObject jsonObject = new JSONObject(dp.getContent());
-        try {
-            return String.format("{\"%s\": \"%s\"}", attribute, jsonObject.getString(attribute));
-        } catch (JSONException e) {
-            return null;
-        }
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
