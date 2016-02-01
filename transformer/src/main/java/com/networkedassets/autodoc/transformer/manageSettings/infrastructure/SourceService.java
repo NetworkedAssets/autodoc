@@ -67,7 +67,7 @@ public class SourceService {
 
 
     @GET
-    @Path("exptended")
+    @Path("extended")
     @JsonView(Views.GetExpandedSourcesView.class)
     public Response getExtendedSources() {
         log.info("GET request for expanded sources handled");

@@ -68,6 +68,27 @@ public class ConfigurationService {
 
     }
 
+    @PUT
+    @Path("sources/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
+                                 @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
+        System.out.println("!!!!!!!!!!!!!!!!!!!!HELLLOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Branch modifiedBranch = null;
+        try {
+            projectKey = URLDecoder.decode(projectKey, "UTF-8");
+            repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
+            branchId = URLDecoder.decode(branchId, "UTF-8");
+            modifiedBranch = transformerClient.modifyBranch(sourceId, projectKey, repoSlug, branchId, branch);
+        } catch (SettingsException e) {
+            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return Response.status(Response.Status.OK).entity(modifiedBranch).build();
+    }
+
     @POST
     @Path("credentials")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -166,25 +187,6 @@ public class ConfigurationService {
 
     }
 
-    @Path("sources/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
-    @POST
-    public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
-                                 @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
-        Branch modifiedBranch = null;
-        try {
-            projectKey = URLDecoder.decode(projectKey, "UTF-8");
-            repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
-            branchId = URLDecoder.decode(branchId, "UTF-8");
-            modifiedBranch = transformerClient.modifyBranch(sourceId, projectKey, repoSlug, branch);
-        } catch (SettingsException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return Response.status(Response.Status.OK).entity(modifiedBranch).build();
-    }
-
     @Path("event/{sourceUrl}/{projectKey}/{repoSlug}/{branchId}")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
@@ -211,6 +213,20 @@ public class ConfigurationService {
             HttpResponse<String> response = transformerClient.getSources();
             return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
                     .build();
+        } catch (SettingsException e) {
+            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+        }
+
+    }
+
+    @Path("sources/extended")
+    @GET
+    public Response getExtendedSources() {
+
+        try {
+            HttpResponse<String> response = transformerClient.getExtendedSources();
+            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
+                    .entity(String.format("{\"sources\": %s}", response.getBody())).build();
         } catch (SettingsException e) {
             throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
         }
@@ -244,6 +260,7 @@ public class ConfigurationService {
 
     }
 
+
     @Path("sources/{id}")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -254,21 +271,6 @@ public class ConfigurationService {
             return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
                     .entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
         } catch (SettingsException | JsonProcessingException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-        }
-
-    }
-
-
-    @Path("sources/extended")
-    @GET
-    public Response getExtendedSources() {
-
-        try {
-            HttpResponse<String> response = transformerClient.getExtendedSources();
-            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
-                    .entity(String.format("{\"sources\": %s}", response.getBody())).build();
-        } catch (SettingsException e) {
             throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
         }
 

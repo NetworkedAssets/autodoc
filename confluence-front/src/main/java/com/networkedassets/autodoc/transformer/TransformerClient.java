@@ -76,15 +76,15 @@ public class TransformerClient {
         return response;
     }
 
-    public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, Branch branch)
+    public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, String branhId, Branch branch)
             throws SettingsException {
         try {
             HttpResponse<Branch> branchHttpResponse = Unirest
-                    .post(url + "/sources/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
+                    .put(url + "/sources/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
                     .routeParam("sourceId", Integer.toString(sourceId))
                     .routeParam("projectKey", URLEncoder.encode(projectKey, "UTF-8"))
                     .routeParam("repoSlug", URLEncoder.encode(repoSlug, "UTF-8"))
-                    .routeParam("branchId", URLEncoder.encode(branch.getId(), "UTF-8"))
+                    .routeParam("branchId", URLEncoder.encode(branhId, "UTF-8"))
                     .header("Content-Type", "application/json").body(branch).asObject(Branch.class);
             if (branchHttpResponse.getStatus() == 200) {
                 return branchHttpResponse.getBody();
