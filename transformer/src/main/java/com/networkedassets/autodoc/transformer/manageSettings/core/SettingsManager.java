@@ -48,10 +48,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         saveSettingsToFile(settingsFilename);
     }
 
-    @Inject
     public Scheduler scheduler;
 
-    public SettingsManager() {
+    @Inject
+    public SettingsManager(Scheduler scheduler) {
+        this.scheduler = scheduler;
         settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
         loadSettingsFromFile(settingsFilename);
         updateAllSourcesAndEnableHooks();
