@@ -59,9 +59,8 @@ public class SettingsService extends RestService {
     @JsonView(Views.GetCredentialsView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCredentials() {
-        //// TODO: 29.01.2016 Don't return null, lol
         return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
-                .entity(null).build();
+                .entity(settingsProvider.getNotUpdatedSettings()).build();
     }
 
     @POST

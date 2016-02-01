@@ -63,6 +63,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         return settings;
     }
 
+    @Override
+    public Settings getNotUpdatedSettings() {
+        return getSettings();
+    }
+
     private void updateAllSourcesAndEnableHooks() {
         this.settings.getSources().forEach(source -> {
             try {
