@@ -38,7 +38,9 @@ public class JsonDocumentationParser {
     private Set<Entity> findEntities(Set<String> entitiesDocPieceNames) {
         JsonNode entitiesNode = rootNode.get("entities");
         return entitiesDocPieceNames.stream()
-                .map(s -> findEntityByFQCN(s, entitiesNode).get())
+                .map(s -> findEntityByFQCN(s, entitiesNode))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toSet());
     }
 

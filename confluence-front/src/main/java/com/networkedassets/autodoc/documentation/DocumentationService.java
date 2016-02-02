@@ -101,7 +101,7 @@ public class DocumentationService {
         }
     }
 
-    @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}/testt")
+    @Path("{project}/{repo}/{branch}/UML/{docPieceName}")
     @GET
     @Produces("application/json")
     public Response test(
@@ -113,7 +113,7 @@ public class DocumentationService {
         String projectDec = URLDecoder.decode(project, "UTF-8");
         String repoDec = URLDecoder.decode(repo, "UTF-8");
         String branchDec = URLDecoder.decode(branch, "UTF-8");
-        String doctypeDec = URLDecoder.decode(docType, "UTF-8");
+        String doctypeDec = "UML";
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
 
         Optional<DocumentationPiece> documentationPiece = ao.executeInTransaction(() ->
@@ -121,8 +121,11 @@ public class DocumentationService {
                         .flatMap(d -> getDocumentationPiece(d, "all"))
         );
         final String JSON = documentationPiece.get().getContent();
+
         JsonDocumentationParser parser = new JsonDocumentationParser(JSON);
-        return Response.ok(parser.composeJSON(docPieceNameDec).get()).build();
+        Optional<String> composedJSON = parser.composeJSON(docPieceName);
+
+        return composedJSON.map(n -> Response.ok(n).build()).orElse(Response.status(404).build());
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
