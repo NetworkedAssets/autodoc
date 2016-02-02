@@ -167,7 +167,7 @@ public class ConfigurationService {
     public Response getListenedBranches() {
         try {
             List<Source> sources = Arrays
-                    .asList(OBJECT_MAPPER.readValue(transformerClient.getSources().getBody(), Source[].class));
+                    .asList(OBJECT_MAPPER.readValue(transformerClient.getExtendedSources().getBody(), Source[].class));
 
             sources.forEach(s -> {
                 s.getProjects().forEach((kp, p) -> {
