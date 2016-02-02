@@ -1,35 +1,6 @@
 package com.networkedassets.autodoc.configureGui;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.httpclient.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.atlassian.applinks.api.ApplicationLink;
-import com.atlassian.applinks.api.ApplicationLinkRequest;
-import com.atlassian.applinks.api.ApplicationLinkRequestFactory;
-import com.atlassian.applinks.api.ApplicationLinkService;
-import com.atlassian.applinks.api.CredentialsRequiredException;
+import com.atlassian.applinks.api.*;
 import com.atlassian.applinks.api.application.stash.StashApplicationType;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.user.UserAccessor;
@@ -47,6 +18,18 @@ import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.settings.Source.SourceType;
+import org.apache.commons.httpclient.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
 
 @Path("/configuration/")
 public class ConfigurationService {
@@ -166,8 +149,8 @@ public class ConfigurationService {
     @GET
     public Response getListenedBranches() {
         try {
-            List<Source> sources = Arrays
-                    .asList(OBJECT_MAPPER.readValue(transformerClient.getSources().getBody(), Source[].class));
+            List<Source> sources = OBJECT_MAPPER.readValue(transformerClient.getSources().getBody(),
+                    OBJECT_MAPPER.getTypeFactory().constructCollectionType(ArrayList.class, Source.class));
 
             sources.forEach(s -> {
                 s.getProjects().forEach((kp, p) -> {
