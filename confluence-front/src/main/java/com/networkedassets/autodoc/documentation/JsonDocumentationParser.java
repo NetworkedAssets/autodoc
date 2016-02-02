@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 /**
  * Created by mtulaza on 2016-02-02.
  */
-//TODO: test, test, test! still needs to be corrected and beautified
 public class JsonDocumentationParser {
     private ObjectMapper mapper = new ObjectMapper();
     private JsonNode rootNode;
@@ -57,7 +56,6 @@ public class JsonDocumentationParser {
         return resultSet;
     }
 
-    //TODO: not too pretty, I know.. still in progress
     public Optional<String> composeJSON(String docPieceName) throws IOException {
         Set<Relation> relationsSet = findRelations(docPieceName);
         Set<Entity> entitiesSet = findEntities(getEntitiesNamesFromRelations(docPieceName, relationsSet));
