@@ -10,7 +10,7 @@ angular.module("DoC")
     javadocEntities
         .fetch()
         .then(function() {
-            vm.items = javadocEntities.getTreeUsingArrays();
+            vm.items = javadocEntities.getTreeUsingArrays().children;
             vm.loading = false;
         });
 

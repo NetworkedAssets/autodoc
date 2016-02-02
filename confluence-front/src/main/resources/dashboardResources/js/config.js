@@ -26,7 +26,7 @@ angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
             .state('structureGraph',{
                 url: "/structureGraph",
                 displayName: "Structure Graph",
-                template: '<a ui-sref="javadoc.entity({name:\'com.networkedassets\'})">click</a><div id="doc_structureGraph"></div>',
+                template: '<div id="doc_structureGraph"></div>',
                 controller: 'StructureGraphCtrl'
             });
 

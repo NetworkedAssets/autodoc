@@ -62,7 +62,7 @@
 
 span.entityType {
     background: #ccc;
-    color: #000;
+    color: #fff;
     border-radius: 0.2em;
     display: inline-block;
     font-family: sans-serif!important;
@@ -79,18 +79,27 @@ span.entityType {
 
 span.entityType.entityTypePackage {
     background: #666;
-    color: #fff;
 }
 
 span.entityType.entityTypeClass {
-    background: #8eb021;
-    color: #fff;
+    background: #59afe1;
 }
 
 span.entityType.entityTypeInterface {
-    background: #59afe1;
+    background: #8eb021;
     font-family: serif;
-    color: #fff;
+}
+
+span.entityType.entityTypeAnnotation {
+    background: #f6c342;
+}
+
+span.entityType.entityTypeException {
+    background: #d04437;
+}
+
+span.entityType.entityTypeEnum {
+    background: #84bbc6;
 }
 
 [treecontrol] li {
