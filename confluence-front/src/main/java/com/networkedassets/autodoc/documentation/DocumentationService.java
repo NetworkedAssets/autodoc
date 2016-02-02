@@ -10,6 +10,7 @@ import net.java.ao.Query;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -98,6 +99,33 @@ public class DocumentationService {
                 return null;
             }
         }
+    }
+
+    @Path("{project}/{repo}/{branch}/UML/{docPieceName}")
+    @GET
+    @Produces("application/json")
+    public Response test(
+            @PathParam("project") String project,
+            @PathParam("repo") String repo,
+            @PathParam("branch") String branch,
+            @PathParam("doctype") String docType,
+            @PathParam("docPieceName") String docPieceName) throws IOException {
+        String projectDec = URLDecoder.decode(project, "UTF-8");
+        String repoDec = URLDecoder.decode(repo, "UTF-8");
+        String branchDec = URLDecoder.decode(branch, "UTF-8");
+        String doctypeDec = "UML";
+        String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
+
+        Optional<DocumentationPiece> documentationPiece = ao.executeInTransaction(() ->
+                getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
+                        .flatMap(d -> getDocumentationPiece(d, "all"))
+        );
+        final String JSON = documentationPiece.get().getContent();
+
+        JsonDocumentationParser parser = new JsonDocumentationParser(JSON);
+        Optional<String> composedJSON = parser.composeJSON(docPieceName);
+
+        return composedJSON.map(n -> Response.ok(n).build()).orElse(Response.status(404).build());
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
