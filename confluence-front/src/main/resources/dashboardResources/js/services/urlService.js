@@ -17,11 +17,13 @@ angular.module("DoC").factory("urlService",function(macroParams) {
                 return "http://atlas.networkedassets.net/confluence";
             }
         },
-        getRestUrl: function(path) {
-            if (!path) {
-                path = "";
-            }
-            return this.getBaseUrl()+"/rest/autodoc/1.0/documentation"+getRestPathParamsString()+path;
+        getRestUrl: function() {
+            var params = arguments;
+            var paramString = "/";
+            angular.forEach(params,function(param) {
+                paramString += urlService.encodeComponent(param)+"/";
+            });
+            return this.getBaseUrl()+"/rest/autodoc/1.0/documentation"+getRestPathParamsString()+paramString;
         },
         getResourcesUrl: function(path) {
             if (!path) {

@@ -42,7 +42,7 @@ angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$stat
             vm.loading = false;
         } else {
             vm.loading = true;
-            $http.get(urlService.getRestUrl("/JAVADOC/"+$stateParams.name)).then(function(response) {
+            $http.get(urlService.getRestUrl("JAVADOC",$stateParams.name)).then(function(response) {
                 vm.entity = new JavadocEntity(response.data);
                 parseBreadcrumb();
                 vm.loading = false;

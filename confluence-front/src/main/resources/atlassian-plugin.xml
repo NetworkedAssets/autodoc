@@ -207,6 +207,8 @@
 			location="dashboardResources/js/dirs/angular-tree-control.js" />
 		<resource type="download" name="js/dirs/javadocTags.js"
 			location="dashboardResources/js/dirs/javadocTags.js" />
+		<resource type="download" name="js/dirs/javadocInheritDocTags.js"
+				  location="dashboardResources/js/dirs/javadocInheritDocTags.js" />
 
 		<resource type="download" name="js/services/urlService.js"
 			location="dashboardResources/js/services/urlService.js" />

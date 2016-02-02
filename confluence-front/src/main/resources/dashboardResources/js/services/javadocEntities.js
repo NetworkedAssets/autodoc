@@ -52,7 +52,7 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
         fetch: function() {
             return $q(function(resolve,reject) {
                 if (!angular.isUndefined(tree)) {
-                    $http.get(urlService.getRestUrl('/JAVADOC/index'), {
+                    $http.get(urlService.getRestUrl('JAVADOC','index'), {
                         cache: true
                     }).then(function (data) {
                         javadocEntities.parse(data.data.indexPackage);

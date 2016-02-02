@@ -10,7 +10,7 @@ angular.module("DoC").controller('ClassDiagramCtrl',function($scope,$http,$eleme
 
     initSpinner();
 
-    $http.get(urlService.getRestUrl("/UML/all/"),{
+    $http.get(urlService.getRestUrl("UML","all"),{
         cache: true
     })
         .then(function(response) {

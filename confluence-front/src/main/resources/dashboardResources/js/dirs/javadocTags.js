@@ -41,15 +41,20 @@ angular.module("DoC")
                                 }
                             },
                             function() {
+                                if (typeof scope.content == "string") {
+                                    var regExp = /{@inheritDoc}/gi;
+                                    scope.content = scope.content.replace(regExp,"<javadoc-inherit-doc-tag></javadoc-inherit-doc-tag>");
+                                }
+                            },
+                            function() {
                                 /* includes {@literal text}*/
                                 var debug = false;
                                 if (!debug && typeof scope.content == "string") {
                                     var regExp = /{@[\w]+\s*([^}]+)}/gi;
                                     scope.content = scope.content.replace(regExp,"$1");
                                 }
-                            }/*
-                                {@inheritDoc}
-                            */
+                            }
+
                         ];
 
                         tagProcessors.forEach(function(fn) {
@@ -62,8 +67,7 @@ angular.module("DoC")
                 });
             },
             scope: {
-                content: "=javadocTags",
-                myAttribute: "=myAttribute"
+                content: "=javadocTags"
             }
         };
     });
