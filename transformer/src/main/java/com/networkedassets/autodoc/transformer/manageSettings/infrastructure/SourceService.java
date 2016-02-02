@@ -162,7 +162,10 @@ public class SourceService {
         Optional<Branch> modifiedBranch = Optional
                 .ofNullable(branchModifier.modifyBranch(sourceId, projectKey, repoSlug, branchId, branch));
 
-        eventScheduler.scheduleEvents(modifiedBranch.get(), sourceId, projectKey, repoSlug, branchId);
+        final String finalProjectKey = projectKey;
+        final String finalRepoSlug = repoSlug;
+        final String finalBranchId = branchId;
+        modifiedBranch.ifPresent(b -> eventScheduler.scheduleEvents(b, sourceId, finalProjectKey, finalRepoSlug, finalBranchId));
         return modifiedBranch
                 .map(b -> Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(b).build())
                 .orElseGet(() -> Response.status(Response.Status.BAD_REQUEST).entity("Wrong parameters").build());

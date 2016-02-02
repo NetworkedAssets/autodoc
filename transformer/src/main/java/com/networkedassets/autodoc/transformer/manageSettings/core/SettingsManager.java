@@ -12,6 +12,7 @@ import com.networkedassets.autodoc.transformer.manageSettings.provide.out.Source
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
 import com.networkedassets.autodoc.transformer.util.SettingsUtils;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -219,7 +220,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
                 Trigger trigger = newTrigger()
                         .startNow()
-                        .withSchedule(event.getCronSchedule())
+                        .withSchedule(ScheduledEventHelper.getCronSchedule(event))
                         .build();
 
                 scheduler.scheduleJob(job, trigger);

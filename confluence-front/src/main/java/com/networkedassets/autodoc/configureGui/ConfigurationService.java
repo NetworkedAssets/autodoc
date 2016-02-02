@@ -71,9 +71,9 @@ public class ConfigurationService {
     @PUT
     @Path("sources/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
-                                 @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!HELLLOOOOOOOOOOOOOO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                                 @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) throws JsonProcessingException {
         Branch modifiedBranch = null;
         try {
             projectKey = URLDecoder.decode(projectKey, "UTF-8");
@@ -86,7 +86,7 @@ public class ConfigurationService {
             e.printStackTrace();
         }
 
-        return Response.status(Response.Status.OK).entity(modifiedBranch).build();
+        return Response.status(Response.Status.OK).entity(OBJECT_MAPPER.writeValueAsString(modifiedBranch)).type(MediaType.APPLICATION_JSON).build();
     }
 
     @POST

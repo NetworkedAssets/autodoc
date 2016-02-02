@@ -1,20 +1,17 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import org.quartz.CronScheduleBuilder;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
+
 
 /**
  * Class representing a scheduled event - an event fired at particular times
  */
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ScheduledEvent implements Serializable {
 
     private static final long serialVersionUID = -1213178165118904796L;
@@ -29,72 +26,56 @@ public class ScheduledEvent implements Serializable {
     public ScheduledEvent() {
     }
 
-    public ScheduledEvent(boolean periodic, String periodType, int number,
-                          HashMap<String, Boolean> weekdays, Date oneTimeDate, String time) {
-        setPeriodic(periodic);
-        setPeriodType(periodType);
-        setNumber(number);
-        setWeekdays(weekdays);
-        setOneTimeDate(oneTimeDate);
-        setTime(time);
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public boolean isPeriodic() {
+        return periodic;
     }
 
     public void setPeriodic(boolean periodic) {
         this.periodic = periodic;
     }
 
-    public void setPeriodType(String periodType) {
-        this.periodType = PeriodType.valueOf(periodType);
+    public PeriodType getPeriodType() {
+        return periodType;
+    }
+
+    public void setPeriodType(PeriodType periodType) {
+        this.periodType = periodType;
+    }
+
+    public int getNumber() {
+        return number;
     }
 
     public void setNumber(int number) {
         this.number = number;
     }
 
+    public HashMap<String, Boolean> getWeekdays() {
+        return weekdays;
+    }
+
     public void setWeekdays(HashMap<String, Boolean> weekdays) {
         this.weekdays = weekdays;
+    }
+
+    public Date getOneTimeDate() {
+        return oneTimeDate;
     }
 
     public void setOneTimeDate(Date oneTimeDate) {
         this.oneTimeDate = oneTimeDate;
     }
 
+    public String getTime() {
+        return time;
+    }
+
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public CronScheduleBuilder getCronSchedule() {
-        String[] splitTime = time.split(":");
-        String h = splitTime[0];
-        String min = splitTime[1];
-
-        return cronSchedule("0 " + min + " " + h + " " + getCronDays());
-    }
-
-    private String getCronDays() {
-        String date;
-        if (periodic) {
-            if (periodType == PeriodType.WEEK) {
-                String days = "";
-                // Get a set of the entries
-                Set<Map.Entry<String, Boolean>> set = weekdays.entrySet();
-                // Get an iterator
-                // Display elements
-                for (Map.Entry<String, Boolean> entry : set) {
-                    if (entry.getValue())
-                        days += entry.getKey().toUpperCase() + ",";
-                }
-                if (days.isEmpty())
-                    days = "*";
-                else
-                    days = days.substring(0, days.length() - 1);
-
-                date = "* * " + days + " *";
-            } else
-                date = "*/" + number + " * *";
-        } else
-            date = oneTimeDate.getDay() + " " + oneTimeDate.getMonth() + " * " + oneTimeDate.getYear();
-        return date;
     }
 
     public enum PeriodType {
@@ -105,5 +86,17 @@ public class ScheduledEvent implements Serializable {
         PeriodType(String type) {
             this.type = type;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ScheduledEvent{" +
+                "periodic=" + periodic +
+                ", periodType=" + periodType +
+                ", number=" + number +
+                ", weekdays=" + weekdays +
+                ", oneTimeDate=" + oneTimeDate +
+                ", time='" + time + '\'' +
+                '}';
     }
 }

@@ -1,7 +1,6 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +9,7 @@ import java.util.List;
 /**
  * Class representing a branch in a repo
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Branch implements Serializable {
 
 	private static final long serialVersionUID = -8481858598787329017L;
@@ -28,12 +28,8 @@ public class Branch implements Serializable {
 		this.setId(id);
 	}
 
-	public ListenType getListenTo() {
-		return this.listenTo == null ? ListenType.none : listenTo;
-	}
-
-	public void setListenTo(ListenType listenTo) {
-		this.listenTo = listenTo;
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
 	}
 
 	public String getDisplayId() {
@@ -52,11 +48,18 @@ public class Branch implements Serializable {
 		this.id = id;
 	}
 
+	public ListenType getListenTo() {
+		return listenTo;
+	}
+
+	public void setListenTo(ListenType listenTo) {
+		this.listenTo = listenTo;
+	}
+
 	public List<ScheduledEvent> getScheduledEvents() {
 		return scheduledEvents;
 	}
 
-	@JsonSetter
 	public void setScheduledEvents(List<ScheduledEvent> scheduledEvents) {
 		this.scheduledEvents = scheduledEvents;
 	}
@@ -69,4 +72,13 @@ public class Branch implements Serializable {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "Branch{" +
+				"displayId='" + displayId + '\'' +
+				", id='" + id + '\'' +
+				", listenTo=" + listenTo +
+				", scheduledEvents=" + scheduledEvents +
+				'}';
+	}
 }
