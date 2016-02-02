@@ -120,10 +120,10 @@ public class DocumentationService {
                 getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
                         .flatMap(d -> getDocumentationPiece(d, "all"))
         );
-        final String JSON = documentationPiece.get().getContent();
+        final String JSON = documentationPiece.get().getContent(); //remove .get()?
 
         JsonDocumentationParser parser = new JsonDocumentationParser(JSON);
-        Optional<String> composedJSON = parser.composeJSON(docPieceName);
+        Optional<String> composedJSON = parser.composeJSON(docPieceNameDec);
 
         return composedJSON.map(n -> Response.ok(n).build()).orElse(Response.status(404).build());
     }
