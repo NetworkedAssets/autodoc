@@ -1,8 +1,8 @@
 angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,$state,$filter,$timeout,$location,javadocEntities) {
     var root;
     var margin = {top: -5, right: -5, bottom: -5, left: -5};
-    var width = 1000 - margin.left - margin.right,
-        height = 700- margin.top - margin.bottom;
+    var width = $(window).width() - margin.left - margin.right,
+        height = $(window).height()-200- margin.top - margin.bottom;
 
 
     var force = d3.layout.force()
@@ -33,10 +33,9 @@ angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,
     javadocEntities
         .fetch()
         .then(function() {
-            root = {
-                "name": "(root)",
-                children: javadocEntities.getTreeUsingArrays()
-            };
+
+            root = javadocEntities.getTree();
+            console.log(root);
             update();
         });
 

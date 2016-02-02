@@ -17,6 +17,12 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
         }
     };
 
+    var convertToArrays = function(tree) {
+        var arr = [];
+        objectToArray(tree.children,arr);
+        return arr;
+    };
+
     var objectToArray = function(obj,arr) {
         angular.forEach(obj,function(value) {
             var innerArr = [];
@@ -157,23 +163,31 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
 
             };
 
-            joinPackages(packages);
+            this.setTree({
+                name: "root",
+                children: convertToArrays(packages)
+            });
 
-            //packages = packages.children;
-
-            this.setTree(packages);
+            this.joinPackages();
 
             this.setReady(true);
-
-            return tree.children;
+        },
+        joinPackages: function() {
+            var pack = tree;
+            for (var i = 0; i < 10; i++) {
+                if (pack.children && pack.children.length === 1) {
+                    pack = pack.children[0];
+                } else {
+                    break;
+                }
+            }
+            tree = pack;
         },
         getTree: function() {
             return tree;
         },
-        getTreeUsingArrays: function() {//TODO Refactor: should be private and used while parsing
-            var arr = [];
-            objectToArray(tree.children,arr);
-            return arr;
+        getTreeUsingArrays: function() {
+            return this.getTree();
         },
         push: function(entity) {
             map[entity.qualified] = entity;

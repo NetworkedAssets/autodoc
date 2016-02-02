@@ -36,14 +36,31 @@
     fill: #0f0;
 }*/
 
+#doc_structureGraph .node.entityTypePackage circle {
+    fill: #666;
+}
+
 #doc_structureGraph .node.entityTypeClass circle {
-    fill: #8eb021;
+    fill: #59afe1;
 }
 
 #doc_structureGraph .node.entityTypeInterface circle {
-    fill: #59afe1;
+    fill: #8eb021;
     font-family: serif;
 }
+
+#doc_structureGraph .node.entityTypeAnnotation circle {
+    fill: #f6c342;
+}
+
+#doc_structureGraph .node.entityTypeException circle {
+    fill: #d04437;
+}
+
+#doc_structureGraph .node.entityTypeEnum circle {
+    fill: #84bbc6;
+}
+
 
 #doc_structureGraph .node text.type {
     text-anchor: middle;
