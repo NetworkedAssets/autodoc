@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 /**
  * Created by mtulaza on 2016-02-02.
  */
-//TODO: test, test, test! still needs to be corrected and beautified
 public class JsonDocumentationParser {
     private ObjectMapper mapper = new ObjectMapper();
     private JsonNode rootNode;
@@ -46,43 +45,48 @@ public class JsonDocumentationParser {
 
     private Set<String> getEntitiesNamesFromRelations(String docPieceName, Set<Relation> foundRelationsSet) {
         Set<String> resultSet = new HashSet<>();
-        for (Relation relation : foundRelationsSet) {
+        foundRelationsSet.stream().forEach(relation -> {
             if(relation.getSource().equals(docPieceName)){
                 resultSet.add(relation.getTarget());
             }else{
                 resultSet.add(relation.getSource());
             }
-        }
+        });
         resultSet.add(docPieceName);
         return resultSet;
     }
 
-    //TODO: not too pretty, I know.. still in progress
     public Optional<String> composeJSON(String docPieceName) throws IOException {
         Set<Relation> relationsSet = findRelations(docPieceName);
         Set<Entity> entitiesSet = findEntities(getEntitiesNamesFromRelations(docPieceName, relationsSet));
 
-        JSONObject jsonObject = new JSONObject();
+        if(! (entitiesSet.isEmpty() || relationsSet.isEmpty()) ) { // prawo DeMorgana sie przydalo.. wow
+            Set<String> allPackages = findAllPackages(entitiesSet);
+            JSONObject responseJSONObject = new JSONObject();
 
-        Set<String> allPackages = findAllPackages(entitiesSet);
+            responseJSONObject.put("entities", buildEntitiesPackageValue(allPackages, entitiesSet));
+            responseJSONObject.put("relations", new JSONArray(relationsSet));
+            return Optional.of(responseJSONObject.toString());
+        }else{
+            return Optional.empty();
+        }
+    }
+
+    private JSONObject buildEntitiesPackageValue(Set<String> allPackages, Set<Entity> entitiesSet) {
         JSONObject packagesJson = new JSONObject();
-        for (String packageName : allPackages) {
-            // building object in the package START
+        allPackages.stream().forEach(packageName -> {
+            //building package defaults: qualified and type
             JSONObject packageValue = new JSONObject()
                     .put("qualified", packageName)
                     .put("type", "package");
-            for (Entity entity : entitiesSet) {
-                if (entity.getPackageName().equals(packageName)){
-                    packageValue.put(entity.getFqcn(), new JSONObject(entity.getJSONdata()));
-                }
-            }
-            // building object in the package END
+            // building objects in the package START
+            entitiesSet.stream().filter(entity -> entity.getPackageName().equals(packageName)).forEach(entity -> {
+                packageValue.put(entity.getFqcn(), new JSONObject(entity.getJSONdata()));
+            });
+            // building objects in the package END
             packagesJson.put(packageName, packageValue);
-        }
-        jsonObject.put("entities", packagesJson);
-        jsonObject.put("relations", new JSONArray(relationsSet));
-
-        return Optional.of(jsonObject.toString());
+        });
+        return packagesJson;
     }
 
     private Set<String> findAllPackages(Set<Entity> entitySet) {
@@ -110,7 +114,7 @@ public class JsonDocumentationParser {
     }
 
     /*
-    * Returns JSON string describing single fqcn class
+    * Returns Entity object describing single FQCN class
     * */
     private Optional<Entity> findEntityByFQCN(String fqcn, JsonNode packagesNode) {
         Optional<String> packageName = seekForPackage(fqcn, copyIteratorToSet(packagesNode.fieldNames()));
