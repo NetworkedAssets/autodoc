@@ -118,10 +118,10 @@ public class TransformerClient {
         }
     }
 
-    public HttpResponse<Source> setSource(Source source) throws SettingsException {
+    public HttpResponse<String> setSource(Source source) throws SettingsException {
         try {
             return Unirest.post(url + SOURCES).header("Content-Type", "application/json").body(source)
-                    .asObject(Source.class);
+                    .asString();
         } catch (UnirestException e) {
             throw new SettingsException(e);
         }

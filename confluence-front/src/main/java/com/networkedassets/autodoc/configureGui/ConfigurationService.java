@@ -36,10 +36,11 @@ public class ConfigurationService {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationService.class);
     private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private TransformerClient transformerClient;
+    private final TransformerClient transformerClient;
     private final ApplicationLinkService appLinkService;
     private final UserAccessor userAccesor;
     private final SettingsManager settingsManager;
+    private final String ERROR_FORMAT = "{\"error\":\"%s\"}";
 
     public ConfigurationService(SettingsManager settingsManager, UserAccessor userAccessor,
                                 final ApplicationLinkService appLinkService) {
@@ -62,9 +63,9 @@ public class ConfigurationService {
             repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
             branchId = URLDecoder.decode(branchId, "UTF-8");
             HttpResponse<String> response = transformerClient.modifyBranch(sourceId, projectKey, repoSlug, branchId, branch);
-            return Response.status(response.getStatus()).entity(response.getBody()).type(MediaType.APPLICATION_JSON).build();
+            return convertToResponse(response);
         } catch (SettingsException | UnsupportedEncodingException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
     }
 
@@ -74,20 +75,18 @@ public class ConfigurationService {
     public Response setCredentials(Credentials credentials) {
 
         try {
-
             if (userAccesor.authenticate(credentials.getConfluenceUsername(), credentials.getConfluencePassword())) {
                 Settings settings = new Settings();
                 settings.setConfluenceUsername(credentials.getConfluenceUsername());
                 settings.setConfluencePassword(credentials.getConfluencePassword());
                 settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
                 HttpResponse<String> response = transformerClient.setCredentials(settings);
-                return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).build();
+                return convertToResponse(response);
             } else
                 return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.APPLICATION_JSON)
-                        .entity(String.format("{\"error\":\"%s\"}", "Incorrect username or password")).build();
-
+                        .entity(String.format(ERROR_FORMAT, "Incorrect username or password")).build();
         } catch (SettingsException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
     }
 
@@ -97,10 +96,9 @@ public class ConfigurationService {
     public Response getCredentials() {
         try {
             HttpResponse<String> response = transformerClient.getCredentials();
-            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
-                    .build();
+            return convertToResponse(response);
         } catch (SettingsException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
     }
 
@@ -110,7 +108,7 @@ public class ConfigurationService {
     @Path("applinks/sources")
     public Response setSourcesFromAppLinks() {
 
-        List<String> sources = new ArrayList<String>();
+        List<String> sources = new ArrayList<>();
 
         appLinkService.getApplicationLinks(StashApplicationType.class).forEach(appLinks -> {
             Optional<SourceType> sourceType = getAppLinkSourceType(appLinks);
@@ -123,13 +121,12 @@ public class ConfigurationService {
                 source.setAppLinksId(appLinks.getId().toString());
 
                 try {
-                    HttpResponse<Source> response = transformerClient.setSource(source);
+                    HttpResponse<String> response = transformerClient.setSource(source);
                     sources.add(OBJECT_MAPPER.writeValueAsString(response.getBody()));
                 } catch (Exception e) {
-                    throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+                    throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
                 }
             }
-
         });
 
         Optional<List<String>> returnSources = Optional.of(sources);
@@ -138,9 +135,9 @@ public class ConfigurationService {
                 .map(g -> Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
                         .entity(String.format("{\"sources\": %s}", g)).build())
                 .orElseGet(() -> Response.status(Response.Status.NOT_FOUND).build());
-
     }
 
+    // FIXME: 03.02.2016 returns empty array
     @Path("branches/listened")
     @GET
     public Response getListenedBranches() {
@@ -161,53 +158,44 @@ public class ConfigurationService {
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
                     .entity(String.format("{\"sources\": %s}", OBJECT_MAPPER.writeValueAsString(sources))).build();
         } catch (SettingsException | IOException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
-
     }
 
     @Path("event/{sourceUrl}/{projectKey}/{repoSlug}/{branchId}")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public String forceGenerate(@PathParam("sourceUrl") String sourceUrl, @PathParam("projectKey") String projectKey,
-                                @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId) {
-
-        HttpResponse<String> response;
+    public Response forceGenerate(@PathParam("sourceUrl") String sourceUrl, @PathParam("projectKey") String projectKey,
+                                  @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId) {
         try {
-            response = transformerClient.forceGenerate(URLDecoder.decode(sourceUrl, "UTF-8"),
+            HttpResponse<String> response = transformerClient.forceGenerate(URLDecoder.decode(sourceUrl, "UTF-8"),
                     URLDecoder.decode(projectKey, "UTF-8"), URLDecoder.decode(repoSlug, "UTF-8"),
                     URLDecoder.decode(branchId, "UTF-8"));
+            return convertToResponse(response);
         } catch (SettingsException | UnsupportedEncodingException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
-        return response.getBody();
-
     }
 
     @Path("sources")
     @GET
     public Response getSources() {
-
         try {
             HttpResponse<String> response = transformerClient.getSources();
-            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).entity(response.getBody())
-                    .build();
+            return convertToResponse(response);
         } catch (SettingsException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
-
     }
 
     @Path("sources/extended")
     @GET
     public Response getExtendedSources() {
-
         try {
             HttpResponse<String> response = transformerClient.getExtendedSources();
-            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
-                    .entity(String.format("{\"sources\": %s}", response.getBody())).build();
+            return convertToResponse(response);
         } catch (SettingsException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
 
     }
@@ -218,9 +206,9 @@ public class ConfigurationService {
     public Response removeSource(@PathParam("id") int sourceId) {
         try {
             HttpResponse<String> response = transformerClient.removeSource(sourceId);
-            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON).build();
+            return convertToResponse(response);
         } catch (SettingsException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
     }
 
@@ -230,15 +218,12 @@ public class ConfigurationService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setSource(Source source) {
         try {
-            HttpResponse<Source> response = transformerClient.setSource(source);
-            return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
-                    .entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
-        } catch (SettingsException | JsonProcessingException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            HttpResponse<String> response = transformerClient.setSource(source);
+            return convertToResponse(response);
+        } catch (SettingsException e) {
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
-
     }
-
 
     @Path("sources/{id}")
     @PUT
@@ -250,9 +235,17 @@ public class ConfigurationService {
             return Response.status(response.getStatus()).type(MediaType.APPLICATION_JSON)
                     .entity(OBJECT_MAPPER.writeValueAsString(response.getBody())).build();
         } catch (SettingsException | JsonProcessingException e) {
-            throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
+    }
 
+
+    private Response convertToResponse(HttpResponse<String> httpResponse) {
+        Response.ResponseBuilder rBuilder = Response.status(httpResponse.getStatus())
+                .type(MediaType.APPLICATION_JSON)
+                .entity(httpResponse.getBody());
+        httpResponse.getHeaders().forEach((s, strings) -> rBuilder.header(s, strings));
+        return rBuilder.build();
     }
 
 
