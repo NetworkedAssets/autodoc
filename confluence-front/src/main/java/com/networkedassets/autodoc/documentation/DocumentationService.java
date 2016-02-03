@@ -123,9 +123,11 @@ public class DocumentationService {
         final String JSON = documentationPiece.get().getContent(); //remove .get()?
 
         JsonDocumentationParser parser = new JsonDocumentationParser(JSON);
-        Optional<String> composedJSON = parser.composeJSON(docPieceNameDec);
+        Optional<String> composedJSON = parser.filterAndComposeJSON(docPieceNameDec);
 
-        return composedJSON.map(n -> Response.ok(n).build()).orElse(Response.status(404).build());
+        return composedJSON
+                .map(n -> Response.ok(n).build())
+                .orElse(Response.status(404).build());
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
