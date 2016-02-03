@@ -57,19 +57,15 @@ public class ConfigurationService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
                                  @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) throws JsonProcessingException {
-        Branch modifiedBranch = null;
         try {
             projectKey = URLDecoder.decode(projectKey, "UTF-8");
             repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
             branchId = URLDecoder.decode(branchId, "UTF-8");
-            modifiedBranch = transformerClient.modifyBranch(sourceId, projectKey, repoSlug, branchId, branch);
-        } catch (SettingsException e) {
+            HttpResponse<String> response = transformerClient.modifyBranch(sourceId, projectKey, repoSlug, branchId, branch);
+            return Response.status(response.getStatus()).entity(response.getBody()).type(MediaType.APPLICATION_JSON).build();
+        } catch (SettingsException | UnsupportedEncodingException e) {
             throw new TransformerSettingsException(String.format("{\"error\":\"%s\"}", e.getMessage()));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
-
-        return Response.status(Response.Status.OK).entity(OBJECT_MAPPER.writeValueAsString(modifiedBranch)).type(MediaType.APPLICATION_JSON).build();
     }
 
     @POST

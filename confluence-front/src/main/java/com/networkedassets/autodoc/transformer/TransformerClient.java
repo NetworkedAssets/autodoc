@@ -76,18 +76,18 @@ public class TransformerClient {
         return response;
     }
 
-    public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, String branchId, Branch branch)
+    public HttpResponse<String> modifyBranch(int sourceId, String projectKey, String repoSlug, String branchId, Branch branch)
             throws SettingsException {
         try {
-            HttpResponse<Branch> branchHttpResponse = Unirest
+            HttpResponse<String> branchHttpResponse = Unirest
                     .put(url + "/sources/{sourceId}/{projectKey}/{repoSlug}/{branchId}")
                     .routeParam("sourceId", Integer.toString(sourceId))
                     .routeParam("projectKey", URLEncoder.encode(projectKey, "UTF-8"))
                     .routeParam("repoSlug", URLEncoder.encode(repoSlug, "UTF-8"))
                     .routeParam("branchId", URLEncoder.encode(branchId, "UTF-8"))
-                    .header("Content-Type", "application/json").body(branch).asObject(Branch.class);
+                    .header("Content-Type", "application/json").body(branch).asString();
             if (branchHttpResponse.getStatus() == 200) {
-                return branchHttpResponse.getBody();
+                return branchHttpResponse;
             } else {
                 throw new SettingsException(
                         "Could not modify branch: " + IOUtils.toString(branchHttpResponse.getRawBody()));
@@ -138,15 +138,15 @@ public class TransformerClient {
         return response;
     }
 
-    public Source getSource(String id) throws SettingsException {
-        HttpResponse<Source> response;
+    public HttpResponse<String> getSource(String id) throws SettingsException {
+        HttpResponse<String> response;
         try {
-            response = Unirest.get(url + SOURCES + "{id}").routeParam("id", id).asObject(Source.class);
+            response = Unirest.get(url + SOURCES + "{id}").routeParam("id", id).asString();
         } catch (UnirestException e) {
             throw new SettingsException(e);
         }
 
-        return response.getBody();
+        return response;
 
     }
 
