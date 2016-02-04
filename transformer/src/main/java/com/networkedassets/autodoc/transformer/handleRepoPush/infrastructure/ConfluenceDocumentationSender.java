@@ -28,13 +28,15 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
 		for (DocumentationPiece docPiece : documentation.getPieces()) {
 			try {
 				Escaper e = UrlEscapers.urlPathSegmentEscaper();
+				String formatted = String.format(confluenceEndpointFormat, url,
+						e.escape(e.escape(documentation.getProject())),
+						e.escape(e.escape(documentation.getRepo())),
+						e.escape(e.escape(documentation.getBranch())),
+						e.escape(e.escape(documentation.getType().toString())),
+						e.escape(e.escape(docPiece.getPieceName())));
+				log.info("Unirest POST TO URL: " + formatted);
 				log.info("Response:{}",
-						Unirest.post(String.format(confluenceEndpointFormat, url,
-								e.escape(e.escape(documentation.getProject())),
-								e.escape(e.escape(documentation.getRepo())),
-								e.escape(e.escape(documentation.getBranch())),
-								e.escape(e.escape(documentation.getType().toString())),
-								e.escape(e.escape(docPiece.getPieceName()))))
+						Unirest.post(formatted)
 						.basicAuth(settings.getConfluenceUsername(), settings.getConfluencePassword())
 						.queryString("pieceType", docPiece.getPieceType()).header("Content-Type", "application/json")
 						.body(docPiece.getContent()).asString().getBody());
