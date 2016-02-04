@@ -6,6 +6,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -29,8 +30,8 @@ public class TransformerClient {
 	private static final String EXTENDED_SOURCES = "/sources/extended/";
 	private static final String EVENT = "/event";
 	private static final String EVENT_JSON = "{\"sourceUrl\":\"%s\",\"projectKey\":\"%s\",\"repositorySlug\":\"%s\",\"branchId\":\"%s\"}";
-	private static final long UNIREST_CONNECTION_TIMEOUT = 90000;
-	private static final long UNIREST_SOCKET_TIMEOUT = 90000;
+	private static final int CONNECTION_TIMEOUT = 90000;
+	private static final int SOCKET_TIMEOUT = 90000;
 
 	public static final Logger log = LoggerFactory.getLogger(TransformerClient.class);
 
@@ -41,7 +42,6 @@ public class TransformerClient {
 		this.url = url;
 		Unirest.setObjectMapper(getConfiguredObjectMapper());
 		Unirest.setHttpClient(getConfiguredHttpClient());
-		Unirest.setTimeouts(UNIREST_CONNECTION_TIMEOUT, UNIREST_SOCKET_TIMEOUT);
 	}
 
 	public HttpResponse<String> getSettings() throws SettingsException {
@@ -153,7 +153,11 @@ public class TransformerClient {
 
 	private static CloseableHttpClient getConfiguredHttpClient() {
 		try {
-			return HttpClients.custom().setHostnameVerifier(new AllowAllHostnameVerifier())
+
+			return HttpClients.custom()
+					.setDefaultRequestConfig(RequestConfig.custom().setSocketTimeout(SOCKET_TIMEOUT)
+							.setConnectTimeout(CONNECTION_TIMEOUT).build())
+					.setHostnameVerifier(new AllowAllHostnameVerifier())
 					.setSslcontext(new SSLContextBuilder().loadTrustMaterial(null, (_1, _2) -> true).build()).build();
 		} catch (NoSuchAlgorithmException | KeyManagementException | KeyStoreException e) {
 			throw new RuntimeException(e);

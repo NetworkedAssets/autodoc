@@ -1,17 +1,34 @@
 package com.networkedassets.autodoc.configureGui;
 
-import com.atlassian.applinks.api.*;
-import com.atlassian.applinks.api.application.stash.StashApplicationType;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.core.util.ClassLoaderUtils;
-import com.atlassian.sal.api.net.Request.MethodType;
-import com.atlassian.sal.api.net.ResponseException;
-import com.atlassian.sal.api.net.ReturningResponseHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.mashape.unirest.http.HttpResponse;
 import com.networkedassets.autodoc.configureGui.data.Credentials;
 import com.networkedassets.autodoc.transformer.TransformerClient;
@@ -19,19 +36,6 @@ import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
-import com.networkedassets.autodoc.transformer.settings.Source.SourceType;
-import org.apache.commons.httpclient.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.*;
 
 @Path("/configuration/")
 public class ConfigurationService {
