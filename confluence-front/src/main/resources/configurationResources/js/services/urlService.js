@@ -4,7 +4,7 @@ angular.module("DoC_Config").factory("urlService",function() {
             if (!path) {
                 path = "";
             }
-            return this.getBaseUrl()+"/rest/autodoc/1.0/configuration"+path;
+            return this.getBaseUrl()+"/rest/doc/1.0/configuration"+path;
         },
         getRestUrlWithParams: function() {
             var params = arguments;

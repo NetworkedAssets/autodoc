@@ -1,294 +1,297 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <atlassian-plugin key="${project.groupId}.${project.artifactId}"
-	name="${project.name}" plugins-version="2">
-	<plugin-info>
-		<description>${project.description}</description>
-		<version>${project.version}</version>
-		<vendor name="${project.organization.name}" url="${project.organization.url}" />
-		<param name="plugin-icon">images/pluginIcon.png</param>
-		<param name="plugin-logo">images/pluginLogo.png</param>
-		<param name="configure.url">/admin/plugins/autodoc/config.action</param>
-	</plugin-info>
-	<!-- add our i18n resource -->
-	<resource type="i18n" name="i18n" location="autodoc_confluence" />
-	<!-- add our web resources -->
-	<web-resource key="autodoc_confluence-resources" name="autodoc_confluence Web Resources">
-		<!--<dependency>com.atlassian.auiplugin:ajs</dependency> -->
-		<!--<dependency>com.atlassian.auiplugin:aui-select</dependency> -->
-		<resource type="download" name="images/" location="/images" />
-		<resource type="download" name="configureScreen.js" location="/js/configureScreen.js" />
-		<resource type="download" name="autodoc-style.css" location="/css/autodoc-style.css" />
+                  name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+        <param name="configure.url">/admin/plugins/autodoc/config.action</param>
+    </plugin-info>
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="autodoc_confluence"/>
+    <!-- add our web resources -->
+    <web-resource key="autodoc_confluence-resources" name="autodoc_confluence Web Resources">
+        <!--<dependency>com.atlassian.auiplugin:ajs</dependency> -->
+        <!--<dependency>com.atlassian.auiplugin:aui-select</dependency> -->
+        <resource type="download" name="images/" location="/images"/>
+        <resource type="download" name="configureScreen.js" location="/js/configureScreen.js"/>
+        <resource type="download" name="autodoc-style.css" location="/css/autodoc-style.css"/>
 
-		<context>autodoc_confluence</context>
-	</web-resource>
+        <context>autodoc_confluence</context>
+    </web-resource>
 
-	<web-resource key="soy-templates">
-		<dependency>com.atlassian.soy.soy-template-plugin:soy-deps
-		</dependency>
+    <web-resource key="soy-templates">
+        <dependency>com.atlassian.soy.soy-template-plugin:soy-deps
+        </dependency>
 
-		<!-- Available to the server-side only -->
-		<resource type="soy" name="configureScreen" location="/templates/configureScreen.soy" />
-		<!-- Make available to the client-side in JS as well... -->
-		<transformation extension="soy">
-			<transformer key="soyTransformer" />
-		</transformation>
-		<resource type="download" name="configureScreen.soy.js"
-			location="/templates/configureScreen.soy" />
-		<context>autodoc_confluence</context>
-	</web-resource>
+        <!-- Available to the server-side only -->
+        <resource type="soy" name="configureScreen" location="/templates/configureScreen.soy"/>
+        <!-- Make available to the client-side in JS as well... -->
+        <transformation extension="soy">
+            <transformer key="soyTransformer"/>
+        </transformation>
+        <resource type="download" name="configureScreen.soy.js"
+                  location="/templates/configureScreen.soy"/>
+        <context>autodoc_confluence</context>
+    </web-resource>
 
-	<!-- imports -->
-	<component-import key="applicationProperties"
-		interface="com.atlassian.sal.api.ApplicationProperties" />
-	<component-import key="pluginSettingsFactory"
-		interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
-	<component-import key="applicationLinkService"
-		interface="com.atlassian.applinks.api.ApplicationLinkService" />
-	<component-import key="userAccessor"
-		interface="com.atlassian.confluence.user.UserAccessor" />
-	<component-import key="soyTemplateRenderer"
-		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
+    <!-- imports -->
+    <component-import key="applicationProperties"
+                      interface="com.atlassian.sal.api.ApplicationProperties"/>
+    <component-import key="pluginSettingsFactory"
+                      interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
+    <component-import key="applicationLinkService"
+                      interface="com.atlassian.applinks.api.ApplicationLinkService"/>
+    <component-import key="userAccessor"
+                      interface="com.atlassian.confluence.user.UserAccessor"/>
+    <component-import key="soyTemplateRenderer"
+                      interface="com.atlassian.soy.renderer.SoyTemplateRenderer"/>
 
-	<!-- Item in Space Tools -->
-	<web-item key="space-tools-autodoc-config" name="Autodoc in Space Admin"
-		section="system.space.tools/addons" weight="100">
-		<label key="Autodoc Configuration" />
-		<link linkId="space-admin-quick-link-manager-id">/plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
-		</link>
-		<conditions type="AND">
-			<condition
-				class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
-				<param name="permission">administer</param>
-			</condition>
-			<condition
-				class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition" />
-		</conditions>
-	</web-item>
-	<!-- Item in Space Admin (for Doc Theme) -->
-	<web-item key="space-tools-autodoc-config-2" name="Quick Link Manager in Space Admin"
-		section="system.space.admin/addons" weight="100">
-		<label key="Autodoc Configuration" />
-		<link linkId="space-admin-quick-link-manager-id">/plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
-		</link>
-		<conditions type="AND">
-			<condition
-				class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
-				<param name="permission">administer</param>
-			</condition>
-			<condition
-				class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition"
-				invert="true" />
-		</conditions>
-	</web-item>
+    <!-- Item in Space Tools -->
+    <web-item name="Space tools configuration action link" key="space-tools-configuration-action"
+              section="system.space.tools/addons" weight="100">
+        <label key="Autodoc Configuration"/>
+        <link linkId="space-admin-quick-link-manager-id">
+            /plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
+        </link>
+        <conditions type="AND">
+            <condition
+                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
+                <param name="permission">administer</param>
+            </condition>
+            <condition
+                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition"/>
+        </conditions>
+    </web-item>
 
-	<!--<servlet name="Autodoc Configure Screen" key="autodocConf" class="com.networkedassets.autodoc.configureGui.SpaceToolsConfigureServlet"> 
-		<url-pattern>/${project.artifactId}/configure-autodoc</url-pattern> </servlet> -->
+    <!-- Item in Space Admin (legacy) -->
+    <web-item name="Space admin configuration action link" key="space-admin-configuration-action"
+              section="system.space.admin/addons" weight="100">
+        <label key="Autodoc Configuration"/>
+        <link linkId="space-admin-quick-link-manager-id">
+            /plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
+        </link>
+        <conditions type="AND">
+            <condition
+                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
+                <param name="permission">administer</param>
+            </condition>
+            <condition
+                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition"
+                    invert="true"/>
+        </conditions>
+    </web-item>
 
-	<xwork name="Example Actions" key="example-actions">
-		<description>Examples of actions</description>
-		<package name="autodoc-config" extends="default"
-			namespace="/plugins/${project.artifactId}">
-			<default-interceptor-ref name="validatingStack" />
-			<action name="autodoc-config"
-				class="com.networkedassets.autodoc.configureGui.BranchSelectionAdminAction">
-				<result name="input" type="velocity">/configurationResources/spaceToolsConfiguration.vm
-				</result>
-				<result name="success" type="velocity">/configurationResources/spaceToolsConfiguration.vm
-				</result>
-			</action>
-		</package>
-	</xwork>
+    <xwork name="Space configuration action" key="space-configuration-action">
+        <description>For picking which branches are watched for given space</description>
+        <package name="autodoc-config" extends="default"
+                 namespace="/plugins/${project.artifactId}">
+            <default-interceptor-ref name="validatingStack"/>
+            <action name="autodoc-config"
+                    class="com.networkedassets.autodoc.configureGui.SpaceConfigurationAction">
+                <result name="input" type="velocity">/configurationResources/spaceToolsConfiguration.vm
+                </result>
+                <result name="success" type="velocity">/configurationResources/spaceToolsConfiguration.vm
+                </result>
+            </action>
+        </package>
+    </xwork>
 
-	<component-import key="ao" name="Active Objects service"
-		interface="com.atlassian.activeobjects.external.ActiveObjects">
-		<description>Component to access Active Objects functionality from the
-			plugin</description>
-	</component-import>
+    <xwork name="Admin configuration action" key="admin-configuration-action">
+        <package extends="default" name="autodoc-configure-action"
+                 namespace="/admin/plugins/autodoc">
+            <default-interceptor-ref name="defaultStack"/>
+            <action class="com.networkedassets.autodoc.configureGui.AdminConfigurationAction"
+                    method="load" name="config">
+                <result name="error" type="velocity">/configurationResources/adminConfiguration.vm
+                </result>
+                <result name="success" type="velocity">/configurationResources/adminConfiguration.vm
+                </result>
+            </action>
+            <action class="com.networkedassets.autodoc.configureGui.AdminConfigurationAction"
+                    method="save" name="save">
+                <interceptor-ref name="validatingStack"/>
+                <result name="error" type="velocity">/configurationResources/adminConfiguration.vm
+                </result>
+                <result name="success" type="redirect">/admin/plugins/autodoc/config.action
+                </result>
+            </action>
+        </package>
+    </xwork>
 
-	<ao key="ao-module">
-		<description>The AO module for this plugin.</description>
-		<entity>com.networkedassets.autodoc.documentation.Documentation
-		</entity>
-		<entity>com.networkedassets.autodoc.documentation.DocumentationPiece
-		</entity>
-	</ao>
+    <rest key="rest" path="/doc" version="1.0">
+        <description>Provides rest endpoints used by Autodoc</description>
+    </rest>
 
-	<rest key="autodocRest" path="/autodoc" version="1.0">
-		<description>Provides rest endpoints used by Autodoc</description>
-	</rest>
+    <component-import key="ao" name="Active Objects service"
+                      interface="com.atlassian.activeobjects.external.ActiveObjects">
+        <description>Component to access Active Objects functionality from the
+            plugin
+        </description>
+    </component-import>
 
-	<xhtml-macro name="autodocDashboard"
-		class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
-		key="autodocDashboard">
-		<description>Macro element containing the Autodoc Dashboard
-		</description>
-		<parameters>
-			<parameter name="source" type="string" required="false" />
-			<parameter name="project" type="string" required="false" />
-			<parameter name="sourceProject" type="enum" required="true">
-				<value name="Loading..." />
-			</parameter>
-			<parameter name="repo" type="enum" required="true">
-				<value name="Loading..." />
-				<option key="hidden" value="true" />
-			</parameter>
-			<parameter name="branch" type="enum" required="true">
-				<value name="Loading..." />
-			</parameter>
-			<parameter name="javadoc" type="boolean" />
-			<parameter name="classDiagram" type="boolean" />
-			<parameter name="structureGraph" type="boolean" />
-		</parameters>
-	</xhtml-macro>
-
-	<web-resource key="autodoc-macro-params" name="autodoc macro parameter autocompletion">
-		<resource type="download" name="autodocMacroParams.js"
-			location="js/autodocMacroParams.js" />
-		<dependency>confluence.editor.actions:editor-macro-browser
-		</dependency>
-		<context>macro-browser</context>
-	</web-resource>
-
-	<web-resource key="dashboard-resources" name="Dashboard web resources">
-		<resource type="download" name="dashboardResources/"
-			location="/dashboardResources" />
-		<resource type="download" name="js/lib/d3.min.js"
-			location="dashboardResources/js/lib/d3.min.js" />
-		<resource type="download" name="js/lib/dagre.min.js"
-			location="dashboardResources/js/lib/dagre.min.js" />
-		<resource type="download" name="js/lib/dagre-d3.min.js"
-			location="dashboardResources/js/lib/dagre-d3.min.js" />
-		<resource type="download" name="js/lib/angular.min.js"
-			location="dashboardResources/js/lib/angular.min.js" />
-		<resource type="download" name="js/lib/angular-sanitize.min.js"
-			location="dashboardResources/js/lib/angular-sanitize.min.js" />
-		<resource type="download" name="js/lib/angular-ui-router.min.js"
-			location="dashboardResources/js/lib/angular-ui-router.min.js" />
-
-		<resource type="download" name="js/app.js" location="dashboardResources/js/app.js" />
-		<resource type="download" name="js/config.js"
-			location="dashboardResources/js/config.js" />
-
-		<resource type="download" name="css/doc_javadoc.css"
-			location="dashboardResources/css/doc_javadoc.css" />
-		<resource type="download" name="css/doc_javadoc.entity.css"
-			location="dashboardResources/css/doc_javadoc.entity.css" />
-		<resource type="download" name="css/doc_classDiagram.css"
-			location="dashboardResources/css/doc_classDiagram.css" />
-		<resource type="download" name="css/doc_structureGraph.css"
-			location="dashboardResources/css/doc_structureGraph.css" />
-		<resource type="download" name="css/doc_main.css"
-			location="dashboardResources/css/doc_main.css" />
-
-		<resource type="download" name="js/ctrl/JavadocEntityCtrl.js"
-			location="dashboardResources/js/ctrl/JavadocEntityCtrl.js" />
-		<resource type="download" name="js/ctrl/JavadocCtrl.js"
-			location="dashboardResources/js/ctrl/JavadocCtrl.js" />
-		<resource type="download" name="js/ctrl/ClassDiagramCtrl.js"
-			location="dashboardResources/js/ctrl/ClassDiagramCtrl.js" />
-		<resource type="download" name="js/ctrl/StructureGraphCtrl.js"
-			location="dashboardResources/js/ctrl/StructureGraphCtrl.js" />
-		<resource type="download" name="js/ctrl/TopCtrl.js"
-			location="dashboardResources/js/ctrl/TopCtrl.js" />
-
-		<resource type="download" name="js/JavadocEntity.js"
-			location="dashboardResources/js/JavadocEntity.js" />
-
-		<resource type="download" name="js/dirs/docQname.js"
-			location="dashboardResources/js/dirs/docQname.js" />
-		<resource type="download" name="js/dirs/docGeneric.js"
-			location="dashboardResources/js/dirs/docGeneric.js" />
-		<resource type="download" name="js/dirs/auiSelect2.js"
-			location="dashboardResources/js/dirs/auiSelect2.js" />
-		<resource type="download" name="js/dirs/angular-tree-control.js"
-			location="dashboardResources/js/dirs/angular-tree-control.js" />
-		<resource type="download" name="js/dirs/javadocTags.js"
-			location="dashboardResources/js/dirs/javadocTags.js" />
-		<resource type="download" name="js/dirs/javadocInheritDocTags.js"
-				  location="dashboardResources/js/dirs/javadocInheritDocTags.js" />
-		<resource type="download" name="js/dirs/docClassDiagram.js"
-				  location="dashboardResources/js/dirs/docClassDiagram.js" />
-
-		<resource type="download" name="js/services/urlService.js"
-			location="dashboardResources/js/services/urlService.js" />
-		<resource type="download" name="js/services/macroParams.js"
-			location="dashboardResources/js/services/macroParams.js" />
-		<resource type="download" name="js/services/javadocEntities.js"
-			location="dashboardResources/js/services/javadocEntities.js" />
-
-		<resource type="download" name="js/filters/javadoc.menuItemSorter.js"
-			location="dashboardResources/js/filters/javadoc.menuItemSorter.js" />
-		<resource type="download" name="js/filters/capitalize.js"
-			location="dashboardResources/js/filters/capitalize.js" />
-
-		<resource type="download" name="js/fn/common.js"
-			location="dashboardResources/js/fn/common.js" />
-
-		<resource type="download" name="images/" location="dashboardResources/images/" />
-	</web-resource>
-
-	<web-resource key="configuration-resources" name="Configuration web resources">
-		<resource type="download" name="configurationResources/"
-			location="/configurationResources" />
+    <ao key="ao-module">
+        <description>The AO module for this plugin.</description>
+        <entity>com.networkedassets.autodoc.documentation.Documentation
+        </entity>
+        <entity>com.networkedassets.autodoc.documentation.DocumentationPiece
+        </entity>
+    </ao>
 
 
-		<resource type="download" name="css/doc_config.css"
-			location="configurationResources/css/doc_config.css" />
+    <xhtml-macro name="autodocDashboard"
+                 class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
+                 key="autodocDashboard">
+        <description>Macro element containing the Autodoc Dashboard
+        </description>
+        <parameters>
+            <parameter name="source" type="string" required="false"/>
+            <parameter name="project" type="string" required="false"/>
+            <parameter name="sourceProject" type="enum" required="true">
+                <value name="Loading..."/>
+            </parameter>
+            <parameter name="repo" type="enum" required="true">
+                <value name="Loading..."/>
+                <option key="hidden" value="true"/>
+            </parameter>
+            <parameter name="branch" type="enum" required="true">
+                <value name="Loading..."/>
+            </parameter>
+            <parameter name="javadoc" type="boolean"/>
+            <parameter name="classDiagram" type="boolean"/>
+            <parameter name="structureGraph" type="boolean"/>
+        </parameters>
+    </xhtml-macro>
 
-		<resource type="download" name="js/lib/angular.min.js"
-			location="configurationResources/js/lib/angular.min.js" />
-		<resource type="download" name="js/lib/angular-resource.min.js"
-			location="configurationResources/js/lib/angular-resource.min.js" />
+    <web-resource key="autodoc-macro-params" name="autodoc macro parameter autocompletion">
+        <resource type="download" name="autodocMacroParams.js"
+                  location="js/autodocMacroParams.js"/>
+        <dependency>confluence.editor.actions:editor-macro-browser
+        </dependency>
+        <context>macro-browser</context>
+    </web-resource>
 
-		<resource type="download" name="js/app.js"
-			location="configurationResources/js/app.js" />
+    <web-resource key="dashboard-resources" name="Dashboard web resources">
+        <resource type="download" name="dashboardResources/"
+                  location="/dashboardResources"/>
+        <resource type="download" name="js/lib/d3.min.js"
+                  location="dashboardResources/js/lib/d3.min.js"/>
+        <resource type="download" name="js/lib/dagre.min.js"
+                  location="dashboardResources/js/lib/dagre.min.js"/>
+        <resource type="download" name="js/lib/dagre-d3.min.js"
+                  location="dashboardResources/js/lib/dagre-d3.min.js"/>
+        <resource type="download" name="js/lib/angular.min.js"
+                  location="dashboardResources/js/lib/angular.min.js"/>
+        <resource type="download" name="js/lib/angular-sanitize.min.js"
+                  location="dashboardResources/js/lib/angular-sanitize.min.js"/>
+        <resource type="download" name="js/lib/angular-ui-router.min.js"
+                  location="dashboardResources/js/lib/angular-ui-router.min.js"/>
 
-		<resource type="download" name="js/services/settingsService.js"
-			location="configurationResources/js/services/settingsService.js" />
-		<resource type="download" name="js/services/urlService.js"
-			location="configurationResources/js/services/urlService.js" />
+        <resource type="download" name="js/app.js" location="dashboardResources/js/app.js"/>
+        <resource type="download" name="js/config.js"
+                  location="dashboardResources/js/config.js"/>
 
-		<resource type="download" name="js/ctrl/ConfluenceCredentialsCtrl.js"
-			location="configurationResources/js/ctrl/ConfluenceCredentialsCtrl.js" />
-		<resource type="download" name="js/ctrl/MenuCtrl.js"
-			location="configurationResources/js/ctrl/MenuCtrl.js" />
-		<resource type="download" name="js/ctrl/SchedulesCtrl.js"
-			location="configurationResources/js/ctrl/SchedulesCtrl.js" />
-		<resource type="download" name="js/ctrl/SourceCtrl.js"
-			location="configurationResources/js/ctrl/SourceCtrl.js" />
+        <resource type="download" name="css/doc_javadoc.css"
+                  location="dashboardResources/css/doc_javadoc.css"/>
+        <resource type="download" name="css/doc_javadoc.entity.css"
+                  location="dashboardResources/css/doc_javadoc.entity.css"/>
+        <resource type="download" name="css/doc_classDiagram.css"
+                  location="dashboardResources/css/doc_classDiagram.css"/>
+        <resource type="download" name="css/doc_structureGraph.css"
+                  location="dashboardResources/css/doc_structureGraph.css"/>
+        <resource type="download" name="css/doc_main.css"
+                  location="dashboardResources/css/doc_main.css"/>
 
-		<resource type="download" name="js/dirs/auiSelect2.js"
-			location="configurationResources/js/dirs/auiSelect2.js" />
-		<resource type="download" name="js/dirs/docAuiButtonGroup.js"
-			location="configurationResources/js/dirs/docAuiButtonGroup.js" />
-		<resource type="download" name="js/dirs/docAuiDatePicker.js"
-			location="configurationResources/js/dirs/docAuiDatePicker.js" />
+        <resource type="download" name="js/ctrl/JavadocEntityCtrl.js"
+                  location="dashboardResources/js/ctrl/JavadocEntityCtrl.js"/>
+        <resource type="download" name="js/ctrl/JavadocCtrl.js"
+                  location="dashboardResources/js/ctrl/JavadocCtrl.js"/>
+        <resource type="download" name="js/ctrl/ClassDiagramCtrl.js"
+                  location="dashboardResources/js/ctrl/ClassDiagramCtrl.js"/>
+        <resource type="download" name="js/ctrl/StructureGraphCtrl.js"
+                  location="dashboardResources/js/ctrl/StructureGraphCtrl.js"/>
+        <resource type="download" name="js/ctrl/TopCtrl.js"
+                  location="dashboardResources/js/ctrl/TopCtrl.js"/>
 
-		<resource type="download" name="data/settings3.json"
-			location="configurationResources/data/settings3.json" />
-	</web-resource>
+        <resource type="download" name="js/JavadocEntity.js"
+                  location="dashboardResources/js/JavadocEntity.js"/>
 
-	<xwork key="autodoc-configure-action" name="autodoc configure actions">
-		<package extends="default" name="autodoc-configure-action"
-			namespace="/admin/plugins/autodoc">
-			<default-interceptor-ref name="defaultStack" />
-			<action class="com.networkedassets.autodoc.configureGui.ConfigureAction"
-				method="load" name="config">
-				<result name="error" type="velocity">/configurationResources/adminConfiguration.vm
-				</result>
-				<result name="success" type="velocity">/configurationResources/adminConfiguration.vm
-				</result>
-			</action>
-			<action class="com.networkedassets.autodoc.configureGui.ConfigureAction"
-				method="save" name="save">
-				<interceptor-ref name="validatingStack" />
-				<result name="error" type="velocity">/configurationResources/adminConfiguration.vm
-				</result>
-				<result name="success" type="redirect">/admin/plugins/autodoc/config.action
-				</result>
-			</action>
-		</package>
-	</xwork>
+        <resource type="download" name="js/dirs/docQname.js"
+                  location="dashboardResources/js/dirs/docQname.js"/>
+        <resource type="download" name="js/dirs/docGeneric.js"
+                  location="dashboardResources/js/dirs/docGeneric.js"/>
+        <resource type="download" name="js/dirs/auiSelect2.js"
+                  location="dashboardResources/js/dirs/auiSelect2.js"/>
+        <resource type="download" name="js/dirs/angular-tree-control.js"
+                  location="dashboardResources/js/dirs/angular-tree-control.js"/>
+        <resource type="download" name="js/dirs/javadocTags.js"
+                  location="dashboardResources/js/dirs/javadocTags.js"/>
+        <resource type="download" name="js/dirs/javadocInheritDocTags.js"
+                  location="dashboardResources/js/dirs/javadocInheritDocTags.js"/>
+        <resource type="download" name="js/dirs/docClassDiagram.js"
+                  location="dashboardResources/js/dirs/docClassDiagram.js"/>
+
+        <resource type="download" name="js/services/urlService.js"
+                  location="dashboardResources/js/services/urlService.js"/>
+        <resource type="download" name="js/services/macroParams.js"
+                  location="dashboardResources/js/services/macroParams.js"/>
+        <resource type="download" name="js/services/javadocEntities.js"
+                  location="dashboardResources/js/services/javadocEntities.js"/>
+
+        <resource type="download" name="js/filters/javadoc.menuItemSorter.js"
+                  location="dashboardResources/js/filters/javadoc.menuItemSorter.js"/>
+        <resource type="download" name="js/filters/capitalize.js"
+                  location="dashboardResources/js/filters/capitalize.js"/>
+
+        <resource type="download" name="js/fn/common.js"
+                  location="dashboardResources/js/fn/common.js"/>
+
+        <resource type="download" name="images/" location="dashboardResources/images/"/>
+    </web-resource>
+
+    <web-resource key="configuration-resources" name="Configuration web resources">
+        <resource type="download" name="configurationResources/"
+                  location="/configurationResources"/>
+
+
+        <resource type="download" name="css/doc_config.css"
+                  location="configurationResources/css/doc_config.css"/>
+
+        <resource type="download" name="js/lib/angular.min.js"
+                  location="configurationResources/js/lib/angular.min.js"/>
+        <resource type="download" name="js/lib/angular-resource.min.js"
+                  location="configurationResources/js/lib/angular-resource.min.js"/>
+
+        <resource type="download" name="js/app.js"
+                  location="configurationResources/js/app.js"/>
+
+        <resource type="download" name="js/services/settingsService.js"
+                  location="configurationResources/js/services/settingsService.js"/>
+        <resource type="download" name="js/services/urlService.js"
+                  location="configurationResources/js/services/urlService.js"/>
+
+        <resource type="download" name="js/ctrl/ConfluenceCredentialsCtrl.js"
+                  location="configurationResources/js/ctrl/ConfluenceCredentialsCtrl.js"/>
+        <resource type="download" name="js/ctrl/MenuCtrl.js"
+                  location="configurationResources/js/ctrl/MenuCtrl.js"/>
+        <resource type="download" name="js/ctrl/SchedulesCtrl.js"
+                  location="configurationResources/js/ctrl/SchedulesCtrl.js"/>
+        <resource type="download" name="js/ctrl/SourceCtrl.js"
+                  location="configurationResources/js/ctrl/SourceCtrl.js"/>
+
+        <resource type="download" name="js/dirs/auiSelect2.js"
+                  location="configurationResources/js/dirs/auiSelect2.js"/>
+        <resource type="download" name="js/dirs/docAuiButtonGroup.js"
+                  location="configurationResources/js/dirs/docAuiButtonGroup.js"/>
+        <resource type="download" name="js/dirs/docAuiDatePicker.js"
+                  location="configurationResources/js/dirs/docAuiDatePicker.js"/>
+
+        <resource type="download" name="data/settings3.json"
+                  location="configurationResources/data/settings3.json"/>
+    </web-resource>
+
 
 </atlassian-plugin>

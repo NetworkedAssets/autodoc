@@ -5,7 +5,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 
-public class BranchSelectionAdminAction extends SpaceAdminAction {
+public class SpaceConfigurationAction extends SpaceAdminAction {
 
     public String getInnerHtml() throws IOException {
         String html;

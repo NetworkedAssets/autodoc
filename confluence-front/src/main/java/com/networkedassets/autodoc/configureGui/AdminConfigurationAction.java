@@ -5,7 +5,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 
-public class ConfigureAction extends ConfluenceActionSupport {
+public class AdminConfigurationAction extends ConfluenceActionSupport {
 
 	public String load() {
         return ConfluenceActionSupport.SUCCESS;
