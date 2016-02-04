@@ -119,7 +119,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
     }
 
 
-   
     @Override
     public boolean setCredentials(Settings settings) {
         this.settings.setConfluencePassword(settings.getConfluencePassword());
@@ -140,13 +139,13 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public Source addSource(Source source) {
-        if(Strings.isNullOrEmpty(source.getUsername()) || Strings.isNullOrEmpty(source.getPassword())){
+        if (Strings.isNullOrEmpty(source.getUsername()) || Strings.isNullOrEmpty(source.getPassword())) {
             source.setUsername(getSettings().getConfluenceUsername());
             source.setPassword(getSettings().getConfluencePassword());
         }
         SettingsUtils.verifySource(source, settings.getSources());
+        source.setId(Source.totalId);
         if (source.isCorrect()) {
-            source.setId(Source.totalId);
             Source.totalId++;
             getSettings().getSources().add(source);
         }
@@ -228,9 +227,9 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
                 e.printStackTrace();
             }
         });
-        try{
+        try {
             scheduler.start();
-        } catch (SchedulerException e){
+        } catch (SchedulerException e) {
             e.printStackTrace();
         }
     }
