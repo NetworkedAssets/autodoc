@@ -43,6 +43,7 @@ public class SourceManager {
 	}
 
 	//TODO:Refactor
+	//FIXME:It doesn't work at all. Just imagine what happens if currentSources is empty. Nothing happens!
 	public List<String> updateSourceFromAppLinks(List<Source> currentSources) {
 
 		Map<String, Source> appLinksSources = Maps.uniqueIndex(getSourcesFromAppLinks(), Source::getAppLinksId);
