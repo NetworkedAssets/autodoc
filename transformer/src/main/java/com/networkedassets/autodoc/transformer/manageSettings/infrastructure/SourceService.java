@@ -116,7 +116,7 @@ public class SourceService {
     @POST
     @JsonView(Views.AddSourcePasswordView.class)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createSource(Source source) throws JsonProcessingException {
+    public Response addSource(Source source) throws JsonProcessingException {
 
         Preconditions.checkNotNull(source);
         log.info("POST request for source handled");
