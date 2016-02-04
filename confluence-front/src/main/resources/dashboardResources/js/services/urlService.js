@@ -23,7 +23,7 @@ angular.module("DoC").factory("urlService",function(macroParams) {
             angular.forEach(params,function(param) {
                 paramString += urlService.encodeComponent(param)+"/";
             });
-            return this.getBaseUrl()+"/rest/autodoc/1.0/documentation"+getRestPathParamsString()+paramString;
+            return this.getBaseUrl()+"/rest/doc/1.0/documentation"+getRestPathParamsString()+paramString;
         },
         getResourcesUrl: function(path) {
             if (!path) {
