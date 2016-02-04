@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -27,6 +26,7 @@ public class DocumentationService {
     @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(DocumentationService.class);
 //    private DocumentationActivityPoster documentationActivityPoster;
+    private final String ERROR_JSON = "{\"success\": false, \"message\": \"Could not find requested documentation!\"}";
 
     public DocumentationService(ActiveObjects ao, ApplicationProperties applicationProperties
                                 /*,ActivityService activityService*/) {
@@ -56,12 +56,10 @@ public class DocumentationService {
                                                 + "\"name\": \"" + dp.getPieceName() + "\"}")
                                         .collect(Collectors.toList()))
                                 + "]}"))
-                        .orElse(Response.status(404).entity(
-                                "{\"success\": false, \"message\": \"Could not find requested documentation!\"}"
-                        ))).build();
+                        .orElse(Response.status(404).entity(ERROR_JSON))).build();
     }
 
-    @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}{attribute:(/[^/]+?)?}")
+    /*@Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}{attribute:(/[^/]+?)?}")
     @GET
     public Response getDocumentationPiece(
             @PathParam("project") String project,
@@ -83,59 +81,69 @@ public class DocumentationService {
         );
         final String finalAttributeDec = (!attributeDec.equals("")) ? attributeDec.substring(1, attributeDec.length()) : attributeDec; //attribute starts with reduntant /
         return buildDocumentationPieceResponse(documentationPiece, finalAttributeDec);
-    }
+    }*/
 
-    private Response getDocumentationPiece(String project, String repo, String branch, String docType, String docPieceName) throws UnsupportedEncodingException {
-        return getDocumentationPiece(project, repo, branch, docType, docPieceName, "");
-    }
-
-    private Response buildDocumentationPieceResponse(Optional<DocumentationPiece> documentationPiece, String attribute) {
-        Optional<String> jsonOptional = documentationPiece.map(d -> makeDocPieceJson(d, attribute));
-        return jsonOptional
-                .map(n -> Response.ok(n).build())
-                .orElse(Response.status(404).entity("{\"success\": false, \"message\": \"Could not find requested documentation!\"}").build());
-    }
-
-    private String makeDocPieceJson(DocumentationPiece dp, String attribute) {
-        if(attribute.isEmpty()){
-            return dp.getContent();
-        }else{
-            JSONObject jsonObject = new JSONObject(dp.getContent());
-            try {
-                return String.format("{\"%s\": \"%s\"}", attribute, jsonObject.getString(attribute));
-            } catch (JSONException e) {
-                return null;
-            }
-        }
-    }
-
-    @Path("{project}/{repo}/{branch}/UML/{docPieceName}")
+    @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
     @GET
-    @Produces("application/json")
-    public Response test(
+    public Response getDocumentationPiece(
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
             @PathParam("doctype") String docType,
-            @PathParam("docPieceName") String docPieceName) throws IOException {
+            @PathParam("docPieceName") String docPieceName) throws UnsupportedEncodingException {
         String projectDec = URLDecoder.decode(project, "UTF-8");
         String repoDec = URLDecoder.decode(repo, "UTF-8");
         String branchDec = URLDecoder.decode(branch, "UTF-8");
-        String doctypeDec = "UML";
+        String doctypeDec = URLDecoder.decode(docType, "UTF-8");
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
 
-        Optional<DocumentationPiece> documentationPiece = ao.executeInTransaction(() ->
-                getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
-                        .flatMap(d -> getDocumentationPiece(d, "all"))
-        );
-        final String JSON = documentationPiece.get().getContent(); //remove .get()?
+        Optional<DocumentationPiece> documentationPiece = findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
 
-        UmlJsonDocumentationParser parser = new UmlJsonDocumentationParser(JSON);
-        Optional<String> composedJSON = parser.filterAndComposeJSON(docPieceNameDec);
-
-        return composedJSON
+        return documentationPiece.map(this::makeDocPieceJson)
                 .map(n -> Response.ok(n).build())
-                .orElse(Response.status(404).entity("{\"success\": false, \"message\": \"Could not find requested documentation!\"}").build());
+                .orElse(Response.status(404).entity(ERROR_JSON).build());
+    }
+
+    @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}/{attribute}")
+    @GET
+    public Response getDocumentationPieceByAttribute(
+            @PathParam("project") String project,
+            @PathParam("repo") String repo,
+            @PathParam("branch") String branch,
+            @PathParam("doctype") String docType,
+            @PathParam("docPieceName") String docPieceName,
+            @PathParam("attribute") String attribute) throws UnsupportedEncodingException {
+        String projectDec = URLDecoder.decode(project, "UTF-8");
+        String repoDec = URLDecoder.decode(repo, "UTF-8");
+        String branchDec = URLDecoder.decode(branch, "UTF-8");
+        String doctypeDec = URLDecoder.decode(docType, "UTF-8");
+        String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
+        String attributeDec = URLDecoder.decode(attribute, "UTF-8");
+
+        Optional<DocumentationPiece> documentationPiece = findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
+
+        return documentationPiece.map(docPiece -> makeDocPieceJson(docPiece, attributeDec))
+                .map(n -> Response.ok(n).build())
+                .orElse(Response.status(404).entity(ERROR_JSON).build());
+    }
+
+    private String makeDocPieceJson(DocumentationPiece dp) {
+        return dp.getContent();
+    }
+
+    private String makeDocPieceJson(DocumentationPiece dp, String attribute) {
+        JSONObject jsonObject = new JSONObject(dp.getContent());
+        try {
+            return String.format("{\"%s\": \"%s\"}", attribute, jsonObject.getString(attribute));
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    private Optional<DocumentationPiece> findDocumentationPiece(String projectDec, String repoDec, String branchDec, String doctypeDec, String docPieceNameDec) {
+        return ao.executeInTransaction(() ->
+                getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
+                        .flatMap(d -> getDocumentationPiece(d, docPieceNameDec)));
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
@@ -210,5 +218,4 @@ public class DocumentationService {
             return piece;
         });
     }
-
 }

@@ -1,10 +1,10 @@
-package com.networkedassets.autodoc.documentation;
+package com.networkedassets.autodoc.transformer.util.uml;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networkedassets.autodoc.documentation.data.Entity;
-import com.networkedassets.autodoc.documentation.data.Relation;
+import com.networkedassets.autodoc.transformer.util.uml.data.Entity;
+import com.networkedassets.autodoc.transformer.util.uml.data.Relation;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

@@ -2,7 +2,6 @@ package com.networkedassets.autodoc.transformer.util.uml;
 
 import com.eclipsesource.json.*;
 import com.github.markusbernhardt.xmldoclet.xjc.Root;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
@@ -11,6 +10,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.core.Documentation
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.JavadocGenerator;
 import com.networkedassets.autodoc.transformer.util.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.util.javadoc.JavadocException;
+import com.networkedassets.util.functional.Throwing;
 import org.json.JSONException;
 
 import javax.xml.bind.JAXBException;
@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -50,19 +51,33 @@ public class UmlClassDiagramConverter {
                 output.add(item.asObject());
             }
         });
-
         javadocObj.add("relations", output);
 
-        Documentation documentation = new Documentation(ImmutableList.of(
-                new DocumentationPiece("all", "all", javadocObj.toString(WriterConfig.PRETTY_PRINT))));
+        List<DocumentationPiece> docPiecesList = buildDocumentationPiecesList(javadocObj, target);
+
+        Documentation documentation = new Documentation(docPiecesList);
         documentation.setType(DocumentationType.UML);
         return documentation;
     }
 
+    private List<DocumentationPiece> buildDocumentationPiecesList(JsonObject javadocObj, List<String> docPieceNamesList) throws IOException {
+        List<DocumentationPiece> docPiecesList = Lists.newLinkedList();
+
+        String allJSON = javadocObj.toString(WriterConfig.PRETTY_PRINT);
+        docPiecesList.add(new DocumentationPiece("all", "all", allJSON));
+
+        UmlJsonDocumentationParser parser = new UmlJsonDocumentationParser(allJSON);
+        docPieceNamesList.parallelStream().forEach(Throwing.rethrowAsRuntimeException(docPieceName -> {
+            Optional<String> docPieceNameJSON = parser.filterAndComposeJSON(docPieceName);
+            if (docPieceNameJSON.isPresent()) {
+                docPiecesList.add(new DocumentationPiece(docPieceName, docPieceName, docPieceNameJSON.get()));
+            }
+        }));
+        return docPiecesList;
+    }
+
     private JsonObject plantUmlDependencyToJson() throws IOException {
-
         String plantUmlDependency = new String(Files.readAllBytes(this.plantUmlPath), "UTF-8");
-
         return Json
                 .parse(String.format("{\"relations\":[%s]}", Pattern.compile(newline).splitAsStream(plantUmlDependency)
                         .filter(s -> s.contains(">")).map(this::transform).sorted().collect(Collectors.joining(","))))
@@ -70,7 +85,6 @@ public class UmlClassDiagramConverter {
     }
 
     private String transform(String s) {
-
         String[] parts = s.split(" ");
         return String.format("{\"source\":\"%s\",\"type\":\"%s\",\"target\":\"%s\"}", parts[0],
                 UmlRelationship.fromDescription(parts[1]), parts[2]);
