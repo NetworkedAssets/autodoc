@@ -127,7 +127,7 @@ public class DocumentationService {
 
         return composedJSON
                 .map(n -> Response.ok(n).build())
-                .orElse(Response.status(404).build());
+                .orElse(Response.status(404).entity("{\"success\": false, \"message\": \"Could not find requested documentation!\"}").build());
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
