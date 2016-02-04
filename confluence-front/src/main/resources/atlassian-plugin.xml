@@ -38,17 +38,18 @@
         <context>autodoc_confluence</context>
     </web-resource>
 
-    <!-- imports -->
-    <component-import key="applicationProperties"
-                      interface="com.atlassian.sal.api.ApplicationProperties"/>
-    <component-import key="pluginSettingsFactory"
-                      interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
-    <component-import key="applicationLinkService"
-                      interface="com.atlassian.applinks.api.ApplicationLinkService"/>
-    <component-import key="userAccessor"
-                      interface="com.atlassian.confluence.user.UserAccessor"/>
-    <component-import key="soyTemplateRenderer"
-                      interface="com.atlassian.soy.renderer.SoyTemplateRenderer"/>
+	<!-- imports -->
+	<component-import key="applicationProperties"
+		interface="com.atlassian.sal.api.ApplicationProperties" />
+	<component-import key="pluginSettingsFactory"
+		interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
+	<component-import key="applicationLinkService"
+		interface="com.atlassian.applinks.api.ApplicationLinkService" />
+	<component-import key="userAccessor"
+		interface="com.atlassian.confluence.user.UserAccessor" />
+	<component-import key="soyTemplateRenderer"
+		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
+	<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />
 
     <!-- Item in Space Tools -->
     <web-item name="Space tools configuration action link" key="space-tools-configuration-action"
