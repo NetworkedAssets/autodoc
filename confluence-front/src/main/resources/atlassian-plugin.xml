@@ -220,7 +220,7 @@
                  namespace="/plugins/${project.artifactId}">
             <default-interceptor-ref name="validatingStack"/>
             <action name="autodoc-config"
-                    class="com.networkedassets.autodoc.configureGui.SpaceConfigurationAction">
+                    class="com.networkedassets.autodoc.configuration.SpaceConfigurationAction">
                 <result name="input" type="velocity">/configurationResources/spaceToolsConfiguration.vm
                 </result>
                 <result name="success" type="velocity">/configurationResources/spaceToolsConfiguration.vm
@@ -232,14 +232,14 @@
         <package extends="default" name="autodoc-configure-action"
                  namespace="/admin/plugins/autodoc">
             <default-interceptor-ref name="defaultStack"/>
-            <action class="com.networkedassets.autodoc.configureGui.AdminConfigurationAction"
+            <action class="com.networkedassets.autodoc.configuration.AdminConfigurationAction"
                     method="load" name="config">
                 <result name="error" type="velocity">/configurationResources/adminConfiguration.vm
                 </result>
                 <result name="success" type="velocity">/configurationResources/adminConfiguration.vm
                 </result>
             </action>
-            <action class="com.networkedassets.autodoc.configureGui.AdminConfigurationAction"
+            <action class="com.networkedassets.autodoc.configuration.AdminConfigurationAction"
                     method="save" name="save">
                 <interceptor-ref name="validatingStack"/>
                 <result name="error" type="velocity">/configurationResources/adminConfiguration.vm

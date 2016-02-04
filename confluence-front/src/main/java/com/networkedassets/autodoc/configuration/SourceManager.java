@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.configureGui;
+package com.networkedassets.autodoc.configuration;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.configureGui.data;
+package com.networkedassets.autodoc.configuration.data;
 
 public class Credentials {
 

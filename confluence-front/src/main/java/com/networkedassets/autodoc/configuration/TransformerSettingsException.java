@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.configureGui;
+package com.networkedassets.autodoc.configuration;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;

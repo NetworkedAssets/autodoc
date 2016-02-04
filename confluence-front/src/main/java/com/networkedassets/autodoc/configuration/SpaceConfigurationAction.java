@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.configureGui;
+package com.networkedassets.autodoc.configuration;
 
 import com.atlassian.confluence.spaces.actions.SpaceAdminAction;
 import org.apache.commons.io.IOUtils;
