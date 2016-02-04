@@ -18,52 +18,61 @@ import java.util.stream.Collectors;
 /**
  * Created by mtulaza on 2016-02-02.
  */
-public class JsonDocumentationParser {
+public class UmlJsonDocumentationParser {
     private ObjectMapper mapper = new ObjectMapper();
     private JsonNode rootNode;
 
-    public JsonDocumentationParser(String JSON) throws IOException {
+    public UmlJsonDocumentationParser(String JSON) throws IOException {
         this.rootNode = mapper.readTree(JSON);
     }
 
-    private Set<Relation> findRelations(String fqcn) throws IOException {
+    private Set<Relation> findAllRelations() throws IOException {
         JsonNode relationsNode = rootNode.get("relations");
-        Set<Relation> allRelationsSet = mapper.readValue(relationsNode.toString(), new TypeReference<Set<Relation>>(){});
+        return mapper.readValue(relationsNode.toString(), new TypeReference<Set<Relation>>(){});
+    }
+
+    private Set<Relation> findRelationsBy(String docPieceName) throws IOException {
+        Set<Relation> allRelationsSet = findAllRelations();
         return allRelationsSet.stream()
-                .filter(n -> n.getSource().equals(fqcn) || n.getTarget().equals(fqcn))
+                .filter(n -> n.getSource().equals(docPieceName) || n.getTarget().equals(docPieceName))
                 .collect(Collectors.toSet());
     }
 
-    private Set<Entity> findEntities(Set<String> entitiesDocPieceNames) {
-        JsonNode entitiesNode = rootNode.get("entities");
-        return entitiesDocPieceNames.stream()
-                .map(s -> findEntityByFQCN(s, entitiesNode))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+    private Set<Relation> findRelationsBetweenEntities(Set<String> entitiesNames, Set<Relation> allRelations) {
+        return allRelations.parallelStream()
+                .filter(relation -> entitiesNames.contains(relation.getSource()) && entitiesNames.contains(relation.getTarget()))
                 .collect(Collectors.toSet());
     }
 
-    private Set<String> getAllEntitiesNamesFromRelations(String fqcn, Set<Relation> foundRelationsSet) {
+    private Set<String> getAllEntitiesNamesFromRelations(String docPieceName, Set<Relation> foundRelationsSet) {
         Set<String> resultSet = new HashSet<>();
         foundRelationsSet.stream().forEach(relation -> {
-            if(relation.getSource().equals(fqcn)){
+            if(relation.getSource().equals(docPieceName)){
                 resultSet.add(relation.getTarget());
             }else{
                 resultSet.add(relation.getSource());
             }
         });
-        resultSet.add(fqcn);
+        resultSet.add(docPieceName);
         return resultSet;
     }
 
-    /*
-    * docPieceName represents the same thing as fqcn variable in the class
-    * */
+    private Set<Entity> findEntities(Set<String> entitiesDocPieceNames) {
+        JsonNode entitiesNode = rootNode.get("entities");
+        return entitiesDocPieceNames.stream()
+                .map(s -> findEntityByDocPieceName(s, entitiesNode))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
+    }
+
     public Optional<String> filterAndComposeJSON(String docPieceName) throws IOException {
-        Set<Relation> relationsSet = findRelations(docPieceName);
+        Set<String> entitiesNames = getAllEntitiesNamesFromRelations(docPieceName, findRelationsBy(docPieceName));
+
+        Set<Relation> relationsSet = findRelationsBetweenEntities(entitiesNames, findAllRelations());
         Set<Entity> entitiesSet = findEntities(getAllEntitiesNamesFromRelations(docPieceName, relationsSet));
 
-        if(! (entitiesSet.isEmpty() || relationsSet.isEmpty()) ) { // prawo DeMorgana sie przydalo.. wow
+        if(! (entitiesSet.isEmpty() || relationsSet.isEmpty()) ) { // prawo deMorgana sie przydalo.. wow
             Set<String> allPackages = findAllPackages(entitiesSet);
             JSONObject responseJSONObject = new JSONObject();
 
@@ -84,9 +93,9 @@ public class JsonDocumentationParser {
                     .put("type", "package");
             // building objects in the package START
             entitiesSet.stream().filter(entity -> entity.getPackageName().equals(packageName)).forEach(entity -> {
-                packageValue.put(entity.getFqcn(), new JSONObject(entity.getJSONdata()));
+                packageValue.put(entity.getDocPieceName(), new JSONObject(entity.getJSONdata()));
             });
-            // building objects in the package END
+
             packagesJson.put(packageName, packageValue);
         });
         return packagesJson;
@@ -99,7 +108,6 @@ public class JsonDocumentationParser {
     private Optional<String> seekForPackage(String docPieceName, Set<String> packagesSet) {
         if(docPieceName.contains(".")){
             String packageName = docPieceName.substring(0, docPieceName.lastIndexOf("."));
-            //System.out.printf("Removed %s ## \n", docPieceName.substring(packageName.length(), docPieceName.length()));
             if(packagesSet.contains(packageName)) {
                 return Optional.of(packageName);
             }else{
@@ -117,17 +125,17 @@ public class JsonDocumentationParser {
     }
 
     /*
-    * Returns Entity object describing single FQCN class
+    * Returns Entity object describing single docPieceName class value in JSON
     * */
-    private Optional<Entity> findEntityByFQCN(String fqcn, JsonNode packagesNode) {
-        Optional<String> packageName = seekForPackage(fqcn, copyIteratorToSet(packagesNode.fieldNames()));
+    private Optional<Entity> findEntityByDocPieceName(String docPieceName, JsonNode packagesNode) {
+        Optional<String> packageName = seekForPackage(docPieceName, copyIteratorToSet(packagesNode.fieldNames()));
         if(packageName.isPresent()) {
             JsonNode foundPackageNode = packagesNode.get(packageName.get());
             Set<String> fqcnSet = copyIteratorToSet(foundPackageNode.fieldNames());
 
-            if(fqcnSet.contains(fqcn)) {
-                JsonNode foundClassNode = foundPackageNode.get(fqcn);
-                return Optional.of(new Entity(packageName.get(), fqcn, foundClassNode.toString()));
+            if(fqcnSet.contains(docPieceName)) {
+                JsonNode foundClassNode = foundPackageNode.get(docPieceName);
+                return Optional.of(new Entity(packageName.get(), docPieceName, foundClassNode.toString()));
             }
         }
         return Optional.empty();

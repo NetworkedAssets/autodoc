@@ -5,15 +5,15 @@ package com.networkedassets.autodoc.documentation.data;
  */
 public class Entity {
     private String packageName;
-    private String fqcn;
+    private String docPieceName;
     private String JSONdata;
 
     public Entity() {
     }
 
-    public Entity(String packageName, String fqcn, String JSONdata) {
+    public Entity(String packageName, String docPieceName, String JSONdata) {
         this.packageName = packageName;
-        this.fqcn = fqcn;
+        this.docPieceName = docPieceName;
         this.JSONdata = JSONdata;
     }
 
@@ -25,12 +25,12 @@ public class Entity {
         this.packageName = packageName;
     }
 
-    public String getFqcn() {
-        return fqcn;
+    public String getDocPieceName() {
+        return docPieceName;
     }
 
-    public void setFqcn(String fqcn) {
-        this.fqcn = fqcn;
+    public void setDocPieceName(String docPieceName) {
+        this.docPieceName = docPieceName;
     }
 
     public String getJSONdata() {

@@ -122,12 +122,12 @@ public class DocumentationService {
         );
         final String JSON = documentationPiece.get().getContent(); //remove .get()?
 
-        JsonDocumentationParser parser = new JsonDocumentationParser(JSON);
+        UmlJsonDocumentationParser parser = new UmlJsonDocumentationParser(JSON);
         Optional<String> composedJSON = parser.filterAndComposeJSON(docPieceNameDec);
 
         return composedJSON
                 .map(n -> Response.ok(n).build())
-                .orElse(Response.status(404).build());
+                .orElse(Response.status(404).entity("{\"success\": false, \"message\": \"Could not find requested documentation!\"}").build());
     }
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {

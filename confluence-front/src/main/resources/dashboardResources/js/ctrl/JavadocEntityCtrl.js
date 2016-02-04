@@ -1,6 +1,7 @@
-angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$state,$sanitize,
-                                                              $filter,$stateParams,$rootScope,
-                                                              $timeout,$element,urlService,javadocEntities) {
+angular.module("DoC").controller("JavadocEntityCtrl", function($scope, $http, $state, $sanitize,
+                                                               $filter, $stateParams, $rootScope,
+                                                               $timeout, $element, urlService,
+                                                               javadocEntities) {
     var vm = this;
     vm.loading = true;
 
@@ -17,11 +18,11 @@ angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$stat
     var parseBreadcrumb = function() {
         vm.packages = [];
         var qualified = "";
-        angular.forEach(vm.entity.packageArray,function(pack) {
+        angular.forEach(vm.entity.packageArray, function(pack) {
             if (!qualified) {
                 qualified = pack;
             } else {
-                qualified += "."+pack;
+                qualified += "." + pack;
             }
             vm.packages.push({
                 name: pack,
@@ -30,7 +31,7 @@ angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$stat
         });
         vm.packages.push({
             name: vm.entity.name,
-            qualified: qualified+"."+name
+            qualified: qualified + "." + name
         });
     };
 
@@ -42,7 +43,7 @@ angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$stat
             vm.loading = false;
         } else {
             vm.loading = true;
-            $http.get(urlService.getRestUrl("JAVADOC",$stateParams.name)).then(function(response) {
+            $http.get(urlService.getRestUrl("JAVADOC", $stateParams.name)).then(function(response) {
                 vm.entity = new JavadocEntity(response.data);
                 parseBreadcrumb();
                 vm.loading = false;
@@ -53,7 +54,7 @@ angular.module("DoC").controller("JavadocEntityCtrl",function($scope,$http,$stat
     if (javadocEntities.isReady()) {
         init();
     } else {
-        $rootScope.$on("javadocEntities.ready",function() {
+        $rootScope.$on("javadocEntities.ready", function() {
             init();
         });
     }
