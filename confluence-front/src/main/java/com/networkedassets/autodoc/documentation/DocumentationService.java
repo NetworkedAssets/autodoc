@@ -122,7 +122,7 @@ public class DocumentationService {
         );
         final String JSON = documentationPiece.get().getContent(); //remove .get()?
 
-        JsonDocumentationParser parser = new JsonDocumentationParser(JSON);
+        UmlJsonDocumentationParser parser = new UmlJsonDocumentationParser(JSON);
         Optional<String> composedJSON = parser.filterAndComposeJSON(docPieceNameDec);
 
         return composedJSON
