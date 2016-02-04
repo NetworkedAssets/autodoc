@@ -22,151 +22,6 @@
 
         <context>autodoc_confluence</context>
     </web-resource>
-
-    <web-resource key="soy-templates">
-        <dependency>com.atlassian.soy.soy-template-plugin:soy-deps
-        </dependency>
-
-        <!-- Available to the server-side only -->
-        <resource type="soy" name="configureScreen" location="/templates/configureScreen.soy"/>
-        <!-- Make available to the client-side in JS as well... -->
-        <transformation extension="soy">
-            <transformer key="soyTransformer"/>
-        </transformation>
-        <resource type="download" name="configureScreen.soy.js"
-                  location="/templates/configureScreen.soy"/>
-        <context>autodoc_confluence</context>
-    </web-resource>
-
-	<!-- imports -->
-	<component-import key="applicationProperties"
-		interface="com.atlassian.sal.api.ApplicationProperties" />
-	<component-import key="pluginSettingsFactory"
-		interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
-	<component-import key="applicationLinkService"
-		interface="com.atlassian.applinks.api.ApplicationLinkService" />
-	<component-import key="userAccessor"
-		interface="com.atlassian.confluence.user.UserAccessor" />
-	<component-import key="soyTemplateRenderer"
-		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
-	<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />
-
-    <!-- Item in Space Tools -->
-    <web-item name="Space tools configuration action link" key="space-tools-configuration-action"
-              section="system.space.tools/addons" weight="100">
-        <label key="Autodoc Configuration"/>
-        <link linkId="space-admin-quick-link-manager-id">
-            /plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
-        </link>
-        <conditions type="AND">
-            <condition
-                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
-                <param name="permission">administer</param>
-            </condition>
-            <condition
-                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition"/>
-        </conditions>
-    </web-item>
-
-    <!-- Item in Space Admin (legacy) -->
-    <web-item name="Space admin configuration action link" key="space-admin-configuration-action"
-              section="system.space.admin/addons" weight="100">
-        <label key="Autodoc Configuration"/>
-        <link linkId="space-admin-quick-link-manager-id">
-            /plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
-        </link>
-        <conditions type="AND">
-            <condition
-                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
-                <param name="permission">administer</param>
-            </condition>
-            <condition
-                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition"
-                    invert="true"/>
-        </conditions>
-    </web-item>
-
-    <xwork name="Space configuration action" key="space-configuration-action">
-        <description>For picking which branches are watched for given space</description>
-        <package name="autodoc-config" extends="default"
-                 namespace="/plugins/${project.artifactId}">
-            <default-interceptor-ref name="validatingStack"/>
-            <action name="autodoc-config"
-                    class="com.networkedassets.autodoc.configureGui.SpaceConfigurationAction">
-                <result name="input" type="velocity">/configurationResources/spaceToolsConfiguration.vm
-                </result>
-                <result name="success" type="velocity">/configurationResources/spaceToolsConfiguration.vm
-                </result>
-            </action>
-        </package>
-    </xwork>
-
-    <xwork name="Admin configuration action" key="admin-configuration-action">
-        <package extends="default" name="autodoc-configure-action"
-                 namespace="/admin/plugins/autodoc">
-            <default-interceptor-ref name="defaultStack"/>
-            <action class="com.networkedassets.autodoc.configureGui.AdminConfigurationAction"
-                    method="load" name="config">
-                <result name="error" type="velocity">/configurationResources/adminConfiguration.vm
-                </result>
-                <result name="success" type="velocity">/configurationResources/adminConfiguration.vm
-                </result>
-            </action>
-            <action class="com.networkedassets.autodoc.configureGui.AdminConfigurationAction"
-                    method="save" name="save">
-                <interceptor-ref name="validatingStack"/>
-                <result name="error" type="velocity">/configurationResources/adminConfiguration.vm
-                </result>
-                <result name="success" type="redirect">/admin/plugins/autodoc/config.action
-                </result>
-            </action>
-        </package>
-    </xwork>
-
-    <rest key="rest" path="/doc" version="1.0">
-        <description>Provides rest endpoints used by Autodoc</description>
-    </rest>
-
-    <component-import key="ao" name="Active Objects service"
-                      interface="com.atlassian.activeobjects.external.ActiveObjects">
-        <description>Component to access Active Objects functionality from the
-            plugin
-        </description>
-    </component-import>
-
-    <ao key="ao-module">
-        <description>The AO module for this plugin.</description>
-        <entity>com.networkedassets.autodoc.documentation.Documentation
-        </entity>
-        <entity>com.networkedassets.autodoc.documentation.DocumentationPiece
-        </entity>
-    </ao>
-
-
-    <xhtml-macro name="autodocDashboard"
-                 class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
-                 key="autodocDashboard">
-        <description>Macro element containing the Autodoc Dashboard
-        </description>
-        <parameters>
-            <parameter name="source" type="string" required="false"/>
-            <parameter name="project" type="string" required="false"/>
-            <parameter name="sourceProject" type="enum" required="true">
-                <value name="Loading..."/>
-            </parameter>
-            <parameter name="repo" type="enum" required="true">
-                <value name="Loading..."/>
-                <option key="hidden" value="true"/>
-            </parameter>
-            <parameter name="branch" type="enum" required="true">
-                <value name="Loading..."/>
-            </parameter>
-            <parameter name="javadoc" type="boolean"/>
-            <parameter name="classDiagram" type="boolean"/>
-            <parameter name="structureGraph" type="boolean"/>
-        </parameters>
-    </xhtml-macro>
-
     <web-resource key="autodoc-macro-params" name="autodoc macro parameter autocompletion">
         <resource type="download" name="autodocMacroParams.js"
                   location="js/autodocMacroParams.js"/>
@@ -174,7 +29,6 @@
         </dependency>
         <context>macro-browser</context>
     </web-resource>
-
     <web-resource key="dashboard-resources" name="Dashboard web resources">
         <resource type="download" name="dashboardResources/"
                   location="/dashboardResources"/>
@@ -252,7 +106,6 @@
 
         <resource type="download" name="images/" location="dashboardResources/images/"/>
     </web-resource>
-
     <web-resource key="configuration-resources" name="Configuration web resources">
         <resource type="download" name="configurationResources/"
                   location="/configurationResources"/>
@@ -293,6 +146,148 @@
         <resource type="download" name="data/settings3.json"
                   location="configurationResources/data/settings3.json"/>
     </web-resource>
+    <web-resource key="soy-templates">
+        <dependency>com.atlassian.soy.soy-template-plugin:soy-deps
+        </dependency>
 
+        <!-- Available to the server-side only -->
+        <resource type="soy" name="configureScreen" location="/templates/configureScreen.soy"/>
+        <!-- Make available to the client-side in JS as well... -->
+        <transformation extension="soy">
+            <transformer key="soyTransformer"/>
+        </transformation>
+        <resource type="download" name="configureScreen.soy.js"
+                  location="/templates/configureScreen.soy"/>
+        <context>autodoc_confluence</context>
+    </web-resource>
+
+	<!-- imports -->
+	<component-import key="applicationProperties"
+		interface="com.atlassian.sal.api.ApplicationProperties" />
+	<component-import key="pluginSettingsFactory"
+		interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory" />
+	<component-import key="applicationLinkService"
+		interface="com.atlassian.applinks.api.ApplicationLinkService" />
+	<component-import key="userAccessor"
+		interface="com.atlassian.confluence.user.UserAccessor" />
+	<component-import key="soyTemplateRenderer"
+		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
+	<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />
+    <component-import key="ao" name="Active Objects service"
+                      interface="com.atlassian.activeobjects.external.ActiveObjects">
+        <description>Component to access Active Objects functionality from the
+            plugin
+        </description>
+    </component-import>
+
+    <!-- Configuration GUI -->
+    <!-- Item in Space Tools -->
+    <web-item name="Space tools configuration action link" key="space-tools-configuration-action"
+              section="system.space.tools/addons" weight="100">
+        <label key="Autodoc Configuration"/>
+        <link linkId="space-admin-quick-link-manager-id">
+            /plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
+        </link>
+        <conditions type="AND">
+            <condition
+                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
+                <param name="permission">administer</param>
+            </condition>
+            <condition
+                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition"/>
+        </conditions>
+    </web-item>
+    <!-- Item in Space Admin (legacy) -->
+    <web-item name="Space admin configuration action link" key="space-admin-configuration-action"
+              section="system.space.admin/addons" weight="100">
+        <label key="Autodoc Configuration"/>
+        <link linkId="space-admin-quick-link-manager-id">
+            /plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
+        </link>
+        <conditions type="AND">
+            <condition
+                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpacePermissionCondition">
+                <param name="permission">administer</param>
+            </condition>
+            <condition
+                    class="com.atlassian.confluence.plugin.descriptor.web.conditions.SpaceSidebarCondition"
+                    invert="true"/>
+        </conditions>
+    </web-item>
+    <xwork name="Space configuration action" key="space-configuration-action">
+        <description>For picking which branches are watched for given space</description>
+        <package name="autodoc-config" extends="default"
+                 namespace="/plugins/${project.artifactId}">
+            <default-interceptor-ref name="validatingStack"/>
+            <action name="autodoc-config"
+                    class="com.networkedassets.autodoc.configureGui.SpaceConfigurationAction">
+                <result name="input" type="velocity">/configurationResources/spaceToolsConfiguration.vm
+                </result>
+                <result name="success" type="velocity">/configurationResources/spaceToolsConfiguration.vm
+                </result>
+            </action>
+        </package>
+    </xwork>
+    <xwork name="Admin configuration action" key="admin-configuration-action">
+        <package extends="default" name="autodoc-configure-action"
+                 namespace="/admin/plugins/autodoc">
+            <default-interceptor-ref name="defaultStack"/>
+            <action class="com.networkedassets.autodoc.configureGui.AdminConfigurationAction"
+                    method="load" name="config">
+                <result name="error" type="velocity">/configurationResources/adminConfiguration.vm
+                </result>
+                <result name="success" type="velocity">/configurationResources/adminConfiguration.vm
+                </result>
+            </action>
+            <action class="com.networkedassets.autodoc.configureGui.AdminConfigurationAction"
+                    method="save" name="save">
+                <interceptor-ref name="validatingStack"/>
+                <result name="error" type="velocity">/configurationResources/adminConfiguration.vm
+                </result>
+                <result name="success" type="redirect">/admin/plugins/autodoc/config.action
+                </result>
+            </action>
+        </package>
+    </xwork>
+
+    <!--Macro-->
+    <xhtml-macro name="autodocDashboard"
+                 class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
+                 key="autodocDashboard">
+        <description>Macro element containing the Autodoc Dashboard
+        </description>
+        <parameters>
+            <parameter name="source" type="string" required="false"/>
+            <parameter name="project" type="string" required="false"/>
+            <parameter name="sourceProject" type="enum" required="true">
+                <value name="Loading..."/>
+            </parameter>
+            <parameter name="repo" type="enum" required="true">
+                <value name="Loading..."/>
+                <option key="hidden" value="true"/>
+            </parameter>
+            <parameter name="branch" type="enum" required="true">
+                <value name="Loading..."/>
+            </parameter>
+            <parameter name="javadoc" type="boolean"/>
+            <parameter name="classDiagram" type="boolean"/>
+            <parameter name="structureGraph" type="boolean"/>
+        </parameters>
+    </xhtml-macro>
+
+    <!--Confluence rest-->
+    <rest key="rest" path="/doc" version="1.0">
+        <description>Provides rest endpoints used by Autodoc</description>
+    </rest>
+
+
+    <!--Active objects-->
+    <ao key="ao-module">
+        <description>The AO module for this plugin.</description>
+        <entity>com.networkedassets.autodoc.documentation.Documentation
+        </entity>
+        <entity>com.networkedassets.autodoc.documentation.DocumentationPiece
+        </entity>
+    </ao>
 
 </atlassian-plugin>
