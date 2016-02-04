@@ -59,30 +59,6 @@ public class DocumentationService {
                         .orElse(Response.status(404).entity(ERROR_JSON))).build();
     }
 
-    /*@Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}{attribute:(/[^/]+?)?}")
-    @GET
-    public Response getDocumentationPiece(
-            @PathParam("project") String project,
-            @PathParam("repo") String repo,
-            @PathParam("branch") String branch,
-            @PathParam("doctype") String docType,
-            @PathParam("docPieceName") String docPieceName,
-            @PathParam("attribute") String attribute) throws UnsupportedEncodingException {
-        String projectDec = URLDecoder.decode(project, "UTF-8");
-        String repoDec = URLDecoder.decode(repo, "UTF-8");
-        String branchDec = URLDecoder.decode(branch, "UTF-8");
-        String doctypeDec = URLDecoder.decode(docType, "UTF-8");
-        String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
-        String attributeDec = URLDecoder.decode(attribute, "UTF-8");
-
-        Optional<DocumentationPiece> documentationPiece = ao.executeInTransaction(() ->
-                getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
-                        .flatMap(d -> getDocumentationPiece(d, docPieceNameDec))
-        );
-        final String finalAttributeDec = (!attributeDec.equals("")) ? attributeDec.substring(1, attributeDec.length()) : attributeDec; //attribute starts with reduntant /
-        return buildDocumentationPieceResponse(documentationPiece, finalAttributeDec);
-    }*/
-
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
     @GET
     public Response getDocumentationPiece(
