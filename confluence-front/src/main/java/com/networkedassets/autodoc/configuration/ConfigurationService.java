@@ -30,7 +30,7 @@ import com.atlassian.core.util.ClassLoaderUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
-import com.networkedassets.autodoc.configuration.data.Credentials;
+import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.TransformerClient;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Settings;

@@ -6,6 +6,7 @@
 
     #requireResource("confluence.web.resources:ajs")
     #requireResource("com.atlassian.auiplugin:aui-select")
+    #requireResource("com.atlassian.auiplugin:aui-select2")
     #requireResource("com.atlassian.auiplugin:aui-toggle")
     #requireResource("com.atlassian.auiplugin:dialog2")
     #requireResource("com.networkedassets.autodoc.confluence-front:configuration-resources")
