@@ -15,7 +15,7 @@ import com.networkedassets.autodoc.transformer.settings.Settings;
 
 public class ConfluenceDocumentationSender implements DocumentationSender {
 	
-	private static final String confluenceEndpointFormat = "%s/rest/autodoc/1.0/documentation/%s/%s/%s/%s/%s";
+	private static final String confluenceEndpointFormat = "%s/rest/doc/1.0/documentation/%s/%s/%s/%s/%s";
 
 	private static final Logger log = LoggerFactory.getLogger(PushEventService.class);
 
