@@ -49,7 +49,7 @@
 		interface="com.atlassian.confluence.user.UserAccessor" />
 	<component-import key="soyTemplateRenderer"
 		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
-	<!--<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />-->
+	<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />
 
     <!-- Item in Space Tools -->
     <web-item name="Space tools configuration action link" key="space-tools-configuration-action"
