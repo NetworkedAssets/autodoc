@@ -4,7 +4,6 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.json.jsonorg.JSONException;
 import com.atlassian.json.jsonorg.JSONObject;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.atlassian.streams.thirdparty.api.ActivityService;
 import com.google.common.base.Joiner;
 import com.networkedassets.util.functional.Optionals;
 import net.java.ao.Query;
@@ -27,12 +26,12 @@ public class DocumentationService {
     private ActiveObjects ao;
     @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(DocumentationService.class);
-    private DocumentationActivityPoster documentationActivityPoster;
+//    private DocumentationActivityPoster documentationActivityPoster;
 
-    public DocumentationService(ActiveObjects ao, ApplicationProperties applicationProperties,
-                                ActivityService activityService) {
+    public DocumentationService(ActiveObjects ao, ApplicationProperties applicationProperties
+                                /*,ActivityService activityService*/) {
         this.ao = ao;
-        documentationActivityPoster = new DocumentationActivityPoster(applicationProperties, activityService);
+//        documentationActivityPoster = new DocumentationActivityPoster(applicationProperties, activityService);
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}")
@@ -182,7 +181,7 @@ public class DocumentationService {
             return Response.ok("{\"success\": true}").build();
         });
 
-        documentationActivityPoster.postDocumentationAdded(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec));
+//        documentationActivityPoster.postDocumentationAdded(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec));
 
         return response;
     }
