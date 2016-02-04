@@ -42,6 +42,20 @@
 			<version>4.3.10</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.streams</groupId>
+			<artifactId>streams-thirdparty-api</artifactId>
+			<version>5.4.14</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.atlassian.streams</groupId>
+			<artifactId>streams-api</artifactId>
+			<version>5.4.14</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>

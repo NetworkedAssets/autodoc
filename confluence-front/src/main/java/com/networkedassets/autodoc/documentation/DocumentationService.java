@@ -3,9 +3,13 @@ package com.networkedassets.autodoc.documentation;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.json.jsonorg.JSONException;
 import com.atlassian.json.jsonorg.JSONObject;
+import com.atlassian.sal.api.ApplicationProperties;
+import com.atlassian.streams.thirdparty.api.ActivityService;
 import com.google.common.base.Joiner;
 import com.networkedassets.util.functional.Optionals;
 import net.java.ao.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -21,9 +25,14 @@ import java.util.stream.Collectors;
 @Produces({MediaType.APPLICATION_JSON})
 public class DocumentationService {
     private ActiveObjects ao;
+    @SuppressWarnings("unused")
+    private Logger log = LoggerFactory.getLogger(DocumentationService.class);
+    private DocumentationActivityPoster documentationActivityPoster;
 
-    public DocumentationService(ActiveObjects ao) {
+    public DocumentationService(ActiveObjects ao, ApplicationProperties applicationProperties,
+                                ActivityService activityService) {
         this.ao = ao;
+        documentationActivityPoster = new DocumentationActivityPoster(applicationProperties, activityService);
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}")
@@ -162,7 +171,8 @@ public class DocumentationService {
         String docTypeDec = URLDecoder.decode(docType, "UTF-8");
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
         String pieceTypeDec = URLDecoder.decode(pieceType, "UTF-8");
-        return ao.executeInTransaction(() -> {
+
+        Response response = ao.executeInTransaction(() -> {
             Documentation doc = findOrCreateDocumentation(projectDec, repoDec, branchDec, docTypeDec);
             DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec);
             piece.setContent(content);
@@ -171,6 +181,10 @@ public class DocumentationService {
 
             return Response.ok("{\"success\": true}").build();
         });
+
+        documentationActivityPoster.postDocumentationAdded(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec));
+
+        return response;
     }
 
     public Documentation findOrCreateDocumentation(String project, String repo, String branch, String docType) {

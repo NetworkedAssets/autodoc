@@ -52,14 +52,14 @@ angular.module('DoC_Config').factory('settingsService', function($http,$rootScop
             .get(urlService.getRestUrlWithParams("sources","extended"))
             .then(function(response) {
                 var sources = {};
-                response.data.sources.forEach(function(source) {
+                response.data.forEach(function(source) {
                     source.verified = true;
                     if (!source.name) {
                         source.name = "(no name)";
                     }
                     sources[source.id] = source;
                 });
-                settings.raw = response.data;
+                settings.raw = {};
                 settings.raw.sources = sources;
                 processListenToValues();
                 console.log("Original settings data: ",settings.raw.sources);

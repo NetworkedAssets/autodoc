@@ -1,7 +1,6 @@
 <div id="doc_javadoc_content">
     <div class="loadingSpinner" ng-show="vm.loading"></div>
     <section class="elem" ng-hide="vm.loading">
-
         <ol class="aui-nav aui-nav-breadcrumbs" ng-show="vm.packages.length > 0">
             <li ng-repeat="package in vm.packages" ng-class="{'aui-nav-selected': $last}">
                 <a ng-if="!$last" href="#" ui-sref="javadoc.entity({name:package.qualified})">{{package.name}}</a>
@@ -31,7 +30,7 @@
             <span class="type" ng-repeat="interface in vm.entity.interfaces" doc-qname="interface"></span>
         </div>
 
-        <p javadoc-tags="vm.entity.comment" my-attribute="vm.entity"></p>
+        <p javadoc-tags="vm.entity.comment"></p>
 
         <div class="doc_panel elems {{elementGroup.type}}s"
              ng-repeat="elementGroup in vm.entity.elements"
@@ -133,5 +132,8 @@
 
         <pre ng-show="0">{{vm.entity|json}}</pre>
 
+    </section>
+    <section class="classDiagram">
+        <div doc-class-diagram="vm.entity.qualified"></div>
     </section>
 </div>

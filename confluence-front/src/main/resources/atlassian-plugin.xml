@@ -49,6 +49,7 @@
 		interface="com.atlassian.confluence.user.UserAccessor" />
 	<component-import key="soyTemplateRenderer"
 		interface="com.atlassian.soy.renderer.SoyTemplateRenderer" />
+	<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />
 
 	<!-- Item in Space Tools -->
 	<web-item key="space-tools-autodoc-config" name="Autodoc in Space Admin"
@@ -192,8 +193,6 @@
 		<resource type="download" name="js/ctrl/TopCtrl.js"
 			location="dashboardResources/js/ctrl/TopCtrl.js" />
 
-		<resource type="download" name="js/doc_classDiagram.js"
-			location="dashboardResources/js/doc_classDiagram.js" />
 		<resource type="download" name="js/JavadocEntity.js"
 			location="dashboardResources/js/JavadocEntity.js" />
 
@@ -209,6 +208,8 @@
 			location="dashboardResources/js/dirs/javadocTags.js" />
 		<resource type="download" name="js/dirs/javadocInheritDocTags.js"
 				  location="dashboardResources/js/dirs/javadocInheritDocTags.js" />
+		<resource type="download" name="js/dirs/docClassDiagram.js"
+				  location="dashboardResources/js/dirs/docClassDiagram.js" />
 
 		<resource type="download" name="js/services/urlService.js"
 			location="dashboardResources/js/services/urlService.js" />
