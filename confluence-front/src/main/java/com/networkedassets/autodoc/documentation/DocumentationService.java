@@ -101,7 +101,7 @@ public class DocumentationService {
         }
     }
 
-    @Path("{project}/{repo}/{branch}/UML/{docPieceName}")
+    /*@Path("{project}/{repo}/{branch}/UML/{docPieceName}")
     @GET
     @Produces("application/json")
     public Response test(
@@ -128,7 +128,7 @@ public class DocumentationService {
         return composedJSON
                 .map(n -> Response.ok(n).build())
                 .orElse(Response.status(404).build());
-    }
+    }*/
 
     public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
         Documentation[] documentations = ao.find(Documentation.class, Query.select()

@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -53,8 +55,15 @@ public class UmlClassDiagramConverter {
 
         javadocObj.add("relations", output);
 
-        Documentation documentation = new Documentation(ImmutableList.of(
-                new DocumentationPiece("all", "all", javadocObj.toString(WriterConfig.PRETTY_PRINT))));
+        List<DocumentationPiece> docPiecesList = new LinkedList<>();
+        String allJSON = javadocObj.toString(WriterConfig.PRETTY_PRINT);
+        DocumentationPiece allDocPieces = new DocumentationPiece("all", "all", allJSON);
+        docPiecesList.add(allDocPieces);
+
+        UmlJsonDocumentationParser parser = new UmlJsonDocumentationParser(allJSON);
+
+
+        Documentation documentation = new Documentation(docPiecesList);
         documentation.setType(DocumentationType.UML);
         return documentation;
     }

@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.documentation.data;
+package com.networkedassets.autodoc.transformer.util.uml.data;
 
 /**
  * Created by mtulaza on 2016-02-02.
