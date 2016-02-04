@@ -22,6 +22,7 @@ public class Settings implements Serializable {
     private TransformerSettings transformerSettings = new TransformerSettings();
     @JsonView(Views.GetSourcesView.class)
     private List<Source> sources = new ArrayList<>();
+    @JsonView(Views.GetCredentialsView.class)
     private Credentials credentials = new Credentials();
 
     public Source getSourceByUrl(String url) {
