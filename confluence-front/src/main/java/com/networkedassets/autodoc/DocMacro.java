@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.presentationMacro;
+package com.networkedassets.autodoc;
 
 import com.atlassian.confluence.content.render.xhtml.ConversionContext;
 import com.atlassian.confluence.macro.Macro;
@@ -13,7 +13,7 @@ import org.apache.velocity.VelocityContext;
 import java.io.IOException;
 import java.util.Map;
 
-public class AutodocDashboard implements Macro {
+public class DocMacro implements Macro {
 
     @Override
     public String execute(Map<String, String> params, String s, ConversionContext conversionContext) throws MacroExecutionException {

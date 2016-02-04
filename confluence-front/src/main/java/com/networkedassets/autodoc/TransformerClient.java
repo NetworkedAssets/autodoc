@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer;
+package com.networkedassets.autodoc;
 
 import java.io.IOException;
 import java.net.URLEncoder;

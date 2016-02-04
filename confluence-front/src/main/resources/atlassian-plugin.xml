@@ -251,10 +251,10 @@
     </xwork>
 
     <!--Macro-->
-    <xhtml-macro name="autodocDashboard"
-                 class="com.networkedassets.autodoc.presentationMacro.AutodocDashboard"
-                 key="autodocDashboard">
-        <description>Macro element containing the Autodoc Dashboard
+    <xhtml-macro name="DoC Macro"
+                 class="com.networkedassets.autodoc.DocMacro"
+                 key="doc-macro">
+        <description>DoC macro displaying documentation in various forms on pages
         </description>
         <parameters>
             <parameter name="source" type="string" required="false"/>

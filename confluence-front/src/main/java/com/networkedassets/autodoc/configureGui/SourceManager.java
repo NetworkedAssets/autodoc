@@ -22,7 +22,7 @@ import com.atlassian.sal.api.net.ReturningResponseHandler;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.networkedassets.autodoc.transformer.TransformerClient;
+import com.networkedassets.autodoc.TransformerClient;
 import com.networkedassets.autodoc.transformer.settings.SettingsException;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.settings.Source.SourceType;
