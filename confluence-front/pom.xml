@@ -133,9 +133,8 @@
 
                     <instructions>
                         <Import-Package>
-                            com.atlassian.streams*;version="${streams.thirdparty.plugin.version}"
+							com.atlassian.streams.thirdparty*;version="${streams.thirdparty.plugin.version}"
                         </Import-Package>
-                        <CONF_COMM/>
                     </instructions>
 
 					<productVersion>${confluence.version}</productVersion>
