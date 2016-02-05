@@ -199,8 +199,8 @@ public class ConfigurationService {
                     String response = authenticatedRequestFactory.createRequest(Request.MethodType.GET, "/rest/api/1.0/projects").execute();
                     ProjectsPage projectsPage = OBJECT_MAPPER.readValue(response, OBJECT_MAPPER.getTypeFactory().constructType(ProjectsPage.class));
                     List<String> aviableProjectsKeys = projectsPage.getProjects().stream().map(Project::getKey).collect(Collectors.toList());
-                    source.getProjects().values().stream().map(com.networkedassets.autodoc.transformer.settings.Project::getKey)
-                            .filter(k -> !aviableProjectsKeys.contains(k)).forEach(k -> source.getProjects().remove(k));
+
+                    source.getProjects().values().removeIf(p -> !aviableProjectsKeys.contains(p.getKey()));
                 } catch (TypeNotInstalledException | CredentialsRequiredException | IOException | ResponseException e) {
                     throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
                 }
