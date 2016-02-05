@@ -34,7 +34,7 @@ public class SourceManager {
 
 	private final TransformerClient transformerClient;
 	private final ApplicationLinkService appLinkService;
-	private List<Source> appLinksSources;
+	private List<Source> appLinksSources=Lists.newArrayList();
 
 	public SourceManager(ApplicationLinkService appLinkService, TransformerClient transformerClient) {
 
