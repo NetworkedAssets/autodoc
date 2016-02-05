@@ -129,7 +129,7 @@ public class TransformerClient {
 		try {
 
 			return Unirest.put(url + SOURCES + "{id}").routeParam("id", id).header("Content-Type", "application/json")
-					.asString();
+					.body(source).asString();
 		} catch (UnirestException e) {
 			throw new SettingsException(e);
 		}

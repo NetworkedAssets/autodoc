@@ -34,7 +34,7 @@ public class SourceManager {
 
 	private final TransformerClient transformerClient;
 	private final ApplicationLinkService appLinkService;
-	private List<Source> appLinksSources=Lists.newArrayList();
+	private List<Source> appLinksSources = Lists.newArrayList();
 
 	public SourceManager(ApplicationLinkService appLinkService, TransformerClient transformerClient) {
 
@@ -45,8 +45,11 @@ public class SourceManager {
 
 	public List<String> updateSourcesFromAppLinks(List<Source> currentSources) {
 
-		return currentSources.isEmpty() ? addNewSources(getAppLinksSources())
-				: updateExistingSources(currentSources, getAppLinksSources());
+		if (!getAppLinksSources().isEmpty()) {
+			return isSourceIsNotFromAppLinks(currentSources) ? addNewSources(getAppLinksSources())
+					: updateExistingSources(currentSources, getAppLinksSources());
+		}
+		return Lists.newArrayList();
 	}
 
 	private List<String> addNewSources(List<Source> newSources) {
@@ -64,18 +67,22 @@ public class SourceManager {
 				.filter(s -> newSourcesIndex.containsKey(s.getAppLinksId()))
 				.map(Throwing.rethrowAsRuntimeException(this::updateSourceWithTransformer))
 				.collect(Collectors.toList());
-		List<String> addedSources = newSources.stream()
-				.filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId())
-						&& !currentSourcesIndex.containsKey(s.getAppLinksId()))
-				.map(Throwing.rethrowAsRuntimeException(this::addSourceToTransformer)).collect(Collectors.toList());
-		currentSources.stream()
-				.filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId())
-						&& !newSourcesIndex.containsKey(s.getAppLinksId()))
+
+		currentSources.stream().filter(s -> !newSourcesIndex.containsKey(s.getAppLinksId()))
 				.map(Throwing.rethrowAsRuntimeException(this::removeSourceFromTransformer))
 				.collect(Collectors.toList());
 
+		List<String> addedSources = newSources.stream().filter(s -> !currentSourcesIndex.containsKey(s.getAppLinksId()))
+				.map(Throwing.rethrowAsRuntimeException(this::addSourceToTransformer)).collect(Collectors.toList());
+
 		return Stream.concat(addedSources.stream(), changedSources.stream()).collect(Collectors.toList());
 
+	}
+
+	private boolean isSourceIsNotFromAppLinks(List<Source> sources) {
+
+		return sources.stream().filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId())).collect(Collectors.toList())
+				.isEmpty();
 	}
 
 	private List<Source> getSourcesFromAppLinks() {
