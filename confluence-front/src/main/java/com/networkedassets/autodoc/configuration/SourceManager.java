@@ -34,6 +34,7 @@ public class SourceManager {
 
 	private final TransformerClient transformerClient;
 	private final ApplicationLinkService appLinkService;
+	private List<Source> appLinksSources;
 
 	public SourceManager(ApplicationLinkService appLinkService, TransformerClient transformerClient) {
 
@@ -42,23 +43,36 @@ public class SourceManager {
 
 	}
 
-	//TODO:Refactor
-	//FIXME:It doesn't work at all. Just imagine what happens if currentSources is empty. Nothing happens!
-	public List<String> updateSourceFromAppLinks(List<Source> currentSources) {
+	public List<String> updateSourcesFromAppLinks(List<Source> currentSources) {
 
-		Map<String, Source> appLinksSources = Maps.uniqueIndex(getSourcesFromAppLinks(), Source::getAppLinksId);
+		return currentSources.isEmpty() ? addNewSources(getAppLinksSources())
+				: updateExistingSources(currentSources, getAppLinksSources());
+	}
+
+	private List<String> addNewSources(List<Source> newSources) {
+
+		return newSources.stream().filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId()))
+				.map(Throwing.rethrowAsRuntimeException(this::addSourceToTransformer)).collect(Collectors.toList());
+	}
+
+	private List<String> updateExistingSources(List<Source> currentSources, List<Source> newSources) {
+
+		Map<String, Source> newSourcesIndex = Maps.uniqueIndex(newSources, Source::getAppLinksId);
+		Map<String, Source> currentSourcesIndex = Maps.uniqueIndex(currentSources, Source::getAppLinksId);
 
 		List<String> changedSources = currentSources.stream()
-				.filter(s -> appLinksSources.containsKey(s.getAppLinksId()))
-				.map(Throwing.rethrowAsRuntimeException(this::updateSource)).collect(Collectors.toList());
-		List<String> addedSources = currentSources.stream()
+				.filter(s -> newSourcesIndex.containsKey(s.getAppLinksId()))
+				.map(Throwing.rethrowAsRuntimeException(this::updateSourceWithTransformer))
+				.collect(Collectors.toList());
+		List<String> addedSources = newSources.stream()
 				.filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId())
-						&& !appLinksSources.containsKey(s.getAppLinksId()))
-				.map(Throwing.rethrowAsRuntimeException(this::addSource)).collect(Collectors.toList());
+						&& !currentSourcesIndex.containsKey(s.getAppLinksId()))
+				.map(Throwing.rethrowAsRuntimeException(this::addSourceToTransformer)).collect(Collectors.toList());
 		currentSources.stream()
 				.filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId())
-						&& !appLinksSources.containsKey(s.getAppLinksId()))
-				.map(Throwing.rethrowAsRuntimeException(this::removeSource)).collect(Collectors.toList());
+						&& !newSourcesIndex.containsKey(s.getAppLinksId()))
+				.map(Throwing.rethrowAsRuntimeException(this::removeSourceFromTransformer))
+				.collect(Collectors.toList());
 
 		return Stream.concat(addedSources.stream(), changedSources.stream()).collect(Collectors.toList());
 
@@ -86,18 +100,18 @@ public class SourceManager {
 		return source;
 	}
 
-	private String addSource(Source source) throws SettingsException {
+	private String addSourceToTransformer(Source source) throws SettingsException {
 
 		return transformerClient.setSource(source).getBody();
 	}
 
-	private String updateSource(Source source) throws SettingsException {
+	private String updateSourceWithTransformer(Source source) throws SettingsException {
 
 		return transformerClient.changeSource(String.valueOf(source.getId()), source).getBody();
 
 	}
 
-	private String removeSource(Source source) throws SettingsException {
+	private String removeSourceFromTransformer(Source source) throws SettingsException {
 
 		return transformerClient.removeSource(String.valueOf(source.getId())).getBody();
 
@@ -132,6 +146,14 @@ public class SourceManager {
 
 		return sourceType;
 
+	}
+
+	public List<Source> getAppLinksSources() {
+		return appLinksSources.isEmpty() ? getSourcesFromAppLinks() : appLinksSources;
+	}
+
+	public void setAppLinksSources(List<Source> appLinksSources) {
+		this.appLinksSources = appLinksSources;
 	}
 
 }

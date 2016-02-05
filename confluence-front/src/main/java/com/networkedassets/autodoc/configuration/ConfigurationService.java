@@ -119,7 +119,7 @@ public class ConfigurationService {
             currentSources = OBJECT_MAPPER.readValue(transformerClient.getSources().getBody(),
                     OBJECT_MAPPER.getTypeFactory().constructCollectionType(ArrayList.class, Source.class));
 
-            Optional<List<String>> returnSources = Optional.of(sourceManager.updateSourceFromAppLinks(currentSources));
+            Optional<List<String>> returnSources = Optional.of(sourceManager.updateSourcesFromAppLinks(currentSources));
 
             return returnSources.filter(s -> !s.isEmpty())
                     .map(g -> Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
