@@ -178,7 +178,7 @@
             plugin
         </description>
     </component-import>
-	<!--<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />-->
+	<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />
 
     <!-- Configuration GUI -->
     <!-- Item in Space Tools -->
