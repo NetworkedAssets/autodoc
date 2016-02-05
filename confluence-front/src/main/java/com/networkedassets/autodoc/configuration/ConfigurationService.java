@@ -85,7 +85,8 @@ public class ConfigurationService {
         }
     }
 
-    private boolean isProjectVisibleForCurrentUser(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey) throws IOException, SettingsException, CredentialsRequiredException, TypeNotInstalledException, ResponseException {
+    private boolean isProjectVisibleForCurrentUser(int sourceId, String projectKey)
+            throws IOException, SettingsException, CredentialsRequiredException, TypeNotInstalledException, ResponseException {
         Source source = OBJECT_MAPPER.readValue(transformerClient.getSource(Integer.toString(sourceId)).getBody(),
                 OBJECT_MAPPER.getTypeFactory().constructType(Source.class));
         ApplicationLinkRequest request = getApplicationLinkRequestFactory(source).createRequest(Request.MethodType.GET, "/rest/api/1.0/projects/" + projectKey);
