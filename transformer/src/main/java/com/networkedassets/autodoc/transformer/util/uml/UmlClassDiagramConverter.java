@@ -41,19 +41,20 @@ public class UmlClassDiagramConverter {
         JsonObject javadocObj = javadocToMainAsJson(r);
         JsonObject umlObj = plantUmlDependencyToJson();
         JsonArray output = Json.array().asArray();
-        List<String> target = Lists.newArrayList();
+
+        List<String> allDocPieceNames = Lists.newArrayList();
         javadocObj.get("entities").asObject().names().stream()
                 .map(n -> javadocObj.get("entities").asObject().get(n).asObject().names())
-                .forEach(target::addAll);
+                .forEach(allDocPieceNames::addAll);
 
         umlObj.get("relations").asArray().forEach(item -> {
-            if (target.contains(item.asObject().getString("target", ""))) {
+            if (allDocPieceNames.contains(item.asObject().getString("target", ""))) {
                 output.add(item.asObject());
             }
         });
         javadocObj.add("relations", output);
 
-        List<DocumentationPiece> docPiecesList = buildDocumentationPiecesList(javadocObj, target);
+        List<DocumentationPiece> docPiecesList = buildDocumentationPiecesList(javadocObj, allDocPieceNames);
 
         Documentation documentation = new Documentation(docPiecesList);
         documentation.setType(DocumentationType.UML);
