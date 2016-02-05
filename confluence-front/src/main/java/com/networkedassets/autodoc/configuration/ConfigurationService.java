@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -20,22 +18,28 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.atlassian.applinks.api.*;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
+import com.atlassian.confluence.user.ConfluenceUser;
+import com.atlassian.sal.api.net.Request;
+import com.atlassian.sal.api.net.ResponseException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.google.common.base.Strings;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project;
+import com.networkedassets.autodoc.transformer.settings.*;
+import com.networkedassets.autodoc.transformer.settings.Branch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.atlassian.applinks.api.ApplicationLinkService;
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.user.UserAccessor;
 import com.atlassian.core.util.ClassLoaderUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
-import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.TransformerClient;
-import com.networkedassets.autodoc.transformer.settings.Branch;
-import com.networkedassets.autodoc.transformer.settings.Settings;
-import com.networkedassets.autodoc.transformer.settings.SettingsException;
-import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.*;
 
 @Path("/configuration/")
 public class ConfigurationService {
@@ -46,6 +50,7 @@ public class ConfigurationService {
     private final UserAccessor userAccesor;
     private final SettingsManager settingsManager;
     private final SourceManager sourceManager;
+    private final ApplicationLinkService appLinkService;
     private final String ERROR_FORMAT = "{\"error\":\"%s\"}";
 
     public ConfigurationService(SettingsManager settingsManager, UserAccessor userAccessor,
@@ -53,6 +58,7 @@ public class ConfigurationService {
 
         this.userAccesor = userAccessor;
         this.settingsManager = settingsManager;
+        this.appLinkService = appLinkService;
         this.transformerClient = new TransformerClient(getTransformerUrl());
         this.sourceManager = new SourceManager(appLinkService, transformerClient);
 
@@ -180,9 +186,36 @@ public class ConfigurationService {
         }
     }
 
-
     @Path("sources/extended")
     @GET
+    public Response getExtendedSourcesFilteredByCurrentUser() {
+        try {
+            List<Source> sources = OBJECT_MAPPER.readValue(transformerClient.getExtendedSources().getBody(),
+                    OBJECT_MAPPER.getTypeFactory().constructCollectionType(ArrayList.class, Source.class));
+
+            sources.stream().filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId())).forEach(source -> {
+                try {
+                    ApplicationLinkRequestFactory authenticatedRequestFactory = appLinkService.getApplicationLink(new ApplicationId(source.getAppLinksId())).createAuthenticatedRequestFactory();
+                    String response = authenticatedRequestFactory.createRequest(Request.MethodType.GET, "/rest/api/1.0/projects").execute();
+                    ProjectsPage projectsPage = OBJECT_MAPPER.readValue(response, OBJECT_MAPPER.getTypeFactory().constructType(ProjectsPage.class));
+                    List<String> aviableProjectsKeys = projectsPage.getProjects().stream().map(Project::getKey).collect(Collectors.toList());
+                    source.getProjects().values().stream().map(com.networkedassets.autodoc.transformer.settings.Project::getKey)
+                            .filter(k -> !aviableProjectsKeys.contains(k)).forEach(k -> source.getProjects().remove(k));
+                } catch (TypeNotInstalledException | CredentialsRequiredException | IOException | ResponseException e) {
+                    throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
+                }
+            });
+
+            return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
+                    .entity(OBJECT_MAPPER.writeValueAsString(sources)).build();
+
+
+        } catch (IOException | SettingsException e) {
+            throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
+        }
+    }
+
+
     public Response getExtendedSources() {
         try {
             HttpResponse<String> response = transformerClient.getExtendedSources();
