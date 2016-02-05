@@ -46,15 +46,21 @@
 		<dependency>
 			<groupId>com.atlassian.streams</groupId>
 			<artifactId>streams-thirdparty-api</artifactId>
-			<version>5.4.14</version>
+			<version>${streams.thirdparty.plugin.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.atlassian.streams</groupId>
 			<artifactId>streams-api</artifactId>
-			<version>5.4.14</version>
+			<version>${streams.thirdparty.plugin.version}</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.atlassian.streams</groupId>
+            <artifactId>streams-thirdparty-plugin</artifactId>
+            <version>${streams.thirdparty.plugin.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -118,6 +124,19 @@
 				<version>${amps.version}</version>
 				<extensions>true</extensions>
 				<configuration>
+                    <pluginDependencies>
+                        <pluginDependency>
+                            <groupId>com.atlassian.streams</groupId>
+                            <artifactId>streams-thirdparty-plugin</artifactId>
+                        </pluginDependency>
+                    </pluginDependencies>
+
+                    <instructions>
+                        <Import-Package>
+							com.atlassian.streams.thirdparty*;version="${streams.thirdparty.plugin.version}"
+                        </Import-Package>
+                    </instructions>
+
 					<productVersion>${confluence.version}</productVersion>
 					<productDataVersion>${confluence.data.version}</productDataVersion>
 					<compressResources>false</compressResources>
@@ -154,5 +173,6 @@
 		<confluence.data.version>5.8.6</confluence.data.version>
 		<amps.version>5.0.13</amps.version>
 		<plugin.testrunner.version>1.2.3</plugin.testrunner.version>
+        <streams.thirdparty.plugin.version>5.4.14</streams.thirdparty.plugin.version>
 	</properties>
 </project>
