@@ -19,12 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.atlassian.applinks.api.*;
-import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
-import com.atlassian.confluence.user.ConfluenceUser;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.base.Strings;
 import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project;
 import com.networkedassets.autodoc.transformer.settings.*;
@@ -75,12 +71,25 @@ public class ConfigurationService {
             projectKey = URLDecoder.decode(projectKey, "UTF-8");
             repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
             branchId = URLDecoder.decode(branchId, "UTF-8");
-            HttpResponse<String> response = transformerClient.modifyBranch(sourceId, projectKey, repoSlug, branchId,
-                    branch);
-            return convertToResponse(response);
-        } catch (SettingsException | UnsupportedEncodingException e) {
+
+            if (isProjectVisibleForCurrentUser(sourceId, projectKey)) {
+                HttpResponse<String> response = transformerClient.modifyBranch(sourceId, projectKey, repoSlug, branchId,
+                        branch);
+                return convertToResponse(response);
+            } else {
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+
+        } catch (SettingsException | IOException | TypeNotInstalledException | CredentialsRequiredException | ResponseException e) {
             throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
+    }
+
+    private boolean isProjectVisibleForCurrentUser(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey) throws IOException, SettingsException, CredentialsRequiredException, TypeNotInstalledException, ResponseException {
+        Source source = OBJECT_MAPPER.readValue(transformerClient.getSource(Integer.toString(sourceId)).getBody(),
+                OBJECT_MAPPER.getTypeFactory().constructType(Source.class));
+        ApplicationLinkRequest request = getApplicationLinkRequestFactory(source).createRequest(Request.MethodType.GET, "/rest/api/1.0/projects/" + projectKey);
+        return request.executeAndReturn(com.atlassian.sal.api.net.Response::isSuccessful);
     }
 
     @POST
@@ -193,26 +202,43 @@ public class ConfigurationService {
             List<Source> sources = OBJECT_MAPPER.readValue(transformerClient.getExtendedSources().getBody(),
                     OBJECT_MAPPER.getTypeFactory().constructCollectionType(ArrayList.class, Source.class));
 
-            sources.stream().filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId())).forEach(source -> {
-                try {
-                    ApplicationLinkRequestFactory authenticatedRequestFactory = appLinkService.getApplicationLink(new ApplicationId(source.getAppLinksId())).createAuthenticatedRequestFactory();
-                    String response = authenticatedRequestFactory.createRequest(Request.MethodType.GET, "/rest/api/1.0/projects").execute();
-                    ProjectsPage projectsPage = OBJECT_MAPPER.readValue(response, OBJECT_MAPPER.getTypeFactory().constructType(ProjectsPage.class));
-                    List<String> aviableProjectsKeys = projectsPage.getProjects().stream().map(Project::getKey).collect(Collectors.toList());
-
-                    source.getProjects().values().removeIf(p -> !aviableProjectsKeys.contains(p.getKey()));
-                } catch (TypeNotInstalledException | CredentialsRequiredException | IOException | ResponseException e) {
-                    throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
-                }
-            });
+            List<Source> filteredSources = filterSourcesByCurrentUserPermissions(sources);
 
             return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
-                    .entity(OBJECT_MAPPER.writeValueAsString(sources)).build();
+                    .entity(OBJECT_MAPPER.writeValueAsString(filteredSources)).build();
 
 
         } catch (IOException | SettingsException e) {
             throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
         }
+    }
+
+    private List<Source> filterSourcesByCurrentUserPermissions(List<Source> givenSources) {
+        List<Source> sources = new ArrayList<>(givenSources);
+        sources.stream().filter(s -> !Strings.isNullOrEmpty(s.getAppLinksId())).forEach(source -> {
+            try {
+                //get aviable project keys for current user from stash/bitbucket
+                ApplicationLinkRequestFactory authenticatedRequestFactory = getApplicationLinkRequestFactory(source);
+                String response = authenticatedRequestFactory
+                        .createRequest(Request.MethodType.GET, "/rest/api/1.0/projects").execute();
+                ProjectsPage projectsPage = OBJECT_MAPPER
+                        .readValue(response, OBJECT_MAPPER.getTypeFactory().constructType(ProjectsPage.class));
+                List<String> aviableProjectsKeys = projectsPage
+                        .getProjects().stream().map(Project::getKey).collect(Collectors.toList());
+
+                //filter given sources with obtained keys
+                source.getProjects().values().removeIf(p -> !aviableProjectsKeys.contains(p.getKey()));
+            } catch (TypeNotInstalledException | CredentialsRequiredException | IOException | ResponseException e) {
+                throw new TransformerSettingsException(String.format(ERROR_FORMAT, e.getMessage()));
+            }
+        });
+        return sources;
+    }
+
+    private ApplicationLinkRequestFactory getApplicationLinkRequestFactory(Source source) throws TypeNotInstalledException {
+        return appLinkService
+                .getApplicationLink(new ApplicationId(source.getAppLinksId()))
+                .createAuthenticatedRequestFactory();
     }
 
 
