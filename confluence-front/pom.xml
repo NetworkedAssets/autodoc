@@ -124,18 +124,19 @@
 				<version>${amps.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-                    <pluginDependencies>
-                        <pluginDependency>
-                            <groupId>com.atlassian.streams</groupId>
-                            <artifactId>streams-thirdparty-plugin</artifactId>
-                        </pluginDependency>
-                    </pluginDependencies>
+                    <!--<pluginDependencies>-->
+                        <!--<pluginDependency>-->
+                            <!--<groupId>com.atlassian.streams</groupId>-->
+                            <!--<artifactId>streams-thirdparty-plugin</artifactId>-->
+                        <!--</pluginDependency>-->
+                    <!--</pluginDependencies>-->
 
-                    <instructions>
-                        <Import-Package>
-							com.atlassian.streams.thirdparty*;version="${streams.thirdparty.plugin.version}"
-                        </Import-Package>
-                    </instructions>
+                    <!--<instructions>-->
+                        <!--<Import-Package>-->
+							<!--com.atlassian.streams.thirdparty*;version="${streams.thirdparty.plugin.version}"-->
+                        <!--</Import-Package>-->
+						<!--<Require-Capability/>-->
+                    <!--</instructions>-->
 
 					<productVersion>${confluence.version}</productVersion>
 					<productDataVersion>${confluence.data.version}</productDataVersion>
