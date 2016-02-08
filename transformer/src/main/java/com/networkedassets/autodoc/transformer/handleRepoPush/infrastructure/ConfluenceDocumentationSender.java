@@ -20,10 +20,14 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
 	private static final Logger log = LoggerFactory.getLogger(PushEventService.class);
 
 	@Override
-	public void send(Documentation documentation, Settings settings) {
+	public boolean send(Documentation documentation, Settings settings) {
 		String url = settings.getConfluenceUrl();
-		if (Strings.isNullOrEmpty(url))
-			return;
+
+		if (Strings.isNullOrEmpty(url)) {
+			log.error("Confluence url isn't set!");
+			return false;
+		}
+
 		url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
 		for (DocumentationPiece docPiece : documentation.getPieces()) {
 			try {
@@ -44,6 +48,7 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
 				throw new RuntimeException(e);
 			}
 		}
+        return true;
 	}
 
 }
