@@ -91,7 +91,7 @@ public class UmlJsonDocumentationParser {
             JSONObject packageValue = new JSONObject()
                     .put("qualified", packageName)
                     .put("type", "package");
-            // building objects in the package START
+            // building objects in the package
             entitiesSet.stream().filter(entity -> entity.getPackageName().equals(packageName)).forEach(entity -> {
                 packageValue.put(entity.getDocPieceName(), new JSONObject(entity.getJSONdata()));
             });
