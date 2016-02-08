@@ -15,9 +15,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Created by mtulaza on 2016-02-02.
- */
+
 public class UmlJsonDocumentationParser {
     private ObjectMapper mapper = new ObjectMapper();
     private JsonNode rootNode;
@@ -26,6 +24,26 @@ public class UmlJsonDocumentationParser {
         this.rootNode = mapper.readTree(JSON);
     }
 
+    
+    public Optional<String> filterAndComposeJSON(String docPieceName) throws IOException {
+        Set<String> entitiesNames = getAllEntitiesNamesFromRelations(docPieceName, findRelationsBy(docPieceName));
+
+        Set<Relation> relationsSet = findRelationsBetweenEntities(entitiesNames, findAllRelations());
+        Set<Entity> entitiesSet = findEntities(getAllEntitiesNamesFromRelations(docPieceName, relationsSet));
+
+        if(! (entitiesSet.isEmpty() || relationsSet.isEmpty()) ) {
+            Set<String> allPackages = findAllPackages(entitiesSet);
+            JSONObject responseJSONObject = new JSONObject();
+
+            responseJSONObject.put("entities", buildPackagesAndTheirValues(allPackages, entitiesSet));
+            responseJSONObject.put("relations", new JSONArray(relationsSet));
+            return Optional.of(responseJSONObject.toString());
+        }else{
+            return Optional.empty();
+        }
+    }
+    
+    
     private Set<Relation> findAllRelations() throws IOException {
         JsonNode relationsNode = rootNode.get("relations");
         return mapper.readValue(relationsNode.toString(), new TypeReference<Set<Relation>>(){});
@@ -66,23 +84,7 @@ public class UmlJsonDocumentationParser {
                 .collect(Collectors.toSet());
     }
 
-    public Optional<String> filterAndComposeJSON(String docPieceName) throws IOException {
-        Set<String> entitiesNames = getAllEntitiesNamesFromRelations(docPieceName, findRelationsBy(docPieceName));
-
-        Set<Relation> relationsSet = findRelationsBetweenEntities(entitiesNames, findAllRelations());
-        Set<Entity> entitiesSet = findEntities(getAllEntitiesNamesFromRelations(docPieceName, relationsSet));
-
-        if(! (entitiesSet.isEmpty() || relationsSet.isEmpty()) ) { // prawo deMorgana sie przydalo.. wow
-            Set<String> allPackages = findAllPackages(entitiesSet);
-            JSONObject responseJSONObject = new JSONObject();
-
-            responseJSONObject.put("entities", buildPackagesAndTheirValues(allPackages, entitiesSet));
-            responseJSONObject.put("relations", new JSONArray(relationsSet));
-            return Optional.of(responseJSONObject.toString());
-        }else{
-            return Optional.empty();
-        }
-    }
+   
 
     private JSONObject buildPackagesAndTheirValues(Set<String> allPackages, Set<Entity> entitiesSet) {
         JSONObject packagesJson = new JSONObject();

@@ -6,9 +6,7 @@ import org.quartz.CronScheduleBuilder;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by kamil on 02.02.2016.
- */
+
 public class ScheduledEventHelper {
     public static CronScheduleBuilder getCronSchedule(ScheduledEvent event) {
         String[] splitTime = event.getTime().split(":");

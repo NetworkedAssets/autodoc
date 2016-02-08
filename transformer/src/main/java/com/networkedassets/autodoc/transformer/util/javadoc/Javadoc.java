@@ -20,10 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Javadoc wrapper for generating javadoc pages TODO: Change all the printlns to
- * proper logging
- */
+
 public class Javadoc {
     private List<Path> sourceFiles;
     private Path javadocDirectory;

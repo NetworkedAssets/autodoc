@@ -1,8 +1,6 @@
 package com.networkedassets.autodoc.transformer.util.uml.data;
 
-/**
- * Created by mtulaza on 2016-02-02.
- */
+
 public class Relation {
     private String source;
     private String type;
