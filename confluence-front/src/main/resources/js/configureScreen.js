@@ -1,6 +1,3 @@
-/**
- * Created by mrobakowski on 9/18/2015.
- */
 (function ($, undefined) {
 
     function post(path, params, method) {

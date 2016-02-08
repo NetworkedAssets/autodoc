@@ -1,6 +1,6 @@
 (function ($) {
     var base_url = $("meta#confluence-base-url").attr("content");
-    var url = base_url + "/rest/autodoc/1.0/configuration/branches/listened";
+    var url = base_url + "/rest/doc/1.0/configuration/branches/listened";
 
     var vm = {};
 
@@ -219,5 +219,5 @@
             }
         }
     };
-    AJS.MacroBrowser.setMacroJsOverride("autodocDashboard", jsOverrides);
+    AJS.MacroBrowser.setMacroJsOverride("docMacro", jsOverrides);
 })(AJS.$);

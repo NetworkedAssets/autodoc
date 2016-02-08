@@ -251,9 +251,9 @@
     </xwork>
 
     <!--Macro-->
-    <xhtml-macro name="DoC Macro"
+    <xhtml-macro name="docMacro"
                  class="com.networkedassets.autodoc.DocMacro"
-                 key="doc-macro">
+                 key="docMacro">
         <description>DoC macro displaying documentation in various forms on pages
         </description>
         <parameters>
