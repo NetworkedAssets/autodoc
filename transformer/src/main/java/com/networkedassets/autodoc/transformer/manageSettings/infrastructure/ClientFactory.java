@@ -9,10 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
-/**
- * Created by kamil on 18.11.2015.
- */
 public class ClientFactory {
 
     private static Logger log = LoggerFactory.getLogger(ClientFactory.class);

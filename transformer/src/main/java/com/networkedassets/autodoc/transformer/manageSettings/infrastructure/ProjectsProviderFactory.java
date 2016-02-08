@@ -5,9 +5,7 @@ import com.networkedassets.autodoc.transformer.settings.Source;
 
 import java.net.MalformedURLException;
 
-/**
- * Created by kamil on 03.12.2015.
- */
+
 public class ProjectsProviderFactory {
     public static ProjectsProvider getInstance(Source source) throws MalformedURLException {
         ProjectsProvider projectsProvider = null;

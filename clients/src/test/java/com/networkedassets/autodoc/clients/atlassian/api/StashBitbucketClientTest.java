@@ -11,9 +11,6 @@ import java.net.URL;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by mtulaza on 2015-12-16.
- */
 public class StashBitbucketClientTest {
 	private final String PROJECT_KEY = "TP";
 	private final String PROJECT_SLUG = "lol";
