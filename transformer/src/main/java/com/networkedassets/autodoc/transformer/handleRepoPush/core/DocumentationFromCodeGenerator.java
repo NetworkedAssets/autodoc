@@ -1,10 +1,5 @@
 package com.networkedassets.autodoc.transformer.handleRepoPush.core;
 
-import javax.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
@@ -13,6 +8,11 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvid
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch.ListenType;
+import com.networkedassets.autodoc.transformer.settings.Settings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 public class DocumentationFromCodeGenerator implements PushEventProcessor {
 	public static Logger log = LoggerFactory.getLogger(DocumentationFromCodeGenerator.class);
@@ -43,18 +43,25 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
 	}
 
 	public void generateDocumentation(String sourceUrl, String projectKey, String repoSlug, String branchId) {
-		if (settingsProvider.getCurrentSettings().isSourceWithUrlExistent(sourceUrl)
-				|| !settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
-						.getRepoBySlug(repoSlug).getBranchById(branchId).getListenTo().equals(ListenType.none)) {
+		final Settings currentSettings = settingsProvider.getCurrentSettings();
 
-			Code code = codeProvider.getCode(settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl),
+		if (doesSourceExistAndBranchIsListened(sourceUrl, projectKey, repoSlug, branchId, currentSettings)) {
+
+			Code code = codeProvider.getCode(currentSettings.getSourceByUrl(sourceUrl),
 					projectKey, repoSlug, branchId);
 
 			for (DocumentationType docType : DocumentationType.values()) {
 				Documentation documentation = docGeneratorFactory.createFor(docType).generateFrom(code);
 				documentation.setProjectInfo(projectKey, repoSlug, branchId);
-				documentationSender.send(documentation, settingsProvider.getCurrentSettings());
+				documentationSender.send(documentation, currentSettings);
 			}
 		}
 	}
+
+    private boolean doesSourceExistAndBranchIsListened(String sourceUrl, String projectKey, String repoSlug,
+                                                       String branchId, Settings currentSettings) {
+        return currentSettings.isSourceWithUrlExistent(sourceUrl)
+                || !currentSettings.getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
+                        .getRepoBySlug(repoSlug).getBranchById(branchId).getListenTo().equals(ListenType.none);
+    }
 }
