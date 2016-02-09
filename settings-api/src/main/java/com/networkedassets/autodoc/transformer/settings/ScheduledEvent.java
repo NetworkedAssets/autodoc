@@ -1,6 +1,9 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -37,11 +40,11 @@ public class ScheduledEvent implements Serializable {
     public void setPeriodic(boolean periodic) {
         this.periodic = periodic;
     }
-
+    
     public PeriodType getPeriodType() {
         return periodType;
     }
-
+   
     public void setPeriodType(PeriodType periodType) {
         this.periodType = periodType;
     }

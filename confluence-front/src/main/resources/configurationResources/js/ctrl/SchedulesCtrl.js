@@ -4,19 +4,19 @@ angular.module("DoC_Config").controller("SchedulesCtrl",function($scope,settings
         singular: [
             {
                 label: "day",
-                value: "day"
+                value: "DAY"
             }, {
                 label: "week",
-                value: "week"
+                value: "WEEK"
             }
         ],
         plural: [
             {
                 label: "days",
-                value: "day"
+                value: "DAY"
             }, {
                 label: "weeks",
-                value: "week"
+                value: "WEEK"
             }
         ]
     };
@@ -66,7 +66,7 @@ angular.module("DoC_Config").controller("SchedulesCtrl",function($scope,settings
         schedules.settings.scheduledEvents.push(
             {
                 "periodic": false,
-                "type": "day",
+                "periodType": "DAY",
                 "number": 1,
                 "weekdays": {
                     "mon": false,
