@@ -6,6 +6,7 @@ import com.atlassian.json.jsonorg.JSONObject;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.streams.thirdparty.api.ActivityService;
 import com.google.common.base.Joiner;
+import com.networkedassets.autodoc.util.Debouncer;
 import com.networkedassets.util.functional.Optionals;
 import net.java.ao.Query;
 import org.slf4j.Logger;
@@ -18,21 +19,24 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Path("/documentation/")
 @Produces({MediaType.APPLICATION_JSON})
 public class DocumentationService {
+    private final String ERROR_JSON = "{\"success\": false, \"message\": \"Could not find requested documentation!\"}";
     private ActiveObjects ao;
     @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(DocumentationService.class);
-    private DocumentationActivityPoster documentationActivityPoster;
-    private final String ERROR_JSON = "{\"success\": false, \"message\": \"Could not find requested documentation!\"}";
+    private Consumer<DocumentationAdded> documentationActivityPoster;
 
-    public DocumentationService(ActiveObjects ao, ApplicationProperties applicationProperties
-                                ,ActivityService activityService) {
+    public DocumentationService(ActiveObjects ao, ApplicationProperties applicationProperties,
+                                ActivityService activityService) {
         this.ao = ao;
-        documentationActivityPoster = new DocumentationActivityPoster(applicationProperties, activityService);
+        documentationActivityPoster = new Debouncer<>(
+                new DocumentationActivityPoster(applicationProperties, activityService),
+                30000); // 30s
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}")
@@ -47,7 +51,8 @@ public class DocumentationService {
         String branchDec = URLDecoder.decode(branch, "UTF-8");
         String doctypeDec = URLDecoder.decode(doctype, "UTF-8");
 
-        if ("uml".equalsIgnoreCase(doctypeDec)) return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
+        if ("uml".equalsIgnoreCase(doctypeDec))
+            return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
         return ao.executeInTransaction(() ->
                 getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
                         .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
@@ -166,7 +171,7 @@ public class DocumentationService {
             return Response.ok("{\"success\": true}").build();
         });
 
-        documentationActivityPoster.postDocumentationAdded(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec));
+        documentationActivityPoster.accept(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec));
 
         return response;
     }

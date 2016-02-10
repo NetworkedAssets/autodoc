@@ -17,7 +17,7 @@ public class TestClassPleaseIgnore {
         Code code = new Code(Paths.get("C:\\Users\\mrobakowski\\projects\\autodoc\\transformer\\src"));
         DocumentationGeneratorFactory dgf = new DefaultDocumentationGeneratorFactory();
         Documentation javadoc = dgf.createFor(DocumentationType.JAVADOC).generateFrom(code);
-        Documentation uml = dgf.createFor(DocumentationType.UML).generateFrom(code);
+//        Documentation uml = dgf.createFor(DocumentationType.UML).generateFrom(code);
         System.out.println("success");
     }
 }

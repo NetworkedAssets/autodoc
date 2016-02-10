@@ -1,18 +1,20 @@
 package com.networkedassets.autodoc.documentation;
 
+import java.util.Objects;
+
 public class DocumentationAdded {
     private final String project;
     private final String repo;
     private final String branch;
     private final String docType;
-    private final String docPieceNameDec;
+    private final String docPieceName;
 
-    public DocumentationAdded(String projectDec, String repoDec, String branchDec, String docTypeDec, String docPieceNameDec) {
+    public DocumentationAdded(String projectDec, String repoDec, String branchDec, String docTypeDec, String docPieceName) {
         project = projectDec;
         repo = repoDec;
         branch = branchDec;
         docType = docTypeDec;
-        this.docPieceNameDec = docPieceNameDec;
+        this.docPieceName = docPieceName;
     }
 
     public String getProject() {
@@ -31,7 +33,25 @@ public class DocumentationAdded {
         return docType;
     }
 
-    public String getDocPieceNameDec() {
-        return docPieceNameDec;
+    public String getDocPieceName() {
+        return docPieceName;
+    }
+
+    // OBJECTS WITH DIFFERENT docPieceName ARE CONSIDERED EQUAL. This is intentional.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DocumentationAdded that = (DocumentationAdded) o;
+        return Objects.equals(project, that.project) &&
+                Objects.equals(repo, that.repo) &&
+                Objects.equals(branch, that.branch) &&
+                Objects.equals(docType, that.docType);
+    }
+
+    // OBJECTS WITH DIFFERENT docPieceName ARE CONSIDERED EQUAL. This is intentional.
+    @Override
+    public int hashCode() {
+        return Objects.hash(project, repo, branch, docType);
     }
 }

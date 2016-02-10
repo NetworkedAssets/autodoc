@@ -13,11 +13,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.function.Consumer;
 
 import static com.atlassian.streams.api.Html.html;
 import static com.atlassian.streams.api.common.Option.some;
 
-public class DocumentationActivityPoster {
+public class DocumentationActivityPoster implements Consumer<DocumentationAdded> {
     private final Application application;
     private final URI baseUrl;
     private ActivityService activityService;
@@ -60,12 +61,16 @@ public class DocumentationActivityPoster {
     }
 
     private String documentationAddedActivityContent(DocumentationAdded documentationAdded) {
-        return String.format("Added documentation for %s %s %s: %s-%s",
+        return String.format("Added documentation for %s %s %s: %s",
                 documentationAdded.getProject(),
                 documentationAdded.getRepo(),
                 documentationAdded.getBranch(),
-                documentationAdded.getDocType(),
-                documentationAdded.getDocPieceNameDec()
+                documentationAdded.getDocType()
         );
+    }
+
+    @Override
+    public void accept(DocumentationAdded documentationAdded) {
+        postDocumentationAdded(documentationAdded);
     }
 }
