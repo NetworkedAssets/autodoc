@@ -82,13 +82,7 @@ public class ScheduledEvent implements Serializable {
     }
 
     public enum PeriodType {
-        DAY("day"), WEEK("week");
-
-        private final String type;
-
-        PeriodType(String type) {
-            this.type = type;
-        }
+        DAY, WEEK
     }
 
     @Override

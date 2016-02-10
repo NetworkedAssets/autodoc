@@ -13,9 +13,6 @@ import org.quartz.JobExecutionException;
 
 import javax.inject.Inject;
 
-/**
- * Created by mgilewicz on 2016-01-14.
- */
 public class ScheduledEventJob implements Job {
     private String sourceUrl;
     private String projectKey;
