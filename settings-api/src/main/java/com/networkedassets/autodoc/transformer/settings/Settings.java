@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.google.common.base.Optional;
 import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 /**
@@ -66,6 +68,7 @@ public class Settings implements Serializable {
 		this.confluenceUrl = confluenceUrl;
 	}
 
+	@JsonProperty("confluenceUsername")
 	public String getConfluenceUsername() {
 		return credentials.getConfluenceUsername();
 	}
@@ -74,16 +77,11 @@ public class Settings implements Serializable {
 		this.credentials.setConfluenceUsername(confluenceUsername);
 	}
 
-	@JsonGetter("confluencePassword")
-	public String getNullConfluencePassword() {
-		return null;
-	}
-
+	@JsonProperty("confluencePassword")
 	public String getConfluencePassword() {
 		return credentials.getConfluencePassword();
 	}
 
-	@JsonSetter("confluencePassword")
 	public void setConfluencePassword(String confluencePassword) {
 		credentials.setConfluencePassword(confluencePassword);
 	}

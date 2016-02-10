@@ -19,6 +19,7 @@ public class Credentials {
 	public String getConfluencePassword() {
 		return confluencePassword;
 	}
+	
 	public void setConfluencePassword(String confluencePassword) {
 		this.confluencePassword = confluencePassword;
 	}

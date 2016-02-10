@@ -10,6 +10,7 @@ import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
+import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
@@ -121,6 +122,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public boolean setCredentials(Settings settings) {
+    	this.settings.setCredentials(new Credentials());
         this.settings.setConfluencePassword(settings.getConfluencePassword());
         this.settings.setConfluenceUrl(settings.getConfluenceUrl());
         this.settings.setConfluenceUsername(settings.getConfluenceUsername());

@@ -1,5 +1,7 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
+import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.view.Views;
 
@@ -50,8 +53,9 @@ public class SettingsService {
 	@JsonView(Views.GetCredentialsView.class)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCredentials() {
-		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
-				.entity(settingsProvider.getNotUpdatedSettings()).build();
+		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(Optional
+				.ofNullable(settingsProvider.getNotUpdatedSettings().getCredentials()).orElse(new Credentials()))
+				.build();
 	}
 
 	@POST
