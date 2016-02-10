@@ -40,18 +40,18 @@ public class JavadocRunner {
             argumentList.add(classPath);
 
             if (sourcePaths != null) {
-                String concatedSourcePaths = join(File.pathSeparator, sourcePaths);
-                if (concatedSourcePaths.length() > 0) {
+                String concatenatedSourcePaths = join(File.pathSeparator, sourcePaths);
+                if (concatenatedSourcePaths.length() > 0) {
                     argumentList.add("-sourcepath");
-                    argumentList.add(concatedSourcePaths);
+                    argumentList.add(concatenatedSourcePaths);
                 }
             }
 
             if (subPackages != null) {
-                String concatedSubPackages = join(";", subPackages);
-                if (concatedSubPackages.length() > 0) {
+                String concatenatedSubPackages = join(";", subPackages);
+                if (concatenatedSubPackages.length() > 0) {
                     argumentList.add("-subpackages");
-                    argumentList.add(concatedSubPackages);
+                    argumentList.add(concatenatedSubPackages);
                 }
             }
 

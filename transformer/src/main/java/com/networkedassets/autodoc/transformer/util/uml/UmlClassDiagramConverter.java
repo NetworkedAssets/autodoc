@@ -93,7 +93,7 @@ public class UmlClassDiagramConverter {
     }
 
     private JsonObject javadocToMainAsJson(Root javadocRoot) throws IOException, JAXBException {
-        String json = JavadocGenerator.jaxbToJson(Root.class, javadocRoot);
+        String json = JavadocGenerator.jaxbToJson(javadocRoot);
         JsonObject rootObj = Json.parse(new StringReader(json)).asObject();
         JsonArray packages = rootObj.get("root").asObject().get("package").asArray();
 

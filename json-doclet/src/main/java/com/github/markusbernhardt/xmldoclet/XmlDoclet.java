@@ -5,17 +5,14 @@ import com.sun.javadoc.DocErrorReporter;
 import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
 import org.apache.commons.cli.*;
-import org.eclipse.persistence.jaxb.JAXBContextFactory;
-import org.eclipse.persistence.jaxb.MarshallerProperties;
-import org.eclipse.persistence.jaxb.xmlmodel.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Doclet class.
@@ -134,63 +131,14 @@ public class XmlDoclet {
 
 	/**
 	 * Save XML object model to a file via JAXB.
-	 * 
+	 *
 	 * @param commandLine
 	 *            the parsed command line arguments
 	 * @param root
 	 *            the document root
 	 */
 	public static void save(CommandLine commandLine, Root root) {
-		if (commandLine.hasOption("dryrun")) {
-			return;
-		}
-
-		FileOutputStream fileOutputStream = null;
-		BufferedOutputStream bufferedOutputStream = null;
-		try {
-
-			Map<String, Object> properties = new HashMap<String, Object>(2);
-			properties.put(MarshallerProperties.MEDIA_TYPE, "application/json");
-			properties.put(MarshallerProperties.JSON_INCLUDE_ROOT, true);
-			properties.put(MarshallerProperties.INDENT_STRING, true);
-			JAXBContext contextObj = JAXBContextFactory.createContext(new Class[] { Root.class, ObjectFactory.class },
-					properties);
-			Marshaller marshaller = contextObj.createMarshaller();
-
-			if (commandLine.hasOption("docencoding")) {
-				marshaller.setProperty(Marshaller.JAXB_ENCODING, commandLine.getOptionValue("docencoding"));
-			}
-
-			String filename = "javadoc.json";
-
-			if (commandLine.hasOption("filename")) {
-				filename = commandLine.getOptionValue("filename");
-			}
-			if (commandLine.hasOption("d")) {
-				filename = commandLine.getOptionValue("d") + File.separator + filename;
-			}
-
-			fileOutputStream = new FileOutputStream(filename);
-			bufferedOutputStream = new BufferedOutputStream(fileOutputStream, 1024 * 1024);
-
-			marshaller.marshal(root, bufferedOutputStream);
-			bufferedOutputStream.flush();
-			fileOutputStream.flush();
-
-		} catch (JAXBException | IOException e) {
-			log.error(e.getMessage(), e);
-		} finally {
-			try {
-				if (bufferedOutputStream != null) {
-					bufferedOutputStream.close();
-				}
-				if (fileOutputStream != null) {
-					fileOutputStream.close();
-				}
-			} catch (IOException e) {
-				log.error(e.getMessage(), e);
-			}
-		}
+		// no saving!
 	}
 
 	/**
