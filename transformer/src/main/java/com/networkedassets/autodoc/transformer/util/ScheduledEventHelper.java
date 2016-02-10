@@ -6,8 +6,19 @@ import org.quartz.CronScheduleBuilder;
 import java.util.Map;
 import java.util.Set;
 
-
+/**
+ * Utils producing CRON (time-based job) used at scheduling events.
+ */
 public class ScheduledEventHelper {
+
+    /**
+     * Creates CRON for given event.
+     * Syntax: sec min hour day_of_month month day_of_week year(optional)
+     * Example: "0 0/5 * * * ?" - fire every 5 minutes
+     *
+     * @param event Event containing full firing-time description
+     * @return CRON built from event
+     */
     public static CronScheduleBuilder getCronSchedule(ScheduledEvent event) {
         String[] splitTime = event.getTime().split(":");
         String h = splitTime[0];
@@ -19,26 +30,28 @@ public class ScheduledEventHelper {
     private static String getCronDays(ScheduledEvent event) {
         String date;
         if (event.isPeriodic()) {
+            //Every week
             if (event.getPeriodType()== ScheduledEvent.PeriodType.WEEK) {
                 String days = "";
-                // Get a set of the entries
-                Set<Map.Entry<String, Boolean>> set = event.getWeekdays().entrySet();
-                // Get an iterator
-                // Display elements
-                for (Map.Entry<String, Boolean> entry : set) {
+                Set<Map.Entry<String, Boolean>> weekdays = event.getWeekdays().entrySet();
+
+                for (Map.Entry<String, Boolean> entry : weekdays) {
                     if (entry.getValue())
                         days += entry.getKey().toUpperCase() + ",";
                 }
                 if (days.isEmpty())
                     days = "*";
-                else
+                else //Remove comma after last day
                     days = days.substring(0, days.length() - 1);
 
-                date = "* * " + days + " *";
-            } else
-                date = "*/" + event.getNumber() + " * *";
+                date = "? * " + days;
+            } else //Every x days
+                date = "*/" + event.getNumber() + " * ?";
         } else
-            date = event.getOneTimeDate().getDay() + " " + event.getOneTimeDate().getMonth() + " * " + event.getOneTimeDate().getYear();
+            date = event.getOneTimeDate().getDay() + " "
+                    + event.getOneTimeDate().getMonth() + " ? "
+                    + event.getOneTimeDate().getYear();
+
         return date;
     }
 }

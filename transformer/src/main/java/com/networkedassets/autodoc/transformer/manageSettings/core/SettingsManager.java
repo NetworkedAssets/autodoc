@@ -200,6 +200,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         return currentBranch;
     }
 
+    @Override
     public void scheduleEvents(Branch currentBranch, int sourceId,
                                String projectKey, String repoSlug, String branchId) {
 
