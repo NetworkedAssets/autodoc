@@ -1,6 +1,23 @@
 package com.networkedassets.autodoc.transformer.util.uml;
 
-import com.eclipsesource.json.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.xml.bind.JAXBException;
+
+import org.json.JSONException;
+
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonValue;
+import com.eclipsesource.json.WriterConfig;
 import com.github.markusbernhardt.xmldoclet.xjc.Root;
 import com.google.common.collect.Lists;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
@@ -11,105 +28,100 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.core.JavadocGenera
 import com.networkedassets.autodoc.transformer.util.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.util.javadoc.JavadocException;
 import com.networkedassets.util.functional.Throwing;
-import org.json.JSONException;
-
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class UmlClassDiagramConverter {
 
-    private static final String newline = System.getProperty("line.separator");
-    private final Path plantUmlPath;
-    private final Code code;
+	private static final String newline = System.getProperty("line.separator");
+	private final Path plantUmlPath;
+	private final Code code;
 
-    public UmlClassDiagramConverter(Path plantUmlPath, Code code) {
-        this.plantUmlPath = plantUmlPath;
-        this.code = code;
-    }
+	public UmlClassDiagramConverter(Path plantUmlPath, Code code) {
+		this.plantUmlPath = plantUmlPath;
+		this.code = code;
+	}
 
-    public Documentation convert() throws JSONException, IOException, JAXBException, JavadocException {
-        Root r = JavadocGenerator.getCachedRoot() != null ?
-                JavadocGenerator.getCachedRoot() :
-                Javadoc.structureFromDirectory(code.getCodePath());
-        JsonObject javadocObj = javadocToMainAsJson(r);
-        JsonObject umlObj = plantUmlDependencyToJson();
-        JsonArray output = Json.array().asArray();
+	public Documentation convert() throws JSONException, IOException, JAXBException, JavadocException {
+		Root r = JavadocGenerator.getCachedRoot() != null ? JavadocGenerator.getCachedRoot()
+				: Javadoc.structureFromDirectory(code.getCodePath());
+		JsonObject javadocObj = javadocToMainAsJson(r);
+		JsonObject umlObj = plantUmlDependencyToJson();
+		List<String> entities = getEntitiesNames(javadocObj);
+		javadocObj.add("relations", getRelationsBetweenEntities(entities, umlObj));
+		List<DocumentationPiece> docPiecesList = buildDocumentationPiecesList(javadocObj, entities);
+		Documentation documentation = new Documentation(docPiecesList);
+		documentation.setType(DocumentationType.UML);
+		return documentation;
+	}
 
-        List<String> allDocPieceNames = Lists.newArrayList();
-        javadocObj.get("entities").asObject().names().stream()
-                .map(n -> javadocObj.get("entities").asObject().get(n).asObject().names())
-                .forEach(allDocPieceNames::addAll);
+	private JsonArray getRelationsBetweenEntities(List<String> entities, JsonObject umlObj) {
 
-        umlObj.get("relations").asArray().forEach(item -> {
-            if (allDocPieceNames.contains(item.asObject().getString("target", ""))) {
-                output.add(item.asObject());
-            }
-        });
-        javadocObj.add("relations", output);
+		JsonArray output = Json.array().asArray();
+		umlObj.get("relations").asArray().forEach(item -> {
+			if (entities.contains(item.asObject().getString("target", ""))) {
+				output.add(item.asObject());
+			}
+		});
 
-        List<DocumentationPiece> docPiecesList = buildDocumentationPiecesList(javadocObj, allDocPieceNames);
+		return output;
+	}
 
-        Documentation documentation = new Documentation(docPiecesList);
-        documentation.setType(DocumentationType.UML);
-        return documentation;
-    }
+	private List<String> getEntitiesNames(JsonObject javadocObj) {
 
-    private List<DocumentationPiece> buildDocumentationPiecesList(JsonObject javadocObj, List<String> docPieceNamesList) throws IOException {
-        List<DocumentationPiece> docPiecesList = Lists.newLinkedList();
+		List<String> allDocPieceNames = Lists.newArrayList();
+		javadocObj.get("entities").asObject().names().stream()
+				.map(n -> javadocObj.get("entities").asObject().get(n).asObject().names())
+				.forEach(allDocPieceNames::addAll);
+		return allDocPieceNames;
+	}
 
-        String allJSON = javadocObj.toString(WriterConfig.PRETTY_PRINT);
-        docPiecesList.add(new DocumentationPiece("all", "all", allJSON));
+	private List<DocumentationPiece> buildDocumentationPiecesList(JsonObject javadocObj, List<String> docPieceNamesList)
+			throws IOException {
+		List<DocumentationPiece> docPiecesList = Lists.newLinkedList();
 
-        UmlJsonDocumentationParser parser = new UmlJsonDocumentationParser(allJSON);
-        docPieceNamesList.parallelStream().forEach(Throwing.rethrowAsRuntimeException(docPieceName -> {
-            Optional<String> docPieceNameJSON = parser.filterAndComposeJSON(docPieceName);
-            if (docPieceNameJSON.isPresent()) {
-                docPiecesList.add(new DocumentationPiece(docPieceName, docPieceName, docPieceNameJSON.get()));
-            }
-        }));
-        return docPiecesList;
-    }
+		String allJSON = javadocObj.toString(WriterConfig.PRETTY_PRINT);
+		docPiecesList.add(new DocumentationPiece("all", "all", allJSON));
 
-    private JsonObject plantUmlDependencyToJson() throws IOException {
-        String plantUmlDependency = new String(Files.readAllBytes(this.plantUmlPath), "UTF-8");
-        return Json
-                .parse(String.format("{\"relations\":[%s]}", Pattern.compile(newline).splitAsStream(plantUmlDependency)
-                        .filter(s -> s.contains(">")).map(this::transform).sorted().collect(Collectors.joining(","))))
-                .asObject();
-    }
+		UmlJsonDocumentationParser parser = new UmlJsonDocumentationParser(allJSON);
+		docPieceNamesList.parallelStream().forEach(Throwing.rethrowAsRuntimeException(docPieceName -> {
+			Optional<String> docPieceNameJSON = parser.filterAndComposeJSON(docPieceName);
+			if (docPieceNameJSON.isPresent()) {
+				docPiecesList.add(new DocumentationPiece(docPieceName, docPieceName, docPieceNameJSON.get()));
+			}
+		}));
+		return docPiecesList;
+	}
 
-    private String transform(String s) {
-        String[] parts = s.split(" ");
-        return String.format("{\"source\":\"%s\",\"type\":\"%s\",\"target\":\"%s\"}", parts[0],
-                UmlRelationship.fromDescription(parts[1]), parts[2]);
+	private JsonObject plantUmlDependencyToJson() throws IOException {
+		String plantUmlDependency = new String(Files.readAllBytes(this.plantUmlPath), "UTF-8");
+		return Json
+				.parse(String.format("{\"relations\":[%s]}", Pattern.compile(newline).splitAsStream(plantUmlDependency)
+						.filter(s -> s.contains(">")).map(this::transform).sorted().collect(Collectors.joining(","))))
+				.asObject();
+	}
 
-    }
+	private String transform(String s) {
+		String[] parts = s.split(" ");
+		return String.format("{\"source\":\"%s\",\"type\":\"%s\",\"target\":\"%s\"}", parts[0],
+				UmlRelationship.fromDescription(parts[1]), parts[2]);
 
-    private JsonObject javadocToMainAsJson(Root javadocRoot) throws IOException, JAXBException {
-        String json = JavadocGenerator.jaxbToJson(javadocRoot);
-        JsonObject rootObj = Json.parse(new StringReader(json)).asObject();
-        JsonArray packages = rootObj.get("root").asObject().get("package").asArray();
+	}
 
-        JsonObject entities_ = Json.object();
-        for (JsonValue item : packages) {
-            JsonObject package_ = Json.object().add("qualified", item.asObject().getString("name", "")).add("type",
-                    "package");
-            item.asObject().names().stream().filter(names -> item.asObject().get(names).isArray())
-                    .forEach(entityType ->
-                            item.asObject().get(entityType).asArray().forEach(entity ->
-                                    package_.add(entity.asObject().getString("qualified", ""), entity.asObject())));
-            entities_.add(package_.getString("qualified", ""), package_);
-        }
-        rootObj.remove("root");
-        rootObj.add("entities", entities_);
-        return rootObj;
-    }
+	private JsonObject javadocToMainAsJson(Root javadocRoot) throws IOException {
+		String json = JavadocGenerator.jaxbToJson(javadocRoot);
+		JsonObject rootObj = Json.parse(new StringReader(json)).asObject();
+		JsonArray packages = rootObj.get("package").asArray();
+		JsonObject entities_ = Json.object();
+		for (JsonValue item : packages) {
+			JsonObject package_ = Json.object().add("qualified", item.asObject().getString("name", "")).add("type",
+					"package");
+			item.asObject().names().stream().filter(names -> item.asObject().get(names).isArray())
+					.forEach(entityType -> item.asObject().get(entityType).asArray().forEach(
+							entity -> package_.add(entity.asObject().getString("qualified", ""), entity.asObject())));
+			entities_.add(package_.getString("qualified", ""), package_);
+		}
+		rootObj.remove("root");
+		rootObj.add("entities", entities_);
+		return rootObj;
+	}
 
 }

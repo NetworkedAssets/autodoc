@@ -1,7 +1,6 @@
 package com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -29,7 +28,7 @@ public class PushEventService {
 
 	private static final Logger log = LoggerFactory.getLogger(PushEventService.class);
 	private final PushEventProcessor eventProcessor;
-	private static final int TIME_OUT = 10000;
+	private static final int TIME_OUT = 200000;
 
 	@Inject
 	public PushEventService(PushEventProcessor eventProcessor) {
