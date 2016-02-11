@@ -2,6 +2,9 @@ package com.networkedassets.autodoc.clients.atlassian.atlassianHookData;
 
 import javax.annotation.Nonnull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HookSettings {
 
 	@Nonnull
