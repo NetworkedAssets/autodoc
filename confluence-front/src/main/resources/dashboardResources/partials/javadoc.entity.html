@@ -53,14 +53,14 @@
                     <span class="toggle" ng-show="element.details.exist" title="Show/hide details"><span
                             class="aui-icon aui-icon-small aui-iconfont-arrow-{{element.details.visible?'up':'down'}}"
                             ng-click="vm.toggleDetails(element)"></span></span>
-                    <span class="annotations" ng-show="element.annotation"><!--
+                    <span class="annotations" ng-show="element.annotation && element.annotation.length"><!--
                                 --><span class="annotation" ng-repeat="annotation in element.annotation">@<span doc-qname="annotation"></span>
                                 </span>
                             </span>
                     <span class="name">{{element.name}}</span><!--
                     --><span class="parameters" ng-show="element.parameter"><span class="parenthesis">(</span><!--
                         --><span ng-repeat-start="parameter in element.parameter" class="parameter"><!--
-                             --><span class="annotations inline" ng-show="parameter.annotation"><!--
+                             --><span class="annotations inline" ng-show="parameter.annotation && parameter.annotation.length"><!--
                                     --><span class="annotation" ng-repeat="annotation in parameter.annotation">@<span doc-qname="annotation"></span>
                                     </span>
                                 </span>

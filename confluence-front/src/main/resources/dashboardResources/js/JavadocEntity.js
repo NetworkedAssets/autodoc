@@ -27,7 +27,7 @@ function JavadocEntity(object) {
             exist: false
         };
 
-        if (object.tag) {
+        if (object.tag && object.tag.length) {
             details.tags = object.tag;
             details.exist = true;
         }
