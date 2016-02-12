@@ -18,6 +18,8 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -107,6 +109,40 @@ public class DocumentationService {
         return documentationPiece.map(docPiece -> makeDocPieceJson(docPiece, attributeDec))
                 .map(n -> Response.ok(n).build())
                 .orElse(Response.status(404).entity(ERROR_JSON).build());
+    }
+
+    @Path("{project}/{repo}/{branch}/{doctype}/search")
+    @GET
+    public Response searchDocumentation(
+            @PathParam("project") String project,
+            @PathParam("repo") String repo,
+            @PathParam("branch") String branch,
+            @PathParam("doctype") String doctype,
+            @QueryParam("q") String query) throws UnsupportedEncodingException {
+
+        String projectDec = URLDecoder.decode(project, "UTF-8");
+        String repoDec = URLDecoder.decode(repo, "UTF-8");
+        String branchDec = URLDecoder.decode(branch, "UTF-8");
+        String queryDec = URLDecoder.decode(query, "UTF-8");
+        String doctypeDec = URLDecoder.decode(doctype, "UTF-8");
+
+        List<DocumentationPiece> searchResult = searchDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, queryDec);
+
+        final List<String> results = searchResult.stream()
+                .map(dp -> "\"" + dp.getPieceName() + "\"")
+                .collect(Collectors.toList());
+
+        return Response.ok(String.format("{\"results\": [%s]}", Joiner.on(",").join(results))).build();
+    }
+
+    private List<DocumentationPiece> searchDocumentationPiece(String project, String repo, String branch, String doctype, String query) {
+        return ao.executeInTransaction(() ->
+                getDocumentation(project, repo, branch, doctype).map(doc -> {
+                    final DocumentationPiece[] documentationPieces = ao.find(DocumentationPiece.class,
+                            // TODO: escape this properly -------------------------------------v
+                            Query.select().where("DOCUMENTATION_ID = ? AND CONTENT LIKE '%" + query + "%'"));
+                    return Arrays.asList(documentationPieces);
+                }).orElse(Collections.emptyList()));
     }
 
     private String makeDocPieceJson(DocumentationPiece dp) {
