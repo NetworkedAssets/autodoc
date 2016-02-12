@@ -67,7 +67,7 @@ public class GitRepository implements CodeRepository {
 	}
 
 	private boolean isPortSet() {
-		return this.baseUrl.getPort() == -1 ? false : true;
+		return this.baseUrl.getPort() != -1;
 	}
 
 }
