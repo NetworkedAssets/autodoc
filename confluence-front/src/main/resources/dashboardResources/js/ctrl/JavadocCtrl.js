@@ -3,6 +3,8 @@ angular.module("DoC")
     var vm = this;
     vm.loading = true;
 
+    vm.resourcesUrl = urlService.getResourcesUrl();
+
     var initSpinner = function() {
         AJS.$($element.find(".loadingSpinner")).spin("big");
     };

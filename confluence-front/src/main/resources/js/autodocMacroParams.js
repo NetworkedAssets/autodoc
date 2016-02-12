@@ -166,6 +166,31 @@
 
 
     var jsOverrides = {
+        /*"opener": function(macro){
+            var html = '<section role="dialog" id="demo-dialog" class="aui-layer aui-dialog2 aui-dialog2-medium" aria-hidden="true">'+
+            '<header class="aui-dialog2-header">'+
+            '<h2 class="aui-dialog2-header-main">Always use sentence case</h2>'+
+            '<div class="aui-dialog2-header-secondary">'+
+            '<form class="aui" action="#">'+
+            '<input id="demo-search" class="text" type="search" name="search">'+
+            '</form>'+
+            '</div>'+
+            '<a class="aui-dialog2-header-close">'+
+            '<span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>'+
+            '</a>'+
+            '</header>'+
+            '<div class="aui-dialog2-content">'+
+            '<p>Hello World</p>'+
+            '</div>'+
+            '<footer class="aui-dialog2-footer">'+
+            '<div class="aui-dialog2-footer-actions">'+
+            '<button id="dialog-close-button" class="aui-button aui-button-link">Close</button>'+
+            '</div>'+
+            '<div class="aui-dialog2-footer-hint">this is a hint</div>'+
+            '</footer>'+
+            '</section>';
+            $(body).
+        },*/
         "fields": {
             "enum": function (params, options) {
                 if (params && params.name == "sourceProject") {

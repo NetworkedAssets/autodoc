@@ -22,7 +22,7 @@
 
         <context>autodoc_confluence</context>
     </web-resource>
-    <web-resource key="autodoc-macro-params" name="autodoc macro parameter autocompletion">
+    <web-resource key="autodoc-macro-params" name="DoC macro parameter autocompletion">
         <resource type="download" name="autodocMacroParams.js"
                   location="js/autodocMacroParams.js"/>
         <dependency>confluence.editor.actions:editor-macro-browser
@@ -30,6 +30,7 @@
         <context>macro-browser</context>
     </web-resource>
     <web-resource key="dashboard-resources" name="Dashboard web resources">
+        <!-- TODO: Refactor Dashboard -> Macro -->
         <resource type="download" name="dashboardResources/"
                   location="/dashboardResources"/>
         <resource type="download" name="js/lib/d3.min.js"
@@ -184,7 +185,7 @@
     <!-- Item in Space Tools -->
     <web-item name="Space tools configuration action link" key="space-tools-configuration-action"
               section="system.space.tools/addons" weight="100">
-        <label key="Autodoc Configuration"/>
+        <label key="DoC Configuration"/>
         <link linkId="space-admin-quick-link-manager-id">
             /plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
         </link>
@@ -200,7 +201,7 @@
     <!-- Item in Space Admin (legacy) -->
     <web-item name="Space admin configuration action link" key="space-admin-configuration-action"
               section="system.space.admin/addons" weight="100">
-        <label key="Autodoc Configuration"/>
+        <label key="DoC Configuration"/>
         <link linkId="space-admin-quick-link-manager-id">
             /plugins/${project.artifactId}/autodoc-config.action?key=$generalUtil.urlEncode($helper.spaceKey)
         </link>
@@ -278,7 +279,7 @@
 
     <!--Confluence rest-->
     <rest key="rest" path="/doc" version="1.0">
-        <description>Provides rest endpoints used by Autodoc</description>
+        <description>Provides REST endpoints used by DoC</description>
     </rest>
 
 

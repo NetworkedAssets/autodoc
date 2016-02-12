@@ -134,3 +134,12 @@ span.entityType.entityTypeEnum {
     width: 280px;
     margin: 10px;
 }
+
+#doc_javadoc_noEntitySelected {
+    text-align: center;
+}
+
+#doc_javadoc_noEntitySelected img {
+    display: inline-block;
+    margin-top: 50px;
+}

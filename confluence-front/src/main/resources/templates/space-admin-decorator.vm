@@ -1,7 +1,7 @@
 #set ( $d = "$")
 <html>
     <head>
-        <title>Configure Autodoc</title>
+        <title>Configure DoC</title>
         <meta name="decorator" content="main"/>
         #requireResource("confluence.web.resources:ajs")
 		#requireResource("com.atlassian.auiplugin:aui-select")

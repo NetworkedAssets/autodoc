@@ -20,13 +20,14 @@
             </div>
         </aside>
         <div class="javadoc_container">
-            <div ng-hide="$state.includes('javadoc.entity')">
-                <h2>Package list</h2>
+            <div ng-hide="$state.includes('javadoc.entity')" id="doc_javadoc_noEntitySelected">
+                <img ng-src="{{vm.resourcesUrl}}/images/logo.png" alt="DoC – Documentation from Code">
+                <!--<h2>Package list</h2>
                 <ul>
                     <li ng-repeat="item in vm.items" class="">
                         <a ui-sref="javadoc.entity({name: item.name})">{{item.name}}</a>
                     </li>
-                </ul>
+                </ul>-->
             </div>
             <div ng-show="$state.includes('javadoc.entity')" id="doc_javadoc_main" ui-view></div>
         </div>
