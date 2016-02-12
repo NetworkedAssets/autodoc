@@ -6,7 +6,7 @@
 //
 
 
-package com.github.markusbernhardt.xmldoclet.xjc;
+package com.networkedassets.autodoc.jsondoclet.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

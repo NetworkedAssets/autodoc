@@ -18,7 +18,7 @@ import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
 import com.eclipsesource.json.WriterConfig;
-import com.github.markusbernhardt.xmldoclet.xjc.Root;
+import com.networkedassets.autodoc.jsondoclet.model.Root;
 import com.google.common.collect.Lists;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;

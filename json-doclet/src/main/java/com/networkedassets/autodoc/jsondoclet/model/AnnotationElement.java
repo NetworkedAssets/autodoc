@@ -6,30 +6,29 @@
 //
 
 
-package com.github.markusbernhardt.xmldoclet.xjc;
+package com.networkedassets.autodoc.jsondoclet.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
- * <p>Java class for annotationInstance complex type.
+ * <p>Java class for annotationElement complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="annotationInstance"&gt;
+ * &lt;complexType name="annotationElement"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="argument" type="{}annotationArgument" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="type" type="{}typeInfo" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -38,44 +37,41 @@ import java.util.List;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "annotationInstance", propOrder = {
-    "argument"
+@XmlType(name = "annotationElement", propOrder = {
+    "type"
 })
-public class AnnotationInstance {
+public class AnnotationElement {
 
-    protected List<AnnotationArgument> argument;
+    protected TypeInfo type;
     @XmlAttribute(name = "name")
     protected String name;
     @XmlAttribute(name = "qualified")
     protected String qualified;
+    @XmlAttribute(name = "default")
+    protected String _default;
 
     /**
-     * Gets the value of the argument property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the argument property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getArgument().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link AnnotationArgument }
-     *
-     *
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link TypeInfo }
+     *     
      */
-    public List<AnnotationArgument> getArgument() {
-        if (argument == null) {
-            argument = new ArrayList<AnnotationArgument>();
-        }
-        return this.argument;
+    public TypeInfo getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link TypeInfo }
+     *     
+     */
+    public void setType(TypeInfo value) {
+        this.type = value;
     }
 
     /**
@@ -124,6 +120,30 @@ public class AnnotationInstance {
      */
     public void setQualified(String value) {
         this.qualified = value;
+    }
+
+    /**
+     * Gets the value of the default property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDefault() {
+        return _default;
+    }
+
+    /**
+     * Sets the value of the default property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDefault(String value) {
+        this._default = value;
     }
 
 }

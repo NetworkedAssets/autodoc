@@ -6,11 +6,12 @@
 //
 
 
-package com.github.markusbernhardt.xmldoclet.xjc;
+package com.networkedassets.autodoc.jsondoclet.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.*;
+import java.lang.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class Package {
     @XmlElement(name = "interface")
     protected List<Interface> _interface;
     @XmlElement(name = "class")
-    protected List<Class> clazz;
+    protected List<com.networkedassets.autodoc.jsondoclet.model.Class> clazz;
     @XmlAttribute(name = "name")
     protected String name;
 
@@ -221,14 +222,14 @@ public class Package {
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Class }
+     * {@link com.networkedassets.autodoc.jsondoclet.model.Class }
      *
      *
      */
     @JsonProperty("class")
-    public List<Class> getClazz() {
+    public List<com.networkedassets.autodoc.jsondoclet.model.Class> getClazz() {
         if (clazz == null) {
-            clazz = new ArrayList<Class>();
+            clazz = new ArrayList<com.networkedassets.autodoc.jsondoclet.model.Class>();
         }
         return this.clazz;
     }

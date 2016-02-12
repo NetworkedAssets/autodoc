@@ -6,7 +6,7 @@
 //
 
 
-package com.github.markusbernhardt.xmldoclet.xjc;
+package com.networkedassets.autodoc.jsondoclet.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -17,29 +17,26 @@ import java.util.List;
 
 
 /**
- * <p>Java class for field complex type.
+ * <p>Java class for annotation complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="field"&gt;
+ * &lt;complexType name="annotation"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="type" type="{}typeInfo" minOccurs="0"/&gt;
  *         &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="constant" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="element" type="{}annotationElement" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="modifier" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="scope" type="{}scope" /&gt;
- *       &lt;attribute name="volatile" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
- *       &lt;attribute name="transient" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
- *       &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt;
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" default="annotation" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -48,20 +45,18 @@ import java.util.List;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "field", propOrder = {
-    "type",
+@XmlType(name = "annotation", propOrder = {
     "comment",
     "tag",
-    "constant",
+    "element",
     "annotation",
     "modifier"
 })
-public class Field {
+public class Annotation {
 
-    protected TypeInfo type;
     protected String comment;
     protected List<TagInfo> tag;
-    protected String constant;
+    protected List<AnnotationElement> element;
     protected List<AnnotationInstance> annotation;
     protected List<String> modifier;
     @XmlAttribute(name = "name")
@@ -70,46 +65,18 @@ public class Field {
     protected String qualified;
     @XmlAttribute(name = "scope")
     protected String scope;
-    @XmlAttribute(name = "volatile")
-    protected Boolean _volatile;
-    @XmlAttribute(name = "transient")
-    protected Boolean _transient;
-    @XmlAttribute(name = "static")
-    protected Boolean _static;
-    @XmlAttribute(name = "final")
-    protected Boolean _final;
-
-    /**
-     * Gets the value of the type property.
-     *
-     * @return
-     *     possible object is
-     *     {@link TypeInfo }
-     *
-     */
-    public TypeInfo getType() {
-        return type;
-    }
-
-    /**
-     * Sets the value of the type property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link TypeInfo }
-     *
-     */
-    public void setType(TypeInfo value) {
-        this.type = value;
-    }
+    @XmlAttribute(name = "included")
+    protected Boolean included;
+    @XmlAttribute(name = "type")
+    protected String type;
 
     /**
      * Gets the value of the comment property.
-     *
+     * 
      * @return
      *     possible object is
      *     {@link String }
-     *
+     *     
      */
     public String getComment() {
         return comment;
@@ -117,11 +84,11 @@ public class Field {
 
     /**
      * Sets the value of the comment property.
-     *
+     * 
      * @param value
      *     allowed object is
      *     {@link String }
-     *
+     *     
      */
     public void setComment(String value) {
         this.comment = value;
@@ -129,25 +96,25 @@ public class Field {
 
     /**
      * Gets the value of the tag property.
-     *
+     * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the tag property.
-     *
+     * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTag().add(newItem);
      * </pre>
-     *
-     *
+     * 
+     * 
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link TagInfo }
-     *
-     *
+     * 
+     * 
      */
     public List<TagInfo> getTag() {
         if (tag == null) {
@@ -157,50 +124,55 @@ public class Field {
     }
 
     /**
-     * Gets the value of the constant property.
-     *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * Gets the value of the element property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the element property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getElement().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link AnnotationElement }
+     * 
+     * 
      */
-    public String getConstant() {
-        return constant;
-    }
-
-    /**
-     * Sets the value of the constant property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
-     */
-    public void setConstant(String value) {
-        this.constant = value;
+    public List<AnnotationElement> getElement() {
+        if (element == null) {
+            element = new ArrayList<AnnotationElement>();
+        }
+        return this.element;
     }
 
     /**
      * Gets the value of the annotation property.
-     *
+     * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the annotation property.
-     *
+     * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAnnotation().add(newItem);
      * </pre>
-     *
-     *
+     * 
+     * 
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AnnotationInstance }
-     *
-     *
+     * 
+     * 
      */
     public List<AnnotationInstance> getAnnotation() {
         if (annotation == null) {
@@ -311,115 +283,59 @@ public class Field {
     }
 
     /**
-     * Gets the value of the volatile property.
+     * Gets the value of the included property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public boolean isVolatile() {
-        if (_volatile == null) {
-            return false;
+    public boolean isIncluded() {
+        if (included == null) {
+            return true;
         } else {
-            return _volatile;
+            return included;
         }
     }
 
     /**
-     * Sets the value of the volatile property.
+     * Sets the value of the included property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setVolatile(Boolean value) {
-        this._volatile = value;
+    public void setIncluded(Boolean value) {
+        this.included = value;
     }
 
     /**
-     * Gets the value of the transient property.
+     * Gets the value of the type property.
      * 
      * @return
      *     possible object is
-     *     {@link Boolean }
+     *     {@link String }
      *     
      */
-    public boolean isTransient() {
-        if (_transient == null) {
-            return false;
+    public String getType() {
+        if (type == null) {
+            return "annotation";
         } else {
-            return _transient;
+            return type;
         }
     }
 
     /**
-     * Sets the value of the transient property.
+     * Sets the value of the type property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Boolean }
+     *     {@link String }
      *     
      */
-    public void setTransient(Boolean value) {
-        this._transient = value;
-    }
-
-    /**
-     * Gets the value of the static property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public boolean isStatic() {
-        if (_static == null) {
-            return false;
-        } else {
-            return _static;
-        }
-    }
-
-    /**
-     * Sets the value of the static property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setStatic(Boolean value) {
-        this._static = value;
-    }
-
-    /**
-     * Gets the value of the final property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public boolean isFinal() {
-        if (_final == null) {
-            return false;
-        } else {
-            return _final;
-        }
-    }
-
-    /**
-     * Sets the value of the final property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setFinal(Boolean value) {
-        this._final = value;
+    public void setType(String value) {
+        this.type = value;
     }
 
 }

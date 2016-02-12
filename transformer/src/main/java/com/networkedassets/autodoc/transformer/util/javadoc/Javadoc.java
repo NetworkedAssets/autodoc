@@ -1,22 +1,16 @@
 package com.networkedassets.autodoc.transformer.util.javadoc;
 
-import com.github.markusbernhardt.xmldoclet.JavadocRunner;
-import com.github.markusbernhardt.xmldoclet.XmlDoclet;
-import com.github.markusbernhardt.xmldoclet.xjc.Root;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
+import com.networkedassets.autodoc.jsondoclet.JavadocRunner;
+import com.networkedassets.autodoc.jsondoclet.JsonDoclet;
+import com.networkedassets.autodoc.jsondoclet.model.Root;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,8 +55,7 @@ public class Javadoc {
         Javadoc javadoc = new Javadoc(javadocPath);
         List<Path> javaFiles = searchJavaFiles(localDirectory);
         javadoc.addFiles(javaFiles);
-        Root r = javadoc.generate(XmlDoclet.class);
-        return r;
+        return javadoc.generate(JsonDoclet.class);
     }
 
     @Nonnull
@@ -100,8 +93,7 @@ public class Javadoc {
      */
     public Root generate(Class<?> docletClass) throws JavadocException {
         return JavadocRunner.executeJavadoc(docletClass, null, null, null,
-                sourceFiles.stream().map(Path::toString).collect(Collectors.toList()), null,
-                "-dryrun");
+                sourceFiles.stream().map(Path::toString).collect(Collectors.toList()), null);
     }
 
     /**

@@ -1,9 +1,9 @@
-package com.github.markusbernhardt.xmldoclet;
+package com.networkedassets.autodoc.jsondoclet;
 
-import com.github.markusbernhardt.xmldoclet.xjc.*;
-import com.github.markusbernhardt.xmldoclet.xjc.Class;
-import com.github.markusbernhardt.xmldoclet.xjc.Enum;
-import com.github.markusbernhardt.xmldoclet.xjc.Package;
+import com.networkedassets.autodoc.jsondoclet.model.Class;
+import com.networkedassets.autodoc.jsondoclet.model.Enum;
+import com.networkedassets.autodoc.jsondoclet.model.Package;
+import com.networkedassets.autodoc.jsondoclet.model.*;
 import com.sun.javadoc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * The main parser class. It scans the given Doclet document root and creates
- * the XML tree.
- * 
- * @author markus
- */
 public class Parser {
 
 	private final static Logger log = LoggerFactory.getLogger(Parser.class);
@@ -27,14 +21,6 @@ public class Parser {
 
 	protected ObjectFactory objectFactory = new ObjectFactory();
 
-	/**
-	 * The entry point into parsing the javadoc.
-	 * 
-	 * @param rootDoc
-	 *            The RootDoc intstance obtained via the doclet API
-	 * @return The root node, containing everything parsed from javadoc doclet
-     *
-	 */
 	public Root parseRootDoc(RootDoc rootDoc) {
 		Root rootNode = objectFactory.createRoot();
         Index index = objectFactory.createIndex();
@@ -113,13 +99,6 @@ public class Parser {
 		return packageNode;
 	}
 
-	/**
-	 * Parse an annotation.
-	 * 
-	 * @param annotationTypeDoc
-	 *            A AnnotationTypeDoc instance
-	 * @return the annotation node
-	 */
 	protected Annotation parseAnnotationTypeDoc(AnnotationTypeDoc annotationTypeDoc) {
 		Annotation annotationNode = objectFactory.createAnnotation();
 		annotationNode.setName(annotationTypeDoc.name());
@@ -146,13 +125,6 @@ public class Parser {
 		return annotationNode;
 	}
 
-	/**
-	 * Parse the elements of an annotation
-	 * 
-	 * @param annotationTypeElementDoc
-	 *            A AnnotationTypeElementDoc instance
-	 * @return the annotation element node
-	 */
 	protected AnnotationElement parseAnnotationTypeElementDoc(AnnotationTypeElementDoc annotationTypeElementDoc) {
 		AnnotationElement annotationElementNode = objectFactory.createAnnotationElement();
 		annotationElementNode.setName(annotationTypeElementDoc.name());
@@ -167,15 +139,6 @@ public class Parser {
 		return annotationElementNode;
 	}
 
-	/**
-	 * Parses annotation instances of an annotable program element
-	 * 
-	 * @param annotationDesc
-	 *            annotationDesc
-	 * @param programElement
-	 *            programElement
-	 * @return representation of annotations
-	 */
 	protected AnnotationInstance parseAnnotationDesc(AnnotationDesc annotationDesc, String programElement) {
 		AnnotationInstance annotationInstanceNode = objectFactory.createAnnotationInstance();
 
@@ -253,12 +216,6 @@ public class Parser {
 		return enumNode;
 	}
 
-	/**
-	 * Parses an enum type definition
-	 * 
-	 * @param fieldDoc
-	 * @return
-	 */
 	protected EnumConstant parseEnumConstant(FieldDoc fieldDoc) {
 		EnumConstant enumConstant = objectFactory.createEnumConstant();
 		enumConstant.setName(fieldDoc.name());
@@ -532,9 +489,9 @@ public class Parser {
 			typeInfoNode.setWildcard(parseWildcard(wildcard));
 		}
 
-		ParameterizedType parameterized = type.asParameterizedType();
-		if (parameterized != null) {
-			for (Type typeArgument : parameterized.typeArguments()) {
+		ParameterizedType parametrized = type.asParameterizedType();
+		if (parametrized != null) {
+			for (Type typeArgument : parametrized.typeArguments()) {
 				typeInfoNode.getGeneric().add(parseTypeInfo(typeArgument));
 			}
 		}
@@ -556,12 +513,6 @@ public class Parser {
 		return wildcardNode;
 	}
 
-	/**
-	 * Parse type variables for generics
-	 * 
-	 * @param typeVariable
-	 * @return
-	 */
 	protected TypeParameter parseTypeParameter(TypeVariable typeVariable) {
 		TypeParameter typeParameter = objectFactory.createTypeParameter();
 		typeParameter.setName(typeVariable.typeName());
@@ -580,12 +531,6 @@ public class Parser {
 		return tagNode;
 	}
 
-	/**
-	 * Returns string representation of scope
-	 * 
-	 * @param doc
-	 * @return
-	 */
 	protected String parseScope(ProgramElementDoc doc) {
 		if (doc.isPrivate()) {
 			return "private";

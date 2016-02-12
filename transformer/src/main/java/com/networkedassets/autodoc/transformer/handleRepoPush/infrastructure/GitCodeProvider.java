@@ -11,9 +11,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * Created by mrobakowski on 11/13/2015.
- */
+
 public class GitCodeProvider implements CodeProvider {
 
 	@Override
