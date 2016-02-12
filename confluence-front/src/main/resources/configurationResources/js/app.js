@@ -23,3 +23,14 @@ angular.element(document).ready(function() {
     AJS.$("#doc_config .spin.small").spin("small");
     AJS.$("#doc_config .spin:not(.small)").spin();
 });
+
+angular.module("DoC_Config").config(function($httpProvider) {
+    $httpProvider.interceptors.push(function() {
+        return {
+            request: function(config) {
+                config.headers["X-Atlassian-Token"] = "nocheck";
+                return config;
+            }
+        };
+    });
+});

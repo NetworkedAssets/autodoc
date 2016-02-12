@@ -253,6 +253,7 @@
     <!--Macro-->
     <xhtml-macro name="docMacro"
                  class="com.networkedassets.autodoc.DocMacro"
+                 icon="/download/resources/${project.groupId}.${project.artifactId}:dashboard-resources/dashboardResources/images/pluginMacroIcon.png"
                  key="docMacro">
         <description>DoC macro displaying documentation in various forms on pages
         </description>

@@ -1,16 +1,16 @@
-angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($scope,$resource,$rootScope,settingsService,$timeout,urlService) {
+angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($scope,$resource,$rootScope,$timeout,urlService) {
     var cc = this;
+    cc.error = false;
 
     var Credentials = $resource(urlService.getRestUrl("/credentials"),{},{
         get: {
             method: "GET",
             transformResponse: function(data) {
                 data = JSON.parse(data);
-                var obj = {
+                return {
                     username: data.confluenceUsername,
                     password: null
                 };
-                return obj;
             }
         },
         update: {
@@ -29,9 +29,14 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
 
         cc.credentials.$update().then(function() {
             cc.get();
-        },function() {
-            cc.credentialsCorrect = false;
+        },function(response) {
             cc.savingState = "dirty";
+            if (response.status == "401") {
+                cc.error = false;
+                cc.credentialsCorrect = false;
+            } else {
+                cc.error = true;
+            }
         });
     };
 
@@ -43,10 +48,12 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
         cc.loading = true;
         cc.credentials = Credentials.get();
         cc.credentials.$promise.then(function() {
+            cc.error = false;
             cc.savingState = "saved";
             cc.loading = false;
             cc.credentialsCorrect = true;
             console.log(cc);
+            $rootScope.$broadcast("ConfluenceCredentials.ready",cc.credentials.username);
             $timeout();
         });
     };

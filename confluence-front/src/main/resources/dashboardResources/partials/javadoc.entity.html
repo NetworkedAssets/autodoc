@@ -16,7 +16,7 @@
             <span ng-repeat="modifier in vm.entity.modifiers" class="modifier {{modifier}}">{{modifier}}</span>
         </span>
         <span class="entityType entityType{{vm.entity.type|capitalize}}">{{vm.entity.type}}</span>
-        <h1 class="aui-page-header-main name {{vm.entity.modifiers.join(' ')}}">{{vm.entity.name}}<span ng-if="vm.entity.generic" doc-generic="vm.entity.generic"></span></h1>
+        <h1 class="aui-page-header-main name {{vm.entity.modifiers.join(' ')}}">{{vm.entity.name}}<span ng-if="vm.entity.generic && vm.entity.generic.length" doc-generic="vm.entity.generic"></span></h1>
 
 
         <div ng-show="vm.entity.supers.length" class="supers">
@@ -69,7 +69,7 @@
                              --><span ng-if="!$last" class="comma">, </span><!--
                         --></span><span ng-repeat-end ng-show="1||!$last"> </span><span class="parenthesis">)</span><!--
                     --></span>
-                    <span class="exceptions" ng-show="element.exception">
+                    <span class="exceptions" ng-show="element.exception && element.exception.length">
                         <span class="throws">throws</span>
                         <span ng-repeat-start="exception in element.exception" doc-qname="exception" class="type"></span>
                         <span ng-if="!$last" class="comma" ng-repeat-end>, </span>

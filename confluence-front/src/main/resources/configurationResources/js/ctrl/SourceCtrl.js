@@ -1,4 +1,4 @@
-angular.module("DoC_Config").controller("SourceCtrl", function ($resource, $timeout, urlService) {
+angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $resource, $timeout, urlService) {
     var vm = this;
     vm.loading = true;
     vm.addFromAppLinksSavingState = "ready";
@@ -15,7 +15,7 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($resource, $time
                 isArray: true
             },
             update: {
-                transformRequest: function (data, headers) {
+                transformRequest: function (data) {
                     console.log(data);
                     var obj = {
                         id: data.id,
@@ -76,5 +76,15 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($resource, $time
 
     };
 
-    vm.get();
+    $rootScope.$on("ConfluenceCredentials.ready",function(event,username) {
+        console.log(username);
+        if (username) {
+            vm.noCredentials = false;
+            vm.get();
+        } else {
+            vm.loading = false;
+            vm.noCredentials = true;
+        }
+    });
+
 });

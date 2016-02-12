@@ -28,7 +28,7 @@ angular.module("DoC").factory("macroParams",function() {
         }
     }
 
-    var macroParams = {
+    return {
         get: function(key) {
             if (!key) {
                 return this.getAll();
@@ -44,6 +44,4 @@ angular.module("DoC").factory("macroParams",function() {
             return params;
         }
     };
-
-    return macroParams;
 });

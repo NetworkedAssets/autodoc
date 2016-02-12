@@ -8,7 +8,7 @@ angular.module("DoC")
 
                 var isGeneric = false;
 
-                if (typeof scope.source == "object" && scope.source.generic) {
+                if (typeof scope.source == "object" && scope.source.generic && scope.source.generic.length) {
                     isGeneric = true;
                 }
 
