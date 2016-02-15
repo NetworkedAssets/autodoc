@@ -138,9 +138,9 @@ public class DocumentationService {
     private List<DocumentationPiece> searchDocumentationPiece(String project, String repo, String branch, String doctype, String query) {
         return ao.executeInTransaction(() ->
                 getDocumentation(project, repo, branch, doctype).map(doc -> {
+                    final String generalizedQuery = "%" + query + "%";
                     final DocumentationPiece[] documentationPieces = ao.find(DocumentationPiece.class,
-                            // TODO: escape this properly -------------------------------------v
-                            Query.select().where("DOCUMENTATION_ID = ? AND CONTENT LIKE '%" + query + "%'"));
+                            Query.select().where("DOCUMENTATION_ID = ? AND CONTENT LIKE ?", doc.getID(), generalizedQuery));
                     return Arrays.asList(documentationPieces);
                 }).orElse(Collections.emptyList()));
     }
