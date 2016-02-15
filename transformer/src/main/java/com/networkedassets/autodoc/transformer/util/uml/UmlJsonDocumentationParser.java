@@ -24,14 +24,13 @@ public class UmlJsonDocumentationParser {
         this.rootNode = mapper.readTree(JSON);
     }
 
-    
     public Optional<String> filterAndComposeJSON(String docPieceName) throws IOException {
         Set<String> entitiesNames = getAllEntitiesNamesFromRelations(docPieceName, findRelationsBy(docPieceName));
 
         Set<Relation> relationsSet = findRelationsBetweenEntities(entitiesNames, findAllRelations());
         Set<Entity> entitiesSet = findEntities(getAllEntitiesNamesFromRelations(docPieceName, relationsSet));
 
-        if(! (entitiesSet.isEmpty() || relationsSet.isEmpty()) ) {
+        if(!entitiesSet.isEmpty()) {
             Set<String> allPackages = findAllPackages(entitiesSet);
             JSONObject responseJSONObject = new JSONObject();
 
@@ -42,8 +41,7 @@ public class UmlJsonDocumentationParser {
             return Optional.empty();
         }
     }
-    
-    
+
     private Set<Relation> findAllRelations() throws IOException {
         JsonNode relationsNode = rootNode.get("relations");
         return mapper.readValue(relationsNode.toString(), new TypeReference<Set<Relation>>(){});
@@ -78,13 +76,11 @@ public class UmlJsonDocumentationParser {
     private Set<Entity> findEntities(Set<String> entitiesDocPieceNames) {
         JsonNode entitiesNode = rootNode.get("entities");
         return entitiesDocPieceNames.stream()
-                .map(s -> findEntityByDocPieceName(s, entitiesNode))
+                .map(docPieceName -> findEntityByDocPieceName(docPieceName, entitiesNode))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
     }
-
-   
 
     private JSONObject buildPackagesAndTheirValues(Set<String> allPackages, Set<Entity> entitiesSet) {
         JSONObject packagesJson = new JSONObject();
