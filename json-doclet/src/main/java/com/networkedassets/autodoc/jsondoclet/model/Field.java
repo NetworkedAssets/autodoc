@@ -6,42 +6,40 @@
 //
 
 
-package com.github.markusbernhardt.xmldoclet.xjc;
+package com.networkedassets.autodoc.jsondoclet.model;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * <p>Java class for method complex type.
+ * <p>Java class for field complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="method"&gt;
+ * &lt;complexType name="field"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
+ *         &lt;element name="type" type="{}typeInfo" minOccurs="0"/&gt;
  *         &lt;element name="comment" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="tag" type="{}tagInfo" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="parameter" type="{}methodParameter" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="return" type="{}typeInfo" minOccurs="0"/&gt;
- *         &lt;element name="exception" type="{}typeInfo" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="constant" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
  *         &lt;element name="annotation" type="{}annotationInstance" maxOccurs="unbounded" minOccurs="0"/&gt;
  *         &lt;element name="modifier" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
  *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
- *       &lt;attribute name="signature" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="qualified" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *       &lt;attribute name="scope" type="{}scope" /&gt;
- *       &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
- *       &lt;attribute name="included" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt;
- *       &lt;attribute name="native" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
- *       &lt;attribute name="synchronized" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="volatile" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="transient" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
  *       &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
- *       &lt;attribute name="varArgs" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -50,47 +48,60 @@ import java.util.List;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "method", propOrder = {
+@XmlType(name = "field", propOrder = {
+    "type",
     "comment",
     "tag",
-    "parameter",
-    "_return",
-    "exception",
+    "constant",
     "annotation",
     "modifier"
 })
-public class Method {
+public class Field {
 
+    protected TypeInfo type;
     protected String comment;
     protected List<TagInfo> tag;
-    protected List<MethodParameter> parameter;
-    @XmlElement(name = "return")
-    protected TypeInfo _return;
-    protected List<TypeInfo> exception;
+    protected String constant;
     protected List<AnnotationInstance> annotation;
     protected List<String> modifier;
     @XmlAttribute(name = "name")
     protected String name;
-    @XmlAttribute(name = "signature")
-    protected String signature;
     @XmlAttribute(name = "qualified")
     protected String qualified;
     @XmlAttribute(name = "scope")
     protected String scope;
-    @XmlAttribute(name = "abstract")
-    protected Boolean _abstract;
-    @XmlAttribute(name = "final")
-    protected Boolean _final;
-    @XmlAttribute(name = "included")
-    protected Boolean included;
-    @XmlAttribute(name = "native")
-    protected Boolean _native;
-    @XmlAttribute(name = "synchronized")
-    protected Boolean _synchronized;
+    @XmlAttribute(name = "volatile")
+    protected Boolean _volatile;
+    @XmlAttribute(name = "transient")
+    protected Boolean _transient;
     @XmlAttribute(name = "static")
     protected Boolean _static;
-    @XmlAttribute(name = "varArgs")
-    protected Boolean varArgs;
+    @XmlAttribute(name = "final")
+    protected Boolean _final;
+
+    /**
+     * Gets the value of the type property.
+     *
+     * @return
+     *     possible object is
+     *     {@link TypeInfo }
+     *
+     */
+    public TypeInfo getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TypeInfo }
+     *
+     */
+    public void setType(TypeInfo value) {
+        this.type = value;
+    }
 
     /**
      * Gets the value of the comment property.
@@ -146,85 +157,27 @@ public class Method {
     }
 
     /**
-     * Gets the value of the parameter property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the parameter property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParameter().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link MethodParameter }
-     *
-     *
-     */
-    public List<MethodParameter> getParameter() {
-        if (parameter == null) {
-            parameter = new ArrayList<MethodParameter>();
-        }
-        return this.parameter;
-    }
-
-    /**
-     * Gets the value of the return property.
+     * Gets the value of the constant property.
      *
      * @return
      *     possible object is
-     *     {@link TypeInfo }
+     *     {@link String }
      *
      */
-    public TypeInfo getReturn() {
-        return _return;
+    public String getConstant() {
+        return constant;
     }
 
     /**
-     * Sets the value of the return property.
+     * Sets the value of the constant property.
      *
      * @param value
      *     allowed object is
-     *     {@link TypeInfo }
+     *     {@link String }
      *
      */
-    public void setReturn(TypeInfo value) {
-        this._return = value;
-    }
-
-    /**
-     * Gets the value of the exception property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the exception property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getException().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link TypeInfo }
-     *
-     *
-     */
-    public List<TypeInfo> getException() {
-        if (exception == null) {
-            exception = new ArrayList<TypeInfo>();
-        }
-        return this.exception;
+    public void setConstant(String value) {
+        this.constant = value;
     }
 
     /**
@@ -310,30 +263,6 @@ public class Method {
     }
 
     /**
-     * Gets the value of the signature property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getSignature() {
-        return signature;
-    }
-
-    /**
-     * Sets the value of the signature property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setSignature(String value) {
-        this.signature = value;
-    }
-
-    /**
      * Gets the value of the qualified property.
      * 
      * @return
@@ -382,143 +311,59 @@ public class Method {
     }
 
     /**
-     * Gets the value of the abstract property.
+     * Gets the value of the volatile property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public boolean isAbstract() {
-        if (_abstract == null) {
+    public boolean isVolatile() {
+        if (_volatile == null) {
             return false;
         } else {
-            return _abstract;
+            return _volatile;
         }
     }
 
     /**
-     * Sets the value of the abstract property.
+     * Sets the value of the volatile property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setAbstract(Boolean value) {
-        this._abstract = value;
+    public void setVolatile(Boolean value) {
+        this._volatile = value;
     }
 
     /**
-     * Gets the value of the final property.
+     * Gets the value of the transient property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public boolean isFinal() {
-        if (_final == null) {
+    public boolean isTransient() {
+        if (_transient == null) {
             return false;
         } else {
-            return _final;
+            return _transient;
         }
     }
 
     /**
-     * Sets the value of the final property.
+     * Sets the value of the transient property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setFinal(Boolean value) {
-        this._final = value;
-    }
-
-    /**
-     * Gets the value of the included property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public boolean isIncluded() {
-        if (included == null) {
-            return true;
-        } else {
-            return included;
-        }
-    }
-
-    /**
-     * Sets the value of the included property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setIncluded(Boolean value) {
-        this.included = value;
-    }
-
-    /**
-     * Gets the value of the native property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public boolean isNative() {
-        if (_native == null) {
-            return false;
-        } else {
-            return _native;
-        }
-    }
-
-    /**
-     * Sets the value of the native property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setNative(Boolean value) {
-        this._native = value;
-    }
-
-    /**
-     * Gets the value of the synchronized property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
-     */
-    public boolean isSynchronized() {
-        if (_synchronized == null) {
-            return false;
-        } else {
-            return _synchronized;
-        }
-    }
-
-    /**
-     * Sets the value of the synchronized property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
-     */
-    public void setSynchronized(Boolean value) {
-        this._synchronized = value;
+    public void setTransient(Boolean value) {
+        this._transient = value;
     }
 
     /**
@@ -550,31 +395,31 @@ public class Method {
     }
 
     /**
-     * Gets the value of the varArgs property.
+     * Gets the value of the final property.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public boolean isVarArgs() {
-        if (varArgs == null) {
+    public boolean isFinal() {
+        if (_final == null) {
             return false;
         } else {
-            return varArgs;
+            return _final;
         }
     }
 
     /**
-     * Sets the value of the varArgs property.
+     * Sets the value of the final property.
      * 
      * @param value
      *     allowed object is
      *     {@link Boolean }
      *     
      */
-    public void setVarArgs(Boolean value) {
-        this.varArgs = value;
+    public void setFinal(Boolean value) {
+        this._final = value;
     }
 
 }

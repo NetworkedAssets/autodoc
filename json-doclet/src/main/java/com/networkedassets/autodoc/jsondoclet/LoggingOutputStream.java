@@ -1,8 +1,8 @@
-package com.github.markusbernhardt.xmldoclet;
-
-import java.io.IOException;
+package com.networkedassets.autodoc.jsondoclet;
 
 import org.slf4j.Logger;
+
+import java.io.IOException;
 
 class LoggingOutputStream extends java.io.OutputStream {
 

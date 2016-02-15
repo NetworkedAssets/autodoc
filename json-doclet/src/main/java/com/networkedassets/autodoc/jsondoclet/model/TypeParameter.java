@@ -6,26 +6,29 @@
 //
 
 
-package com.github.markusbernhardt.xmldoclet.xjc;
+package com.networkedassets.autodoc.jsondoclet.model;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>Java class for typeParameter complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
+ * &lt;complexType name="typeParameter"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="package" type="{}package" maxOccurs="unbounded" minOccurs="0"/&gt;
- *         &lt;element name="index" type="{}index"/&gt;
+ *         &lt;element name="bound" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
@@ -34,69 +37,66 @@ import java.util.List;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "_package",
-    "index"
+@XmlType(name = "typeParameter", propOrder = {
+    "bound"
 })
-@XmlRootElement(name = "root")
-public class Root {
+public class TypeParameter {
 
-    @XmlElement(name = "package")
-    protected List<Package> _package;
-    @XmlElement(required = true)
-    protected Index index;
+    protected List<String> bound;
+    @XmlAttribute(name = "name")
+    protected String name;
 
     /**
-     * Gets the value of the package property.
-     *
+     * Gets the value of the bound property.
+     * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the package property.
-     *
+     * This is why there is not a <CODE>set</CODE> method for the bound property.
+     * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getPackage().add(newItem);
+     *    getBound().add(newItem);
      * </pre>
-     *
-     *
+     * 
+     * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Package }
-     *
-     *
+     * {@link String }
+     * 
+     * 
      */
-    public List<Package> getPackage() {
-        if (_package == null) {
-            _package = new ArrayList<Package>();
+    public List<String> getBound() {
+        if (bound == null) {
+            bound = new ArrayList<String>();
         }
-        return this._package;
+        return this.bound;
     }
 
     /**
-     * Gets the value of the index property.
+     * Gets the value of the name property.
      * 
      * @return
      *     possible object is
-     *     {@link Index }
+     *     {@link String }
      *     
      */
-    public Index getIndex() {
-        return index;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the value of the index property.
+     * Sets the value of the name property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Index }
+     *     {@link String }
      *     
      */
-    public void setIndex(Index value) {
-        this.index = value;
+    public void setName(String value) {
+        this.name = value;
     }
 
 }

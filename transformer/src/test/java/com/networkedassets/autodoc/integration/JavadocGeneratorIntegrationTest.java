@@ -21,9 +21,6 @@ import java.io.IOException;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by mtulaza on 2015-12-09.
- */
 @Category(IntegrationTest.class)
 public class JavadocGeneratorIntegrationTest {
     @Inject

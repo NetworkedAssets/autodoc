@@ -2,10 +2,10 @@ package com.networkedassets.autodoc.transformer.handleRepoPush.core;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.markusbernhardt.xmldoclet.xjc.*;
-import com.github.markusbernhardt.xmldoclet.xjc.Class;
-import com.github.markusbernhardt.xmldoclet.xjc.Enum;
-import com.github.markusbernhardt.xmldoclet.xjc.Package;
+import com.networkedassets.autodoc.jsondoclet.model.*;
+import com.networkedassets.autodoc.jsondoclet.model.Class;
+import com.networkedassets.autodoc.jsondoclet.model.Enum;
+import com.networkedassets.autodoc.jsondoclet.model.Package;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;

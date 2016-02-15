@@ -1,4 +1,4 @@
-package com.github.markusbernhardt.xmldoclet;
+package com.networkedassets.autodoc.jsondoclet;
 
 import org.slf4j.Logger;
 
@@ -9,27 +9,18 @@ import org.slf4j.Logger;
  * @author markus
  */
 public enum LoggingLevelEnum implements LoggingLevel {
-	/**
-	 * Log level: INFO
-	 */
 	INFO {
 		@Override
 		public void log(Logger log, String message) {
 			log.info(message);
 		}
 	},
-	/**
-	 * Log level: WARN
-	 */
 	WARN {
 		@Override
 		public void log(Logger log, String message) {
 			log.warn(message);
 		}
 	},
-	/**
-	 * Log level: ERROR
-	 */
 	ERROR {
 		@Override
 		public void log(Logger log, String message) {

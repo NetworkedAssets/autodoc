@@ -12,9 +12,6 @@ import java.net.URL;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by mtulaza on 2016-02-12.
- */
 /*
  *   shouldn't these test be treated as integration tests?
 */
