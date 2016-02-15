@@ -28,7 +28,7 @@ public class PushEventService {
 
 	private static final Logger log = LoggerFactory.getLogger(PushEventService.class);
 	private final PushEventProcessor eventProcessor;
-	private static final int TIME_OUT = 200000;
+	private static final int TIME_OUT = 10000;
 
 	@Inject
 	public PushEventService(PushEventProcessor eventProcessor) {
