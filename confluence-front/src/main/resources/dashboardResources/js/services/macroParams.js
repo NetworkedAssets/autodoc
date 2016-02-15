@@ -3,6 +3,13 @@ angular.module("DoC").factory("macroParams",function() {
 
     if (AJS && AJS.params && typeof AJS.params.dashboardParamsJson == "string") {
         params = angular.fromJson(AJS.params.dashboardParamsJson);
+        angular.forEach(params,function(value,key) {
+            if (value === "false") { // let's hope there will never be a branch named like this...
+                params[key] = false;
+            } else if (value === "true") { // or this...
+                params[key] = true;
+            }
+        });
     } else {
         var guava = false;
         if (guava) {

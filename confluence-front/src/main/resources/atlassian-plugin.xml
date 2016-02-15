@@ -179,7 +179,7 @@
             plugin
         </description>
     </component-import>
-	<component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService" />
+    <component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService"/>
 
     <!-- Configuration GUI -->
     <!-- Item in Space Tools -->
@@ -259,18 +259,10 @@
         <description>DoC macro displaying documentation in various forms on pages
         </description>
         <parameters>
-            <parameter name="source" type="string" required="false"/>
-            <parameter name="project" type="string" required="false"/>
-            <parameter name="sourceProject" type="enum" required="true">
-                <value name="Loading..."/>
-            </parameter>
-            <parameter name="repo" type="enum" required="true">
-                <value name="Loading..."/>
-                <option key="hidden" value="true"/>
-            </parameter>
-            <parameter name="branch" type="enum" required="true">
-                <value name="Loading..."/>
-            </parameter>
+            <parameter name="source" type="string" required="true"/>
+            <parameter name="project" type="string" required="true"/>
+            <parameter name="repo" type="string" required="true"/>
+            <parameter name="branch" type="string" required="true"/>
             <parameter name="javadoc" type="boolean"/>
             <parameter name="classDiagram" type="boolean"/>
             <parameter name="structureGraph" type="boolean"/>
