@@ -6,6 +6,7 @@ import com.atlassian.json.jsonorg.JSONObject;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.streams.thirdparty.api.ActivityService;
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.networkedassets.autodoc.util.Debouncer;
 import com.networkedassets.util.functional.Optionals;
 import net.java.ao.Query;
@@ -120,6 +121,8 @@ public class DocumentationService {
             @PathParam("doctype") String doctype,
             @QueryParam("q") String query) throws UnsupportedEncodingException {
 
+        if (Strings.isNullOrEmpty(query)) return Response.ok("{\"results\": []}").build();
+
         String projectDec = URLDecoder.decode(project, "UTF-8");
         String repoDec = URLDecoder.decode(repo, "UTF-8");
         String branchDec = URLDecoder.decode(branch, "UTF-8");
@@ -140,7 +143,8 @@ public class DocumentationService {
                 getDocumentation(project, repo, branch, doctype).map(doc -> {
                     final String generalizedQuery = "%" + query + "%";
                     final DocumentationPiece[] documentationPieces = ao.find(DocumentationPiece.class,
-                            Query.select().where("DOCUMENTATION_ID = ? AND CONTENT LIKE ?", doc.getID(), generalizedQuery));
+                            Query.select().where("DOCUMENTATION_TYPE = ? AND DOCUMENTATION_ID = ? AND CONTENT LIKE ?",
+                                    doctype, doc.getID(), generalizedQuery));
                     return Arrays.asList(documentationPieces);
                 }).orElse(Collections.emptyList()));
     }
