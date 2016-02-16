@@ -1,6 +1,7 @@
 package com.networkedassets.autodoc.documentation;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.json.jsonorg.JSONException;
 import com.atlassian.json.jsonorg.JSONObject;
 import com.atlassian.sal.api.ApplicationProperties;
@@ -39,7 +40,7 @@ public class DocumentationService {
         this.ao = ao;
         documentationActivityPoster = new Debouncer<>(
                 new DocumentationActivityPoster(applicationProperties, activityService),
-                30000); // 30s
+                5000); // 5s
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}")
@@ -211,7 +212,8 @@ public class DocumentationService {
             return Response.ok("{\"success\": true}").build();
         });
 
-        documentationActivityPoster.accept(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec));
+        documentationActivityPoster.accept(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec,
+                docPieceNameDec, AuthenticatedUserThreadLocal.getUsername()));
 
         return response;
     }

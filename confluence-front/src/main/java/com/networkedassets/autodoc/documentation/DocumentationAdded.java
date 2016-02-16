@@ -8,13 +8,15 @@ public class DocumentationAdded {
     private final String branch;
     private final String docType;
     private final String docPieceName;
+    private String username;
 
-    public DocumentationAdded(String projectDec, String repoDec, String branchDec, String docTypeDec, String docPieceName) {
+    public DocumentationAdded(String projectDec, String repoDec, String branchDec, String docTypeDec, String docPieceName, String username) {
         project = projectDec;
         repo = repoDec;
         branch = branchDec;
         docType = docTypeDec;
         this.docPieceName = docPieceName;
+        this.username = username;
     }
 
     public String getProject() {
@@ -53,5 +55,9 @@ public class DocumentationAdded {
     @Override
     public int hashCode() {
         return Objects.hash(project, repo, branch, docType);
+    }
+
+    public String getUsername() {
+        return username;
     }
 }

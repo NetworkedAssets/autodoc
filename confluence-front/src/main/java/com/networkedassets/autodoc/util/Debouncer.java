@@ -1,5 +1,8 @@
 package com.networkedassets.autodoc.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -14,6 +17,8 @@ public class Debouncer<T> implements Consumer<T> {
     private final ConcurrentHashMap<T, TimerTask> delayedMap = new ConcurrentHashMap<>();
     private final Consumer<T> callback;
     private final int interval;
+
+    private final Logger log = LoggerFactory.getLogger(Debouncer.class);
 
     public Debouncer(Consumer<T> c, int interval) {
         this.callback = c;

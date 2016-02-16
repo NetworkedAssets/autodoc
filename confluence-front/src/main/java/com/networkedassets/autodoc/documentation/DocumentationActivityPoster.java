@@ -1,6 +1,5 @@
 package com.networkedassets.autodoc.documentation;
 
-import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.UrlMode;
 import com.atlassian.streams.api.common.Either;
@@ -53,7 +52,7 @@ public class DocumentationActivityPoster implements Consumer<DocumentationAdded>
 
     private Either<ValidationErrors, Activity> buildPostDocumentationActivity(DocumentationAdded documentationAdded) {
         return Activity
-                .builder(application, DateTime.now(), AuthenticatedUserThreadLocal.getUsername())
+                .builder(application, DateTime.now(), documentationAdded.getUsername())
                 .content(some(html(documentationAddedActivityContent(documentationAdded))))
                 .title(some(html("Documentation added")))
                 .url(some(baseUrl))
@@ -71,6 +70,10 @@ public class DocumentationActivityPoster implements Consumer<DocumentationAdded>
 
     @Override
     public void accept(DocumentationAdded documentationAdded) {
-        postDocumentationAdded(documentationAdded);
+        try {
+            postDocumentationAdded(documentationAdded);
+        } catch (Exception e) {
+            log.error("Exception: ", e);
+        }
     }
 }
