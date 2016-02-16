@@ -58,11 +58,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         this.scheduler = scheduler;
         settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
         loadSettingsFromFile(settingsFilename);
-        settings.getTransformerSettings().setLocalhostAddress(
+        settings.getTransformerSettings().setAddress(
                 PropertyHandler.getInstance().getValue("jetty.address"),
                 Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port"))
         );
-        log.info("Address is setup to: " + settings.getTransformerSettings().getLocalhostAddress());
+        log.info("Address is setup to: " + settings.getTransformerSettings().getAddress());
         updateAllSourcesAndEnableHooks();
     }
 
@@ -81,7 +81,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         this.settings.getSources().forEach(source -> {
             try {
                 SettingsUtils.updateProjectsFromRemoteSource(source);
-                HookActivatorFactory.getInstance(source, this.settings.getTransformerSettings().getLocalhostAddress())
+                HookActivatorFactory.getInstance(source, this.settings.getTransformerSettings().getAddress())
                         .enableAllHooks();
             } catch (MalformedURLException e) {
                 log.error("Source {} has malformed URL. Can't load projects: ", source.toString(), e);

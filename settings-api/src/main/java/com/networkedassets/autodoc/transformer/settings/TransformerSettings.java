@@ -10,41 +10,24 @@ import java.io.Serializable;
  * Confluence)
  */
 public class TransformerSettings implements Serializable {
-
 	private static final long serialVersionUID = 2478995810617471316L;
-	private int transformerPort = 8050;
-	private String localhostAddress = "https://localhost:" + transformerPort + "/event";
+	private String address;
 
-	@JsonProperty("transformerPort")
-	public int getTransformerPort() {
-		return transformerPort;
+	@JsonProperty("address")
+	public String getAddress() {
+		return address;
 	}
 
-	public void setTransformerPort(int transformerPort) {
-		this.transformerPort = transformerPort;
-	}
-
-	@JsonProperty("localhostAddress")
-	public String getLocalhostAddress() {
-		return localhostAddress;
-	}
-
-	public void setLocalhostAddress(String localhostAddress, int transformerPort) {
-		this.transformerPort = transformerPort;
-		this.localhostAddress = cutAllSlashes(localhostAddress) + "asdasdsda:" + transformerPort + "/event";
+	public void setAddress(String address, int port) {
+		this.address = cutAllSlashes(address) + ":" + port + "/event";
 	}
 
 	private String cutAllSlashes(String url) {
-		if(url.endsWith("/") || url.endsWith("\\")){
-			return cutAllSlashes(url.substring(0, url.length() - 1));
-		}else{
-			return url;
-		}
+		return (url.endsWith("/") || url.endsWith("\\")) ? cutAllSlashes(url.substring(0, url.length() - 1)) : url;
 	}
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("transformerPort", transformerPort)
-				.add("localhostAddress", localhostAddress).toString();
+		return MoreObjects.toStringHelper(this).add("address", address).toString();
 	}
 }
