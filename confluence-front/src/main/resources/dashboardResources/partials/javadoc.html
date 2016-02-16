@@ -22,12 +22,10 @@
         <div class="javadoc_container">
             <div ng-hide="$state.includes('javadoc.entity')" id="doc_javadoc_noEntitySelected">
                 <img ng-src="{{vm.resourcesUrl}}/images/logo.png" alt="DoC – Documentation from Code">
-                <!--<h2>Package list</h2>
-                <ul>
-                    <li ng-repeat="item in vm.items" class="">
-                        <a ui-sref="javadoc.entity({name: item.name})">{{item.name}}</a>
-                    </li>
-                </ul>-->
+                <form class="aui">
+                    <span class="aui-icon aui-icon-large aui-iconfont-search">Search</span>
+                    <input class="form-control" placeholder="Quick search...">
+                </form>
             </div>
             <div ng-show="$state.includes('javadoc.entity')" id="doc_javadoc_main" ui-view></div>
         </div>

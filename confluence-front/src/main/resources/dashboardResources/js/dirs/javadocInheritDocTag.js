@@ -7,7 +7,7 @@ angular.module("DoC")
                 var parentQualified = arr.join(".");
                 element.html('<span class="aui-icon aui-icon-wait">Loading...</span>');
                 $http
-                    .get(urlService.getRestUrl("JAVADOC",parentQualified,"comment"))
+                    .get(urlService.getRestUrl("javadoc",parentQualified,"comment"))
                     .then(function(response) {
                         response.data.comment = "{@code ha!}";
                         element.html('<div javadoc-tags="\''+response.data.comment+'\'"></div>');

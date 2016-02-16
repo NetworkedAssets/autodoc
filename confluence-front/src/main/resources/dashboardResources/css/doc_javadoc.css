@@ -143,3 +143,24 @@ span.entityType.entityTypeEnum {
     display: inline-block;
     margin-top: 50px;
 }
+
+#doc_javadoc_noEntitySelected input {
+    font-size: 20px;
+    padding-left: 28px;
+}
+
+#doc_javadoc_noEntitySelected span.aui-icon {
+    position: absolute;
+    z-index: 1;
+    margin-top: 9px;
+    margin-left: 8px;
+}
+
+#doc_javadoc_noEntitySelected span.aui-icon:before {
+    font-size: 20px!important;
+}
+
+#doc_javadoc_noEntitySelected div.select2-result-label span.qualified {
+    font-size: 10px;
+    color: #888;
+}
