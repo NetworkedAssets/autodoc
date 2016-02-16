@@ -44,6 +44,10 @@
     stroke-width: 1px;
 }
 
+.node {
+    cursor: pointer;
+}
+
 .node rect:not(.head) {
     fill: #fff8b7;
 }

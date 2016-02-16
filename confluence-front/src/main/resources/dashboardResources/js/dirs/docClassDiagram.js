@@ -1,4 +1,4 @@
-angular.module("DoC").directive("docClassDiagram", function($http, urlService) {
+angular.module("DoC").directive("docClassDiagram", function($state, $http, urlService) {
     return {
         link: function(scope, element) {
             var dagreGraph, svg, inner, render;
@@ -24,6 +24,7 @@ angular.module("DoC").directive("docClassDiagram", function($http, urlService) {
                         static: entity.static,
                         methods: entity.methods,
                         name: entity.name,
+                        qualified: entity.qualified,
                         fields: entity.fields,
                         type: entity.type
                     },
@@ -366,6 +367,15 @@ angular.module("DoC").directive("docClassDiagram", function($http, urlService) {
                     node.intersect = function(point) {
                         return dagreD3.intersect.rect(node, point);
                     };
+
+                    g.on("click", function() {
+                        if (!d3.event.defaultPrevented) {
+                            console.log(node.data.qualified);
+                            $state.go("javadoc.entity", {
+                                name: node.data.qualified
+                            });
+                        }
+                    });
 
                     return outerRect;
                 };
