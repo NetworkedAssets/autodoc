@@ -143,8 +143,8 @@ public class DocumentationService {
                 getDocumentation(project, repo, branch, doctype).map(doc -> {
                     final String generalizedQuery = "%" + query + "%";
                     final DocumentationPiece[] documentationPieces = ao.find(DocumentationPiece.class,
-                            Query.select().where("DOCUMENTATION_TYPE = ? AND DOCUMENTATION_ID = ? AND CONTENT LIKE ?",
-                                    doctype, doc.getID(), generalizedQuery));
+                            Query.select().where("PIECE_TYPE <> 'index' AND PIECE_TYPE <> 'INDEX' AND " +
+                                    "DOCUMENTATION_ID = ? AND CONTENT LIKE ?", doc.getID(), generalizedQuery));
                     return Arrays.asList(documentationPieces);
                 }).orElse(Collections.emptyList()));
     }
