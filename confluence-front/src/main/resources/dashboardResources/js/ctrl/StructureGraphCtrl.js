@@ -123,22 +123,22 @@ angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,
     }
 
     function click(d) {
-        if (d3.event.defaultPrevented) return; // ignore drag
-        if (d3.event.shiftKey) {
-            if (d.children) {
-                d._children = d.children;
-                d.children = null;
+        if (!d3.event.defaultPrevented) {
+            if (d.type === "package") {
+                if (d.children) {
+                    d._children = d.children;
+                    d.children = null;
+                } else {
+                    d.children = d._children;
+                    d._children = null;
+                }
+                update();
             } else {
-                d.children = d._children;
-                d._children = null;
+                $state.go("javadoc.entity",{
+                    name: d.name
+                });
             }
-            update();
-        } else {
-            $state.go("javadoc.entity",{
-                name: d.name
-            });
         }
-
     }
 
     function flatten(root) {
