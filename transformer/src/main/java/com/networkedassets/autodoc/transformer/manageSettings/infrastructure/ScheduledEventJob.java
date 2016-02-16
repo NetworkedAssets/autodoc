@@ -1,17 +1,13 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
-import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
-import com.networkedassets.autodoc.transformer.handleRepoPush.core.DefaultDocumentationGeneratorFactory;
-import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationFromCodeGenerator;
-import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.ConfluenceDocumentationSender;
-import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.GitCodeProvider;
-import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
-import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
+import javax.inject.Inject;
+
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import javax.inject.Inject;
+import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
+import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
 
 public class ScheduledEventJob implements Job {
     private String sourceUrl;

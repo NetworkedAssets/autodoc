@@ -10,7 +10,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 /**
  * Jersey application serverConfig
  */
-@SuppressWarnings("unused")
+
 @ApplicationPath("/")
 public class Application extends ResourceConfig {
 	public Application() {

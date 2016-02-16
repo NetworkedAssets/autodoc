@@ -12,31 +12,24 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece
 import com.networkedassets.autodoc.transformer.util.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.util.javadoc.JavadocException;
 import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class JavadocGenerator implements DocumentationGenerator {
 
-	@SuppressWarnings("unused")
-    private static Logger log = LoggerFactory.getLogger(JavadocGenerator.class);
-
-    // TODO: resolve the problem of other documentation generators depending on partial results from different generators
-    private static Root cachedRoot;
-
+	private static Root cachedRoot;
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public static Root getCachedRoot() {
-        return cachedRoot;
-    }
+	public static Root getCachedRoot() {
+		return cachedRoot;
+	}
 
-    @Override
+	@Override
 	public Documentation generateFrom(Code code) {
 		try {
 			Root docRoot = Javadoc.structureFromDirectory(code.getCodePath());
-            cachedRoot = docRoot;
+			cachedRoot = docRoot;
 			return convert(docRoot);
 		} catch (JavadocException | JSONException | JsonProcessingException e) {
 			throw new RuntimeException("Couldn't generate Javadoc", e);
@@ -68,10 +61,10 @@ public class JavadocGenerator implements DocumentationGenerator {
 				String cl = jaxbToJson(c);
 				pieces.add(new DocumentationPiece(c.getQualified(), "class", cl));
 			}
-            for (Annotation a : p.getAnnotation()) {
-                String an = jaxbToJson(a);
-                pieces.add(new DocumentationPiece(a.getQualified(), "annotation", an));
-            }
+			for (Annotation a : p.getAnnotation()) {
+				String an = jaxbToJson(a);
+				pieces.add(new DocumentationPiece(a.getQualified(), "annotation", an));
+			}
 		}
 
 		return doc;
