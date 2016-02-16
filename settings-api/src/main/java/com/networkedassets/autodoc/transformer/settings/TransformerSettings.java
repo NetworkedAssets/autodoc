@@ -12,8 +12,6 @@ import java.io.Serializable;
 public class TransformerSettings implements Serializable {
 
 	private static final long serialVersionUID = 2478995810617471316L;
-	// TODO: 19.11.2015 Remove default values and require user to enter them on
-	// first run in frontend
 	private int transformerPort = 8050;
 	private String localhostAddress = "https://localhost:" + transformerPort + "/event";
 
@@ -31,8 +29,17 @@ public class TransformerSettings implements Serializable {
 		return localhostAddress;
 	}
 
-	public void setLocalhostAddress(String localhostAddress) {
-		this.localhostAddress = localhostAddress;
+	public void setLocalhostAddress(String localhostAddress, int transformerPort) {
+		this.transformerPort = transformerPort;
+		this.localhostAddress = cutAllSlashes(localhostAddress) + "asdasdsda:" + transformerPort + "/event";
+	}
+
+	private String cutAllSlashes(String url) {
+		if(url.endsWith("/") || url.endsWith("\\")){
+			return cutAllSlashes(url.substring(0, url.length() - 1));
+		}else{
+			return url;
+		}
 	}
 
 	@Override

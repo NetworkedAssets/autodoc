@@ -13,6 +13,7 @@ import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
 import com.networkedassets.autodoc.transformer.util.SettingsUtils;
 import org.quartz.JobDetail;
@@ -57,6 +58,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         this.scheduler = scheduler;
         settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
         loadSettingsFromFile(settingsFilename);
+        settings.getTransformerSettings().setLocalhostAddress(
+                PropertyHandler.getInstance().getValue("jetty.address"),
+                Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port"))
+        );
+        log.info("Address is setup to: " + settings.getTransformerSettings().getLocalhostAddress());
         updateAllSourcesAndEnableHooks();
     }
 
