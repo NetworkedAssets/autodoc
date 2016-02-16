@@ -15,17 +15,16 @@ import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
 import com.networkedassets.autodoc.transformer.util.SettingsUtils;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -122,7 +121,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public boolean setCredentials(Settings settings) {
-    	this.settings.setCredentials(new Credentials());
+        this.settings.setCredentials(new Credentials());
         this.settings.setConfluencePassword(settings.getConfluencePassword());
         this.settings.setConfluenceUrl(settings.getConfluenceUrl());
         this.settings.setConfluenceUsername(settings.getConfluenceUsername());
@@ -208,29 +207,33 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
         Preconditions.checkNotNull(currentBranch);
         Preconditions.checkNotNull(scheduler);
-
-        currentBranch.getScheduledEvents().stream().forEach(event -> {
-            try {
-                scheduler.shutdown(true);
-                scheduler.clear();
-                JobDetail job = newJob(ScheduledEventJob.class)
-                        .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
-                        .usingJobData("projectKey", projectKey)
-                        .usingJobData("repoSlug", repoSlug)
-                        .usingJobData("branchId", branchId)
-                        .build();
-
-                Trigger trigger = newTrigger()
-                        .startNow()
-                        .withSchedule(ScheduledEventHelper.getCronSchedule(event))
-                        .build();
-
-                scheduler.scheduleJob(job, trigger);
-            } catch (SchedulerException e) {
-                e.printStackTrace();
-            }
-        });
         try {
+            scheduler.clear();
+            scheduler.shutdown(true);
+
+            currentBranch.getScheduledEvents().stream().forEach(event -> {
+                try {
+                    JobDetail job = newJob(ScheduledEventJob.class)
+                            .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
+                            .usingJobData("projectKey", projectKey)
+                            .usingJobData("repoSlug", repoSlug)
+                            .usingJobData("branchId", branchId)
+                            .build();
+
+                    CronScheduleBuilder eventCron = ScheduledEventHelper.getCronSchedule(event);
+
+                    Trigger trigger = newTrigger()
+                            .startNow()
+                            .withSchedule(eventCron)
+                            .build();
+
+                    log.debug("Scheduled event {} with cron: ", event.toString(), eventCron);
+                    scheduler.scheduleJob(job, trigger);
+                } catch (SchedulerException e) {
+                    e.printStackTrace();
+                }
+            });
+
             scheduler.start();
         } catch (SchedulerException e) {
             e.printStackTrace();
