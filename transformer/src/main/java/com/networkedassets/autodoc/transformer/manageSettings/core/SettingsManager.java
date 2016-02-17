@@ -209,7 +209,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         Preconditions.checkNotNull(scheduler);
         try {
             scheduler.clear();
-            scheduler.shutdown(true);
 
             currentBranch.getScheduledEvents().stream().forEach(event -> {
                 try {
@@ -220,14 +219,12 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
                             .usingJobData("branchId", branchId)
                             .build();
 
-                    CronScheduleBuilder eventCron = ScheduledEventHelper.getCronSchedule(event);
-
                     Trigger trigger = newTrigger()
                             .startNow()
-                            .withSchedule(eventCron)
+                            .withSchedule(ScheduledEventHelper.getCronSchedule(event))
                             .build();
 
-                    log.debug("Scheduled event {} with cron: ", event.toString(), eventCron);
+                    log.debug("Scheduled event {} with cron: {}", event.toString(), ((CronTrigger) trigger).getCronExpression());
                     scheduler.scheduleJob(job, trigger);
                 } catch (SchedulerException e) {
                     e.printStackTrace();

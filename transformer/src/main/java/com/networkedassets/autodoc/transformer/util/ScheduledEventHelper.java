@@ -24,7 +24,7 @@ public class ScheduledEventHelper {
         String h = splitTime[0];
         String min = splitTime[1];
 
-        return CronScheduleBuilder.cronSchedule("0 " + min + " " + h + " " + getCronDays(event));
+        return CronScheduleBuilder.cronSchedule("00 " + min + " " + h + " " + getCronDays(event));
     }
 
     private static String getCronDays(ScheduledEvent event) {
@@ -48,9 +48,9 @@ public class ScheduledEventHelper {
             } else //Every x days
                 date = "*/" + event.getNumber() + " * ?";
         } else
-            date = event.getOneTimeDate().getDay() + " "
-                    + event.getOneTimeDate().getMonth() + " ? "
-                    + event.getOneTimeDate().getYear();
+            date = event.getDay() + " "
+                    + event.getMonth() + " ? "
+                    + event.getYear();
 
         return date;
     }

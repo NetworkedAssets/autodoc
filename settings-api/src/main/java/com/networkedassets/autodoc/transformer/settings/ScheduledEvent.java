@@ -1,11 +1,12 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 
 
 /**
@@ -15,13 +16,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ScheduledEvent implements Serializable {
 
     private static final long serialVersionUID = -1213178165118904796L;
-
     private boolean periodic;
     private PeriodType periodType;
     private int number;
     private HashMap<String, Boolean> weekdays;
-    private Date oneTimeDate;
     private String time;
+    private Calendar calendar;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+    private Date oneTimeDate;
 
     public ScheduledEvent() {
     }
@@ -68,6 +70,8 @@ public class ScheduledEvent implements Serializable {
 
     public void setOneTimeDate(Date oneTimeDate) {
         this.oneTimeDate = oneTimeDate;
+        calendar = Calendar.getInstance();
+        calendar.setTime(oneTimeDate);
     }
 
     public String getTime() {
@@ -76,6 +80,19 @@ public class ScheduledEvent implements Serializable {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public int getDay(){
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    //Months start at 0
+    public int getMonth(){
+        return calendar.get(Calendar.MONTH) + 1;
+    }
+
+    public int getYear(){
+        return calendar.get(Calendar.YEAR);
     }
 
     public enum PeriodType {
