@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer.util;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,14 +18,20 @@ import static org.junit.Assert.assertNotNull;
 public class PropertyHandlerTest {
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+	private PropertyHandler propertyHandler;
+
+	@Before
+	public void getInstance() {
+		this.propertyHandler = PropertyHandler.getInstance();
+	}
 
 	@Test
 	public void testGetDefaultPortAddressFilename() {
-		assertNotNull(PropertyHandler.getInstance().getValue("jetty.port"));
-		assertEquals(PropertyHandler.getInstance().getValue("jetty.port"), "8050");
+		assertNotNull(propertyHandler.getValue("jetty.port"));
+		assertEquals(propertyHandler.getValue("jetty.port"), "8050");
 
-		assertEquals(PropertyHandler.getInstance().getValue("jetty.address"), "http://localhost/");
-		assertEquals(PropertyHandler.getInstance().getValue("settings.filename"), "transformerSettings.ser");
+		assertEquals(propertyHandler.getValue("jetty.address"), "http://localhost/");
+		assertEquals(propertyHandler.getValue("settings.filename"), "transformerSettings.ser");
 	}
 
 	// you need to delete transformer.properties and Transformer.log files after this test manually
@@ -37,7 +44,7 @@ public class PropertyHandlerTest {
 		Properties properties = prepareProperties(tempFile);
 		properties.store(new FileWriter(transformerProperties), "Its a file for testing, delete it if it won't itself");
 
-		assertEquals(PropertyHandler.getInstance().getValue("jetty.port"), "1234");
+		assertEquals(propertyHandler.getValue("jetty.port"), "1234");
 	}
 
 	private Properties prepareProperties(File tempFile) throws IOException {
@@ -49,7 +56,7 @@ public class PropertyHandlerTest {
 
 	@Test
 	public void testGetValueNotFoundKey() {
-		assertEquals(PropertyHandler.getInstance().getValue("not-found-key"), "null");
+		assertEquals(propertyHandler.getValue("not-found-key"), "null");
 	}
 
 }
