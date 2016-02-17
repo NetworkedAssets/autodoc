@@ -1,9 +1,10 @@
-package com.networkedassets.autodoc.clients.atlassian.api;
+package com.networkedassets.autodoc.clients.integration;
 
 import com.networkedassets.autodoc.clients.git.api.GitRepository;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 /*
  *   shouldn't these test be treated as integration tests?
 */
+@Category(IntegrationTest.class)
 public class GitRepositoryTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
