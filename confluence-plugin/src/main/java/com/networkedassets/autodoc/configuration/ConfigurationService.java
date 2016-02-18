@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,7 @@ import javax.ws.rs.core.Response;
 import com.atlassian.applinks.api.*;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.google.common.base.Strings;
 import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project;
 import com.networkedassets.autodoc.transformer.settings.*;
@@ -58,6 +61,7 @@ public class ConfigurationService {
         this.transformerClient = new TransformerClient(getTransformerUrl());
         this.sourceManager = new SourceManager(appLinkService, transformerClient);
 
+        OBJECT_MAPPER.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
     }
 
     @PUT
