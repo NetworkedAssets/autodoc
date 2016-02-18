@@ -23,9 +23,8 @@ public class GitRepository implements CodeRepository {
 	@Nullable
 	private final String password;
 
-	public GitRepository(@Nonnull URL baseUrl, @Nullable String username,
-			@Nullable String password) {
-		
+	public GitRepository(@Nonnull URL baseUrl, @Nullable String username, @Nullable String password) {
+
 		Preconditions.checkNotNull(baseUrl);
 		Preconditions.checkNotNull(username);
 		Preconditions.checkNotNull(password);
@@ -45,15 +44,30 @@ public class GitRepository implements CodeRepository {
 		Preconditions.checkNotNull(repositorySlug);
 		Preconditions.checkNotNull(branchName);
 
-		StringBuffer uriTemplate = new StringBuffer();
-		uriTemplate.append(this.baseUrl.getProtocol()).append("://%s@").append(this.baseUrl.getHost()).append(':')
-				.append(this.baseUrl.getPort()).append(this.baseUrl.getPath()).append("/scm/%s/%s.git");
-
-		String URI = String.format(uriTemplate.toString(), this.username, projectKey, repositorySlug);
+		String URI = String.format(getRepositoryPath(), this.username, projectKey, repositorySlug);
 
 		Git.cloneRepository().setURI(URI).setDirectory(localRepoDirectory.toFile()).setBranch(branchName)
 				.setCredentialsProvider(new UsernamePasswordCredentialsProvider(this.username, this.password)).call();
 
+	}
+
+	private String getRepositoryPath() {
+
+		StringBuffer uriTemplate = new StringBuffer();
+		if (isPortSet()) {
+			uriTemplate.append(this.baseUrl.getProtocol()).append("://%s@").append(this.baseUrl.getHost()).append(':')
+					.append(this.baseUrl.getPort()).append(this.baseUrl.getPath()).append("/scm/%s/%s.git");
+		} else {
+			uriTemplate.append(this.baseUrl.getProtocol()).append("://%s@").append(this.baseUrl.getHost())
+					.append(this.baseUrl.getPath()).append("/scm/%s/%s.git");
+		}
+
+		return uriTemplate.toString();
+
+	}
+
+	private boolean isPortSet() {
+		return this.baseUrl.getPort() != -1;
 	}
 
 }

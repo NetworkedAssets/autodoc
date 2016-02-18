@@ -102,14 +102,14 @@ public class Transformer {
 			NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException, SignatureException {
 
 		final int keysize = 1024;
-		final String commonName = "dupa";
-		final String organizationalUnit = "DUPA";
-		final String organization = "dupa";
-		final String city = "dupa";
-		final String state = "dupa";
-		final String country = "DU";
+		final String commonName = "NetworkedAssets Documantation Transformer";
+		final String organizationalUnit = "NetworkedAssets Wroclaw";
+		final String organization = "NetworkedAssets";
+		final String city = "Wroclaw";
+		final String state = "Dolnoslaskie";
+		final String country = "PL";
 		final long validity = 1096; // 3 years
-		final String alias = "dupa";
+		final String alias = "networkedassets";
 		final char[] keyPass = KEY_STORE_PASSWORD.toCharArray();
 
 		KeyStore keyStore = KeyStore.getInstance("JKS");

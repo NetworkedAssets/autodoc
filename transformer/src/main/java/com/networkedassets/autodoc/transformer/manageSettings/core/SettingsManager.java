@@ -10,8 +10,10 @@ import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.settings.Branch;
+import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
 import com.networkedassets.autodoc.transformer.util.SettingsUtils;
 import net.sourceforge.plantuml.creole.Sea;
 import org.quartz.JobDetail;
@@ -65,10 +67,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         saveSettingsToFile(settingsFilename);
     }
 
-    @Inject
     public Scheduler scheduler;
 
-    public SettingsManager() {
+    @Inject
+    public SettingsManager(Scheduler scheduler) {
+        this.scheduler = scheduler;
         settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
         // Create key
         KeySpec spec = new PBEKeySpec(password, salt, 1024, 128);
@@ -99,6 +102,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
     public Settings getCurrentSettings() {
         updateAllSourcesAndEnableHooks();
         return settings;
+    }
+
+    @Override
+    public Settings getNotUpdatedSettings() {
+        return getSettings();
     }
 
     private void updateAllSourcesAndEnableHooks() {
@@ -159,11 +167,10 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
             log.error("Illegal block size during unsealing settings", e);
         }
     }
-   
+
     @Override
     public boolean setCredentials(Settings settings) {
-
-    	
+        this.settings.setCredentials(new Credentials());
         this.settings.setConfluencePassword(settings.getConfluencePassword());
         this.settings.setConfluenceUrl(settings.getConfluenceUrl());
         this.settings.setConfluenceUsername(settings.getConfluenceUsername());
@@ -182,9 +189,13 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
     @Override
     public Source addSource(Source source) {
+        if (Strings.isNullOrEmpty(source.getUsername()) || Strings.isNullOrEmpty(source.getPassword())) {
+            source.setUsername(getSettings().getConfluenceUsername());
+            source.setPassword(getSettings().getConfluencePassword());
+        }
         SettingsUtils.verifySource(source, settings.getSources());
+        source.setId(Source.totalId);
         if (source.isCorrect()) {
-            source.setId(Source.totalId);
             Source.totalId++;
             getSettings().getSources().add(source);
         }
@@ -239,36 +250,38 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         return currentBranch;
     }
 
+    @Override
     public void scheduleEvents(Branch currentBranch, int sourceId,
                                String projectKey, String repoSlug, String branchId) {
 
         Preconditions.checkNotNull(currentBranch);
         Preconditions.checkNotNull(scheduler);
+        try {
+            scheduler.clear();
 
-        currentBranch.getScheduledEvents().stream().forEach(event -> {
-            try {
-                scheduler.shutdown(true);
-                scheduler.clear();
-                JobDetail job = newJob(ScheduledEventJob.class)
-                        .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
-                        .usingJobData("projectKey", projectKey)
-                        .usingJobData("repoSlug", repoSlug)
-                        .usingJobData("branchId", branchId)
-                        .build();
+            currentBranch.getScheduledEvents().stream().forEach(event -> {
+                try {
+                    JobDetail job = newJob(ScheduledEventJob.class)
+                            .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
+                            .usingJobData("projectKey", projectKey)
+                            .usingJobData("repoSlug", repoSlug)
+                            .usingJobData("branchId", branchId)
+                            .build();
 
-                Trigger trigger = newTrigger()
-                        .startNow()
-                        .withSchedule(event.getCronSchedule())
-                        .build();
+                    Trigger trigger = newTrigger()
+                            .startNow()
+                            .withSchedule(ScheduledEventHelper.getCronSchedule(event))
+                            .build();
 
-                scheduler.scheduleJob(job, trigger);
-            } catch (SchedulerException e) {
-                e.printStackTrace();
-            }
-        });
-        try{
+                    log.debug("Scheduled event {} with cron: {}", event.toString(), ((CronTrigger) trigger).getCronExpression());
+                    scheduler.scheduleJob(job, trigger);
+                } catch (SchedulerException e) {
+                    e.printStackTrace();
+                }
+            });
+
             scheduler.start();
-        } catch (SchedulerException e){
+        } catch (SchedulerException e) {
             e.printStackTrace();
         }
     }

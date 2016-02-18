@@ -85,6 +85,20 @@ public interface Throwing {
         };
     }
 
+    static <T, E extends Throwable> java.util.function.Consumer<T> rethrowAsRuntimeException(Specific.Consumer<T, E> cons) {
+        return t -> {
+            try {
+                cons.accept(t);
+            } catch (Throwable e) {
+                if (e instanceof RuntimeException) throw (RuntimeException) e;
+                throw new RuntimeException(e);
+            }
+        };
+    }
+
+
+
+
     /**
      * Converts a throwing runnable to a optional with it's result value or none if it threw
      * @param runnable action that might throw an exception

@@ -1,0 +1,331 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="js/lib/angular.min.js"></script>
+    <script src="js/lib/angular-resource.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
+
+    <!--  AUI Core -->
+    <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui.js"></script>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/css/aui.css" media="all">
+
+    <!-- AUI Experimental components -->
+    <script src="//cdn.rawgit.com/jrburke/almond/0.3.0/almond.js"></script>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/css/aui-experimental.css" media="all">
+    <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui-experimental.js"></script>
+
+    <!-- AUI Datepicker and Soy templates -->
+    <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui-datepicker.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui-soy.js"></script>
+
+
+
+    <script src="js/app.js"></script>
+    <script src="js/ctrl/ConfluenceCredentialsCtrl.js"></script>
+    <script src="js/ctrl/MenuCtrl.js"></script>
+    <script src="js/ctrl/SchedulesCtrl.js"></script>
+    <script src="js/ctrl/SourceCtrl.js"></script>
+    <script src="js/services/settingsService.js"></script>
+    <script src="js/services/urlService.js"></script>
+    <script src="js/dirs/docAuiDatePicker.js"></script>
+    <script src="js/dirs/auiSelect2.js"></script>
+    <script src="js/dirs/docAuiButtonGroup.js"></script>
+
+
+    <link rel="stylesheet" href="css/doc_config.css" media="all">
+    <style>
+        body {
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+<!--CUT-START-->
+<section ng-app="DoC_Config" id="doc_config">
+    <div class="aui-tabs horizontal-tabs">
+        <ul class="tabs-menu" ng-if="$root.location == 'local'">
+            <li class="menu-item">
+                <a href="#doc_config-branch">Space Tools</a>
+            </li>
+            <li class="menu-item active-tab">
+                <a href="#doc_config-cc">Config</a>
+            </li>
+        </ul>
+        <div ng-if="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch">
+            <div ng-hide="$root.loading">
+                <div class="table">
+                    <div class="table-row">
+
+                        <div ng-controller="MenuCtrl as menu" id="doc_config-branch-menu">
+                            <form class="aui">
+                                <div>
+                                    <label>Project</label>
+                                    <select
+                                            aui-select2
+                                            doc-allow-empty="true"
+                                            placeholder="Choose project"
+                                            doc-options="menu.tree.sources"
+                                            ng-model="menu.chosen.sourceProject"
+                                            doc-format-result="menu.formatResult"
+                                            doc-format-selection="menu.formatResult"
+                                            id="doc_config-branch-menu-sourceProject"
+                                    >
+                                    </select>
+                                </div>
+                                <div ng-if="menu.chosen.project !== null">
+                                    <label>Repository</label>
+                                    <select
+                                            placeholder="Choose repository"
+                                            doc-allow-empty="true"
+                                            doc-options="menu.tree.sources[menu.chosen.source].projects[menu.chosen.project].repos"
+                                            ng-model="menu.chosen.repo"
+                                            aui-select2
+                                            doc-format-result="menu.formatResult"
+                                            doc-format-selection="menu.formatResult"
+                                    >
+                                    </select>
+                                </div>
+
+                                <div ng-if="menu.chosen.repo !== null" >
+                                    <label>Branch</label>
+                                    <select
+                                            placeholder="Choose branch"
+                                            doc-allow-empty="true"
+                                            doc-options="menu.tree.sources[menu.chosen.source].projects[menu.chosen.project].repos[menu.chosen.repo].branches"
+                                            ng-model="menu.chosen.branch"
+                                            aui-select2
+                                            doc-id="doc_config-branch-menu-branch"
+                                            doc-placeholder="Choose Branch"
+                                            doc-label="Branch"
+                                            doc-format-result="menu.formatResult"
+                                            doc-format-selection="menu.formatResult"
+                                    >
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="doc_config-branch-container">
+                            <div ng-hide="$root.settings.path != null" class="aui-message aui-message-info">
+                                <p class="title">
+                                    <strong>Choose source, project, repository and branch.</strong>
+                                </p>
+                            </div>
+
+                            <div ng-show="$root.settings.path != null">
+                                <h3>Options</h3>
+                                <div>
+                                    <div>
+                                        <h4>General</h4>
+                                        <form class="aui">
+                                            <fieldset class="group">
+                                                <legend><span>Update on</span></legend>
+                                                <doc-aui-button-group
+                                                        doc-periodType="radio"
+                                                        ng-model="$root.settings.listenTo"
+                                                        doc-options="$root.listenToOptions"
+                                                ></doc-aui-button-group>
+                                                <button
+                                                        class="aui-button aui-button-primary"
+                                                        ng-show="$root.listenTo != 'none'"
+                                                        ng-click="$root.settings.updateNow()"
+                                                        ng-disabled="$root.settings.updateNowState != 'ready'"
+                                                >{{ $root.settings.updateNowState == "updated"?'Updated':($root.settings.updateNowState == "updating"?'Updating...':'Update now')}}</button>
+                                                <span class="button-spinner spin small" ng-show="$root.settings.updateNowState=='updating'"></span>
+                                            </fieldset>
+                                        </form>
+                                    </div>
+                                    <div ng-controller="SchedulesCtrl as schedules">
+                                        <div ng-show="schedules.settings.listenTo=='schedule'" >
+                                            <h4>Schedule events</h4>
+                                            <div id="doc_config-branch-schedules-events">
+                                                <div ng-repeat="event in schedules.settings.scheduledEvents" ng-class-even="'even'" class="doc_config-branch-event">
+                                                    <div>
+                                                        <div>
+                                                            <form class="aui">
+                                                                <fieldset class="group">
+                                                                    <legend><span>Event type</span></legend>
+                                                                    <doc-aui-button-group
+                                                                            doc-type="radio"
+                                                                            ng-model="event.periodic"
+                                                                            doc-options="[{value:false,label:'One time'},{value:true,label:'Periodic'}]"
+                                                                    ></doc-aui-button-group>
+                                                                    <!--<div class="radio">
+                                                                        <input class="radio" type="radio" id="doc_config-branch-schedules-periodic-false{{$index}}"
+                                                                               name="doc_config-branch-schedules-periodic{{$parent.$index}}" ng-model="event.periodic" ng-value="false">
+                                                                        <label for="doc_config-branch-schedules-periodic-false{{$index}}">One time</label><br>
+                                                                        <input class="radio" type="radio" id="doc_config-branch-schedules-periodic-true{{$index}}"
+                                                                               name="doc_config-branch-schedules-periodic{{$parent.$index}}" ng-model="event.periodic" ng-value="true">
+                                                                        <label for="doc_config-branch-schedules-periodic-true{{$index}}">Periodic</label>
+                                                                    </div>-->
+                                                                </fieldset>
+                                                                <div ng-show="event.periodic">
+                                                                    <fieldset class="group">
+                                                                        <legend><span>Every</span></legend>
+                                                                        <input type="number" min="1" max="10" class="text short-field" ng-model="event.number">
+                                                                        <doc-aui-button-group ng-hide="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.singular"></doc-aui-button-group>
+                                                                        <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.plural"></doc-aui-button-group>
+                                                                        <!--<div class="radio">
+                                                                            <input class="radio"
+                                                                                   ng-repeat-start="type in schedules.types"
+                                                                                   type="radio"
+                                                                                   name="doc_config-branch-schedules-type{{$parent.$index}}"
+                                                                                   id="doc_config-branch-schedules-type{{$parent.$index}}_{{$index}}"
+                                                                                   ng-value="type.value"
+                                                                                   ng-model="event.type"
+                                                                            ><label for="doc_config-branch-schedules-type{{$parent.$index}}_{{$index}}">{{type.name}}{{(event.number>1)?'s':''}}</label><br ng-repeat-end>
+                                                                        </div>-->
+                                                                    </fieldset>
+                                                                    <fieldset ng-show="event.periodType=='WEEK'" class="group">
+                                                                        <legend><span>Days of week</span></legend>
+                                                                        <doc-aui-button-group
+                                                                                doc-type="checkbox"
+                                                                                ng-model="event.weekdays"
+                                                                                doc-options="schedules.weekdayOptions"
+                                                                        ></doc-aui-button-group>
+                                                                    </fieldset>
+                                                                </div>
+
+                                                                <div class="field-group" ng-hide="event.periodic">
+                                                                    <label>Date</label>
+                                                                    <input type="text"  doc-aui-date-picker class="text" ng-model="event.oneTimeDate">
+                                                                </div>
+
+                                                                <div class="field-group">
+                                                                    <label>Time</label>
+                                                                    <input type="text" class="text short-field" ng-model="event.time" ng-pattern="/([01]?[0-9]|2[0-3]):[0-5][0-9]/" placeholder="17:00">
+                                                                </div>
+                                                                <div class="buttons-container">
+                                                                    <button ng-click="schedules.removeEvent($index)" class="aui-button aui-button-link">Remove event</button>
+                                                                </div>
+
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <form class="aui">
+                                                    <div class="buttons-container">
+                                                        <button ng-click="schedules.addEvent()" class="aui-button">Add event</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <form class="aui">
+                                    <div class="buttons-container">
+                                        <button
+                                                class="aui-button aui-button-primary"
+                                                ng-click="$root.settings.save()"
+                                                ng-disabled="$root.settings.savingState != 'dirty'"
+                                        >{{$root.settings.savingState == "saved"?'Saved':($root.settings.savingState == "saving"?'Saving...':'Save')}}</button>
+                                        <span class="button-spinner spin small" ng-show="$root.settings.savingState=='saving'"></span>
+                                        <button class="aui-button" ng-click="$root.settings.revert();">Revert</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!--<aui-select2 doc-options="content.sources" placeholder="Placeholder"></aui-select2>-->
+
+                            <pre ng-show="0">{{$root.settings | json}}</pre>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="doc_config-loading" ng-show="$root.loading"></div>
+        </div>
+        <div ng-if="$root.location == 'admin' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane active-pane':''}}" id="doc_config-admin">
+            <div>
+                <div class="table">
+                    <div class="table-cell" ng-controller="ConfluenceCredentialsCtrl as cc">
+                        <h3>Confluence credentials</h3>
+                        <form class="aui" ng-hide="cc.loading">
+                            <fieldset>
+                                <div class="field-group">
+                                    <label>Username</label>
+                                    <input ng-change="cc.setAsDirty()" ng-model="cc.credentials.username" class="text" placeholder="Username">
+                                </div>
+                                <div class="field-group">
+                                    <label>Password</label>
+                                    <input type="password" ng-change="cc.setAsDirty()" ng-model="cc.credentials.password" class="password" placeholder="Password">
+                                    <div class="error" ng-show="!cc.credentialsCorrect && cc.savingState == 'dirty'">Incorrect username or password.</div>
+                                    <div class="error" ng-show="cc.error && cc.savingState == 'dirty'">Unknown error occurred. Please try again later.</div>
+                                </div>
+                            </fieldset>
+                            <div class="buttons-container">
+                                <button
+                                        ng-click="cc.save()"
+                                        class="aui-button aui-button-primary"
+                                        ng-disabled="cc.savingState != 'dirty'"
+                                >{{cc.savingState=="dirty"?'Check & Save':(cc.savingState=="saving"?"Saving...":"Saved")}}</button>
+                                <span class="button-spinner spin small" ng-show="cc.savingState=='saving'"></span>
+                                <button ng-click="cc.revert()" ng-disabled="cc.savingState != 'dirty'" class="aui-button">Revert</button>
+                            </div>
+                        </form>
+                        <div ng-show="cc.loading" class="spin block"></div>
+                    </div>
+                    <div class="table-cell" ng-controller="SourceCtrl as vm">
+                        <h3>Source configuration</h3>
+                        <div ng-hide="vm.loading">
+                            <div ng-show="vm.noCredentials">
+                                <div class="aui-message aui-message-warning">
+                                    <p class="title">
+                                        <strong>No credentials</strong>
+                                    </p>
+                                    <p>You must provide correct credentials.</p>
+                                </div>
+                            </div>
+                            <div ng-hide="vm.noCredentials">
+                                <div class="aui-message aui-message-warning" ng-hide="vm.sources.length > 0">
+                                    <p class="title">
+                                        <strong>No sources found</strong>
+                                    </p>
+                                    <p>Sources will be added automatically after Application Link configuration.</p>
+                                </div>
+                                <div ng-show="vm.sources.length > 0">
+                                    <div ng-repeat="source in vm.sources" class="source" ng-class-even="'even'" ng-class-odd="'odd'">
+                                        <!--<button class="aui-button delete" ng-click="vm.delete($index)">Delete</button>-->
+                                        <h3 class="title">
+                                            {{source.name}}
+                                            <span class="aui-lozenge aui-lozenge-complete">{{source.sourceType|uppercase}}</span>
+                                        </h3>
+                                        <p class="url" ng-hide="source.inEdit">
+                                            {{source.url}}<!--
+                                        &ndash; <button ng-click="vm.edit($index)" class="aui-button aui-button-link">edit</button>-->
+                                        </p>
+                                        <form class="aui url" ng-show="source.inEdit">
+                                            <input ng-model="source.url" type="text" class="text">
+                                            <button ng-click="vm.save($index)" class="aui-button aui-button-primary">Save</button><!--
+                                    --><button ng-click="vm.revert($index)" class="aui-button">Revert</button>
+                                        </form>
+                                        <div class="aui-message aui-message-warning" ng-hide="source.correct">
+                                            <p class="title">
+                                                <strong>Errors:</strong>
+                                            </p>
+                                            <ul>
+                                                <li ng-hide="source.sourceTypeCorrect">Incorrect source type</li>
+                                                <li ng-hide="!source.sourceTypeExists">Source doesn't exist</li>
+                                                <li ng-hide="source.credentialsCorrect">Credentials incorrect</li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="addFromAppLinksCntr">
+                                    <button class="aui-button aui-button-primary" ng-disabled="vm.addFromAppLinksSavingState=='saving'" ng-click="vm.addFromAppLinks()">{{(vm.sources.length > 0)?'Update':'Add'}} from Application Links</button>
+                                    <span class="button-spinner spin small" ng-show="vm.addFromAppLinksSavingState=='saving'"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div ng-show="vm.loading" class="spin block"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--CUT-END-->
+</body>
+</html>

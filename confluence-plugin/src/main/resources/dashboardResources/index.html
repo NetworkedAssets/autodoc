@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DoC Confluence Front Localhost</title>
+    <script src="js/jquery.min.js"></script>
+
+    <script src="js/lib/d3.min.js"></script>
+
+    <script src="js/lib/dagre.min.js"></script>
+
+    <script src="js/lib/dagre-d3.min.js"></script>
+
+    <script src="js/jquery.textWidth.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <link href="css/doc_javadoc.css" rel="stylesheet">
+    <link href="css/doc_javadoc.entity.css" rel="stylesheet">
+    <link href="css/doc_classDiagram.css" rel="stylesheet">
+    <link href="css/doc_structureGraph.css" rel="stylesheet">
+    <link href="css/doc_main.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://aui-cdn.atlassian.com/aui-adg/5.9.3/css/aui.css" media="all">
+    <link rel="stylesheet" href="https://aui-cdn.atlassian.com/aui-adg/5.9.3/css/aui-experimental.css" media="all">
+    <script src="https://aui-cdn.atlassian.com/aui-adg/5.9.3/js/aui.js"></script>
+    <script src="https://aui-cdn.atlassian.com/aui-adg/5.9.3/js/aui-experimental.js"></script>
+    <script src="js/lib/angular.min.js"></script>
+    <script src="js/lib/angular-sanitize.min.js"></script>
+    <script src="js/lib/angular-ui-router.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/ctrl/JavadocEntityCtrl.js"></script>
+    <script src="js/ctrl/JavadocCtrl.js"></script>
+    <script src="js/ctrl/ClassDiagramCtrl.js"></script>
+    <script src="js/ctrl/StructureGraphCtrl.js"></script>
+    <script src="js/JavadocEntity.js"></script>
+    <script src="js/ctrl/TopCtrl.js"></script>
+    <script src="js/dirs/docQname.js"></script>
+    <script src="js/dirs/docGeneric.js"></script>
+    <script src="js/dirs/auiSelect2.js"></script>
+    <script src="js/dirs/angular-tree-control.js"></script>
+    <script src="js/dirs/javadocTags.js"></script>
+    <script src="js/dirs/javadocInheritDocTag.js"></script>
+    <script src="js/dirs/docClassDiagram.js"></script>
+    <script src="js/fn/common.js"></script>
+    <script src="js/services/urlService.js"></script>
+    <script src="js/services/macroParams.js"></script>
+    <script src="js/services/javadocEntities.js"></script>
+    <script src="js/filters/javadoc.menuItemSorter.js"></script>
+    <script src="js/filters/capitalize.js"></script>
+    <script src="js/config.js"></script>
+    <style>
+    body {
+        background: #fff!important;
+    }
+</style>
+</head>
+<body>
+
+<!-- CUT FROM HERE -->
+<section id="doc_content" class="ac-content doc" ng-app="DoC">
+    <div id="doc_top" ng-controller="TopCtrl">
+        <div id="doc_stateSelector">
+            <select
+                aui-select2
+                doc-disable-search="true"
+                ng-options="s.label for s in states"
+                ng-model="chosenState"
+
+        ></select>
+        </div>
+    </div>
+    <div ui-view></div>
+</section>
+<!-- TO HERE -->
+
+</body>
+</html>

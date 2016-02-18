@@ -16,16 +16,14 @@ import com.networkedassets.autodoc.transformer.settings.view.Views;
 public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 3847560203140549969L;
-	@JsonView(Views.PublicView.class)
+	@JsonView(Views.GetSettingsView.class)
 	private String confluenceUrl;
-	@JsonView(Views.PublicView.class)
-	private String confluenceUsername;
-	@JsonView(Views.PublicView.class)
-	private String confluencePassword ;
-	@JsonView(Views.InternalView.class)
+	@JsonView(Views.GetSettingsView.class)
 	private TransformerSettings transformerSettings = new TransformerSettings();
-	@JsonView(Views.ExtendedView.class)
+	@JsonView(Views.GetSourcesView.class)
 	private List<Source> sources = new ArrayList<>();
+	@JsonView(Views.GetCredentialsView.class)
+	private Credentials credentials = new Credentials();
 
 	public Source getSourceByUrl(String url) {
 		return sources.stream().filter(source -> source.getUrl().equals(url)).findAny().orElse(null);
@@ -68,19 +66,27 @@ public class Settings implements Serializable {
 
 	@JsonProperty("confluenceUsername")
 	public String getConfluenceUsername() {
-		return confluenceUsername;
+		return credentials.getConfluenceUsername();
 	}
 
 	public void setConfluenceUsername(String confluenceUsername) {
-		this.confluenceUsername = confluenceUsername;
+		this.credentials.setConfluenceUsername(confluenceUsername);
 	}
 
 	@JsonProperty("confluencePassword")
 	public String getConfluencePassword() {
-		return confluencePassword;
+		return credentials.getConfluencePassword();
 	}
 
 	public void setConfluencePassword(String confluencePassword) {
-		this.confluencePassword = confluencePassword;
+		credentials.setConfluencePassword(confluencePassword);
+	}
+
+	public Credentials getCredentials() {
+		return credentials;
+	}
+
+	public void setCredentials(Credentials credentials) {
+		this.credentials = credentials;
 	}
 }

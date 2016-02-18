@@ -11,7 +11,7 @@
     <name>Autodoc Parent</name>
 
     <modules>
-        <module>confluence-front</module>
+        <module>confluence-plugin</module>
         <module>transformer</module>
         <module>settings-api</module>
         <module>functional-utils</module>

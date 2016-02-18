@@ -29,19 +29,22 @@ public class Binder extends AbstractBinder {
 
 	@Override
 	protected void configure() {
-		SettingsManager settingsManager = new SettingsManager();
 		DefaultDocumentationGeneratorFactory docFactory = new DefaultDocumentationGeneratorFactory();
-		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
-		GitCodeProvider codeProvider = new GitCodeProvider();
-		DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
-				codeProvider);
 		SchedulerFactory factory = new StdSchedulerFactory();
+
 		Scheduler scheduler = null;
 		try {
 			scheduler = factory.getScheduler();
 		} catch (SchedulerException e) {
 			e.printStackTrace();
 		}
+
+		SettingsManager settingsManager = new SettingsManager(scheduler);
+		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
+		GitCodeProvider codeProvider = new GitCodeProvider();
+		DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
+				codeProvider);
+
 		bind(scheduler).to(Scheduler.class);
 		bind(settingsManager).to(SettingsSaver.class);
 		bind(settingsManager).to(SettingsProvider.class);

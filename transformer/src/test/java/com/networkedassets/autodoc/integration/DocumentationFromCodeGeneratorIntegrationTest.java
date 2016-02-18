@@ -17,9 +17,6 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by mtulaza on 2015-12-07.
- */
 @Category(IntegrationTest.class)
 public class DocumentationFromCodeGeneratorIntegrationTest {
     @Inject

@@ -1,33 +1,25 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
-import com.networkedassets.autodoc.transformer.handleRepoPush.core.DefaultDocumentationGeneratorFactory;
-import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationFromCodeGenerator;
-import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.ConfluenceDocumentationSender;
-import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.GitCodeProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
-import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
+import com.networkedassets.autodoc.transformer.server.Application;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import javax.inject.Inject;
+import java.util.Objects;
 
-/**
- * Created by mgilewicz on 2016-01-14.
- */
 public class ScheduledEventJob implements Job {
     private String sourceUrl;
     private String projectKey;
     private String repoSlug;
     private String branchId;
+    private PushEventProcessor pushEventProcessor;
 
-    private PushEventProcessor eventProcessor;
-
-    @Inject
-    public ScheduledEventJob(PushEventProcessor eventProcessor) {
-        this.eventProcessor = eventProcessor;
+    public ScheduledEventJob() {
+        pushEventProcessor = Objects.requireNonNull(Application.getService(PushEventProcessor.class));
     }
+
     public void execute(JobExecutionContext context)
             throws JobExecutionException
     {
@@ -37,7 +29,7 @@ public class ScheduledEventJob implements Job {
         event.setRepositorySlug(repoSlug);
         event.setSourceUrl(sourceUrl);
 
-        eventProcessor.processEvent(event);
+        pushEventProcessor.processEvent(event);
     }
 
     public void setSourceUrl(String sourceUrl) {

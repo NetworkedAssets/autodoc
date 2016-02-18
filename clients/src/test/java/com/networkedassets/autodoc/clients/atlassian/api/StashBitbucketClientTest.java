@@ -11,9 +11,6 @@ import java.net.URL;
 
 import static org.junit.Assert.assertNotNull;
 
-/**
- * Created by mtulaza on 2015-12-16.
- */
 public class StashBitbucketClientTest {
 	private final String PROJECT_KEY = "TP";
 	private final String PROJECT_SLUG = "lol";
@@ -41,10 +38,7 @@ public class StashBitbucketClientTest {
 		client.getHookSettings(null, null, null);
 	}
 
-	@Test(expected = UnirestException.class)
-	public void testWrongRequestUrlInGetHookSettingsMethod() throws UnirestException {
-		client.getHookSettings("/&asda=12331&addd=211", "&3334g=gg33g4&g34g34=43grgr", "///&asda=12331///&addd=211");
-	}
+	
 
 	@Test
 	public void testProperArgumentsReturnProperHookSettingsInstance() throws UnirestException {
@@ -57,11 +51,7 @@ public class StashBitbucketClientTest {
 		client.setHookSettings(null, null, null, null, null);
 	}
 
-	@Test(expected = UnirestException.class)
-	public void testWrongRequestUrlInSetHookSettingsMethod() throws UnirestException {
-		client.setHookSettings("/&asda=12331&addd=211", "&3334g=gg33g4&g34g34=43grgr", "///&asda=12331///&addd=211",
-				"ENDP//OI&&NT=12", "###$#$T#$G#$");
-	}
+	
 
 	@Test
 	public void testSetHookSettingsAndRestoreDefault() throws UnirestException {

@@ -9,9 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 
-/**
- * Created by kamil on 18.11.2015.
- */
+
 public class AtlassianHookActivator implements HookActivator {
 
     private static Logger log = LoggerFactory.getLogger(AtlassianHookActivator.class);
@@ -27,7 +25,6 @@ public class AtlassianHookActivator implements HookActivator {
     }
 
 
-    @SuppressWarnings("Duplicates")
     @Override
     public void enableAllHooks() {
         source.getProjects().values().stream().forEach(project -> project.getRepos().values().stream().forEach(repo -> {

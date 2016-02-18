@@ -27,40 +27,39 @@ import java.util.Map;
         "projects"
 })
 public class Source implements Serializable {
-    
-	private static final long serialVersionUID = -6404862914170481264L;
 
-	@JsonIgnore
+    private static final long serialVersionUID = -6404862914170481264L;
+
+    @JsonIgnore
     public static int totalId = 1;
 
-	@JsonView(Views.InternalView.class)
+    @JsonView(Views.GetSourcesView.class)
     private int id;
-    @JsonView(Views.PublicView.class)
+    @JsonView(Views.GetSourcesView.class)
     private String name;
-    @JsonView(Views.PublicView.class)
+    @JsonView(Views.GetSourcesView.class)
     private String url;
-    @JsonView(Views.PublicView.class)
+    @JsonView(Views.GetSourcesView.class)
     private SourceType sourceType;
-    @JsonView(Views.PublicView.class)
+    @JsonView(Views.GetSourcesView.class)
     private String username;
-    @JsonView(Views.PublicView.class)
+    @JsonView(Views.AddSourcePasswordView.class)
     private String password;
-    @JsonView(Views.PublicView.class)
+    @JsonView(Views.GetSourcesView.class)
     private String appLinksId;
-    @JsonView(Views.VerificationView.class)
+    @JsonView(Views.SourceCorrectView.class)
     private boolean sourceExists;
-    @JsonView(Views.VerificationView.class)
+    @JsonView(Views.SourceCorrectView.class)
     private boolean credentialsCorrect;
-    @JsonView(Views.VerificationView.class)
+    @JsonView(Views.SourceCorrectView.class)
     private boolean nameCorrect;
-    @JsonView(Views.VerificationView.class)
+    @JsonView(Views.SourceCorrectView.class)
     private boolean sourceTypeCorrect;
-    @JsonView(Views.InternalView.class)
+    @JsonView(Views.GetExpandedSourcesView.class)
     private Map<String, Project> projects = new HashMap<>();
 
-   
 
-	public Source() {
+    public Source() {
     }
 
     public void addProject(Project p) {
@@ -94,7 +93,7 @@ public class Source implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getAppLinksId() {
         return appLinksId;
     }
@@ -127,18 +126,6 @@ public class Source implements Serializable {
         return password;
     }
 
-    /**
-     * For jackson serialization. We don't want to share password on every
-     * request so we only return null on REST request
-     *
-     * @return null
-     */
-    @JsonGetter("password")
-    public String getNullPassword() {
-        return null;
-    }
-
-    @JsonSetter("password")
     public void setPassword(String password) {
         this.password = password;
     }
@@ -152,20 +139,20 @@ public class Source implements Serializable {
     }
 
     public void setId(int id) {
-        this.id=id;
+        this.id = id;
     }
-    
-    
+
+
     public int getId() {
         return id;
     }
 
-   
+
     public boolean isNameCorrect() {
         return nameCorrect;
     }
 
-    
+
     public void setNameCorrect(boolean nameCorrect) {
         this.nameCorrect = nameCorrect;
     }
@@ -178,26 +165,27 @@ public class Source implements Serializable {
         this.sourceTypeCorrect = sourceTypeCorrect;
     }
 
-    @JsonView(Views.VerificationView.class)
+    @JsonView(Views.GetSourcesView.class)
     public boolean isCorrect() {
         return isSourceExists()
                 && isCredentialsCorrect()
                 && isNameCorrect()
                 && isSourceTypeCorrect();
     }
-    
-    public Map<String, Project> getProjects() {
-		return projects;
-	}
 
-	public void setProjects(Map<String, Project> projects) {
-		this.projects = projects;
-	}
+    public Map<String, Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Map<String, Project> projects) {
+        this.projects = projects;
+    }
 
     public static enum SourceType implements Serializable {
-        STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"), BITBUCKET(
-                "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
-    	@JsonView(Views.InternalView.class)
+        STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"),
+        BITBUCKET("com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+
+        @JsonView(Views.InternalView.class)
         private String hookKey;
 
         SourceType(String hookKey) {
