@@ -130,7 +130,7 @@
                                                         ng-show="$root.listenTo != 'none'"
                                                         ng-click="$root.settings.updateNow()"
                                                         ng-disabled="$root.settings.updateNowState != 'ready'"
-                                                >{{ $root.settings.updateNowState == "updated"?'Updated':($root.settings.updateNowState == "updating"?'Updating...':'Update now')}}</button>
+                                                >{{ $root.settings.updateNowState == "updated"?'Updated':($root.settings.updateNowState == "updating"?'Updating...':($root.settings.updateNowState == "updatingInBackground"?'Updating in background':'Update now'))}}</button>
                                                 <span class="button-spinner spin small" ng-show="$root.settings.updateNowState=='updating'"></span>
                                             </fieldset>
                                         </form>

@@ -175,9 +175,22 @@ angular.module('DoC_Config').factory('settingsService', function($http,$rootScop
 
         $http
             .post(urlService.getRestUrl("/event/"+settings.getPathAsString())+"/")
-            .then(function() {
+            .then(function(response) {
+                if (response.status == 202) {
+                    require(['aui/flag'], function(flag) {
+                        flag({
+                            type: 'info',
+                            title: 'Updating in background',
+                            body: 'The documentation is quite big, so the generating process will continue in the background. You will be notified through activity stream when it\'s done.'
+                        });
+                    });
+
+                    settings.updateNowState = "updatingInBackground";
+                } else {
+                    settings.updateNowState = "updated";
+                }
                 listenForChanges = false;
-                settings.updateNowState = "updated";
+
                 $timeout(function() {
                     listenForChanges = true;
                 });
