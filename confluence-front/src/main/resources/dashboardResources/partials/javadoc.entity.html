@@ -1,6 +1,18 @@
 <div id="doc_javadoc_content">
     <div class="loadingSpinner" ng-show="vm.loading"></div>
-    <section class="elem" ng-hide="vm.loading">
+    <div class="aui-message aui-message-error" ng-show="vm.error == 404">
+        <p class="title">
+            <strong>Entity not found</strong>
+        </p>
+        <p>Try selecting an entity from the left-hand sidebar</p>
+    </div>
+    <div class="aui-message aui-message-error" ng-show="vm.error == 500">
+        <p class="title">
+            <strong>Unknown error occurred</strong>
+        </p>
+        <p>Try reloading the page.</p>
+    </div>
+    <section class="elem" ng-hide="vm.loading || vm.error">
         <ol class="aui-nav aui-nav-breadcrumbs" ng-show="vm.packages.length > 0">
             <li ng-repeat="package in vm.packages" ng-class="{'aui-nav-selected': $last}">
                 <a ng-if="!$last" href="#" ui-sref="javadoc.entity({name:package.qualified})">{{package.name}}</a>

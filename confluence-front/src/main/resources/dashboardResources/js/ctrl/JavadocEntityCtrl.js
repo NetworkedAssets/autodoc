@@ -47,6 +47,13 @@ angular.module("DoC").controller("JavadocEntityCtrl", function($scope, $http, $s
                 vm.entity = new JavadocEntity(response.data);
                 parseBreadcrumb();
                 vm.loading = false;
+            }, function(response) {
+                vm.loading = false;
+                if (response.status == 404) {
+                    vm.error = 404;
+                } else {
+                    vm.error = 500;
+                }
             });
         }
     };

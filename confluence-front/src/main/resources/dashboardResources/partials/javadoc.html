@@ -8,6 +8,12 @@
             <form class="aui" ng-hide="vm.loading">
                 <input type="text" ng-model="vm.tree.q" class="text" placeholder="Filter...">
             </form>
+            <div class="aui-message aui-message-error" ng-show="vm.error">
+                <p class="title">
+                    <strong>An error occurred</strong>
+                </p>
+                <p>Try reloading the page.</p>
+            </div>
             <div class="doc_tree" treecontrol
                  tree-model="vm.items"
                  options="vm.tree.options"
