@@ -13,28 +13,23 @@ import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.util.PasswordStoreService;
 import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
+import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
 import com.networkedassets.autodoc.transformer.util.SettingsUtils;
-import net.sourceforge.plantuml.creole.Sea;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SealedObject;
 import javax.inject.Inject;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -43,70 +38,28 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * Handles the settings of the application
  */
 public class SettingsManager implements SettingsProvider, SettingsSaver, SourceProvider, SourceCreator, SourceRemover,
-        SourceModifier, BranchModifier, EventScheduler {
-
-    private Settings settings = new Settings();
-
-    //TODO Change place to store password
-    private final char[] password =
-            "Nobody Expects the Spanish Inquisition".toCharArray();
-    private final byte[] salt = "a9v5n38s".getBytes();
-    private SecretKey secret;
-    private Cipher cipher, decipher;
-
+        SourceModifier, BranchModifier, EventScheduler  {
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
 
+    public Scheduler scheduler;
+    private SettingsEncryptor settingsEncryptor;
+
+    private Settings settings = new Settings();
     public String settingsFilename;
 
-    public Settings getSettings() {
-        return settings;
-    }
-
-    public void setSettings(Settings settings) {
-        this.settings = settings;
-        saveSettingsToFile(settingsFilename);
-    }
-
-    public Scheduler scheduler;
 
     @Inject
     public SettingsManager(Scheduler scheduler) {
         this.scheduler = scheduler;
         settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
-        // Create key
-        KeySpec spec = new PBEKeySpec(password, salt, 1024, 128);
-        try {
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            SecretKey tmp = factory.generateSecret(spec);
-            secret = new SecretKeySpec(tmp.getEncoded(), "AES");
 
-            cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.ENCRYPT_MODE, secret);
-            decipher = Cipher.getInstance("AES");
-            decipher.init(Cipher.DECRYPT_MODE, secret);
-        } catch (InvalidKeySpecException e) {
-            log.error("Invalid key spec", e);
-        } catch (NoSuchAlgorithmException e) {
-            log.error("No such algorithm as given to SecretKeyFactory", e);
-        } catch (NoSuchPaddingException e) {
-            log.error("No such padding as given to Ciper.getInstance()", e);
-        } catch (InvalidKeyException e) {
-            log.error("Invalid key", e);
-        }
+        // TODO: after merge with 'props' branch it will be good to read password-filename from default or outer properties file as well
+        // TODO: find good name for the file..
+        PasswordStoreService passwordService = new PasswordStoreService("./notpassword.txt");
+        settingsEncryptor = new SettingsEncryptor(passwordService.getPassword(), passwordService.getRandomSalt(10));
 
         loadSettingsFromFile(settingsFilename);
         updateAllSourcesAndEnableHooks();
-    }
-
-    @Override
-    public Settings getCurrentSettings() {
-        updateAllSourcesAndEnableHooks();
-        return settings;
-    }
-
-    @Override
-    public Settings getNotUpdatedSettings() {
-        return getSettings();
     }
 
     private void updateAllSourcesAndEnableHooks() {
@@ -126,9 +79,8 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 
-            SealedObject sealedObject = new SealedObject(settings, cipher);
+            objectOut.writeObject(settingsEncryptor.buildSealedObjectFrom(settings));
 
-            objectOut.writeObject(sealedObject);
             log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.error("Can't save settings to {} - file was not found: ", settingsFile.getAbsolutePath(), e);
@@ -148,9 +100,10 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         File settingsFile = new File(filename);
         try (FileInputStream fileIn = new FileInputStream(settingsFile);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileIn)) {
-            SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
 
-            settings = (Settings) sealedObject.getObject(decipher);
+            SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
+            settings = settingsEncryptor.buildSettingsObjectFrom(sealedObject);
+
             log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.error("Can't load settings from {} - file not found. Creating new default settings...",
@@ -166,6 +119,17 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         } catch (IllegalBlockSizeException e) {
             log.error("Illegal block size during unsealing settings", e);
         }
+    }
+
+    @Override
+    public Settings getNotUpdatedSettings() {
+        return getSettings();
+    }
+
+    @Override
+    public Settings getCurrentSettings() {
+        updateAllSourcesAndEnableHooks();
+        return settings;
     }
 
     @Override
@@ -284,5 +248,14 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+        saveSettingsToFile(settingsFilename);
     }
 }
