@@ -18,7 +18,7 @@ public class DocMacro implements Macro {
     @Override
     public String execute(Map<String, String> params, String s, ConversionContext conversionContext) throws MacroExecutionException {
         String dashboardSection;
-        String resourcesPath = "download/resources/com.networkedassets.autodoc.confluence-front:dashboard-resources/dashboardResources/";
+        String resourcesPath = "download/resources/com.networkedassets.autodoc.confluence-plugin:dashboard-resources/dashboardResources/";
 
         try {
             dashboardSection = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("/dashboardResources/index.html"));
