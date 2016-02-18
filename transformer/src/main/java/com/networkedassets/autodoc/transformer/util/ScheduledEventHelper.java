@@ -33,10 +33,10 @@ public class ScheduledEventHelper {
             //Every week
             if (event.getPeriodType()== ScheduledEvent.PeriodType.WEEK) {
                 String days = "";
-                Set<Map.Entry<String, Boolean>> weekdays = event.getWeekdays().entrySet();
+                Set<Map.Entry<String, Object>> weekdays = event.getWeekdays().entrySet();
 
-                for (Map.Entry<String, Boolean> entry : weekdays) {
-                    if (entry.getValue())
+                for (Map.Entry<String, Object> entry : weekdays) {
+                    if ((Boolean) entry.getValue())
                         days += entry.getKey().toUpperCase() + ",";
                 }
                 if (days.isEmpty())

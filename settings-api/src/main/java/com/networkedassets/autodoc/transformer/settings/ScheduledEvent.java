@@ -1,6 +1,5 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -19,10 +18,9 @@ public class ScheduledEvent implements Serializable {
     private boolean periodic;
     private PeriodType periodType;
     private int number;
-    private HashMap<String, Boolean> weekdays;
+    private HashMap<String, Object> weekdays;
     private String time;
     private Calendar calendar;
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private Date oneTimeDate;
 
     public ScheduledEvent() {
@@ -56,11 +54,11 @@ public class ScheduledEvent implements Serializable {
         this.number = number;
     }
 
-    public HashMap<String, Boolean> getWeekdays() {
+    public HashMap<String, Object> getWeekdays() {
         return weekdays;
     }
 
-    public void setWeekdays(HashMap<String, Boolean> weekdays) {
+    public void setWeekdays(HashMap<String, Object> weekdays) {
         this.weekdays = weekdays;
     }
 
@@ -71,7 +69,10 @@ public class ScheduledEvent implements Serializable {
     public void setOneTimeDate(Date oneTimeDate) {
         this.oneTimeDate = oneTimeDate;
         calendar = Calendar.getInstance();
-        calendar.setTime(oneTimeDate);
+
+        if(oneTimeDate != null){
+            calendar.setTime(oneTimeDate);
+        }
     }
 
     public String getTime() {
