@@ -146,7 +146,7 @@
                                                                 <fieldset class="group">
                                                                     <legend><span>Event type</span></legend>
                                                                     <doc-aui-button-group
-                                                                            doc-periodType="radio"
+                                                                            doc-type="radio"
                                                                             ng-model="event.periodic"
                                                                             doc-options="[{value:false,label:'One time'},{value:true,label:'Periodic'}]"
                                                                     ></doc-aui-button-group>
@@ -159,10 +159,11 @@
                                                                         <label for="doc_config-branch-schedules-periodic-true{{$index}}">Periodic</label>
                                                                     </div>-->
                                                                 </fieldset>
-                                                                <div ng-show="event.periodic">
+                                                                <div ng-if="event.periodic">
                                                                     <fieldset class="group">
                                                                         <legend><span>Every</span></legend>
                                                                         <input type="number" min="1" max="10" class="text short-field" ng-model="event.number">
+                                                                        <div class="error" ng-show="!event.number">Invalid value – should be 1-10</div>
                                                                         <doc-aui-button-group ng-hide="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.singular"></doc-aui-button-group>
                                                                         <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.plural"></doc-aui-button-group>
                                                                         <!--<div class="radio">
@@ -176,24 +177,26 @@
                                                                             ><label for="doc_config-branch-schedules-type{{$parent.$index}}_{{$index}}">{{type.name}}{{(event.number>1)?'s':''}}</label><br ng-repeat-end>
                                                                         </div>-->
                                                                     </fieldset>
-                                                                    <fieldset ng-show="event.periodType=='WEEK'" class="group">
+                                                                    <fieldset ng-if="event.periodType=='WEEK'" class="group">
                                                                         <legend><span>Days of week</span></legend>
                                                                         <doc-aui-button-group
-                                                                                doc-periodType="checkbox"
+                                                                                doc-type="checkbox"
                                                                                 ng-model="event.weekdays"
                                                                                 doc-options="schedules.weekdayOptions"
                                                                         ></doc-aui-button-group>
                                                                     </fieldset>
                                                                 </div>
 
-                                                                <div class="field-group" ng-hide="event.periodic">
+                                                                <div class="field-group" ng-if="!event.periodic">
                                                                     <label>Date</label>
-                                                                    <input type="text"  doc-aui-date-picker class="text" ng-model="event.oneTimeDate">
+                                                                    <input type="text" doc-aui-date-picker class="text" ng-model="event.oneTimeDate">
                                                                 </div>
 
                                                                 <div class="field-group">
                                                                     <label>Time</label>
-                                                                    <input type="text" class="text short-field" ng-model="event.time" ng-pattern="/([01]?[0-9]|2[0-3]):[0-5][0-9]/" placeholder="17:00">
+                                                                    <input type="text" class="text short-field" ng-model="event.time" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/" placeholder="17:00"><!--/([01]?[0-9]|2[0-3]):[0-5][0-9]/-->
+                                                                    <div class="error" ng-show="!event.time">Invalid value – should be HH:MM</div>
+
                                                                 </div>
                                                                 <div class="buttons-container">
                                                                     <button ng-click="schedules.removeEvent($index)" class="aui-button aui-button-link">Remove event</button>
