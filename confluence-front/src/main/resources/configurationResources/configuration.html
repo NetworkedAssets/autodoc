@@ -146,7 +146,7 @@
                                                                 <fieldset class="group">
                                                                     <legend><span>Event type</span></legend>
                                                                     <doc-aui-button-group
-                                                                            doc-periodType="radio"
+                                                                            doc-type="radio"
                                                                             ng-model="event.periodic"
                                                                             doc-options="[{value:false,label:'One time'},{value:true,label:'Periodic'}]"
                                                                     ></doc-aui-button-group>
@@ -179,7 +179,7 @@
                                                                     <fieldset ng-show="event.periodType=='WEEK'" class="group">
                                                                         <legend><span>Days of week</span></legend>
                                                                         <doc-aui-button-group
-                                                                                doc-periodType="checkbox"
+                                                                                doc-type="checkbox"
                                                                                 ng-model="event.weekdays"
                                                                                 doc-options="schedules.weekdayOptions"
                                                                         ></doc-aui-button-group>
