@@ -53,7 +53,7 @@
             </li>
         </ul>
         <div ng-if="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch">
-            <div ng-hide="$root.loading">
+            <div ng-hide="$root.loading || $root.error">
                 <div class="table">
                     <div class="table-row">
 
@@ -178,7 +178,6 @@
                                                                     <label>Time</label>
                                                                     <input type="text" class="text short-field" ng-model="event.time" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/" placeholder="17:00"><!--/([01]?[0-9]|2[0-3]):[0-5][0-9]/-->
                                                                     <div class="error" ng-show="!event.time">Invalid value – should be HH:MM</div>
-
                                                                 </div>
                                                                 <div class="buttons-container">
                                                                     <button ng-click="schedules.removeEvent($index)" class="aui-button aui-button-link">Remove event</button>
@@ -219,13 +218,25 @@
                 </div>
             </div>
             <div id="doc_config-loading" ng-show="$root.loading"></div>
+            <div class="aui-message aui-message-error" ng-show="$root.error">
+                <p class="title">
+                    <strong>Unknown error occurred</strong>
+                </p>
+                <p>Try refreshing the page.</p>
+            </div>
         </div>
         <div ng-if="$root.location == 'admin' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane active-pane':''}}" id="doc_config-admin">
             <div>
                 <div class="table">
                     <div class="table-cell" ng-controller="ConfluenceCredentialsCtrl as cc">
                         <h3>Confluence credentials</h3>
-                        <form class="aui" ng-hide="cc.loading">
+                        <div class="aui-message aui-message-error" ng-show="cc.error">
+                            <p class="title">
+                                <strong>Unknown error occurred</strong>
+                            </p>
+                            <p>Try refreshing the page.</p>
+                        </div>
+                        <form class="aui" ng-hide="cc.loading || cc.error">
                             <fieldset>
                                 <div class="field-group">
                                     <label>Username</label>
@@ -235,7 +246,6 @@
                                     <label>Password</label>
                                     <input type="password" ng-change="cc.setAsDirty()" ng-model="cc.credentials.password" class="password" placeholder="Password">
                                     <div class="error" ng-show="!cc.credentialsCorrect && cc.savingState == 'dirty'">Incorrect username or password.</div>
-                                    <div class="error" ng-show="cc.error && cc.savingState == 'dirty'">Unknown error occurred. Please try again later.</div>
                                 </div>
                             </fieldset>
                             <div class="buttons-container">
@@ -260,6 +270,12 @@
                                     </p>
                                     <p>You must provide correct credentials.</p>
                                 </div>
+                            </div>
+                            <div class="aui-message aui-message-error" ng-show="cc.error">
+                                <p class="title">
+                                    <strong>Unknown error occurred</strong>
+                                </p>
+                                <p>Try refreshing the page.</p>
                             </div>
                             <div ng-hide="vm.noCredentials">
                                 <div class="aui-message aui-message-warning" ng-hide="vm.sources.length > 0">

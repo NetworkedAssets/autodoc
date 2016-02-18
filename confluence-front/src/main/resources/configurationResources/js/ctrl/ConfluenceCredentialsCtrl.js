@@ -55,6 +55,9 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
             console.log(cc);
             $rootScope.$broadcast("ConfluenceCredentials.ready",cc.credentials.username);
             $timeout();
+        },function() {
+            cc.loading = false;
+            cc.error = true;
         });
     };
 

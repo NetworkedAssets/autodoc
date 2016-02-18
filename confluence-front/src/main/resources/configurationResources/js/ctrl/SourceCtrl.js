@@ -42,6 +42,10 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
         vm.sources = Source.query();
         vm.sources.$promise.then(function() {
             vm.loading = false;
+            vm.error = false;
+        },function() {
+            vm.loading = false;
+            vm.error = true;
         });
     };
 

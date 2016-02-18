@@ -65,8 +65,11 @@ angular.module('DoC_Config').factory('settingsService', function($http,$rootScop
                 console.log("Original settings data: ",settings.raw.sources);
 
                 $rootScope.$broadcast("settingsService.ready");
-
+                $rootScope.error = false;
                 $rootScope.loading = false;
+            },function () {
+                $rootScope.loading = false;
+                $rootScope.error = true;
             });
     };
 

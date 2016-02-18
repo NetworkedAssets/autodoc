@@ -210,8 +210,14 @@
                 '       </a>' +
                 '   </header>' +
                 '   <div class="aui-dialog2-content">' +
-                '       <div id="doc_macroDialogLoading" style="text-align: center">' +
-                '          <span class="aui-icon aui-icon-wait aui-icon-large">Loading...</span>' +
+                '       <div id="doc_macroDialogError" style="text-align: center"  style="display:none">' +
+                '           <span class="aui-icon aui-icon-wait aui-icon-large">Loading...</span>' +
+                '           <div class="aui-message aui-message-error">' +
+                '               <p class="title">' +
+                '                   <strong>Unknown error occured</strong>' +
+                '               </p>' +
+                '               <p>Try refreshing the page.</p>' +
+                '           </div>'+
                 '       </div>' +
                 '       <div style="display: table; width: 100%" id="doc_macroDialogContent">' +
                 '           <div style="display: table-row">' +
@@ -231,7 +237,7 @@
                 '       <div class="aui-dialog2-footer-actions">' +
                 '           <button id="doc_macroDialogSaveButton" class="aui-button aui-button-primary" disabled>Save</button>' +
                 '           <button id="doc_macroDialogCloseButton" class="aui-button aui-button-link">Close</button>' +
-                '           </div>' +
+                '       </div>' +
                 '   </footer>' +
                 '</section>';
             dialogInstance = $(html).appendTo("body");
@@ -256,9 +262,13 @@
         if (vm.tree === null) {
             $("#doc_macroDialogLoading").fadeIn(0);
             $("#doc_macroDialogContent").fadeOut(0);
+            $("#doc_macroDialogError").fadeOut(0);
             $.getJSON(url).then(function(data) {
                 processTree(data);
                 init();
+            },function() {
+                $("#doc_macroDialogError").fadeIn(0);
+                $("#doc_macroDialogLoading").fadeOut(0);
             });
         } else {
             init();
