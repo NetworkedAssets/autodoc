@@ -150,32 +150,14 @@
                                                                             ng-model="event.periodic"
                                                                             doc-options="[{value:false,label:'One time'},{value:true,label:'Periodic'}]"
                                                                     ></doc-aui-button-group>
-                                                                    <!--<div class="radio">
-                                                                        <input class="radio" type="radio" id="doc_config-branch-schedules-periodic-false{{$index}}"
-                                                                               name="doc_config-branch-schedules-periodic{{$parent.$index}}" ng-model="event.periodic" ng-value="false">
-                                                                        <label for="doc_config-branch-schedules-periodic-false{{$index}}">One time</label><br>
-                                                                        <input class="radio" type="radio" id="doc_config-branch-schedules-periodic-true{{$index}}"
-                                                                               name="doc_config-branch-schedules-periodic{{$parent.$index}}" ng-model="event.periodic" ng-value="true">
-                                                                        <label for="doc_config-branch-schedules-periodic-true{{$index}}">Periodic</label>
-                                                                    </div>-->
                                                                 </fieldset>
                                                                 <div ng-if="event.periodic">
                                                                     <fieldset class="group">
                                                                         <legend><span>Every</span></legend>
                                                                         <input type="number" min="1" max="10" class="text short-field" ng-model="event.number">
-                                                                        <div class="error" ng-show="!event.number">Invalid value – should be 1-10</div>
                                                                         <doc-aui-button-group ng-hide="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.singular"></doc-aui-button-group>
                                                                         <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.plural"></doc-aui-button-group>
-                                                                        <!--<div class="radio">
-                                                                            <input class="radio"
-                                                                                   ng-repeat-start="type in schedules.types"
-                                                                                   type="radio"
-                                                                                   name="doc_config-branch-schedules-type{{$parent.$index}}"
-                                                                                   id="doc_config-branch-schedules-type{{$parent.$index}}_{{$index}}"
-                                                                                   ng-value="type.value"
-                                                                                   ng-model="event.type"
-                                                                            ><label for="doc_config-branch-schedules-type{{$parent.$index}}_{{$index}}">{{type.name}}{{(event.number>1)?'s':''}}</label><br ng-repeat-end>
-                                                                        </div>-->
+                                                                        <div class="error" ng-show="!event.number">Invalid value – should be 1-10</div>
                                                                     </fieldset>
                                                                     <fieldset ng-if="event.periodType=='WEEK'" class="group">
                                                                         <legend><span>Days of week</span></legend>
