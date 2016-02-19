@@ -16,6 +16,10 @@ angular.module("DoC")
             .then(function() {
                 vm.items = javadocEntities.getTreeUsingArrays().children;
                 vm.loading = false;
+                vm.error = false;
+            },function() {
+                vm.loading = false;
+                vm.error = true;
             });
 
 

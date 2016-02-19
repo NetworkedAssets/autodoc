@@ -53,7 +53,7 @@
             </li>
         </ul>
         <div ng-if="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch">
-            <div ng-hide="$root.loading">
+            <div ng-hide="$root.loading || $root.error">
                 <div class="table">
                     <div class="table-row">
 
@@ -130,7 +130,7 @@
                                                         ng-show="$root.listenTo != 'none'"
                                                         ng-click="$root.settings.updateNow()"
                                                         ng-disabled="$root.settings.updateNowState != 'ready'"
-                                                >{{ $root.settings.updateNowState == "updated"?'Updated':($root.settings.updateNowState == "updating"?'Updating...':'Update now')}}</button>
+                                                >{{ $root.settings.updateNowState == "updated"?'Updated':($root.settings.updateNowState == "updating"?'Updating...':($root.settings.updateNowState == "updatingInBackground"?'Updating in background':'Update now'))}}</button>
                                                 <span class="button-spinner spin small" ng-show="$root.settings.updateNowState=='updating'"></span>
                                             </fieldset>
                                         </form>
@@ -150,33 +150,16 @@
                                                                             ng-model="event.periodic"
                                                                             doc-options="[{value:false,label:'One time'},{value:true,label:'Periodic'}]"
                                                                     ></doc-aui-button-group>
-                                                                    <!--<div class="radio">
-                                                                        <input class="radio" type="radio" id="doc_config-branch-schedules-periodic-false{{$index}}"
-                                                                               name="doc_config-branch-schedules-periodic{{$parent.$index}}" ng-model="event.periodic" ng-value="false">
-                                                                        <label for="doc_config-branch-schedules-periodic-false{{$index}}">One time</label><br>
-                                                                        <input class="radio" type="radio" id="doc_config-branch-schedules-periodic-true{{$index}}"
-                                                                               name="doc_config-branch-schedules-periodic{{$parent.$index}}" ng-model="event.periodic" ng-value="true">
-                                                                        <label for="doc_config-branch-schedules-periodic-true{{$index}}">Periodic</label>
-                                                                    </div>-->
                                                                 </fieldset>
-                                                                <div ng-show="event.periodic">
+                                                                <div ng-if="event.periodic">
                                                                     <fieldset class="group">
                                                                         <legend><span>Every</span></legend>
                                                                         <input type="number" min="1" max="10" class="text short-field" ng-model="event.number">
                                                                         <doc-aui-button-group ng-hide="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.singular"></doc-aui-button-group>
                                                                         <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.plural"></doc-aui-button-group>
-                                                                        <!--<div class="radio">
-                                                                            <input class="radio"
-                                                                                   ng-repeat-start="type in schedules.types"
-                                                                                   type="radio"
-                                                                                   name="doc_config-branch-schedules-type{{$parent.$index}}"
-                                                                                   id="doc_config-branch-schedules-type{{$parent.$index}}_{{$index}}"
-                                                                                   ng-value="type.value"
-                                                                                   ng-model="event.type"
-                                                                            ><label for="doc_config-branch-schedules-type{{$parent.$index}}_{{$index}}">{{type.name}}{{(event.number>1)?'s':''}}</label><br ng-repeat-end>
-                                                                        </div>-->
+                                                                        <div class="error" ng-show="!event.number">Invalid value – should be 1-10</div>
                                                                     </fieldset>
-                                                                    <fieldset ng-show="event.periodType=='WEEK'" class="group">
+                                                                    <fieldset ng-if="event.periodType=='WEEK'" class="group">
                                                                         <legend><span>Days of week</span></legend>
                                                                         <doc-aui-button-group
                                                                                 doc-type="checkbox"
@@ -186,14 +169,15 @@
                                                                     </fieldset>
                                                                 </div>
 
-                                                                <div class="field-group" ng-hide="event.periodic">
+                                                                <div class="field-group" ng-if="!event.periodic">
                                                                     <label>Date</label>
-                                                                    <input type="text"  doc-aui-date-picker class="text" ng-model="event.oneTimeDate">
+                                                                    <input type="text" doc-aui-date-picker class="text" ng-model="event.oneTimeDate">
                                                                 </div>
 
                                                                 <div class="field-group">
                                                                     <label>Time</label>
-                                                                    <input type="text" class="text short-field" ng-model="event.time" ng-pattern="/([01]?[0-9]|2[0-3]):[0-5][0-9]/" placeholder="17:00">
+                                                                    <input type="text" class="text short-field" ng-model="event.time" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/" placeholder="17:00"><!--/([01]?[0-9]|2[0-3]):[0-5][0-9]/-->
+                                                                    <div class="error" ng-show="!event.time">Invalid value – should be HH:MM</div>
                                                                 </div>
                                                                 <div class="buttons-container">
                                                                     <button ng-click="schedules.removeEvent($index)" class="aui-button aui-button-link">Remove event</button>
@@ -234,13 +218,25 @@
                 </div>
             </div>
             <div id="doc_config-loading" ng-show="$root.loading"></div>
+            <div class="aui-message aui-message-error" ng-show="$root.error">
+                <p class="title">
+                    <strong>Unknown error occurred</strong>
+                </p>
+                <p>Try refreshing the page.</p>
+            </div>
         </div>
         <div ng-if="$root.location == 'admin' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane active-pane':''}}" id="doc_config-admin">
             <div>
                 <div class="table">
                     <div class="table-cell" ng-controller="ConfluenceCredentialsCtrl as cc">
                         <h3>Confluence credentials</h3>
-                        <form class="aui" ng-hide="cc.loading">
+                        <div class="aui-message aui-message-error" ng-show="cc.error">
+                            <p class="title">
+                                <strong>Unknown error occurred</strong>
+                            </p>
+                            <p>Try refreshing the page.</p>
+                        </div>
+                        <form class="aui" ng-hide="cc.loading || cc.error">
                             <fieldset>
                                 <div class="field-group">
                                     <label>Username</label>
@@ -250,7 +246,6 @@
                                     <label>Password</label>
                                     <input type="password" ng-change="cc.setAsDirty()" ng-model="cc.credentials.password" class="password" placeholder="Password">
                                     <div class="error" ng-show="!cc.credentialsCorrect && cc.savingState == 'dirty'">Incorrect username or password.</div>
-                                    <div class="error" ng-show="cc.error && cc.savingState == 'dirty'">Unknown error occurred. Please try again later.</div>
                                 </div>
                             </fieldset>
                             <div class="buttons-container">
@@ -275,6 +270,12 @@
                                     </p>
                                     <p>You must provide correct credentials.</p>
                                 </div>
+                            </div>
+                            <div class="aui-message aui-message-error" ng-show="cc.error">
+                                <p class="title">
+                                    <strong>Unknown error occurred</strong>
+                                </p>
+                                <p>Try refreshing the page.</p>
                             </div>
                             <div ng-hide="vm.noCredentials">
                                 <div class="aui-message aui-message-warning" ng-hide="vm.sources.length > 0">

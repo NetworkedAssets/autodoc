@@ -26,7 +26,14 @@ angular.module('DoC').config(function($stateProvider,$urlRouterProvider) {
             .state('structureGraph',{
                 url: "/structureGraph",
                 displayName: "Structure Graph",
-                template: '<div id="doc_structureGraph"></div>',
+                template: '' +
+                '<div class="aui-message aui-message-error" ng-show="error">' +
+                '   <p class="title">' +
+                '       <strong>An error occurred</strong>' +
+                '   </p>' +
+                '   <p>Try reloading the page.</p>' +
+                '</div>' +
+                '<div id="doc_structureGraph" ng-hide="error"></div>',
                 controller: 'StructureGraphCtrl'
             });
 

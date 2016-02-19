@@ -47,7 +47,10 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                         cache: true
                     })
                     .then(function(response) {
+                        scope.false = true;
                         generate(response.data);
+                    },function() {
+                        scope.error = true;
                     });
             };
 
@@ -508,6 +511,13 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                 }
             });
         },
+        template: '' +
+        '<div class="aui-message aui-message-warning" ng-show="error">' +
+        '   <p class="title">' +
+        '       <strong>Unknown error occured while loading Class Diagram</strong>' +
+        '   </p>' +
+        '   <p>Try reloading the page or changing entity.</p>' +
+        '</div>',
         scope: {
             qualified: "=docClassDiagram"
         }

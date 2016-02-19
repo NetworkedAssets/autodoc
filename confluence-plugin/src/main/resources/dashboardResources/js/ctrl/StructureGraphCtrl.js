@@ -1,4 +1,5 @@
-angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,$state,$filter,$timeout,$location,javadocEntities) {
+angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $rootScope, $state,
+                                                                $filter, $timeout, $location, javadocEntities) {
     var root;
     var margin = {top: -5, right: -5, bottom: -5, left: -5};
     var width = $(window).width() - margin.left - margin.right,
@@ -33,10 +34,11 @@ angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,
     javadocEntities
         .fetch()
         .then(function() {
-
+            $scope.error = false;
             root = javadocEntities.getTree();
-            console.log(root);
             update();
+        },function() {
+            $scope.error = true;
         });
 
     function update() {
@@ -123,22 +125,22 @@ angular.module("DoC").controller("StructureGraphCtrl",function($http,$rootScope,
     }
 
     function click(d) {
-        if (d3.event.defaultPrevented) return; // ignore drag
-        if (d3.event.shiftKey) {
-            if (d.children) {
-                d._children = d.children;
-                d.children = null;
+        if (!d3.event.defaultPrevented) {
+            if (d.type === "package") {
+                if (d.children) {
+                    d._children = d.children;
+                    d.children = null;
+                } else {
+                    d.children = d._children;
+                    d._children = null;
+                }
+                update();
             } else {
-                d.children = d._children;
-                d._children = null;
+                $state.go("javadoc.entity",{
+                    name: d.name
+                });
             }
-            update();
-        } else {
-            $state.go("javadoc.entity",{
-                name: d.name
-            });
         }
-
     }
 
     function flatten(root) {
