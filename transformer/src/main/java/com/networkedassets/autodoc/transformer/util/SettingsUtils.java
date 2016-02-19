@@ -133,22 +133,13 @@ public final class SettingsUtils {
 	}
 
 	/**
-	 * Returns settings filename from properties. If absent, default filename is
+	 * Returns settings filename from transformer properties. If absent, default filename is
 	 * returned.
 	 *
-	 * @return Settings filename from properties or default if absent
+	 * @return Settings filename from transformer properties or from transformer_defaults if absent
 	 */
 	public static String getSettingsFilenameFromProperties() {
-
-		final String defaultFilename = "transformerSettings.ser";
-		PropertyHandler propertyHandler;
-		try {
-			propertyHandler = PropertyHandler.getInstance();
-		} catch (IOException e) {
-			log.error("Couldn't load the properties file", e);
-			return defaultFilename;
-		}
-		return propertyHandler.getValue("settings.filename", defaultFilename);
+		return PropertyHandler.getInstance().getValue("settings.filename");
 	}
 
 	/**

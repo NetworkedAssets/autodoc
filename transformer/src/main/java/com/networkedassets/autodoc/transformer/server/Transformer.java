@@ -29,7 +29,7 @@ public class Transformer {
 
 	public static void main(String[] args) throws Exception {
 
-		jettyServer = getServer(Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port", "8050")));
+		jettyServer = getServer(Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port")));
 		try {
 			jettyServer.start();
 			jettyServer.join();
