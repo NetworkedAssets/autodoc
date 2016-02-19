@@ -204,8 +204,8 @@
                 '       </a>' +
                 '   </header>' +
                 '   <div class="aui-dialog2-content">' +
+                '       <span class="aui-icon aui-icon-wait aui-icon-large" id="doc_macroDialogLoading">Loading...</span>' +
                 '       <div id="doc_macroDialogError" style="text-align: center"  style="display:none">' +
-                '           <span class="aui-icon aui-icon-wait aui-icon-large">Loading...</span>' +
                 '           <div class="aui-message aui-message-error">' +
                 '               <p class="title">' +
                 '                   <strong>Unknown error occured</strong>' +
