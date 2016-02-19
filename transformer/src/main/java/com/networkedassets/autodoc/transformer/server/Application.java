@@ -1,14 +1,5 @@
 package com.networkedassets.autodoc.transformer.server;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.server.ServerProperties;
-import org.glassfish.jersey.server.spi.Container;
-import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
-import org.glassfish.jersey.server.validation.ValidationConfig;
-import org.glassfish.jersey.server.validation.internal.InjectingConstraintValidatorFactory;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -19,6 +10,14 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.ContextResolver;
+
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
+import org.glassfish.jersey.server.spi.Container;
+import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
+import org.glassfish.jersey.server.validation.ValidationConfig;
+import org.glassfish.jersey.server.validation.internal.InjectingConstraintValidatorFactory;
 
 /**
  * Jersey application serverConfig
@@ -39,11 +38,11 @@ public class Application extends ResourceConfig {
 		property("com.sun.jersey.spi.container.ContainerResponseFilters",
 				"com.sun.jersey.api.container.filter.LoggingFilter");
 		property(ServerProperties.TRACING, "ALL");
+		
 
 		// register binder for dependency injection
 		register(new Binder());
 		register(JacksonFeature.class);
-		register(JacksonJsonProvider.class);
 		register(ValidationConfigurationContextResolver.class);
 		register(new ContainerLifecycleListener() {
 			@Override

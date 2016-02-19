@@ -21,7 +21,7 @@ public @interface ProperTime {
 
 	Class<? extends Payload>[]payload() default {};
 
-	String message() default "{com.networkedassets.autodoc.transformer.manageSettings.infrastructure.constraint.ProperDateTime.message}";
+	String message() default "{com.networkedassets.autodoc.transformer.manageSettings.infrastructure.constraint.ProperTime.message}";
 
 	public class Validator implements ConstraintValidator<ProperTime, Branch> {
 		private static final String TIME_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";

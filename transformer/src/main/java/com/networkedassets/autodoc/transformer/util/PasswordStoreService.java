@@ -17,8 +17,8 @@ public class PasswordStoreService {
     private File file;
     private Properties properties;
 
-    public PasswordStoreService(String filename) {
-        this.file = new File(filename);
+    public PasswordStoreService(String filepath) {
+        this.file = new File(filepath);
         this.properties = new Properties();
 
         try {

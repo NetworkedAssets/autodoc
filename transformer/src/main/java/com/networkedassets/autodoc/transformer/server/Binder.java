@@ -12,6 +12,10 @@ import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManag
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
+import com.networkedassets.autodoc.transformer.util.PasswordStoreService;
+import com.networkedassets.autodoc.transformer.util.PropertyHandler;
+import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
+
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -39,12 +43,19 @@ public class Binder extends AbstractBinder {
 			e.printStackTrace();
 		}
 
-		SettingsManager settingsManager = new SettingsManager(scheduler);
+		PasswordStoreService passwordService = new PasswordStoreService(
+				PropertyHandler.getInstance().getValue("encrypt.password.filepath"));
+		SettingsEncryptor settingsEncryptor = new SettingsEncryptor(
+				passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
+				passwordService.getProperty(PasswordStoreService.PropertyType.SALT));
+
+		SettingsManager settingsManager = new SettingsManager(scheduler, settingsEncryptor);
 		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
 		GitCodeProvider codeProvider = new GitCodeProvider();
 		DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
 				codeProvider);
 
+		bind(settingsEncryptor).to(SettingsEncryptor.class);
 		bind(scheduler).to(Scheduler.class);
 		bind(settingsManager).to(SettingsSaver.class);
 		bind(settingsManager).to(SettingsProvider.class);
