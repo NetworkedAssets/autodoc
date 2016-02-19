@@ -25,7 +25,6 @@ public class AtlassianHookActivator implements HookActivator {
     }
 
 
-    @SuppressWarnings("Duplicates")
     @Override
     public void enableAllHooks() {
         source.getProjects().values().stream().forEach(project -> project.getRepos().values().stream().forEach(repo -> {

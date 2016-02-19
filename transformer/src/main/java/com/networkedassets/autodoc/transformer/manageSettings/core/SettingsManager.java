@@ -14,19 +14,23 @@ import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
+import com.networkedassets.autodoc.transformer.util.PasswordStoreService;
 import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
+import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
 import com.networkedassets.autodoc.transformer.util.SettingsUtils;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SealedObject;
 import javax.inject.Inject;
 import java.io.*;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -35,46 +39,37 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * Handles the settings of the application
  */
 public class SettingsManager implements SettingsProvider, SettingsSaver, SourceProvider, SourceCreator, SourceRemover,
-        SourceModifier, BranchModifier, EventScheduler {
-
-    private Settings settings = new Settings();
+        SourceModifier, BranchModifier, EventScheduler  {
     private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
 
+    public Scheduler scheduler;
+    private SettingsEncryptor settingsEncryptor;
+
+    private Settings settings = new Settings();
     public String settingsFilename;
 
-    public Settings getSettings() {
-        return settings;
-    }
-
-    public void setSettings(Settings settings) {
-        this.settings = settings;
-        saveSettingsToFile(settingsFilename);
-    }
-
-    public Scheduler scheduler;
 
     @Inject
     public SettingsManager(Scheduler scheduler) {
         this.scheduler = scheduler;
         settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
+
+        // TODO: after merge with 'props' branch it will be good to read password-filename from default or outer properties file as well
+        // TODO: find good name for the file..
+        PasswordStoreService passwordService = new PasswordStoreService("./encrypt.properties");
+        settingsEncryptor = new SettingsEncryptor(
+                passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
+                passwordService.getProperty(PasswordStoreService.PropertyType.SALT)
+        );
+
         loadSettingsFromFile(settingsFilename);
+
         settings.getTransformerSettings().setAddress(
                 PropertyHandler.getInstance().getValue("jetty.address"),
                 Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port"))
         );
         log.info("Address is setup to: " + settings.getTransformerSettings().getAddress());
         updateAllSourcesAndEnableHooks();
-    }
-
-    @Override
-    public Settings getCurrentSettings() {
-        updateAllSourcesAndEnableHooks();
-        return settings;
-    }
-
-    @Override
-    public Settings getNotUpdatedSettings() {
-        return getSettings();
     }
 
     private void updateAllSourcesAndEnableHooks() {
@@ -93,7 +88,9 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         File settingsFile = new File(filename);
         try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
-            objectOut.writeObject(settings);
+
+            objectOut.writeObject(settingsEncryptor.buildSealedObjectFrom(settings));
+
             log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.error("Can't save settings to {} - file was not found: ", settingsFile.getAbsolutePath(), e);
@@ -101,7 +98,9 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
         } catch (IOException e) {
             log.error("Can't save settings to {} - general IO problem: ", settingsFile.getAbsolutePath(), e);
             return false;
-
+        } catch (IllegalBlockSizeException e) {
+            log.error("Illegal block size during sealing settings", e);
+            return false;
         }
 
         return true;
@@ -110,8 +109,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
     private void loadSettingsFromFile(String filename) {
         File settingsFile = new File(filename);
         try (FileInputStream fileIn = new FileInputStream(settingsFile);
-             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
-            settings = (Settings) objectIn.readObject();
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileIn)) {
+
+            SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
+            settings = settingsEncryptor.buildSettingsObjectFrom(sealedObject);
+
             log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.error("Can't load settings from {} - file not found. Creating new default settings...",
@@ -122,13 +124,27 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
                     settingsFile.getAbsolutePath());
         } catch (IOException e) {
             log.error("Can't load settings from {}: ", settingsFile.getAbsolutePath(), e);
+        } catch (BadPaddingException e) {
+            log.error("Bad padding during unsealing settings", e);
+        } catch (IllegalBlockSizeException e) {
+            log.error("Illegal block size during unsealing settings", e);
         }
     }
 
+    @Override
+    public Settings getNotUpdatedSettings() {
+        return getSettings();
+    }
+
+    @Override
+    public Settings getCurrentSettings() {
+        updateAllSourcesAndEnableHooks();
+        return settings;
+    }
 
     @Override
     public boolean setCredentials(Settings settings) {
-    	this.settings.setCredentials(new Credentials());
+        this.settings.setCredentials(new Credentials());
         this.settings.setConfluencePassword(settings.getConfluencePassword());
         this.settings.setConfluenceUrl(settings.getConfluenceUrl());
         this.settings.setConfluenceUsername(settings.getConfluenceUsername());
@@ -214,32 +230,42 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
         Preconditions.checkNotNull(currentBranch);
         Preconditions.checkNotNull(scheduler);
-
-        currentBranch.getScheduledEvents().stream().forEach(event -> {
-            try {
-                scheduler.shutdown(true);
-                scheduler.clear();
-                JobDetail job = newJob(ScheduledEventJob.class)
-                        .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
-                        .usingJobData("projectKey", projectKey)
-                        .usingJobData("repoSlug", repoSlug)
-                        .usingJobData("branchId", branchId)
-                        .build();
-
-                Trigger trigger = newTrigger()
-                        .startNow()
-                        .withSchedule(ScheduledEventHelper.getCronSchedule(event))
-                        .build();
-
-                scheduler.scheduleJob(job, trigger);
-            } catch (SchedulerException e) {
-                e.printStackTrace();
-            }
-        });
         try {
+            scheduler.clear();
+
+            currentBranch.getScheduledEvents().stream().forEach(event -> {
+                try {
+                    JobDetail job = newJob(ScheduledEventJob.class)
+                            .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
+                            .usingJobData("projectKey", projectKey)
+                            .usingJobData("repoSlug", repoSlug)
+                            .usingJobData("branchId", branchId)
+                            .build();
+
+                    Trigger trigger = newTrigger()
+                            .startNow()
+                            .withSchedule(ScheduledEventHelper.getCronSchedule(event))
+                            .build();
+
+                    log.debug("Scheduled event {} with cron: {}", event.toString(), ((CronTrigger) trigger).getCronExpression());
+                    scheduler.scheduleJob(job, trigger);
+                } catch (SchedulerException e) {
+                    e.printStackTrace();
+                }
+            });
+
             scheduler.start();
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
+    }
+
+    public Settings getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Settings settings) {
+        this.settings = settings;
+        saveSettingsToFile(settingsFilename);
     }
 }

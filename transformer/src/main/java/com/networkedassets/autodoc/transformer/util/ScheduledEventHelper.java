@@ -24,7 +24,7 @@ public class ScheduledEventHelper {
         String h = splitTime[0];
         String min = splitTime[1];
 
-        return CronScheduleBuilder.cronSchedule("0 " + min + " " + h + " " + getCronDays(event));
+        return CronScheduleBuilder.cronSchedule("00 " + min + " " + h + " " + getCronDays(event));
     }
 
     private static String getCronDays(ScheduledEvent event) {
@@ -33,10 +33,10 @@ public class ScheduledEventHelper {
             //Every week
             if (event.getPeriodType()== ScheduledEvent.PeriodType.WEEK) {
                 String days = "";
-                Set<Map.Entry<String, Boolean>> weekdays = event.getWeekdays().entrySet();
+                Set<Map.Entry<String, Object>> weekdays = event.getWeekdays().entrySet();
 
-                for (Map.Entry<String, Boolean> entry : weekdays) {
-                    if (entry.getValue())
+                for (Map.Entry<String, Object> entry : weekdays) {
+                    if ((Boolean) entry.getValue())
                         days += entry.getKey().toUpperCase() + ",";
                 }
                 if (days.isEmpty())
@@ -48,9 +48,9 @@ public class ScheduledEventHelper {
             } else //Every x days
                 date = "*/" + event.getNumber() + " * ?";
         } else
-            date = event.getOneTimeDate().getDay() + " "
-                    + event.getOneTimeDate().getMonth() + " ? "
-                    + event.getOneTimeDate().getYear();
+            date = event.getDay() + " "
+                    + event.getMonth() + " ? "
+                    + event.getYear();
 
         return date;
     }
