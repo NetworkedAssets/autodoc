@@ -21,7 +21,7 @@
     display: inline-block;
     padding: 0.3em;
     margin: 0.5em;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     color: #fff;
     cursor: pointer;
 }
@@ -29,18 +29,19 @@
 [doc-class-diagram] .link-tools .tool-remove,
 [doc-class-diagram] .link-tools .tool-options,
 [doc-class-diagram] .link .marker-arrowheads,
-[doc-class-diagram] .link .connection-wrap { display: none; }
+[doc-class-diagram] .link .connection-wrap {
+    display: none;
+}
 
 [doc-class-diagram] svg {
     width: 100%;
     height: 100%;
 }
 
-
 .node rect,
 .node polygon {
-    color: #1b3062;
-    stroke: #f18f27;
+    color: #494948;
+    /*stroke: #c6d92d;*/
     stroke-width: 1px;
 }
 
@@ -48,8 +49,12 @@
     cursor: pointer;
 }
 
-.node rect:not(.head) {
-    fill: #fff8b7;
+.node rect.fields {
+    fill: #edf1b3;
+}
+
+.node rect.outer {
+    fill: #e1ea9b;
 }
 
 .edgePath path {
@@ -63,7 +68,8 @@
 }
 
 [doc-class-diagram] rect.head {
-    fill: #f18f27;
+    fill: #c8da2f;
+    color: #f00;
     stroke-width: 0;
 }
 
@@ -93,7 +99,7 @@
     fill: #fff;
     stroke: #999;
     stroke-width: 2;
-    stroke-dasharray: 1,0;
+    stroke-dasharray: 1, 0;
 }
 
 [doc-class-diagram] svg .edgePath.aggregation marker polygon {

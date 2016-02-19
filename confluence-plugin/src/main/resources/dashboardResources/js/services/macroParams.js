@@ -27,7 +27,7 @@ angular.module("DoC").factory("macroParams",function() {
                 source: "1",
                 project: "AUT",
                 repo: "autodoc",
-                branch: "refs/heads/master",
+                branch: "refs/heads/develop",
                 javadoc: true,
                 classDiagram: true,
                 structureGraph: true

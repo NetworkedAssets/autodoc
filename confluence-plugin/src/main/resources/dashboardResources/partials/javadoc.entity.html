@@ -145,7 +145,7 @@
         <pre ng-show="0">{{vm.entity|json}}</pre>
 
     </section>
-    <section class="classDiagram">
+    <section class="classDiagram" ng-if="vm.entity.type !== 'package'">
         <div doc-class-diagram="vm.entity.qualified"></div>
     </section>
 </div>

@@ -17,7 +17,6 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
             };
 
             var drawEntity = function(entity) {
-
                 dagreGraph.setNode(entity.qualified, {
                     data: {
                         abstract: entity.abstract,
@@ -38,9 +37,9 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
             scope.load = function() {
                 var url;
                 if (scope.qualified === true) {
-                    url = urlService.getRestUrl("UML");
+                    url = urlService.getRestUrl("uml");
                 } else {
-                    url = urlService.getRestUrl("UML", scope.qualified);
+                    url = urlService.getRestUrl("uml", scope.qualified);
                 }
                 $http
                     .get(url, {
@@ -49,7 +48,7 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                     .then(function(response) {
                         scope.false = true;
                         generate(response.data);
-                    },function() {
+                    }, function() {
                         scope.error = true;
                     });
             };
@@ -244,7 +243,7 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                         .attr("height", h)
                         .attr("rx", 5)
                         .attr("ry", 5)
-                        ;
+                        .classed("outer", true);
 
                     var nameRect = g.append("rect")
                         .attr("x", -w / 2)
@@ -253,27 +252,22 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                         .attr("height", h1)
                         .attr("rx", 5)
                         .attr("ry", 5)
-                        .classed("head", true)
-                        ;
-
+                        .classed("head", true);
 
                     var textOffset = {
                         x: -w / 2 + 4,
                         y: -h / 2 + h_row / 2 + 4
                     };
 
-                    if (node.data.type != "class") {
+                    if (node.data.type != "class" && node.data.type != "enum") {
 
                         if (node.data.type == "interface") {
-
-
                             g.append("text")
                                 .classed("head", true)
                                 .attr("x", 0)
                                 .attr("y", textOffset.y)
                                 .attr("text-anchor", "middle")
-                                .text('«Interface»')
-                            ;
+                                .text('«Interface»');
                         }
 
                         g.append("text")
@@ -281,21 +275,20 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                             .attr("x", 0)
                             .attr("y", textOffset.y + h_row)
                             .attr("text-anchor", "middle")
-                            .text(node.data.name)
-                        ;
+                            .text(node.data.name);
                     } else {
                         var headText = g.append("text")
                             .classed("head", true)
                             .attr("x", 0)
                             .attr("y", textOffset.y)
                             .attr("text-anchor", "middle")
-                            .text(node.data.name)
-                            ;
+                            .text(node.data.name);
                         if (node.data.abstract) {
                             headText.classed("abstract", true);
                         }
                     }
 
+                    var i;
 
                     if (node.data.fields && node.data.fields.length) {
                         var fieldRect = g.append("rect")
@@ -303,8 +296,8 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                             .attr("y", -h / 2 + h1)
                             .attr("width", w)
                             .attr("height", h2 - h1)
-                            ;
-                        var i = 0;
+                            .classed("fields", true);
+                        i = 0;
                         node.data.fields.forEach(function(elem) {
                             var tspan = g.append("text")
                                 //.classed("abstract",true)
@@ -312,14 +305,16 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                                 .attr("x", textOffset.x + scopeLockSize)
                                 .attr("y", textOffset.y + h_row * i + h1)
                                 .append("tspan")
-                                .text(elem.string)
-                                ;
+                                .text(elem.string);
+
                             if (elem.abstract) {
                                 tspan.classed("abstract", true);
                             }
+
                             if (elem.static) {
                                 tspan.classed("static", true);
                             }
+
                             if (elem.scope == "public" || elem.scope == "private" || elem.scope == "protected") {
                                 g.append("image")
                                     .attr("x", textOffset.x - 3)
@@ -331,11 +326,10 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
 
                             i++;
                         });
-
                     }
 
                     if (node.data.methods) {
-                        var i = 0;
+                        i = 0;
                         node.data.methods.forEach(function(elem) {
                             var tspan = g.append("text")
                                 //.classed("abstract",true)
@@ -343,8 +337,7 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                                 .attr("x", textOffset.x + scopeLockSize)
                                 .attr("y", textOffset.y + h_row * i + h2)
                                 .append("tspan")
-                                .text(elem.string)
-                                ;
+                                .text(elem.string);
                             if (elem.abstract) {
                                 tspan.classed("abstract", true);
                             }
@@ -372,8 +365,8 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                     };
 
                     g.on("click", function() {
-                        if (!d3.event.defaultPrevented) {
-                            console.log(node.data.qualified);
+                        if (!d3.event.defaultPrevented && d3.event) {
+
                             $state.go("javadoc.entity", {
                                 name: node.data.qualified
                             });
@@ -424,11 +417,9 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                                 string += ', ';
                             }
 
-
                             string += value.name + ": " + qName(value.type);
                         });
                     }
-
 
                     string += ")";
                 }
@@ -491,6 +482,7 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                 var fields = entity.fields ? entity.fields.length : 0;
 
                 var headerRows = 1;
+
                 if (entity.type != "class") {
                     headerRows++;
                 }
