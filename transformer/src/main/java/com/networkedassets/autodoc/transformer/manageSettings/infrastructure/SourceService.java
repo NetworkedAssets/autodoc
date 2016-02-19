@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.constraint.ProperTime;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import org.slf4j.Logger;
@@ -148,7 +149,7 @@ public class SourceService {
     @JsonView(Views.GetExpandedSourcesView.class)
     @Produces(MediaType.APPLICATION_JSON)
     public Response modifyBranch(@PathParam("sourceId") int sourceId, @PathParam("projectKey") String projectKey,
-                                 @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, Branch branch) {
+                                 @PathParam("repoSlug") String repoSlug, @PathParam("branchId") String branchId, @ProperTime Branch branch) {
         try {
             projectKey = URLDecoder.decode(projectKey, "UTF-8");
             repoSlug = URLDecoder.decode(repoSlug, "UTF-8");
