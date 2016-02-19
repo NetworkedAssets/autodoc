@@ -10,7 +10,6 @@ angular.module("DoC").factory("urlService",function(macroParams) {
 
     var urlService = {
         getBaseUrl: function() {
-
             if (AJS.params && AJS.params.baseUrl) {
                 return AJS.params.baseUrl;
             } else {

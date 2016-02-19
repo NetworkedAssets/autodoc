@@ -69,8 +69,6 @@ angular.module("DoC_Config").controller("MenuCtrl",function($scope,$element,$htt
 
     var auto = 0;
 
-
-
     menu.initSources = function() {
         var sources = [];
         angular.forEach(menu.tree.sources,function(value,key) {

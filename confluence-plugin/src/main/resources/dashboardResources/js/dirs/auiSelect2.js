@@ -1,16 +1,16 @@
-angular.module("DoC").directive("auiSelect2",function($compile,$parse,$timeout) {
+angular.module("DoC").directive("auiSelect2", function() {
 
     return {
         restrict: "A",
         require: 'ngModel',
-        link: function(scope,element,attrs,ngModel) {
+        link: function(scope, element, attrs, ngModel) {
             var select = $(element);
 
             scope.$watch(function() {
                 return ngModel.$viewValue;
-            },function() {
+            }, function() {
                 AJS.$(select).auiSelect2({
-                    minimumResultsForSearch: attrs.docDisableSearch?(-1):(undefined)
+                    minimumResultsForSearch: attrs.docDisableSearch ? (-1) : (undefined)
                 });
             });
         },
@@ -18,4 +18,4 @@ angular.module("DoC").directive("auiSelect2",function($compile,$parse,$timeout) 
             model: "=ngModel"
         }
     }
-})
+});

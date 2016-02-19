@@ -52,7 +52,6 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
             cc.savingState = "saved";
             cc.loading = false;
             cc.credentialsCorrect = true;
-            console.log(cc);
             $rootScope.$broadcast("ConfluenceCredentials.ready",cc.credentials.username);
             $timeout();
         },function() {

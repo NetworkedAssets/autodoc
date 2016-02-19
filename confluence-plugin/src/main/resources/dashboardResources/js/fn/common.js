@@ -1,7 +1,4 @@
-/**
- * Created by Jakub on 24/11/15.
- */
-function qName(source,getQualified) {
+function qName(source, getQualified) {
     var arr;
     var qualified;
     if (typeof source == "string") {

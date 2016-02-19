@@ -9,16 +9,14 @@
     #requireResource("com.networkedassets.autodoc.confluence-plugin:configuration-resources")
     #putMetadata('configLocation', "space")
 </head>
-
-
-    #applyDecorator("root")
-    #decoratorParam("context" "space")
-    #decoratorParam("mode" "collector")
-    #decoratorParam("collector-key" "plugin-content-main-link")
-    #applyDecorator ("root")
-        #decoratorParam ("context" "spacetoolspanel")
-        #decoratorParam("helper" $action.helper)
-        #decoratorParam("selectedSpaceToolsWebItem" "space-tools-autodoc-config")
+#applyDecorator("root")
+#decoratorParam("context" "space")
+#decoratorParam("mode" "collector")
+#decoratorParam("collector-key" "plugin-content-main-link")
+#applyDecorator ("root")
+    #decoratorParam ("context" "spacetoolspanel")
+    #decoratorParam("helper" $action.helper)
+    #decoratorParam("selectedSpaceToolsWebItem" "space-tools-autodoc-config")
     <body>
     $innerHtml
     </body>

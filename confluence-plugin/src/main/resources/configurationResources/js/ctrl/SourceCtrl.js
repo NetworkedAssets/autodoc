@@ -3,7 +3,6 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
     vm.loading = true;
     vm.addFromAppLinksSavingState = "ready";
 
-
     var Source = $resource(
         urlService.getRestUrlWithParams("sources") + ":id",
         {
@@ -16,7 +15,6 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
             },
             update: {
                 transformRequest: function (data) {
-                    console.log(data);
                     var obj = {
                         id: data.id,
                         name: data.name,
@@ -49,7 +47,6 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
         });
     };
 
-
     vm.edit = function (index) {
         vm.sources[index].inEdit = true;
         vm.sources[index].originalUrl = vm.sources[index].url;
@@ -81,7 +78,6 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
     };
 
     $rootScope.$on("ConfluenceCredentials.ready",function(event,username) {
-        console.log(username);
         if (username) {
             vm.noCredentials = false;
             vm.get();
@@ -90,5 +86,4 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
             vm.noCredentials = true;
         }
     });
-
 });

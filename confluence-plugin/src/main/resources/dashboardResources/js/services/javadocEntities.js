@@ -1,4 +1,4 @@
-angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,urlService) {
+angular.module("DoC").factory('javadocEntities', function($rootScope, $http, $q, urlService) {
 
     var tree;
 
@@ -10,7 +10,7 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
             obj = tree;
         }
         if (typeof obj.children == "object") {
-            angular.forEach(obj.children,function(child) {
+            angular.forEach(obj.children, function(child) {
                 map[child.name] = child;
                 treeToMap(child);
             });
@@ -19,16 +19,16 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
 
     var convertToArrays = function(tree) {
         var arr = [];
-        objectToArray(tree.children,arr);
+        objectToArray(tree.children, arr);
         return arr;
     };
 
-    var objectToArray = function(obj,arr) {
-        angular.forEach(obj,function(value) {
+    var objectToArray = function(obj, arr) {
+        angular.forEach(obj, function(value) {
             var innerArr = [];
             if (value.children) {
-                objectToArray(value.children,innerArr);
-                innerArr.sort(function(a,b) {
+                objectToArray(value.children, innerArr);
+                innerArr.sort(function(a, b) {
                     if (a.type === b.type) {
                         if (a.name === b.name) {
                             return 0;
@@ -56,14 +56,14 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
     var ready = false;
     var javadocEntities = {
         fetch: function() {
-            return $q(function(resolve,reject) {
+            return $q(function(resolve, reject) {
                 if (!angular.isUndefined(tree)) {
-                    $http.get(urlService.getRestUrl('javadoc','index'), {
+                    $http.get(urlService.getRestUrl('javadoc', 'index'), {
                         cache: true
-                    }).then(function (data) {
+                    }).then(function(data) {
                         javadocEntities.parse(data.data.indexPackage);
                         resolve();
-                    },function() {
+                    }, function() {
                         reject();
                     });
                 } else {
@@ -72,8 +72,8 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
             });
         },
         parse: function(packageList) {
-            var packages = {children:{},level:0};
-            angular.forEach(packageList,function(pack) {
+            var packages = {children: {}, level: 0};
+            angular.forEach(packageList, function(pack) {
                 if (!pack.name || pack.name == "") {
                     pack.name = "(default)";
                     return true;
@@ -92,11 +92,11 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
                             level: 0
                         };
                         if (currentPackage.name) {
-                            currentPackage.children[value].name = currentPackage.name+'.'+value;
+                            currentPackage.children[value].name = currentPackage.name + '.' + value;
                         } else {
                             currentPackage.children[value].name = value;
                         }
-                        currentPackage.children[value].level = currentPackage.level+1;
+                        currentPackage.children[value].level = currentPackage.level + 1;
                     }
                     currentPackage = currentPackage.children[value];
                 });
@@ -106,13 +106,12 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
                 pack.type = "package";
 
 
-
-                pack.indexClass.sort(function(a,b) {
+                pack.indexClass.sort(function(a, b) {
                     /* needed for class/interface nesting below */
                     if (a.name > b.name) {
                         return 1;
                     }
-                    if (a.name< b.name) {
+                    if (a.name < b.name) {
                         return -1;
                     }
                     return 0;
@@ -122,9 +121,9 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
                 var lastEntity;
                 var lastLevel = 1;
 
-                angular.forEach(pack.indexClass,function(cl) {
+                angular.forEach(pack.indexClass, function(cl) {
                     var arr = cl.name.split(".");
-                    var name = arr[arr.length-1];
+                    var name = arr[arr.length - 1];
                     if (arr.length === 1) {
                         currentEntity = currentPackage;
                     } else {
@@ -138,30 +137,13 @@ angular.module("DoC").factory('javadocEntities',function($rootScope,$http,$q,url
                     currentEntity.children[name] = {
                         name: cl.qualified,
                         type: cl.type,
-                        level: currentEntity.level+1
+                        level: currentEntity.level + 1
                     };
 
                     lastLevel = arr.length;
                     lastEntity = currentEntity.children[name];
                 });
             });
-
-            var rootPackage = null;
-            var obj;
-            var joinPackages = function(current) {
-                var i = 0;
-
-                angular.forEach(current.children,function(value,key) {
-                    obj = value;
-                    objKey = key;
-                    i++;
-                });
-                if (i == 1) {
-                    rootPackage = obj;
-                    joinPackages(obj);
-                }
-
-            };
 
             this.setTree({
                 name: "root",

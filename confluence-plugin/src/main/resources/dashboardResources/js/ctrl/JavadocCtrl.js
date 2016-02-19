@@ -17,7 +17,7 @@ angular.module("DoC")
                 vm.items = javadocEntities.getTreeUsingArrays().children;
                 vm.loading = false;
                 vm.error = false;
-            },function() {
+            }, function() {
                 vm.loading = false;
                 vm.error = true;
             });
@@ -131,7 +131,7 @@ angular.module("DoC")
 
         var initSearch = function() {
             var select = $element.find(".javadoc_container input");
-            console.log(AJS.$(select).auiSelect2({
+            AJS.$(select).auiSelect2({
                 id: function(e) {
                     return e;
                 },
@@ -144,16 +144,16 @@ angular.module("DoC")
                             q: term
                         };
                     },
-                    results: function (data) {
+                    results: function(data) {
                         return data;
                     }
                 },
                 formatResult: function(result) {
-                    return '<span>'+qName(result)+'</span><br><span style="font-size: 14px; opacity:0.5">'+result+'</span>';
+                    return '<span>' + qName(result) + '</span><br><span style="font-size: 14px; opacity:0.5">' + result + '</span>';
                 },
                 minimumInputLength: 3,
                 multiple: true
-            }));
+            });
             select.on("select2-selecting", function(event) {
                 $state.go("javadoc.entity", {
                     name: event.val

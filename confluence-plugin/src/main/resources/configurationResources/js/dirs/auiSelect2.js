@@ -22,10 +22,9 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
 
                 option.appendTo(elem);
             }
-
         });
         return elem;
-    }
+    };
 
     return {
         restrict: "A",
@@ -33,14 +32,8 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
         link: function(scope,element,attrs,ngModel) {
             var select = $(element);
 
-
-
-            /*ngModel.$render = function() {
-
-            }*/
-
             var select2Options = {
-                minimumResultsForSearch: attrs.docDisableSearch?(-1):(undefined),
+                minimumResultsForSearch: attrs.docDisableSearch?(-1):(undefined)
             };
 
             if (typeof scope.formatResult == "function") {
@@ -51,16 +44,14 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
             }
 
             $timeout(function() {
-
                 AJS.$(select).auiSelect2(select2Options);
                 select.on("change",function(e) {
-                    //console.log("yep",e);
                     scope.model = e.val;
                     ngModel.$setViewValue(e.val);
                     $timeout();
                 })
             });
-            scope.$watch("options",function(options) {
+            scope.$watch("options",function() {
                 select.empty();
                 if (attrs.docAllowEmpty && select.find("option:not([value])").length == 0) {
                     select.prepend('<option value=""></option>');
@@ -69,27 +60,19 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
                     processOptions(scope.options,select)
                 }
 
-
                 AJS.$(select).auiSelect2(select2Options);
             },true);
             scope.$watch(function() {
                 return ngModel.$viewValue;
             },function(newValue,oldValue) {
-                //console.log(newValue,oldValue);
                 if (1 || newValue !== oldValue) {
-                    //console.log("setting",newValue,oldValue);
                     var value = newValue;
                     if (typeof value != "string") {
                         value = "";
                     }
                     AJS.$(select).auiSelect2("val",value);
                 }
-
             });
-
-            //select.attr("ng-model",attrs.ngModel);
-            //$compile(element)(scope);
-
         },
         scope: {
             options: "=docOptions",
@@ -98,4 +81,4 @@ angular.module("DoC_Config").directive("auiSelect2",function($compile,$parse,$ti
             formatSelection: "=docFormatSelection"
         }
     }
-})
+});

@@ -62,7 +62,6 @@ angular.module('DoC_Config').factory('settingsService', function($http,$rootScop
                 settings.raw = {};
                 settings.raw.sources = sources;
                 processListenToValues();
-                console.log("Original settings data: ",settings.raw.sources);
 
                 $rootScope.$broadcast("settingsService.ready");
                 $rootScope.error = false;
@@ -151,7 +150,6 @@ angular.module('DoC_Config').factory('settingsService', function($http,$rootScop
 
     settings.getPathAsString = function() {
         var url = urlService.encodeComponent(getSourceUrlFromId(settings.path.source));
-        console.log(url);
         return url+"/"+settings.path.project+"/"+settings.path.repo+"/"+urlService.encodeComponent(settings.path.branch);
     };
 

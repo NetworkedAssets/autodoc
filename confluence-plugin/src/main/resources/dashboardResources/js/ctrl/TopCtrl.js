@@ -1,4 +1,4 @@
-angular.module("DoC").controller("TopCtrl",function($scope,$state,macroParams) {
+angular.module("DoC").controller("TopCtrl", function($scope, $state, macroParams) {
 
     $scope.states = {};
 
@@ -31,7 +31,7 @@ angular.module("DoC").controller("TopCtrl",function($scope,$state,macroParams) {
         if (rootState) {
             if (!$scope.states[rootState]) {
                 /* Default state not available, switching to first available */
-                angular.forEach($scope.states,function(state) {
+                angular.forEach($scope.states, function(state) {
                     $state.go(state.value);
                     return false;
                 });
@@ -41,13 +41,13 @@ angular.module("DoC").controller("TopCtrl",function($scope,$state,macroParams) {
             }
 
         }
-    },true);
+    }, true);
 
-    $scope.$watch("chosenState",function(newValue,oldValue) {
+    $scope.$watch("chosenState", function(newValue, oldValue) {
         if (newValue != oldValue && newValue) {
             $state.go(newValue.value);
         }
 
-    },true);
+    }, true);
 
 });

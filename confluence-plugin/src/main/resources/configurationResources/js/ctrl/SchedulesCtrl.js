@@ -83,7 +83,5 @@ angular.module("DoC_Config").controller("SchedulesCtrl",function($scope,settings
         );
     };
 
-
-
 });
 

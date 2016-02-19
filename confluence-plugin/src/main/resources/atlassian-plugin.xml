@@ -14,10 +14,7 @@
     <resource type="i18n" name="i18n" location="autodoc_confluence"/>
     <!-- add our web resources -->
     <web-resource key="autodoc_confluence-resources" name="autodoc_confluence Web Resources">
-        <!--<dependency>com.atlassian.auiplugin:ajs</dependency> -->
-        <!--<dependency>com.atlassian.auiplugin:aui-select</dependency> -->
         <resource type="download" name="images/" location="/images"/>
-        <resource type="download" name="configureScreen.js" location="/js/configureScreen.js"/>
         <resource type="download" name="autodoc-style.css" location="/css/autodoc-style.css"/>
 
         <context>autodoc_confluence</context>
@@ -47,8 +44,8 @@
                   location="dashboardResources/js/lib/angular-ui-router.min.js"/>
 
         <resource type="download" name="js/app.js" location="dashboardResources/js/app.js"/>
-        <resource type="download" name="js/config.js"
-                  location="dashboardResources/js/config.js"/>
+        <resource type="download" name="js/routes.js"
+                  location="dashboardResources/js/routes.js"/>
 
         <resource type="download" name="css/doc_javadoc.css"
                   location="dashboardResources/css/doc_javadoc.css"/>
@@ -65,8 +62,6 @@
                   location="dashboardResources/js/ctrl/JavadocEntityCtrl.js"/>
         <resource type="download" name="js/ctrl/JavadocCtrl.js"
                   location="dashboardResources/js/ctrl/JavadocCtrl.js"/>
-        <resource type="download" name="js/ctrl/ClassDiagramCtrl.js"
-                  location="dashboardResources/js/ctrl/ClassDiagramCtrl.js"/>
         <resource type="download" name="js/ctrl/StructureGraphCtrl.js"
                   location="dashboardResources/js/ctrl/StructureGraphCtrl.js"/>
         <resource type="download" name="js/ctrl/TopCtrl.js"
@@ -97,8 +92,6 @@
         <resource type="download" name="js/services/javadocEntities.js"
                   location="dashboardResources/js/services/javadocEntities.js"/>
 
-        <resource type="download" name="js/filters/javadoc.menuItemSorter.js"
-                  location="dashboardResources/js/filters/javadoc.menuItemSorter.js"/>
         <resource type="download" name="js/filters/capitalize.js"
                   location="dashboardResources/js/filters/capitalize.js"/>
 

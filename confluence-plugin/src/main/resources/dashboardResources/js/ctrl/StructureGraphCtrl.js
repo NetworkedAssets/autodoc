@@ -3,8 +3,7 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
     var root;
     var margin = {top: -5, right: -5, bottom: -5, left: -5};
     var width = $(window).width() - margin.left - margin.right,
-        height = $(window).height()-200- margin.top - margin.bottom;
-
+        height = $(window).height() - 200 - margin.top - margin.bottom;
 
     var force = d3.layout.force()
         .linkDistance(50)
@@ -28,8 +27,12 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
     svg.call(zoom);
 
     var link = g.selectAll(".link");
-    var node = g.selectAll(".node").attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
+    var node = g.selectAll(".node").attr("cx", function(d) {
+            return d.x;
+        })
+        .attr("cy", function(d) {
+            return d.y;
+        });
 
     javadocEntities
         .fetch()
@@ -37,7 +40,7 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
             $scope.error = false;
             root = javadocEntities.getTree();
             update();
-        },function() {
+        }, function() {
             $scope.error = true;
         });
 
@@ -45,77 +48,86 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
         var nodes = flatten(root),
             links = d3.layout.tree().links(nodes);
 
-        // Restart the force layout.
         force
             .nodes(nodes)
             .links(links);
-            //.start();
 
-        // Update links.
-        link = link.data(links, function(d) { return d.target.id; });
+        link = link.data(links, function(d) {
+            return d.target.id;
+        });
 
         link.exit().remove();
 
         link.enter().insert("line", ".node")
             .attr("class", "link");
 
-        // Update nodes.
-        node = node.data(nodes, function(d) { return d.id; });
+        node = node.data(nodes, function(d) {
+            return d.id;
+        });
 
         node.exit().remove();
 
         var nodeEnter = node.enter().append("g")
-            .attr("class",cssClass)
-            .classed("node",true)
+            .attr("class", cssClass)
+            .classed("node", true)
             .on("click", null)
             .on("click", click);
-            //.call(force.drag);
 
         nodeEnter.append("circle")
             .attr("r", function(d) {
-                return 1/d.level*50 || 7;
+                return 1 / d.level * 50 || 7;
             });
 
         nodeEnter.append("text")
             .text(getText)
-            .classed("type",true)
-            .attr("dy","0.3em");
+            .classed("type", true)
+            .attr("dy", "0.3em");
 
         nodeEnter.append("text")
             .attr("dy", "0.35em")
             .attr("dx", function(d) {
-                return (d.level?(1/ d.level*50*0.1+0.35):0.75)+"em"
+                return (d.level ? (1 / d.level * 50 * 0.1 + 0.35) : 0.75) + "em"
             })
-            .text(function(d) { return qName(d.name); });
-            //.addClass("entityType")
-            //.style("fill", color);
+            .text(function(d) {
+                return qName(d.name);
+            });
 
 
         force.start();
-        /*for (var i = 0; i < 1000; ++i) force.tick();
-        force.stop();*/
+        /* for (var i = 0; i < 1000; ++i) force.tick();
+         force.stop(); // without animation */
 
     }
 
     function tick() {
-        link.attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
+        link.attr("x1", function(d) {
+                return d.source.x;
+            })
+            .attr("y1", function(d) {
+                return d.source.y;
+            })
+            .attr("x2", function(d) {
+                return d.target.x;
+            })
+            .attr("y2", function(d) {
+                return d.target.y;
+            });
 
-        node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+        node.attr("transform", function(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
     }
 
     function getText(d) {
         if (d.type) {
-             return d.type.charAt(0).toUpperCase();
+            return d.type.charAt(0).toUpperCase();
         } else {
             return "";
         }
     }
 
     function cssClass(d) {
-        var cl = "entityType"+$filter("capitalize")(d.type);
+        var cl = "entityType" + $filter("capitalize")(d.type);
         if (d._children) {
             cl += " collapsed";
         } else if (d.children) {
@@ -136,7 +148,7 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
                 }
                 update();
             } else {
-                $state.go("javadoc.entity",{
+                $state.go("javadoc.entity", {
                     name: d.name
                 });
             }

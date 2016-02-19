@@ -1,11 +1,11 @@
 angular.module("DoC")
-    .directive('docGeneric', function ($compile) {
+    .directive('docGeneric', function($compile) {
         return {
-            link: function (scope, element) {
+            link: function(scope, element) {
                 var html = '';
                 html += '&lt;';
 
-                scope.docGeneric.forEach(function (generic, i) {
+                scope.docGeneric.forEach(function(generic, i) {
                     if (i > 0) {
                         html += '<span>, </span>';
                     }
@@ -16,8 +16,8 @@ angular.module("DoC")
 
                     html += '<span doc-qname="\'' + qualified + '\'"></span>';
                     if (generic.wildcard) {
-                        var processBound = function (bound, text) {
-                            bound.forEach(function (bound, j) {
+                        var processBound = function(bound, text) {
+                            bound.forEach(function(bound, j) {
                                 if (j > 0) {
                                     html += '<span>, </span>';
                                 }

@@ -2,18 +2,16 @@
     var base_url = $("meta#confluence-base-url").attr("content");
     var url = base_url + "/rest/doc/1.0/configuration/branches/listened";
 
-    var vm = {};
-
-    vm.chosen = {
-        source: null,
-        project: null,
-        repo: null,
-        branch: null
+    var vm = {
+        chosen: {
+            source: null,
+            project: null,
+            repo: null,
+            branch: null
+        },
+        tree: null,
+        macro: null
     };
-
-    vm.tree = null;
-
-    vm.macro = null;
 
     var projects = {
         select: null,
@@ -32,7 +30,6 @@
             repos.init();
         },
         set: function(slug) {
-            console.log(slug);
             if (slug) {
                 var arr = slug.split("\uF000");
                 vm.chosen.source = arr[0];
@@ -145,7 +142,6 @@
         return elem;
     };
 
-
     var processTree = function(raw) {
         vm.tree = {};
         vm.tree.sources = {};
@@ -182,7 +178,6 @@
 
     var dialogInstance = null;
 
-
     var save = function() {
         var macroName = "docMacro";
 
@@ -190,7 +185,6 @@
         currentParams.javadoc = $("#doc_macroDialogJavadocCheckbox").is(":checked");
         currentParams.classDiagram = $("#doc_macroDialogClassDiagramCheckbox").is(":checked");
         currentParams.structureGraph = $("#doc_macroDialogStructureGraphCheckbox").is(":checked");
-        console.log(currentParams);
         tinymce.confluence.macrobrowser.macroBrowserComplete({
             "name": macroName,
             "bodyHtml": undefined,
@@ -296,7 +290,6 @@
     };
 
     var setParams = function() {
-        console.log(vm.macro.params);
         if (vm.macro.params) {
             projects.select.select2("val", vm.macro.params.source + "\uF000" + vm.macro.params.project).change();
             repos.select.select2("val", vm.macro.params.repo).change();
@@ -311,12 +304,11 @@
         }
     };
 
-    var jsOverrides = {
+    AJS.MacroBrowser.setMacroJsOverride("docMacro", {
         "opener": function(macro) {
             vm.macro = macro;
             AJS.dialog2(getDialogInstance()).show();
             load();
         }
-    };
-    AJS.MacroBrowser.setMacroJsOverride("docMacro", jsOverrides);
+    });
 })(AJS.$);

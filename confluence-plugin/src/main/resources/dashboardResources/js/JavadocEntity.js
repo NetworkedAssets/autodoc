@@ -38,15 +38,15 @@ function JavadocEntity(object) {
         entity.elements = [
             {
                 type: "constructor",
-                elements: (typeof object.constructor=="object")?object.constructor:[]
+                elements: (typeof object.constructor == "object") ? object.constructor : []
             },
             {
                 type: "field",
-                elements: object.field?object.field:[]
+                elements: object.field ? object.field : []
             },
             {
                 type: "method",
-                elements: object.method?object.method:[]
+                elements: object.method ? object.method : []
             }
         ];
 
@@ -76,7 +76,7 @@ function JavadocEntity(object) {
         entity.comment = object.comment;
         entity.generic = object.generic;
 
-        entity.qualified = object.qualified?object.qualified:object.name;
+        entity.qualified = object.qualified ? object.qualified : object.name;
 
         entity.packageArray = entity.qualified.split(".");
 
@@ -102,7 +102,7 @@ function JavadocEntity(object) {
         }
 
         if (object.children) {
-            angular.forEach(object.children,function(child) {
+            angular.forEach(object.children, function(child) {
                 if (child.type == "package") {
                     entity.nestedPackages.push(child);
                 } else {

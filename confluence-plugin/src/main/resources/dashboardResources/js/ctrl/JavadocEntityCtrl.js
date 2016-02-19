@@ -1,9 +1,11 @@
 angular.module("DoC").controller("JavadocEntityCtrl", function($scope, $http, $state, $sanitize,
                                                                $filter, $stateParams, $rootScope,
                                                                $timeout, $element, urlService,
-                                                               javadocEntities) {
+                                                               javadocEntities, macroParams) {
     var vm = this;
     vm.loading = true;
+
+    vm.classDiagramEnabled = macroParams.get("classDiagram");
 
     var initSpinner = function() {
         AJS.$($element.find(".loadingSpinner")).spin("big");

@@ -8,7 +8,6 @@ if (AJS.Data) {
     doc_confluencePath = window.location.origin+arr.join("/")+"/";
 }
 
-
 angular.module("DoC_Config",['ngResource']);
 
 angular.module("DoC_Config").run(function($rootScope) {
