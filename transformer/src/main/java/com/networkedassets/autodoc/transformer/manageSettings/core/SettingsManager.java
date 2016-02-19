@@ -55,8 +55,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
         // TODO: after merge with 'props' branch it will be good to read password-filename from default or outer properties file as well
         // TODO: find good name for the file..
-        PasswordStoreService passwordService = new PasswordStoreService("./notpassword.txt");
-        settingsEncryptor = new SettingsEncryptor(passwordService.getPassword(), passwordService.getRandomSalt(10));
+        PasswordStoreService passwordService = new PasswordStoreService("./notpassword.properties");
+        settingsEncryptor = new SettingsEncryptor(
+                passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
+                passwordService.getProperty(PasswordStoreService.PropertyType.SALT)
+        );
 
         loadSettingsFromFile(settingsFilename);
         updateAllSourcesAndEnableHooks();

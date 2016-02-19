@@ -28,8 +28,12 @@ public class SettingsEncryptorTest {
         Settings settings = new Settings();
         settings.setConfluenceUrl(CONFLUENCE_URL);
 
-        PasswordStoreService passwordService = new PasswordStoreService(tempFolder.getAbsolutePath() + "iamnotpassword.txt");
-        SettingsEncryptor settingsEncryptor = new SettingsEncryptor(passwordService.getPassword(), passwordService.getRandomSalt(10));
+        PasswordStoreService passwordService = new PasswordStoreService(tempFolder.getAbsolutePath() + "iamnotpassword.properties");
+        SettingsEncryptor settingsEncryptor = new SettingsEncryptor(
+                passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
+                passwordService.getProperty(PasswordStoreService.PropertyType.SALT)
+        );
+
 
         SealedObject sealedObject = settingsEncryptor.buildSealedObjectFrom(settings);
         FileOutputStream fos = new FileOutputStream(settingsFile);
