@@ -9,6 +9,8 @@
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
         <param name="configure.url">/admin/plugins/autodoc/config.action</param>
+        <!--Licensing-->
+        <param name="atlassian-licensing-enabled">true</param>
     </plugin-info>
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="autodoc_confluence"/>
@@ -173,6 +175,8 @@
         </description>
     </component-import>
     <component-import key="activityService" interface="com.atlassian.streams.thirdparty.api.ActivityService"/>
+    <!--Licensing-->
+    <component-import key="pluginLicenseManager" interface="com.atlassian.upm.api.license.PluginLicenseManager"/>
 
     <!-- Configuration GUI -->
     <!-- Item in Space Tools -->
