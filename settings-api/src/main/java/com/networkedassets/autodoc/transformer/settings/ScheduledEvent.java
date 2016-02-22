@@ -20,7 +20,9 @@ public class ScheduledEvent implements Serializable {
     private int number;
     private HashMap<String, Object> weekdays;
     private String time;
-    private Calendar calendar;
+    private String year;
+    private String month;
+    private String day;
     private Date oneTimeDate;
 
     public ScheduledEvent() {
@@ -68,11 +70,6 @@ public class ScheduledEvent implements Serializable {
 
     public void setOneTimeDate(Date oneTimeDate) {
         this.oneTimeDate = oneTimeDate;
-        calendar = Calendar.getInstance();
-
-        if(oneTimeDate != null){
-            calendar.setTime(oneTimeDate);
-        }
     }
 
     public String getTime() {
@@ -84,16 +81,27 @@ public class ScheduledEvent implements Serializable {
     }
 
     public int getDay(){
-        return calendar.get(Calendar.DAY_OF_MONTH);
+        return Integer.parseInt(day);
     }
 
-    //Months start at 0
     public int getMonth(){
-        return calendar.get(Calendar.MONTH) + 1;
+        return Integer.parseInt(month);
     }
 
     public int getYear(){
-        return calendar.get(Calendar.YEAR);
+        return Integer.parseInt(year);
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
     }
 
     public enum PeriodType {
