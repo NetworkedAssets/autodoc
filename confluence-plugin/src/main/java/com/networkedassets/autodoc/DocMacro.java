@@ -17,20 +17,20 @@ public class DocMacro implements Macro {
 
     @Override
     public String execute(Map<String, String> params, String s, ConversionContext conversionContext) throws MacroExecutionException {
-        String dashboardSection;
-        String resourcesPath = "download/resources/com.networkedassets.autodoc.confluence-plugin:dashboard-resources/dashboardResources/";
+        String macroSection;
+        String resourcesPath = "download/resources/com.networkedassets.autodoc.confluence-plugin:macro-resources/macroResources/";
 
         try {
-            dashboardSection = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("/dashboardResources/index.html"));
+            macroSection = IOUtils.toString(this.getClass().getClassLoader().getResourceAsStream("/macroResources/index.html"));
         } catch (IOException e) {
             throw new MacroExecutionException(e);
         }
 
-        dashboardSection = ("<section" + dashboardSection.split("<section")[1]).split("section>")[0] + "section>";
+        macroSection = ("<section" + macroSection.split("<section")[1]).split("section>")[0] + "section>";
   
         Map<String,Object> context = MacroUtils.defaultVelocityContext();
         
-        context.put("dashboardSectionHtml", dashboardSection);
+        context.put("macroSectionHtml", macroSection);
         context.put("resourcesPath", resourcesPath);
 
         try {
@@ -39,7 +39,7 @@ public class DocMacro implements Macro {
             e.printStackTrace();
         }
 
-        return VelocityUtils.getRenderedTemplate("/dashboardResources/dashboard.vm", context);
+        return VelocityUtils.getRenderedTemplate("/macroResources/macro.vm", context);
     }
 
     @Override

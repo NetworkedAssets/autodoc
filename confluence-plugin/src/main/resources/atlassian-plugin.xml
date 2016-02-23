@@ -28,79 +28,78 @@
         </dependency>
         <context>macro-browser</context>
     </web-resource>
-    <web-resource key="dashboard-resources" name="Dashboard web resources">
-        <!-- TODO: Refactor Dashboard -> Macro -->
-        <resource type="download" name="dashboardResources/"
-                  location="/dashboardResources"/>
+    <web-resource key="macro-resources" name="Macro web resources">
+        <resource type="download" name="macroResources/"
+                  location="/macroResources"/>
         <resource type="download" name="js/lib/d3.min.js"
-                  location="dashboardResources/js/lib/d3.min.js"/>
+                  location="macroResources/js/lib/d3.min.js"/>
         <resource type="download" name="js/lib/dagre.min.js"
-                  location="dashboardResources/js/lib/dagre.min.js"/>
+                  location="macroResources/js/lib/dagre.min.js"/>
         <resource type="download" name="js/lib/dagre-d3.min.js"
-                  location="dashboardResources/js/lib/dagre-d3.min.js"/>
+                  location="macroResources/js/lib/dagre-d3.min.js"/>
         <resource type="download" name="js/lib/angular.min.js"
-                  location="dashboardResources/js/lib/angular.min.js"/>
+                  location="macroResources/js/lib/angular.min.js"/>
         <resource type="download" name="js/lib/angular-sanitize.min.js"
-                  location="dashboardResources/js/lib/angular-sanitize.min.js"/>
+                  location="macroResources/js/lib/angular-sanitize.min.js"/>
         <resource type="download" name="js/lib/angular-ui-router.min.js"
-                  location="dashboardResources/js/lib/angular-ui-router.min.js"/>
+                  location="macroResources/js/lib/angular-ui-router.min.js"/>
 
-        <resource type="download" name="js/app.js" location="dashboardResources/js/app.js"/>
+        <resource type="download" name="js/app.js" location="macroResources/js/app.js"/>
         <resource type="download" name="js/routes.js"
-                  location="dashboardResources/js/routes.js"/>
+                  location="macroResources/js/routes.js"/>
 
         <resource type="download" name="css/doc_javadoc.css"
-                  location="dashboardResources/css/doc_javadoc.css"/>
+                  location="macroResources/css/doc_javadoc.css"/>
         <resource type="download" name="css/doc_javadoc.entity.css"
-                  location="dashboardResources/css/doc_javadoc.entity.css"/>
+                  location="macroResources/css/doc_javadoc.entity.css"/>
         <resource type="download" name="css/doc_classDiagram.css"
-                  location="dashboardResources/css/doc_classDiagram.css"/>
+                  location="macroResources/css/doc_classDiagram.css"/>
         <resource type="download" name="css/doc_structureGraph.css"
-                  location="dashboardResources/css/doc_structureGraph.css"/>
+                  location="macroResources/css/doc_structureGraph.css"/>
         <resource type="download" name="css/doc_main.css"
-                  location="dashboardResources/css/doc_main.css"/>
+                  location="macroResources/css/doc_main.css"/>
 
         <resource type="download" name="js/ctrl/JavadocEntityCtrl.js"
-                  location="dashboardResources/js/ctrl/JavadocEntityCtrl.js"/>
+                  location="macroResources/js/ctrl/JavadocEntityCtrl.js"/>
         <resource type="download" name="js/ctrl/JavadocCtrl.js"
-                  location="dashboardResources/js/ctrl/JavadocCtrl.js"/>
+                  location="macroResources/js/ctrl/JavadocCtrl.js"/>
         <resource type="download" name="js/ctrl/StructureGraphCtrl.js"
-                  location="dashboardResources/js/ctrl/StructureGraphCtrl.js"/>
+                  location="macroResources/js/ctrl/StructureGraphCtrl.js"/>
         <resource type="download" name="js/ctrl/TopCtrl.js"
-                  location="dashboardResources/js/ctrl/TopCtrl.js"/>
+                  location="macroResources/js/ctrl/TopCtrl.js"/>
 
         <resource type="download" name="js/JavadocEntity.js"
-                  location="dashboardResources/js/JavadocEntity.js"/>
+                  location="macroResources/js/JavadocEntity.js"/>
 
         <resource type="download" name="js/dirs/docQname.js"
-                  location="dashboardResources/js/dirs/docQname.js"/>
+                  location="macroResources/js/dirs/docQname.js"/>
         <resource type="download" name="js/dirs/docGeneric.js"
-                  location="dashboardResources/js/dirs/docGeneric.js"/>
+                  location="macroResources/js/dirs/docGeneric.js"/>
         <resource type="download" name="js/dirs/auiSelect2.js"
-                  location="dashboardResources/js/dirs/auiSelect2.js"/>
+                  location="macroResources/js/dirs/auiSelect2.js"/>
         <resource type="download" name="js/dirs/angular-tree-control.js"
-                  location="dashboardResources/js/dirs/angular-tree-control.js"/>
+                  location="macroResources/js/dirs/angular-tree-control.js"/>
         <resource type="download" name="js/dirs/javadocTags.js"
-                  location="dashboardResources/js/dirs/javadocTags.js"/>
+                  location="macroResources/js/dirs/javadocTags.js"/>
         <resource type="download" name="js/dirs/javadocInheritDocTag.js"
-                  location="dashboardResources/js/dirs/javadocInheritDocTag.js"/>
+                  location="macroResources/js/dirs/javadocInheritDocTag.js"/>
         <resource type="download" name="js/dirs/docClassDiagram.js"
-                  location="dashboardResources/js/dirs/docClassDiagram.js"/>
+                  location="macroResources/js/dirs/docClassDiagram.js"/>
 
         <resource type="download" name="js/services/urlService.js"
-                  location="dashboardResources/js/services/urlService.js"/>
+                  location="macroResources/js/services/urlService.js"/>
         <resource type="download" name="js/services/macroParams.js"
-                  location="dashboardResources/js/services/macroParams.js"/>
+                  location="macroResources/js/services/macroParams.js"/>
         <resource type="download" name="js/services/javadocEntities.js"
-                  location="dashboardResources/js/services/javadocEntities.js"/>
+                  location="macroResources/js/services/javadocEntities.js"/>
 
         <resource type="download" name="js/filters/capitalize.js"
-                  location="dashboardResources/js/filters/capitalize.js"/>
+                  location="macroResources/js/filters/capitalize.js"/>
 
         <resource type="download" name="js/fn/common.js"
-                  location="dashboardResources/js/fn/common.js"/>
+                  location="macroResources/js/fn/common.js"/>
 
-        <resource type="download" name="images/" location="dashboardResources/images/"/>
+        <resource type="download" name="images/" location="macroResources/images/"/>
     </web-resource>
     <web-resource key="configuration-resources" name="Configuration web resources">
         <resource type="download" name="configurationResources/"
@@ -251,7 +250,7 @@
     <!--Macro-->
     <xhtml-macro name="docMacro"
                  class="com.networkedassets.autodoc.DocMacro"
-                 icon="/download/resources/${project.groupId}.${project.artifactId}:dashboard-resources/dashboardResources/images/pluginMacroIcon.png"
+                 icon="/download/resources/${project.groupId}.${project.artifactId}:macro-resources/macroResources/images/pluginMacroIcon.png"
                  key="docMacro">
         <description>DoC macro displaying documentation in various forms on pages
         </description>

@@ -1,7 +1,7 @@
 var doc_resourcePath = "";
 
 if (AJS.Data) {
-    doc_resourcePath = AJS.Data.get("base-url") + "/" + AJS.Meta.get("dashboardResourcePath");
+    doc_resourcePath = AJS.Data.get("base-url") + "/" + AJS.Meta.get("macroResourcePath");
 } else {
     var arr = window.location.pathname.split("/");
     arr.splice(arr.length - 1, 1);

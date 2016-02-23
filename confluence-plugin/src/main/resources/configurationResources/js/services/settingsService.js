@@ -90,6 +90,8 @@ angular.module('DoC_Config').factory('settingsService', function($http,$rootScop
             id: branchSettings.id
         };
 
+        console.log(settings.scheduledEvents);
+
         if (data.listenTo !== "schedule") {
             delete data.scheduledEvents;
         }

@@ -1,8 +1,8 @@
 angular.module("DoC").factory("macroParams", function() {
     var params;
 
-    if (AJS && AJS.params && typeof AJS.params.dashboardParamsJson == "string") {
-        params = angular.fromJson(AJS.params.dashboardParamsJson);
+    if (AJS && AJS.params && typeof AJS.params.macroParamsJson == "string") {
+        params = angular.fromJson(AJS.params.macroParamsJson);
         angular.forEach(params, function(value, key) {
             if (value === "false") { // let's hope there will never be a branch named like this...
                 params[key] = false;

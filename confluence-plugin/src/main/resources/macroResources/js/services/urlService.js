@@ -28,7 +28,7 @@ angular.module("DoC").factory("urlService",function(macroParams) {
             if (!path) {
                 path = "";
             }
-            return this.getBaseUrl()+"/download/resources/com.networkedassets.autodoc.confluence-plugin:dashboard-resources/dashboardResources"+path;
+            return this.getBaseUrl()+"/download/resources/com.networkedassets.autodoc.confluence-plugin:macro-resources/macroResources"+path;
         },
         encodeComponent: function(string) {
             return encodeURIComponent(encodeURIComponent(string));
