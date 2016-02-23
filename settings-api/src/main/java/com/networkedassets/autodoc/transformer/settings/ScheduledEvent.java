@@ -1,10 +1,11 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 
 
@@ -14,16 +15,15 @@ import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScheduledEvent implements Serializable {
 
-    private static final long serialVersionUID = -1213178165118904796L;
+    private static final long serialVersionUID = -1213178165118904797L;
     private boolean periodic;
     private PeriodType periodType;
     private int number;
     private HashMap<String, Object> weekdays;
     private String time;
-    private String year;
-    private String month;
-    private String day;
-    private Date oneTimeDate;
+
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+    private Calendar oneTimeDate;
 
     public ScheduledEvent() {
     }
@@ -64,11 +64,11 @@ public class ScheduledEvent implements Serializable {
         this.weekdays = weekdays;
     }
 
-    public Date getOneTimeDate() {
+    public Calendar getOneTimeDate() {
         return oneTimeDate;
     }
 
-    public void setOneTimeDate(Date oneTimeDate) {
+    public void setOneTimeDate(Calendar oneTimeDate) {
         this.oneTimeDate = oneTimeDate;
     }
 
@@ -80,28 +80,19 @@ public class ScheduledEvent implements Serializable {
         this.time = time;
     }
 
+    @JsonIgnore
     public int getDay(){
-        return Integer.parseInt(day);
+        return oneTimeDate.get(Calendar.DAY_OF_MONTH);
     }
 
+    @JsonIgnore
     public int getMonth(){
-        return Integer.parseInt(month);
+        return oneTimeDate.get(Calendar.MONTH);
     }
 
+    @JsonIgnore
     public int getYear(){
-        return Integer.parseInt(year);
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public void setMonth(String month) {
-        this.month = month;
-    }
-
-    public void setDay(String day) {
-        this.day = day;
+        return oneTimeDate.get(Calendar.YEAR);
     }
 
     public enum PeriodType {
