@@ -15,6 +15,7 @@ public class Branch implements Serializable {
 	private static final long serialVersionUID = -8481858598787329017L;
 	private String displayId;
 	private String id;
+	private String latestCommit;
 	private ListenType listenTo;
 	private List<ScheduledEvent> scheduledEvents;
 
@@ -22,11 +23,16 @@ public class Branch implements Serializable {
 		setScheduledEvents(new ArrayList<>());
 	}
 
-	public Branch(String displayId, String id) {
+	public Branch(String displayId, String id, String latestCommit) {
 		this();
 		this.setDisplayId(displayId);
 		this.setId(id);
+		this.setLatestCommit(latestCommit);
 	}
+
+	public String getLatestCommit() { return latestCommit; }
+
+	public void setLatestCommit(String latestCommit) { this.latestCommit = latestCommit; }
 
 	public static long getSerialVersionUID() {
 		return serialVersionUID;

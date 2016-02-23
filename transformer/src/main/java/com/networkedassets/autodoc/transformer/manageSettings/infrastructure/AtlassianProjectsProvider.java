@@ -57,7 +57,7 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
                         .forEach(sourceBranch ->
                                 repo.getBranches().put(
                                         sourceBranch.getId(),
-                                        new Branch(sourceBranch.getDisplayId(), sourceBranch.getId())
+                                        new Branch(sourceBranch.getDisplayId(), sourceBranch.getId(), sourceBranch.getLatestCommit())
                                 )
                         );
             }

@@ -244,13 +244,16 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 					JobDetail job = newJob(ScheduledEventJob.class)
 							.usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
 							.usingJobData("projectKey", projectKey).usingJobData("repoSlug", repoSlug)
-							.usingJobData("branchId", branchId).build();
+							.usingJobData("branchId", branchId)
+							.usingJobData("latestCommit", currentBranch.getLatestCommit()).build();
 
 					Trigger trigger = newTrigger().startNow().withSchedule(ScheduledEventHelper.getCronSchedule(event))
 							.build();
 
 					log.debug("Scheduled event {} with cron: {}", event.toString(),
 							((CronTrigger) trigger).getCronExpression());
+					log.debug("Scheduled event has latestCommit hash: {}", currentBranch.getLatestCommit());
+
 					scheduler.scheduleJob(job, trigger);
 				} catch (SchedulerException e) {
 					e.printStackTrace();

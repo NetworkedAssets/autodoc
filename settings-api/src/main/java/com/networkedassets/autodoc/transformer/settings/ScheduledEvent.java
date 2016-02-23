@@ -1,11 +1,11 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -15,15 +15,15 @@ import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScheduledEvent implements Serializable {
 
-    private static final long serialVersionUID = -1213178165118904797L;
+    private static final long serialVersionUID = -1213178165118904796L;
     private boolean periodic;
     private PeriodType periodType;
     private int number;
     private HashMap<String, Object> weekdays;
     private String time;
+    private Calendar calendar;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
-    private Calendar oneTimeDate;
+    private Date oneTimeDate;
 
     public ScheduledEvent() {
     }
@@ -64,12 +64,17 @@ public class ScheduledEvent implements Serializable {
         this.weekdays = weekdays;
     }
 
-    public Calendar getOneTimeDate() {
+    public Date getOneTimeDate() {
         return oneTimeDate;
     }
 
-    public void setOneTimeDate(Calendar oneTimeDate) {
+    public void setOneTimeDate(Date oneTimeDate) {
         this.oneTimeDate = oneTimeDate;
+        calendar = Calendar.getInstance();
+
+        if(oneTimeDate != null){
+            calendar.setTime(oneTimeDate);
+        }
     }
 
     public String getTime() {
@@ -82,17 +87,18 @@ public class ScheduledEvent implements Serializable {
 
     @JsonIgnore
     public int getDay(){
-        return oneTimeDate.get(Calendar.DAY_OF_MONTH);
+        return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
+    //Months start at 0
     @JsonIgnore
     public int getMonth(){
-        return oneTimeDate.get(Calendar.MONTH);
+        return calendar.get(Calendar.MONTH) + 1;
     }
 
     @JsonIgnore
     public int getYear(){
-        return oneTimeDate.get(Calendar.YEAR);
+        return calendar.get(Calendar.YEAR);
     }
 
     public enum PeriodType {

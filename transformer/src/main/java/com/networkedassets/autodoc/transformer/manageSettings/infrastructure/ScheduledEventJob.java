@@ -2,34 +2,60 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
 import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.server.Application;
+import com.networkedassets.autodoc.transformer.settings.Branch;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
 public class ScheduledEventJob implements Job {
+    private static Logger log = LoggerFactory.getLogger(ScheduledEventJob.class);
+
     private String sourceUrl;
     private String projectKey;
     private String repoSlug;
     private String branchId;
+    private String latestCommit;
     private PushEventProcessor pushEventProcessor;
+    private SettingsProvider settingsProvider;
+
+    private boolean firstRun;
 
     public ScheduledEventJob() {
         pushEventProcessor = Objects.requireNonNull(Application.getService(PushEventProcessor.class));
+        settingsProvider = Objects.requireNonNull(Application.getService(SettingsProvider.class));
+
+        firstRun = true;
     }
 
     public void execute(JobExecutionContext context)
             throws JobExecutionException
     {
-        PushEvent event = new PushEvent();
-        event.setBranchId(branchId);
-        event.setProjectKey(projectKey);
-        event.setRepositorySlug(repoSlug);
-        event.setSourceUrl(sourceUrl);
+        Branch branch = settingsProvider.getCurrentSettings()
+                .getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
+                .getRepoBySlug(repoSlug).getBranchById(branchId);
+        log.debug("Preparing to start scheduled event job for {}", branch.getLatestCommit());
 
-        pushEventProcessor.processEvent(event);
+        if(firstRun || !branch.getLatestCommit().equals(this.latestCommit)) {
+            firstRun = false;
+
+            PushEvent event = new PushEvent();
+            event.setBranchId(branchId);
+            event.setProjectKey(projectKey);
+            event.setRepositorySlug(repoSlug);
+            event.setSourceUrl(sourceUrl);
+
+            log.debug("Starting to process {}", this);
+
+            pushEventProcessor.processEvent(event);
+        } else{
+            log.debug("Aborted processing {}. Nothing changed on the branch since last schedule time.", this);
+        }
     }
 
     public void setSourceUrl(String sourceUrl) {
@@ -46,5 +72,13 @@ public class ScheduledEventJob implements Job {
 
     public void setBranchId(String branchId) {
         this.branchId = branchId;
+    }
+
+    public void setLatestCommit(String latestCommit) { this.latestCommit = latestCommit; }
+
+    @Override
+    public String toString(){
+        return "Scheduled event job for: " +
+            sourceUrl + "/" + projectKey + "/" + repoSlug + "/" + branchId;
     }
 }

@@ -22,7 +22,6 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
     private DocumentationGeneratorFactory docGeneratorFactory;
     private DocumentationSender documentationSender;
     private CodeProvider codeProvider;
-    public static DocumentationFromCodeGenerator instance;
 
     @Inject
     public DocumentationFromCodeGenerator(SettingsProvider settingsProvider,
@@ -32,11 +31,6 @@ public class DocumentationFromCodeGenerator implements PushEventProcessor {
         this.docGeneratorFactory = docGeneratorFactory;
         this.documentationSender = documentationSender;
         this.codeProvider = codeProvider;
-        instance = this;
-    }
-
-    public static DocumentationFromCodeGenerator getInstance(){
-        return instance;
     }
 
     @Override
