@@ -105,8 +105,8 @@ public class ConfigurationService {
         try {
             if (userAccesor.authenticate(credentials.getConfluenceUsername(), credentials.getConfluencePassword())) {
                 Settings settings = new Settings();
-                settings.setConfluenceUsername(credentials.getConfluenceUsername());
-                settings.setConfluencePassword(credentials.getConfluencePassword());
+                settings.getCredentials().setConfluenceUsername(credentials.getConfluenceUsername());
+                settings.getCredentials().setConfluencePassword(credentials.getConfluencePassword());
                 settings.setConfluenceUrl(settingsManager.getGlobalSettings().getBaseUrl());
                 HttpResponse<String> response = transformerClient.setCredentials(settings);
                 return convertToResponse(response);

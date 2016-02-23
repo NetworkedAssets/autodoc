@@ -41,7 +41,7 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
 				log.info("Unirest POST TO URL: " + formatted);
 				log.info("Response:{}",
 						Unirest.post(formatted)
-						.basicAuth(settings.getConfluenceUsername(), settings.getConfluencePassword())
+						.basicAuth(settings.getCredentials().getConfluenceUsername(), settings.getCredentials().getConfluencePassword())
 						.queryString("pieceType", docPiece.getPieceType()).header("Content-Type", "application/json")
 						.body(docPiece.getContent()).asString().getBody());
 			} catch (UnirestException e) {

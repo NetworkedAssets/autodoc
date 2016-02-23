@@ -64,24 +64,6 @@ public class Settings implements Serializable {
 		this.confluenceUrl = confluenceUrl;
 	}
 
-	@JsonProperty("confluenceUsername")
-	public String getConfluenceUsername() {
-		return credentials.getConfluenceUsername();
-	}
-
-	public void setConfluenceUsername(String confluenceUsername) {
-		this.credentials.setConfluenceUsername(confluenceUsername);
-	}
-
-	@JsonProperty("confluencePassword")
-	public String getConfluencePassword() {
-		return credentials.getConfluencePassword();
-	}
-
-	public void setConfluencePassword(String confluencePassword) {
-		credentials.setConfluencePassword(confluencePassword);
-	}
-
 	public Credentials getCredentials() {
 		return credentials;
 	}
