@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import sun.security.tools.keytool.CertAndKeyGen;
 import sun.security.x509.X500Name;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,6 +29,7 @@ public class Transformer {
 	private static Server jettyServer;
 
 	public static void main(String[] args) throws Exception {
+		checkFilePermissions();
 
 		jettyServer = getServer(Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port")));
 		try {
@@ -38,11 +40,25 @@ public class Transformer {
 		}
 	}
 
+	/*
+	 * Checks if user that runs transformer.jar has permissions
+	 * to create and read from configuration files that will be created at runtime
+	 */
+	private static void checkFilePermissions() throws IOException {
+		File file = File.createTempFile("prefix", "suffix", new File("./"));
+		try {
+			if (!file.canRead()) {
+				throw new IOException("Can't read from the temp file");
+			}
+		} finally {
+			file.delete();
+		}
+	}
+
 	public static Server getServer(int port) {
 		if (jettyServer != null) {
 			return jettyServer;
 		} else {
-
 			Server newJettyServer = new Server();
 			configureSsl(newJettyServer, port);
 
