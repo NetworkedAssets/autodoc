@@ -5,14 +5,14 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.server.Application;
 import com.networkedassets.autodoc.transformer.settings.Branch;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
 public class ScheduledEventJob implements Job {
     private static Logger log = LoggerFactory.getLogger(ScheduledEventJob.class);
 
@@ -24,25 +24,24 @@ public class ScheduledEventJob implements Job {
     private PushEventProcessor pushEventProcessor;
     private SettingsProvider settingsProvider;
 
-    private boolean firstRun;
-
     public ScheduledEventJob() {
         pushEventProcessor = Objects.requireNonNull(Application.getService(PushEventProcessor.class));
         settingsProvider = Objects.requireNonNull(Application.getService(SettingsProvider.class));
-
-        firstRun = true;
     }
 
     public void execute(JobExecutionContext context)
             throws JobExecutionException
     {
+        boolean firstRun = context.getPreviousFireTime() == null;
+
         Branch branch = settingsProvider.getCurrentSettings()
                 .getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
                 .getRepoBySlug(repoSlug).getBranchById(branchId);
-        log.debug("Preparing to start scheduled event job for {}", branch.getLatestCommit());
 
-        if(firstRun || !branch.getLatestCommit().equals(this.latestCommit)) {
-            firstRun = false;
+        String latestCommit = branch.getLatestCommit();
+
+        if(firstRun || !latestCommit.equals(this.latestCommit)) {
+            context.getJobDetail().getJobDataMap().put("latestCommit", latestCommit);
 
             PushEvent event = new PushEvent();
             event.setBranchId(branchId);
@@ -51,7 +50,6 @@ public class ScheduledEventJob implements Job {
             event.setSourceUrl(sourceUrl);
 
             log.debug("Starting to process {}", this);
-
             pushEventProcessor.processEvent(event);
         } else{
             log.debug("Aborted processing {}. Nothing changed on the branch since last schedule time.", this);

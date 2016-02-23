@@ -5,6 +5,7 @@ import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
+import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Project;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import org.slf4j.Logger;
@@ -69,8 +70,12 @@ public final class SettingsUtils {
 						.forEach(repo -> repo.getBranches().values().stream()
 								.filter(branch -> projects.get(project.getKey()).getRepos().get(repo.getSlug())
 										.getBranches().containsKey(branch.getId()))
-								.forEach(branch -> branch.setDisplayId(projects.get(project.getKey()).getRepos()
-										.get(repo.getSlug()).getBranches().get(branch.getId()).getDisplayId()))));
+								.forEach(branch -> {
+									Branch currentBranch = projects.get(project.getKey()).getRepos()
+											.get(repo.getSlug()).getBranches().get(branch.getId());
+									branch.setDisplayId(currentBranch.getDisplayId());
+									branch.setLatestCommit(currentBranch.getLatestCommit());
+								})));
 	}
 
 	/**
