@@ -42,8 +42,12 @@ public class PushEventService {
 		log.info("New EVENT information received: {}", pushEvent.toString());
 
 		CompletableFuture.runAsync(() -> eventProcessor.processEvent(pushEvent))
-				.thenApply((result) -> asyncResponse.resume(Response.status(Response.Status.OK).build())).exceptionally(
-						e -> asyncResponse.resume(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build()));
+				.thenApply((result) -> asyncResponse.resume(Response.status(Response.Status.OK).build()))
+				.exceptionally(e -> {
+					log.error("Event processing failed {}", pushEvent.toString(), e);
+					asyncResponse.resume(Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build());
+					return false;
+				});
 
 		asyncResponse.setTimeout(TIME_OUT, TimeUnit.MILLISECONDS);
 		asyncResponse.setTimeoutHandler(ar -> ar.resume(Response.status(Status.ACCEPTED).build()));

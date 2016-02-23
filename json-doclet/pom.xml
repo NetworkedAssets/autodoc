@@ -9,7 +9,7 @@
         <version>1.0</version>
     </parent>
 
-	<groupId>com.github.markusbernhardt</groupId>
+	
 	<artifactId>json-doclet</artifactId>
 	<version>1.0.7</version>
 	<packaging>jar</packaging>
