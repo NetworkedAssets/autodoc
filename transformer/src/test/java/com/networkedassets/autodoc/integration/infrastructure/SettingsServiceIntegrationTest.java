@@ -3,6 +3,7 @@ package com.networkedassets.autodoc.integration.infrastructure;
 import com.google.common.collect.Lists;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.specification.RequestSpecification;
 import com.networkedassets.autodoc.integration.IntegrationTest;
 import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
@@ -21,11 +22,14 @@ public class SettingsServiceIntegrationTest {
     private final static String CONFLUENCE_URL = "http://atlas.networkedassets.net/confluence";
     private static String TRANSFORMER_URL;
     private static int TRANSFORMER_PORT;
+    private final RequestSpecification HTTPSvalidatedRequest = given()
+            .relaxedHTTPSValidation();
 
     @BeforeClass
     public static void setupRestAssured() {
         RestAssured.baseURI = "https://atlas.networkedassets.net";
         RestAssured.port = 8050;
+        RestAssured.basePath = "/settings";
 
         TRANSFORMER_URL = cutAllSlashes(PropertyHandler.getInstance().getValue("jetty.address"));
         TRANSFORMER_PORT = Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port"));
@@ -33,10 +37,9 @@ public class SettingsServiceIntegrationTest {
 
     @Test
     public void testGETSettingsEndpoint() {
-        given()
-                .relaxedHTTPSValidation()
+        HTTPSvalidatedRequest
         .when()
-                .get("/settings")
+                .get()
         .then()
                 .assertThat().contentType(ContentType.JSON)
                 .statusCode(200)
@@ -48,10 +51,9 @@ public class SettingsServiceIntegrationTest {
 
     @Test
     public void testGETCredentialsEndpoint() {
-        given()
-                .relaxedHTTPSValidation()
+        HTTPSvalidatedRequest
         .when()
-                .get("/settings/credentials")
+                .get("/credentials")
         .then()
                 .assertThat().contentType(ContentType.JSON)
                 .statusCode(200)
@@ -61,12 +63,11 @@ public class SettingsServiceIntegrationTest {
 
     @Test
     public void testPOSTCredentialsEndpoint() {
-        given()
-                .relaxedHTTPSValidation()
+        HTTPSvalidatedRequest
                 .contentType(ContentType.JSON)
                 .body(bakeSettingsObject())
         .when()
-                .post("/settings/credentials")
+                .post("/credentials")
         .then()
                 .statusCode(202);
     }
