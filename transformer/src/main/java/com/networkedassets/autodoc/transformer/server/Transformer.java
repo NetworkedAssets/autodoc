@@ -48,7 +48,7 @@ public class Transformer {
 		File file = File.createTempFile("prefix", "suffix", new File("./"));
 		try {
 			if (!file.canRead()) {
-				throw new IOException("Can't read from the temp file");
+				throw new IOException("You have no read permission, therefore application will not be run..");
 			}
 		} finally {
 			file.delete();
