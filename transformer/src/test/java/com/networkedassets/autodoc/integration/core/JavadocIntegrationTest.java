@@ -1,5 +1,6 @@
-package com.networkedassets.autodoc.integration;
+package com.networkedassets.autodoc.integration.core;
 
+import com.networkedassets.autodoc.integration.IntegrationTest;
 import com.networkedassets.autodoc.jsondoclet.model.Root;
 import com.networkedassets.autodoc.transformer.util.javadoc.Javadoc;
 import com.networkedassets.autodoc.transformer.util.javadoc.JavadocException;

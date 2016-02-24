@@ -1,6 +1,7 @@
-package com.networkedassets.autodoc.integration;
+package com.networkedassets.autodoc.integration.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networkedassets.autodoc.integration.IntegrationTest;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
 import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
 import com.networkedassets.autodoc.transformer.handleRepoPush.core.JavadocGenerator;
