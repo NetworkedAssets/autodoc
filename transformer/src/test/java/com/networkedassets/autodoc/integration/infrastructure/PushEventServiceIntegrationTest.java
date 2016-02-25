@@ -4,13 +4,13 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.specification.RequestSpecification;
 import com.networkedassets.autodoc.integration.IntegrationTest;
-import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
 
 @Category(IntegrationTest.class)
 public class PushEventServiceIntegrationTest {
@@ -24,23 +24,21 @@ public class PushEventServiceIntegrationTest {
     }
 
     @Test
-    @Ignore //AsyncResponse needs to be tested
-    public void test() {
+    public void testPOSTAddEventEndpoint() {
         HTTPSvalidatedRequest
                 .contentType(ContentType.JSON)
-                .body(buildPushEvent())
+                .body(buildPushEventString())
         .when()
                 .post("/event")
         .then()
-                .statusCode(202);
+                .statusCode(anyOf(equalTo(200), equalTo(202)));
     }
 
-    private PushEvent buildPushEvent() {
-        PushEvent event = new PushEvent();
-        event.setBranchId("refs/heads/master");
-        event.setProjectKey("APD");
-        event.setRepositorySlug("javadoc-plugin");
-        event.setSourceUrl("http://atlas.networkedassets.net:7990");
-        return event;
+    private String buildPushEventString() {
+        return String.format("{\"sourceUrl\":\"%s\",\"projectKey\":\"%s\",\"repositorySlug\":\"%s\",\"branchId\":\"%s\"}",
+                "http://atlas.networkedassets.net:7990",
+                "APD",
+                "javadoc-plugin",
+                "refs/heads/master");
     }
 }
