@@ -18,7 +18,6 @@ However, if you don't wan't to watch our video for some reasons, you can follow 
 ### Confluence plugin installation
 1. Login to confluence as administrator, click the cog icon in upper-right corner and select Add-ons.
 2. Click Upload add-on and select the streams-thirdparty-plugin .jar file that you've previously downloaded. Click Upload. 
-⋅⋅⋅(If uploading takes too long time and seems not to finish at all, refresh the page and upload the file again.)
 3. Success pop-up window will appear.
 4. Repeat stepps 2 and 3 for the confluence-plugin .jar file.
 ### Bitbucket/Stash PostReceive Hook Plugin installation
