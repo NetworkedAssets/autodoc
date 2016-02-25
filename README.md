@@ -1,6 +1,6 @@
-# ![](../src/main/resources/images/logo.png "Transformer") Transformer <a href="http://www.networkedassets.com/"><img style="float: right;" src="http://www.networkedassets.com/wordpress/wp-content/uploads/2013/03/NA_logo_header.png" height="48"></a>
+# ![](https://github.com/networkedassets/transformer/src/main/resources/images/logo.png "Transformer") Transformer <a href="http://www.networkedassets.com/"><img style="float: right;" src="http://www.networkedassets.com/wordpress/wp-content/uploads/2013/03/NA_logo_header.png" height="48"></a>
 
-Java application used by [NetworkedAssets's](http://www.networkedassets.com/) [Documentation from Code Plugin](http://www.google.com) for Atlassian Confluence.
+Java application used by [NetworkedAssets's](http://www.networkedassets.com/) [Documentation from Code Plugin](http://condoc.networkedassets.com/) for Atlassian Confluence.
 
 ## Installation
 
