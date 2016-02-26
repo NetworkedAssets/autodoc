@@ -191,7 +191,7 @@
 			<systemPath>${java.home}/lib/rt.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>com.github.markusbernhardt</groupId>
+			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>json-doclet</artifactId>
 			<version>1.0.7</version>
 		</dependency>
