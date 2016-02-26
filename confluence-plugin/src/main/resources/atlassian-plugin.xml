@@ -124,6 +124,8 @@
 
         <resource type="download" name="js/ctrl/ConfluenceCredentialsCtrl.js"
                   location="configurationResources/js/ctrl/ConfluenceCredentialsCtrl.js"/>
+        <resource type="download" name="js/ctrl/SpaceToolsCtrl.js"
+                  location="configurationResources/js/ctrl/SpaceToolsCtrl.js"/>
         <resource type="download" name="js/ctrl/MenuCtrl.js"
                   location="configurationResources/js/ctrl/MenuCtrl.js"/>
         <resource type="download" name="js/ctrl/SchedulesCtrl.js"

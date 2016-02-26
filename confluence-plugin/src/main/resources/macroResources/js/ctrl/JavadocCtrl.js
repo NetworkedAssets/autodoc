@@ -104,7 +104,7 @@ angular.module("DoC")
                 $timeout(function() {
                     vm.tree.updateSelectedNodeByName(toParams.name);
                     window.scrollTo(0, 0);
-                }, 50);
+                }, 50);jira
             });
 
         $scope.$on('$destroy', function() {

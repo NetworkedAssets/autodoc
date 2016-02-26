@@ -23,6 +23,7 @@
 
     <script src="js/app.js"></script>
     <script src="js/ctrl/ConfluenceCredentialsCtrl.js"></script>
+    <script src="js/ctrl/SpaceToolsCtrl.js"></script>
     <script src="js/ctrl/MenuCtrl.js"></script>
     <script src="js/ctrl/SchedulesCtrl.js"></script>
     <script src="js/ctrl/SourceCtrl.js"></script>
@@ -49,11 +50,11 @@
                 <a href="#doc_config-branch">Space Tools</a>
             </li>
             <li class="menu-item active-tab">
-                <a href="#doc_config-cc">Config</a>
+                <a href="#doc_config-admin">Config</a>
             </li>
         </ul>
-        <div ng-if="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch">
-            <div ng-hide="$root.loading || $root.error">
+        <div ng-if="$root.location == 'space' || $root.location == 'local'" class="{{$root.location == 'local'?'tabs-pane':''}}" id="doc_config-branch" ng-controller="SpaceToolsCtrl as spaceTools">
+            <div ng-hide="spaceTools.loading || spaceTools.error">
                 <div class="table">
                     <div class="table-row">
 
@@ -106,119 +107,120 @@
                             </form>
                         </div>
                         <div id="doc_config-branch-container">
-                            <div ng-hide="$root.settings.path != null" class="aui-message aui-message-info">
+                            <div ng-hide="spaceTools.path != null" class="aui-message aui-message-info">
                                 <p class="title">
                                     <strong>Choose source, project, repository and branch.</strong>
                                 </p>
                             </div>
 
-                            <div ng-show="$root.settings.path != null">
-                                <h3>Options</h3>
-                                <div>
+                            <div ng-show="spaceTools.path != null">
+                                <form name="spaceTools.form" novalidate class="aui">
+                                    <h3>Options</h3>
                                     <div>
-                                        <h4>General</h4>
-                                        <form class="aui">
-                                            <fieldset class="group">
-                                                <legend><span>Update on</span></legend>
-                                                <doc-aui-button-group
-                                                        doc-periodType="radio"
-                                                        ng-model="$root.settings.listenTo"
-                                                        doc-options="$root.listenToOptions"
-                                                ></doc-aui-button-group>
-                                                <button
-                                                        class="aui-button aui-button-primary"
-                                                        ng-show="$root.listenTo != 'none'"
-                                                        ng-click="$root.settings.updateNow()"
-                                                        ng-disabled="$root.settings.updateNowState != 'ready'"
-                                                >{{ $root.settings.updateNowState == "updated"?'Updated':($root.settings.updateNowState == "updating"?'Updating...':($root.settings.updateNowState == "updatingInBackground"?'Updating in background':'Update now'))}}</button>
-                                                <span class="button-spinner spin small" ng-show="$root.settings.updateNowState=='updating'"></span>
-                                            </fieldset>
-                                        </form>
-                                    </div>
-                                    <div ng-controller="SchedulesCtrl as schedules">
-                                        <div ng-show="schedules.settings.listenTo=='schedule'" >
-                                            <h4>Schedule events</h4>
-                                            <div id="doc_config-branch-schedules-events">
-                                                <div ng-repeat="event in schedules.settings.scheduledEvents" ng-class-even="'even'" class="doc_config-branch-event">
-                                                    <div>
+                                        <div>
+                                            <h4>General</h4>
+                                            <form class="aui" name="branchGeneralOptionsForm">
+                                                <fieldset class="group">
+                                                    <legend><span>Update on</span></legend>
+                                                    <doc-aui-button-group
+                                                            doc-periodType="radio"
+                                                            ng-model="spaceTools.listenTo"
+                                                            doc-options="spaceTools.listenToOptions"
+                                                    ></doc-aui-button-group>
+                                                    <button
+                                                            class="aui-button aui-button-primary"
+                                                            ng-show="spaceTools.listenTo != 'none'"
+                                                            ng-click="spaceTools.updateNow()"
+                                                            ng-disabled="spaceTools.updateNowState != 'ready'"
+                                                    >{{ spaceTools.updateNowState == "updated"?'Updated':(spaceTools.updateNowState == "updating"?'Updating...':(spaceTools.updateNowState == "updatingInBackground"?'Updating in background':'Update now'))}}</button>
+                                                    <span class="button-spinner spin small" ng-show="spaceTools.updateNowState=='updating'"></span>
+                                                </fieldset>
+                                            </form>
+                                        </div>
+                                        <div ng-controller="SchedulesCtrl as schedules">
+                                            <div ng-show="spaceTools.listenTo=='schedule'" >
+                                                <h4>Schedule events</h4>
+                                                <div id="doc_config-branch-schedules-events">
+                                                    <div ng-repeat="event in spaceTools.scheduledEvents" ng-class-even="'even'" class="doc_config-branch-event">
                                                         <div>
-                                                            <form class="aui">
-                                                                <fieldset class="group">
-                                                                    <legend><span>Event type</span></legend>
-                                                                    <doc-aui-button-group
-                                                                            doc-type="radio"
-                                                                            ng-model="event.periodic"
-                                                                            doc-options="[{value:false,label:'One time'},{value:true,label:'Periodic'}]"
-                                                                    ></doc-aui-button-group>
-                                                                </fieldset>
-                                                                <div ng-if="event.periodic">
+                                                            <div>
+                                                                <form class="aui" name="event.form" novalidate>
                                                                     <fieldset class="group">
-                                                                        <legend><span>Every</span></legend>
-                                                                        <input type="number" min="1" max="10" class="text short-field" ng-model="event.number">
-                                                                        <doc-aui-button-group ng-hide="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.singular"></doc-aui-button-group>
-                                                                        <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.plural"></doc-aui-button-group>
-                                                                        <div class="error" ng-show="!event.number">Invalid value – should be 1-10</div>
-                                                                    </fieldset>
-                                                                    <fieldset ng-if="event.periodType=='WEEK'" class="group">
-                                                                        <legend><span>Days of week</span></legend>
+                                                                        <legend><span>Event type</span></legend>
                                                                         <doc-aui-button-group
-                                                                                doc-type="checkbox"
-                                                                                ng-model="event.weekdays"
-                                                                                doc-options="schedules.weekdayOptions"
+                                                                                doc-type="radio"
+                                                                                ng-model="event.periodic"
+                                                                                doc-options="[{value:false,label:'One time'},{value:true,label:'Periodic'}]"
                                                                         ></doc-aui-button-group>
                                                                     </fieldset>
-                                                                </div>
+                                                                    <div ng-if="event.periodic">
+                                                                        <fieldset class="group">
+                                                                            <legend><span>Every</span></legend>
+                                                                            <input type="number" min="1" max="10" class="text short-field" ng-model="event.number" name="number">
+                                                                            <doc-aui-button-group ng-hide="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.singular"></doc-aui-button-group>
+                                                                            <doc-aui-button-group style="margin-left:0" ng-show="event.number>1" doc-periodType="radio" ng-model="event.periodType" doc-options="schedules.types.plural"></doc-aui-button-group>
+                                                                            <div class="error" ng-show="event.form.number.$invalid">Invalid value &ndash; should be 1-10</div>
+                                                                        </fieldset>
+                                                                        <fieldset ng-if="event.periodType=='WEEK'" class="group">
+                                                                            <legend><span>Days of week</span></legend>
+                                                                            <doc-aui-button-group
+                                                                                    doc-type="checkbox"
+                                                                                    ng-model="event.weekdays"
+                                                                                    doc-options="schedules.weekdayOptions"
+                                                                            ></doc-aui-button-group>
+                                                                        </fieldset>
+                                                                    </div>
 
-                                                                <div class="field-group" ng-if="!event.periodic">
-                                                                    <label>Date</label>
-                                                                    <input type="text" doc-aui-date-picker class="text" ng-model="event.oneTimeDate">
-                                                                </div>
+                                                                    <div class="field-group" ng-if="!event.periodic">
+                                                                        <label>Date</label>
+                                                                        <input type="date" doc-aui-date-picker class="text" ng-model="event.oneTimeDate" name="date" required>
+                                                                        <div class="error" ng-show="event.form.date.$error.required">Date is required.</div>
+                                                                        <div class="error" ng-show="event.form.date.$error.date">Date is invalid. Should be YYYY-MM-DD.</div>
+                                                                    </div>
 
-                                                                <div class="field-group">
-                                                                    <label>Time</label>
-                                                                    <input type="text" class="text short-field" ng-model="event.time" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/" placeholder="17:00"><!--/([01]?[0-9]|2[0-3]):[0-5][0-9]/-->
-                                                                    <div class="error" ng-show="!event.time">Invalid value – should be HH:MM</div>
-                                                                </div>
-                                                                <div class="buttons-container">
-                                                                    <button ng-click="schedules.removeEvent($index)" class="aui-button aui-button-link">Remove event</button>
-                                                                </div>
+                                                                    <div class="field-group">
+                                                                        <label>Time</label>
+                                                                        <input type="text" class="text short-field" ng-model="event.time" name="time" ng-pattern="/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/" placeholder="17:00" required><!--/([01]?[0-9]|2[0-3]):[0-5][0-9]/-->
+                                                                        <div class="error" ng-show="event.form.time.$error.pattern">Invalid value &ndash; should be HH:MM.</div>
+                                                                        <div class="error" ng-show="event.form.time.$error.required">Time is required.</div>
+                                                                    </div>
+                                                                    <div class="buttons-container">
+                                                                        <button ng-click="schedules.removeEvent($index)" class="aui-button aui-button-link">Remove event</button>
+                                                                    </div>
 
-                                                            </form>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <form class="aui">
                                                     <div class="buttons-container">
                                                         <button ng-click="schedules.addEvent()" class="aui-button">Add event</button>
                                                     </div>
-                                                </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <form class="aui">
-                                    <div class="buttons-container">
-                                        <button
-                                                class="aui-button aui-button-primary"
-                                                ng-click="$root.settings.save()"
-                                                ng-disabled="$root.settings.savingState != 'dirty'"
-                                        >{{$root.settings.savingState == "saved"?'Saved':($root.settings.savingState == "saving"?'Saving...':'Save')}}</button>
-                                        <span class="button-spinner spin small" ng-show="$root.settings.savingState=='saving'"></span>
-                                        <button class="aui-button" ng-click="$root.settings.revert();">Revert</button>
-                                    </div>
-                                </form>
+                                        <hr>
+                                        <div class="buttons-container">
+                                            <button
+                                                    class="aui-button aui-button-primary"
+                                                    ng-click="spaceTools.save()"
+                                                    ng-disabled="spaceTools.savingState == 'saving' || spaceTools.form.$invalid || spaceTools.form.$pristine"
+                                            >{{spaceTools.form.$pristine?'Saved':(spaceTools.savingState == "saving"?'Saving...':'Save')}}</button>
+                                            <span class="button-spinner spin small" ng-show="spaceTools.savingState=='saving'"></span>
+                                            <button class="aui-button" ng-click="spaceTools.revert();" ng-disabled="spaceTools.form.$pristine">Revert</button>
+                                        </div>
+                                    </form>
+                            </div>
                             </div>
                             <!--<aui-select2 doc-options="content.sources" placeholder="Placeholder"></aui-select2>-->
 
-                            <pre ng-show="0">{{$root.settings | json}}</pre>
+                            <pre ng-show="0">{{spaceTools | json}}</pre>
 
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="doc_config-loading" ng-show="$root.loading"></div>
-            <div class="aui-message aui-message-error" ng-show="$root.error">
+            <div id="doc_config-loading" ng-show="spaceTools.loading"></div>
+            <div class="aui-message aui-message-error" ng-show="spaceTools.error">
                 <p class="title">
                     <strong>Unknown error occurred</strong>
                 </p>
