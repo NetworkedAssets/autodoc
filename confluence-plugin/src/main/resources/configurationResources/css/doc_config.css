@@ -135,3 +135,8 @@ span.doc_config-branch-menu-option.listened span.indicator {
     padding-top: 1em;
     text-align: center;
 }
+
+#doc_config hr {
+    border: none;
+    border-top: 1px solid #eee;
+}
