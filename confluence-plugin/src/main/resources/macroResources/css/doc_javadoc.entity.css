@@ -229,3 +229,11 @@
 .doc .javadoc .monospace {
     font-family: monospace;
 }
+
+.doc .javadoc h2.collapsible {
+    cursor: pointer;
+}
+
+.doc .javadoc h2.collapsible span.aui-icon {
+    vertical-align: 0.4em;
+}

@@ -30,12 +30,10 @@
         <span class="entityType entityType{{vm.entity.type|capitalize}}">{{vm.entity.type}}</span>
         <h1 class="aui-page-header-main name {{vm.entity.modifiers.join(' ')}}">{{vm.entity.name}}<span ng-if="vm.entity.generic && vm.entity.generic.length" doc-generic="vm.entity.generic"></span></h1>
 
-
         <div ng-show="vm.entity.supers.length" class="supers">
             <span>extends</span>
             <span class="type" ng-repeat="super in vm.entity.supers" doc-qname="super"></span>
         </div>
-
 
         <div ng-show="vm.entity.interfaces.length" class="interfaces">
             <span>implements</span>
@@ -44,12 +42,23 @@
 
         <p javadoc-tags="vm.entity.comment"></p>
 
+        <div class="classDiagram" ng-if="vm.classDiagramEnabled && vm.entity.type != 'package'">
+            <h2 ng-click="vm.expanded.toggle('classDiagram')" class="collapsible">
+                <span class="aui-icon aui-icon-small aui-iconfont-arrow-{{vm.expanded.classDiagram ? 'down' : 'up'}}">Expand/Collapse</span>
+                UML Diagram
+            </h2>
+            <div doc-class-diagram="vm.entity.qualified" ng-if="vm.expanded.classDiagram"></div>
+        </div>
+
         <div class="doc_panel elems {{elementGroup.type}}s"
              ng-repeat="elementGroup in vm.entity.elements"
              ng-show="elementGroup.elements.length">
             <pre>{{isObject(elementGroup)}}</pre>
-            <h2>{{elementGroup.type}}s<!--{{(elementGroup.elements.length > 1)?'s':''}}--></h2>
-            <table>
+            <h2 ng-click="vm.expanded.toggle(elementGroup.type+'s')" class="collapsible">
+                <span class="aui-icon aui-icon-small aui-iconfont-arrow-{{vm.expanded[elementGroup.type+'s'] ? 'down' : 'up'}}">Expand/Collapse</span>
+                {{elementGroup.type}}s
+            </h2>
+            <table ng-show="vm.expanded[elementGroup.type+'s']">
             <tr class="elem {{elementGroup.type}} {{element.modifiers.join(' ')}} ng-class-even: 'even';"
                  ng-repeat="element in elementGroup.elements">
                 <td>
@@ -145,7 +154,5 @@
         <pre ng-show="0">{{vm.entity|json}}</pre>
 
     </section>
-    <section class="classDiagram" ng-if="vm.classDiagramEnabled && vm.entity.type != 'package'">
-        <div doc-class-diagram="vm.entity.qualified"></div>
-    </section>
+
 </div>

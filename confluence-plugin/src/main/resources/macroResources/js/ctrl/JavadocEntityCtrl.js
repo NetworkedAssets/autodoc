@@ -15,6 +15,18 @@ angular.module("DoC").controller("JavadocEntityCtrl", function($scope, $http, $s
         method.details.visible = !method.details.visible;
     };
 
+    vm.expanded = {
+        classDiagram: false,
+        fields: true,
+        constructors: true,
+        methods: true,
+        toggle: function(item) {
+            if (typeof vm.expanded[item] != "undefined") {
+                vm.expanded[item] = !vm.expanded[item];
+            }
+        }
+    };
+
     vm.packages = [];
 
     var parseBreadcrumb = function() {
