@@ -1,10 +1,8 @@
 package com.networkedassets.autodoc.configuration;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,8 +21,6 @@ import javax.ws.rs.core.Response;
 import com.atlassian.applinks.api.*;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.SerializationConfig;
 import com.google.common.base.Strings;
 import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project;
 import com.networkedassets.autodoc.transformer.settings.*;
@@ -34,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import com.atlassian.confluence.setup.settings.SettingsManager;
 import com.atlassian.confluence.user.UserAccessor;
-import com.atlassian.core.util.ClassLoaderUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
@@ -52,13 +47,15 @@ public class ConfigurationService {
     private final SourceManager sourceManager;
     private final ApplicationLinkService appLinkService;
     private final String ERROR_FORMAT = "{\"error\":\"%s\"}";
+    private final DocSettingsService docSettingsService;
 
     public ConfigurationService(SettingsManager settingsManager, UserAccessor userAccessor,
-                                final ApplicationLinkService appLinkService) {
+                                ApplicationLinkService appLinkService, DocSettingsService docSettingsService) {
 
         this.userAccesor = userAccessor;
         this.settingsManager = settingsManager;
         this.appLinkService = appLinkService;
+        this.docSettingsService = docSettingsService;
         this.transformerClient = new TransformerClient(getTransformerUrl());
         this.sourceManager = new SourceManager(appLinkService, transformerClient);
 
@@ -304,14 +301,7 @@ public class ConfigurationService {
     }
 
     private String getTransformerUrl() {
-        InputStream properties = ClassLoaderUtils.getResourceAsStream("autodoc_confluence.properties", getClass());
-        Properties props = new Properties();
-        try {
-            props.load(properties);
-        } catch (IOException e) {
-            log.error("Couldn't load the configuration file", e);
-        }
-        return props.getProperty("transformerUrl", "https://localhost:8050/");
+        return docSettingsService.getTransformerUrl();
     }
 
 }
