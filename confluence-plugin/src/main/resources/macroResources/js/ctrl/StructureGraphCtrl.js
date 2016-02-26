@@ -149,7 +149,8 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
                 update();
             } else {
                 $state.go("javadoc.entity", {
-                    name: d.name
+                    name: d.name,
+                    elementType: "classDiagram"
                 });
             }
         }

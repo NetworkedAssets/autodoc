@@ -39,6 +39,10 @@
     background: #f5f5f5;
 }
 
+.doc .javadoc .elems .elem.selected td {
+    background: #ebf2f9;
+}
+
 .doc .javadoc span.modifier {
     font-size: 0.9em;
     line-height: 1.2em;

@@ -7,6 +7,8 @@ angular.module("DoC").controller("JavadocEntityCtrl", function($scope, $http, $s
 
     vm.classDiagramEnabled = macroParams.get("classDiagram");
 
+    vm.$stateParams = $stateParams;
+
     var initSpinner = function() {
         AJS.$($element.find(".loadingSpinner")).spin("big");
     };
@@ -16,7 +18,7 @@ angular.module("DoC").controller("JavadocEntityCtrl", function($scope, $http, $s
     };
 
     vm.expanded = {
-        classDiagram: false,
+        classDiagram: vm.$stateParams.elementType === "classDiagram",
         fields: true,
         constructors: true,
         methods: true,

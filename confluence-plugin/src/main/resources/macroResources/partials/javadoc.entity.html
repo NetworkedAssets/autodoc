@@ -32,19 +32,25 @@
 
         <div ng-show="vm.entity.supers.length" class="supers">
             <span>extends</span>
-            <span class="type" ng-repeat="super in vm.entity.supers" doc-qname="super"></span>
+            <span ng-repeat="super in vm.entity.supers">
+                <span class="type" doc-qname="super"></span><!--
+                --><span ng-if="!$last" class="comma">, </span>
+            </span>
         </div>
 
         <div ng-show="vm.entity.interfaces.length" class="interfaces">
             <span>implements</span>
-            <span class="type" ng-repeat="interface in vm.entity.interfaces" doc-qname="interface"></span>
+            <span ng-repeat="interface in vm.entity.interfaces">
+                <span class="type" doc-qname="interface"></span><!--
+                --><span ng-if="!$last" class="comma">, </span>
+            </span>
         </div>
 
         <p javadoc-tags="vm.entity.comment"></p>
 
         <div class="classDiagram" ng-if="vm.classDiagramEnabled && vm.entity.type != 'package'">
             <h2 ng-click="vm.expanded.toggle('classDiagram')" class="collapsible">
-                <span class="aui-icon aui-icon-small aui-iconfont-arrow-{{vm.expanded.classDiagram ? 'down' : 'up'}}">Expand/Collapse</span>
+                <span class="aui-icon aui-icon-small aui-iconfont-arrow-{{vm.expanded.classDiagram ? 'up' : 'down'}}">Expand/Collapse</span>
                 UML Diagram
             </h2>
             <div doc-class-diagram="vm.entity.qualified" ng-if="vm.expanded.classDiagram"></div>
@@ -55,34 +61,38 @@
              ng-show="elementGroup.elements.length">
             <pre>{{isObject(elementGroup)}}</pre>
             <h2 ng-click="vm.expanded.toggle(elementGroup.type+'s')" class="collapsible">
-                <span class="aui-icon aui-icon-small aui-iconfont-arrow-{{vm.expanded[elementGroup.type+'s'] ? 'down' : 'up'}}">Expand/Collapse</span>
+                <span class="aui-icon aui-icon-small aui-iconfont-arrow-{{vm.expanded[elementGroup.type+'s'] ? 'up' : 'down'}}">Expand/Collapse</span>
                 {{elementGroup.type}}s
             </h2>
             <table ng-show="vm.expanded[elementGroup.type+'s']">
-            <tr class="elem {{elementGroup.type}} {{element.modifiers.join(' ')}} ng-class-even: 'even';"
-                 ng-repeat="element in elementGroup.elements">
-                <td>
+                <tr class="elem {{elementGroup.type}} {{element.modifiers.join(' ')}} ng-class-even: 'even';"
+                    ng-class="{'selected': vm.$stateParams.elementType === elementGroup.type && vm.$stateParams.elementName === element.name}"
+                    ng-repeat="element in elementGroup.elements">
+                    <td>
                     <span class="modifiers"><!--
-                        --><span ng-repeat="modifier in element.modifiers" class="modifier {{modifier}}">{{modifier}}</span><!--
+                        --><span ng-repeat="modifier in element.modifiers"
+                                 class="modifier {{modifier}}">{{modifier}}</span><!--
                     --></span><span ng-if="element.generic" class="generic" doc-generic="vm.entity.generic"></span><!--
                     --><span class="typeWrapper">
                         <span class="type" ng-show="element.type" doc-qname="element.type"></span>
                     </span>
-                </td>
-                <td>
-
+                    </td>
+                    <td>
                     <span class="toggle" ng-show="element.details.exist" title="Show/hide details"><span
                             class="aui-icon aui-icon-small aui-iconfont-arrow-{{element.details.visible?'up':'down'}}"
                             ng-click="vm.toggleDetails(element)"></span></span>
                     <span class="annotations" ng-show="element.annotation && element.annotation.length"><!--
-                                --><span class="annotation" ng-repeat="annotation in element.annotation">@<span doc-qname="annotation"></span>
+                                --><span class="annotation" ng-repeat="annotation in element.annotation">@<span
+                            doc-qname="annotation"></span>
                                 </span>
                             </span>
-                    <span class="name">{{element.name}}</span><!--
+                        <span class="name">{{element.name}}</span><!--
                     --><span class="parameters" ng-show="element.parameter"><span class="parenthesis">(</span><!--
                         --><span ng-repeat-start="parameter in element.parameter" class="parameter"><!--
-                             --><span class="annotations inline" ng-show="parameter.annotation && parameter.annotation.length"><!--
-                                    --><span class="annotation" ng-repeat="annotation in parameter.annotation">@<span doc-qname="annotation"></span>
+                             --><span class="annotations inline"
+                                      ng-show="parameter.annotation && parameter.annotation.length"><!--
+                                    --><span class="annotation" ng-repeat="annotation in parameter.annotation">@<span
+                            doc-qname="annotation"></span>
                                     </span>
                                 </span>
                                 <span class="type" doc-qname="parameter.type"></span>
@@ -92,21 +102,22 @@
                     --></span>
                     <span class="exceptions" ng-show="element.exception && element.exception.length">
                         <span class="throws">throws</span>
-                        <span ng-repeat-start="exception in element.exception" doc-qname="exception" class="type"></span>
+                        <span ng-repeat-start="exception in element.exception" doc-qname="exception"
+                              class="type"></span>
                         <span ng-if="!$last" class="comma" ng-repeat-end>, </span>
                     </span>
-                    <p class="comment" javadoc-tags="element.comment"></p>
-                    <div class="details" ng-show="element.details.visible">
-                        <div class="content">
-                            <div class="tags" ng-repeat="tag in element.details.tags">
-                                <h5>{{tag.name}}</h5>
-                                <p javadoc-tags="tag.text"></p>
+                        <p class="comment" javadoc-tags="element.comment"></p>
+                        <div class="details" ng-show="element.details.visible">
+                            <div class="content">
+                                <div class="tags" ng-repeat="tag in element.details.tags">
+                                    <h5>{{tag.name}}</h5>
+                                    <p javadoc-tags="tag.text"></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </td>
+                    </td>
 
-            </tr>
+                </tr>
             </table>
         </div>
 
