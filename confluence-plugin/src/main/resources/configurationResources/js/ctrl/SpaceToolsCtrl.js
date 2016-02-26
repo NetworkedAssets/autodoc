@@ -1,4 +1,4 @@
-angular.module("DoC_Config").controller("SpaceToolsCtrl", function($http, $scope, $rootScope, $timeout, urlService) {
+angular.module("DoC_Config").controller("SpaceToolsCtrl", function($http, $scope, $rootScope, $timeout, $filter, urlService) {
     var spaceTools = this;
 
     spaceTools.path = null;
@@ -84,13 +84,7 @@ angular.module("DoC_Config").controller("SpaceToolsCtrl", function($http, $scope
     };
 
     var formatDate = function(date) {
-        function pad(number) {
-            if (number < 10) {
-                return '0' + number;
-            }
-            return number;
-        }
-        return date.getFullYear()+"-"+pad(date.getMonth()+1)+"-"+pad(date.getDate());
+        return $filter("date")(date, "yyyy-MM-dd");
     };
 
     var parseDate = function(string) {
