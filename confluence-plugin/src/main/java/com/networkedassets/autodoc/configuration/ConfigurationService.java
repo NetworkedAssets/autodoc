@@ -296,9 +296,9 @@ public class ConfigurationService {
     }
 
     private Response convertToResponse(HttpResponse<String> httpResponse) {
-        Response.ResponseBuilder rBuilder = Response.status(httpResponse.getStatus()).type(MediaType.APPLICATION_JSON)
-                .entity(httpResponse.getBody());
-        httpResponse.getHeaders().forEach((s, strings) -> rBuilder.header(s, strings));
+        Response.ResponseBuilder rBuilder = Response.status(httpResponse.getStatus()).entity(httpResponse.getBody());
+        httpResponse.getHeaders().forEach(rBuilder::header);
+        rBuilder.type(MediaType.APPLICATION_JSON);
         return rBuilder.build();
     }
 
