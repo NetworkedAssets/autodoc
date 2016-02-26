@@ -1,4 +1,4 @@
-angular.module("DoC_Config").controller("SchedulesCtrl",function($scope,settingsService) {
+angular.module("DoC_Config").controller("SchedulesCtrl",function($scope) {
     var schedules = this;
     schedules.types = {
         singular: [
@@ -52,18 +52,18 @@ angular.module("DoC_Config").controller("SchedulesCtrl",function($scope,settings
         }
     };
 
-    schedules.settings = settingsService;
+    var spaceTools = $scope.$parent.spaceTools;
 
     schedules.log = function() {
-        console.log(schedules.settings.schedule);
+        console.log(spaceTools.schedule);
     };
 
     schedules.removeEvent = function(id) {
-        schedules.settings.scheduledEvents.splice(id,1);
+        spaceTools.scheduledEvents.splice(id,1);
     };
 
     schedules.addEvent = function() {
-        schedules.settings.scheduledEvents.push(
+        spaceTools.scheduledEvents.push(
             {
                 "periodic": false,
                 "periodType": "DAY",

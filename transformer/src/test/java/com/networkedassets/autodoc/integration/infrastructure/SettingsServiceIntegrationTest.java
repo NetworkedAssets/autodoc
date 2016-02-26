@@ -27,8 +27,8 @@ public class SettingsServiceIntegrationTest {
 
     @BeforeClass
     public static void setupRestAssured() {
-        RestAssured.baseURI = "https://atlas.networkedassets.net";
-        RestAssured.port = 8050;
+        RestAssured.baseURI = TransformerConstants.getBaseUri();
+        RestAssured.port =TransformerConstants.getPort();
         RestAssured.basePath = "/settings";
 
         TRANSFORMER_URL = cutAllSlashes(PropertyHandler.getInstance().getValue("jetty.address"));

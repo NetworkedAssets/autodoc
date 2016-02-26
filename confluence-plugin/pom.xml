@@ -11,7 +11,7 @@
 		<version>1.0</version>
 	</parent>
 	<organization>
-		<name>NetworkedAssets GmbH</name>
+		<name>NetworkedAssets Sp. z o.o</name>
 		<url>http://www.networkedassets.com/en/</url>
 	</organization>
 	<name>DoC</name>
@@ -55,12 +55,12 @@
 			<version>${streams.thirdparty.plugin.version}</version>
 			<scope>provided</scope>
 		</dependency>
-        <dependency>
-            <groupId>com.atlassian.streams</groupId>
-            <artifactId>streams-thirdparty-plugin</artifactId>
-            <version>${streams.thirdparty.plugin.version}</version>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>com.atlassian.streams</groupId>
+			<artifactId>streams-thirdparty-plugin</artifactId>
+			<version>${streams.thirdparty.plugin.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -120,7 +120,7 @@
 			<version>1.0</version>
 		</dependency>
 
-		<!--Licensing API-->
+		<!--Licensing API -->
 		<dependency>
 			<groupId>com.atlassian.upm</groupId>
 			<artifactId>licensing-api</artifactId>
@@ -142,19 +142,20 @@
 				<version>${amps.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-                    <!--<pluginDependencies>-->
-                        <!--<pluginDependency>-->
-                            <!--<groupId>com.atlassian.streams</groupId>-->
-                            <!--<artifactId>streams-thirdparty-plugin</artifactId>-->
-                        <!--</pluginDependency>-->
-                    <!--</pluginDependencies>-->
+					<pluginDependencies>
+						<pluginDependency>
+							<groupId>com.atlassian.streams</groupId>
+							<artifactId>streams-thirdparty-plugin</artifactId>
+						</pluginDependency>
+					</pluginDependencies>
 
-                    <!--<instructions>-->
-                        <!--<Import-Package>-->
-							<!--com.atlassian.streams.thirdparty*;version="${streams.thirdparty.plugin.version}"-->
-                        <!--</Import-Package>-->
-						<!--<Require-Capability/>-->
-                    <!--</instructions>-->
+					<instructions>
+						<Import-Package>
+							org.codehaus.jackson*;version="1.4.4", 
+							com.atlassian.streams.thirdparty.api*;version="${streams.thirdparty.plugin.version}",
+                            *;resolution:=optional
+						</Import-Package>
+					</instructions>
 
 					<productVersion>${confluence.version}</productVersion>
 					<productDataVersion>${confluence.data.version}</productDataVersion>
@@ -192,6 +193,6 @@
 		<confluence.data.version>5.8.6</confluence.data.version>
 		<amps.version>5.0.13</amps.version>
 		<plugin.testrunner.version>1.2.3</plugin.testrunner.version>
-        <streams.thirdparty.plugin.version>5.4.14</streams.thirdparty.plugin.version>
+		<streams.thirdparty.plugin.version>5.4.14</streams.thirdparty.plugin.version>
 	</properties>
 </project>

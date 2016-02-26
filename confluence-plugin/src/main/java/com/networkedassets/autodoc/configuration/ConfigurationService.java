@@ -23,6 +23,7 @@ import javax.ws.rs.core.Response;
 import com.atlassian.applinks.api.*;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.google.common.base.Strings;
 import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project;
