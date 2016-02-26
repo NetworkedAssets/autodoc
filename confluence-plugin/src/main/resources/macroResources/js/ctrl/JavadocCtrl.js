@@ -104,7 +104,7 @@ angular.module("DoC")
                 $timeout(function() {
                     vm.tree.updateSelectedNodeByName(toParams.name);
                     window.scrollTo(0, 0);
-                }, 50);jira
+                }, 50);
             });
 
         $scope.$on('$destroy', function() {
@@ -121,7 +121,9 @@ angular.module("DoC")
 
         vm.go = function(item) {
             $state.go("javadoc.entity", {
-                name: item.name
+                name: item.name,
+                elementType: null,
+                elementName: null
             });
         };
 
@@ -156,7 +158,9 @@ angular.module("DoC")
             });
             select.on("select2-selecting", function(event) {
                 $state.go("javadoc.entity", {
-                    name: event.val
+                    name: event.val,
+                    elementType: null,
+                    elementName: null
                 });
                 select.select2("close");
                 event.preventDefault();

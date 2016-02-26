@@ -1,4 +1,4 @@
-angular.module("DoC").directive("docClassDiagram", function($state, $http, urlService) {
+angular.module("DoC").directive("docClassDiagram", function($state, $http, $timeout, urlService) {
     return {
         link: function(scope, element) {
             var dagreGraph, svg, inner, render;
@@ -41,16 +41,18 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                 } else {
                     url = urlService.getRestUrl("uml", scope.qualified);
                 }
-                $http
-                    .get(url, {
-                        cache: true
-                    })
-                    .then(function(response) {
-                        scope.false = true;
-                        generate(response.data);
-                    }, function() {
-                        scope.error = true;
-                    });
+                $timeout(function() {
+                    $http
+                        .get(url, {
+                            cache: true
+                        })
+                        .then(function(response) {
+                            scope.false = true;
+                            generate(response.data);
+                        }, function() {
+                            scope.error = true;
+                        });
+                });
             };
 
             var generate = function(data) {
@@ -368,7 +370,9 @@ angular.module("DoC").directive("docClassDiagram", function($state, $http, urlSe
                         if (!d3.event.defaultPrevented && d3.event) {
 
                             $state.go("javadoc.entity", {
-                                name: node.data.qualified
+                                name: node.data.qualified,
+                                elementType: "classDiagram",
+                                elementName: null
                             });
                         }
                     });

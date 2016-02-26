@@ -8,9 +8,11 @@ angular.module('DoC').config(function($stateProvider, $urlRouterProvider) {
             controller: "JavadocCtrl as vm"
         })
         .state('javadoc.entity', {
-            url: "/entity/:name",
+            url: "/entity/{name}/{elementType}/{elementName}",
             params: {
-                name: ""
+                name: "",
+                elementType: "",
+                elementName: ""
             },
             templateUrl: doc_resourcePath + "partials/javadoc.entity.html?",
             controller: "JavadocEntityCtrl as vm"

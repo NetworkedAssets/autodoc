@@ -7,12 +7,26 @@ angular.module("DoC").controller("JavadocEntityCtrl", function($scope, $http, $s
 
     vm.classDiagramEnabled = macroParams.get("classDiagram");
 
+    vm.$stateParams = $stateParams;
+
     var initSpinner = function() {
         AJS.$($element.find(".loadingSpinner")).spin("big");
     };
 
     vm.toggleDetails = function(method) {
         method.details.visible = !method.details.visible;
+    };
+
+    vm.expanded = {
+        classDiagram: vm.$stateParams.elementType === "classDiagram",
+        fields: true,
+        constructors: true,
+        methods: true,
+        toggle: function(item) {
+            if (typeof vm.expanded[item] != "undefined") {
+                vm.expanded[item] = !vm.expanded[item];
+            }
+        }
     };
 
     vm.packages = [];

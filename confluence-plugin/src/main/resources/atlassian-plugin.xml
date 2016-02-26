@@ -272,13 +272,19 @@
         <description>Provides REST endpoints used by DoC</description>
     </rest>
 
+    <component key="docSettingsService" class="com.networkedassets.autodoc.configuration.DocSettingsService" />
 
     <!--Active objects-->
     <ao key="ao-module">
         <description>The AO module for this plugin.</description>
-        <entity>com.networkedassets.autodoc.documentation.Documentation
+        <entity>
+            com.networkedassets.autodoc.documentation.Documentation
         </entity>
-        <entity>com.networkedassets.autodoc.documentation.DocumentationPiece
+        <entity>
+            com.networkedassets.autodoc.documentation.DocumentationPiece
+        </entity>
+        <entity>
+            com.networkedassets.autodoc.configuration.DocSettings
         </entity>
     </ao>
 
