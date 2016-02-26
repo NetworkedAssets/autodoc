@@ -65,14 +65,14 @@ public class SettingsServiceIntegrationTest {
     public void testPOSTCredentialsEndpoint() {
         HTTPSvalidatedRequest
                 .contentType(ContentType.JSON)
-                .body(bakeSettingsObject())
+                .body(buildSettingsObject())
         .when()
                 .post("/credentials")
         .then()
                 .statusCode(202);
     }
 
-    private Settings bakeSettingsObject() {
+    private Settings buildSettingsObject() {
         Settings settings = new Settings();
 
         Credentials credentials = new Credentials();
