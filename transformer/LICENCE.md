@@ -193,3 +193,19 @@ third-party archives.
     See the License for the specific language governing permissions and
     limitations under the License.
 	
+	
+The Transformer uses external libraries, which have their own licenses:
+	
+- [Jersey](https://jersey.java.net/license.html)  [CDDL-Version 1.1, GPL Version 2]
+- [Guava Libraries] https://code.google.com/p/guava-libraries/ [APACHE-2]
+- [JUnit] http://junit.org/license.html [EPL - v 1.0]
+- [Hamcrest] https://github.com/hamcrest/JavaHamcrest/blob/master/LICENSE.txt [BSD]
+- [Unirest] https://github.com/Mashape/unirest-java/blob/master/LICENSE [BSD]
+- [Rest-assured] https://github.com/jayway/rest-assured [APACHE-2]
+- [FasterXML] https://github.com/FasterXML [ASL, LGPL]
+- [HttpComponents] https://hc.apache.org/httpcomponents-core-ga/license.html [APACHE-2]
+- [PlantUML] http://plantuml-depend.sourceforge.net/maven-site/plantuml-dependency-cli/dependencies.html [GPL]
+
+The Transformer includes code from the following projects, which have their own licenses:
+- [XML-DOCLET](https://github.com/MarkusBernhardt/xml-doclet/blob/master/LICENSE)  [APACHE-2]. 
+
