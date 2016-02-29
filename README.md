@@ -1,4 +1,4 @@
-# ![](https://github.com/networkedassets/transformer/src/main/resources/images/logo.png "Transformer") Transformer <a href="http://www.networkedassets.com/"><img style="float: right;" src="http://www.networkedassets.com/wordpress/wp-content/uploads/2013/03/NA_logo_header.png" height="48"></a>
+# ![](https://github.com/networkedassets/transformer/src/main/resources/images/trans_logo.png "Transformer")<a href="http://www.networkedassets.com/"><img style="float: right;" src="http://www.networkedassets.com/wordpress/wp-content/uploads/2013/03/NA_logo_header.png" height="79"></a>
 
 Java application used by [NetworkedAssets's](http://www.networkedassets.com/) [Documentation from Code Plugin](http://condoc.networkedassets.com/) for Atlassian Confluence.
 
@@ -19,7 +19,7 @@ Java application used by [NetworkedAssets's](http://www.networkedassets.com/) [D
 ssh root@example
 ```
 
-5. On your server machine run **transformer-start.sh** contained in *scripts/server*.
+5. On your server machine run **transformer-start.<i></i>sh** contained in *scripts/server*.
 
 ```bash
 # /opt/autodoc/transformer-start.sh
