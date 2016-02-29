@@ -163,7 +163,7 @@
 
 					<instructions>
 						<Import-Package>
-							org.codehaus.jackson*;version="1.4.4", 
+							org.codehaus.jackson*;version="1.4.4",
 							com.atlassian.streams.thirdparty.api*;version="${streams.thirdparty.plugin.version}",
                             *;resolution:=optional
 						</Import-Package>

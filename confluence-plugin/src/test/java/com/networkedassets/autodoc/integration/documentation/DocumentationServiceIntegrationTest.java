@@ -13,12 +13,10 @@ public class DocumentationServiceIntegrationTest {
     public static final String project = "TEST";
     public static final String repo = "testrepo";
     public static final String branch = "refs%252Fheads%252Fmaster";
-    public static final String body = "Lorem ipsum dolor sit amet";
+    public static final String body = "{\"Lorem\": \"ipsum\", \"dolor\": \"sit amet\"}";
     public static final String docPieceName = "DPN";
     public static final String docType = "javadoc";
     public static final String pieceType = "pieceTypename";
-
-
 
     @BeforeClass
     public static void setupRestAssured() {

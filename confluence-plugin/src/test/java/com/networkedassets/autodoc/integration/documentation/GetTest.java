@@ -13,9 +13,6 @@ import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.containsString;
 
-/**
- * Created by Kamil on 29.02.2016.
- */
 @Category(IntegrationTest.class)
 public class GetTest extends DocumentationServiceIntegrationTest {
 
@@ -37,5 +34,32 @@ public class GetTest extends DocumentationServiceIntegrationTest {
         Assert.assertTrue(docPieces.stream()
                 .anyMatch(h -> h.containsKey("type") && h.containsKey("name")
                         && h.get("type").equals(pieceType) && h.get("name").equals(docPieceName)));
+    }
+
+    @Test
+    public void testSearchDocumentation() {
+        final String lorem = when().get(
+                String.format("/%s/%s/%s/%s/search?q=%s",
+                        project,
+                        repo,
+                        branch,
+                        docType,
+                        "Lorem"))
+                .asString();
+        Assert.assertTrue(lorem.contains(docPieceName));
+    }
+
+    @Test
+    public void testGetDocumentationPieceByAttribute() throws Exception {
+        final String dolor = when().get(String.format("/%s/%s/%s/%s/%s/%s",
+                project,
+                repo,
+                branch,
+                docType,
+                docPieceName,
+                "dolor")).asString();
+        final String sit_amet = from(dolor).get("dolor");
+
+        Assert.assertEquals(sit_amet, "sit amet");
     }
 }
