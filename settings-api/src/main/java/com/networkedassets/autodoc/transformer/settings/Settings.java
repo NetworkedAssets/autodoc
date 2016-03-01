@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -16,6 +17,10 @@ import com.networkedassets.autodoc.transformer.settings.view.Views;
 public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 3847560203140549969L;
+
+	@JsonIgnore
+	public int totalId = 1;
+
 	@JsonView(Views.GetSettingsView.class)
 	private String confluenceUrl;
 	@JsonView(Views.GetSettingsView.class)

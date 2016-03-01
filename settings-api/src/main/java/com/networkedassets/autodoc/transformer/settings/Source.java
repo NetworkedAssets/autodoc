@@ -30,9 +30,6 @@ public class Source implements Serializable {
 
     private static final long serialVersionUID = -6404862914170481264L;
 
-    @JsonIgnore
-    public static int totalId = 1;
-
     @JsonView(Views.GetSourcesView.class)
     private int id;
     @JsonView(Views.GetSourcesView.class)

@@ -174,9 +174,9 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 			source.setPassword(getSettings().getCredentials().getConfluencePassword());
 		}
 		SettingsUtils.verifySource(source, settings.getSources());
-		source.setId(Source.totalId);
+		source.setId(getSettings().totalId);
 		if (source.isCorrect()) {
-			Source.totalId++;
+			getSettings().totalId++;
 			getSettings().getSources().add(source);
 		}
 		saveSettingsToFile(settingsFilename);
