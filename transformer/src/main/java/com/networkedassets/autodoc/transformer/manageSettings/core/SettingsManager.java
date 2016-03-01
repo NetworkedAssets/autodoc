@@ -169,6 +169,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
 	@Override
 	public Source addSource(Source source) {
+		source.setId();
 		if (Strings.isNullOrEmpty(source.getUsername()) || Strings.isNullOrEmpty(source.getPassword())) {
 			source.setUsername(getSettings().getCredentials().getConfluenceUsername());
 			source.setPassword(getSettings().getCredentials().getConfluencePassword());
