@@ -1,5 +1,7 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,6 +9,8 @@ import java.util.Map;
 /**
  * Class representing a repo in a Stash  or Bitbucket project
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Repo implements Serializable {
 
 	private static final long serialVersionUID = -8959782122446629856L;

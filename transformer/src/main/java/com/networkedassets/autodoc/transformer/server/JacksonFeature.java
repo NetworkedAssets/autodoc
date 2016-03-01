@@ -23,7 +23,7 @@ public class JacksonFeature implements Feature {
         context.register( JsonParseExceptionMapper.class );
         context.register( JsonMappingExceptionMapper.class );
         context.register( JacksonJsonProvider.class, MessageBodyReader.class, MessageBodyWriter.class );
-       
+
 
         return true;
     }

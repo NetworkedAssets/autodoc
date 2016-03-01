@@ -12,6 +12,7 @@ import java.util.HashMap;
 /**
  * Class representing a scheduled event - an event fired at particular times
  */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScheduledEvent implements Serializable {
 
