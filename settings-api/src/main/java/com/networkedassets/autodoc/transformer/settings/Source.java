@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Represents code source like Stash, Bitbucket, Github and so on
  */
-@JsonIgnoreProperties()
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonPropertyOrder({
         "id",
         "name",
