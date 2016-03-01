@@ -71,7 +71,7 @@ angular.module("DoC_Config").controller("SchedulesCtrl",function($scope) {
                 "weekdays": {
                     "mon": false,
                     "tue": false,
-                    "wed": true,
+                    "wed": false,
                     "thu": false,
                     "fri": false,
                     "sat": false,
