@@ -16,7 +16,7 @@ public class Branch implements Serializable {
 	private String displayId;
 	private String id;
 	private String latestCommit;
-	private ListenType listenTo;
+	private ListenType listenTo = ListenType.none;
 	private List<ScheduledEvent> scheduledEvents;
 
 	public Branch() {
@@ -55,7 +55,7 @@ public class Branch implements Serializable {
 	}
 
 	public ListenType getListenTo() {
-		return listenTo;
+		return this.listenTo == null ? ListenType.none : listenTo;
 	}
 
 	public void setListenTo(ListenType listenTo) {

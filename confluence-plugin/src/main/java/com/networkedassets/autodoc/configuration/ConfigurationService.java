@@ -21,6 +21,8 @@ import javax.ws.rs.core.Response;
 import com.atlassian.applinks.api.*;
 import com.atlassian.sal.api.net.Request;
 import com.atlassian.sal.api.net.ResponseException;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.google.common.base.Strings;
 import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project;
 import com.networkedassets.autodoc.transformer.settings.*;
@@ -60,6 +62,7 @@ public class ConfigurationService {
         this.sourceManager = new SourceManager(appLinkService, transformerClient);
 
         OBJECT_MAPPER.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+        OBJECT_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @PUT

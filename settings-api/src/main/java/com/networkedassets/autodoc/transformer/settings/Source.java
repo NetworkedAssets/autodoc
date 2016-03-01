@@ -1,6 +1,9 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import com.fasterxml.jackson.annotation.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 import java.io.Serializable;
@@ -11,7 +14,7 @@ import java.util.Map;
 /**
  * Represents code source like Stash, Bitbucket, Github and so on
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties()
 @JsonPropertyOrder({
         "id",
         "name",
