@@ -169,6 +169,38 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.github.searls</groupId>
+				<artifactId>jasmine-maven-plugin</artifactId>
+				<version>2.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<preloadSources>
+						<script>src/main/resources/configurationResources/js/lib/angular.min.js</script>
+						<script>https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-mocks.js</script>
+						<script>src/main/resources/configurationResources/js/lib/angular-resource.min.js</script>
+						<script>https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+						<source>https://aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui.js</source>
+						<source>https://cdn.rawgit.com/jrburke/almond/0.3.0/almond.js</source>
+						<source>https://aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui-experimental.js</source>
+						<source>https://aui-cdn.atlassian.com/aui-adg/0.0.5-7-29-snapshot-aui-3550-responsive-header-fixes/js/aui-datepicker.js</source>
+						<source>src/main/resources/configurationResources/js/app.js</source>
+						<source>src/main/resources/configurationResources/js/ctrl/SchedulesCtrl.js</source>
+					</preloadSources>
+					<jsSrcDir>src/main/resources/configurationResources/js</jsSrcDir>
+					<jsTestSrcDir>src/test/resources/configurationResources/js</jsTestSrcDir>
+					<specIncludes>
+						<include>*Spec.js</include>
+					</specIncludes>
+
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
