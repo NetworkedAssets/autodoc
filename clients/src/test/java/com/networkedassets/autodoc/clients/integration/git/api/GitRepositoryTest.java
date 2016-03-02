@@ -1,6 +1,7 @@
-package com.networkedassets.autodoc.clients.integration;
+package com.networkedassets.autodoc.clients.integration.git.api;
 
 import com.networkedassets.autodoc.clients.git.api.GitRepository;
+import com.networkedassets.autodoc.clients.integration.IntegrationTest;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Before;
 import org.junit.Rule;
