@@ -62,9 +62,7 @@ public class ConfigurationServiceIntegrationTest {
                 .getSampleBranch(sourceId, projectKey, repoSlug, branchId);
         String originalListenType = sampleBranch.getListenTo().toString();
         String testListenType = "git";
-        System.out.println(String.format("%s  %s", originalListenType, testListenType));
-
-        //modifyBranchListenType(sampleBranch, null, PUTurl);
+        
         modifyBranchListenType(sampleBranch, Branch.ListenType.valueOf(testListenType), PUTurl)
                 .then()
                 .assertThat().contentType(ContentType.JSON)
