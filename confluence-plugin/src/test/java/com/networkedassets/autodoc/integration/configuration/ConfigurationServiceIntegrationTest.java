@@ -60,18 +60,18 @@ public class ConfigurationServiceIntegrationTest {
 
         Branch sampleBranch = ConfigurationServiceTestHelper
                 .getSampleBranch(sourceId, projectKey, repoSlug, branchId);
-        Branch.ListenType originalListenType = sampleBranch.getListenTo();
-        Branch.ListenType testListenType = Branch.ListenType.git;
-
+        String originalListenType = sampleBranch.getListenTo().toString();
+        String testListenType = "git";
+        System.out.println(String.format("%s  %s", originalListenType, testListenType));
 
         //modifyBranchListenType(sampleBranch, null, PUTurl);
-        modifyBranchListenType(sampleBranch, testListenType, PUTurl)
+        modifyBranchListenType(sampleBranch, Branch.ListenType.valueOf(testListenType), PUTurl)
                 .then()
                 .assertThat().contentType(ContentType.JSON)
                 .statusCode(200)
                 .body("listenTo", equalTo(testListenType));
 
-        modifyBranchListenType(sampleBranch, originalListenType, PUTurl)
+        modifyBranchListenType(sampleBranch, Branch.ListenType.valueOf(originalListenType), PUTurl)
                 .then()
                 .assertThat().contentType(ContentType.JSON)
                 .statusCode(200)
