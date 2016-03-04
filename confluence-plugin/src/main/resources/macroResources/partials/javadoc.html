@@ -1,7 +1,12 @@
 <div class="javadoc">
     <div class="row">
         <aside class="doc_tree">
-            <h2>Structure</h2>
+            <h2>
+                Structure
+                <span class="expandAllCollapseAll">
+                    <a ng-click="vm.tree.expandAll()">Expand all</a>&nbsp;<span>|</span>&nbsp;<a ng-click="vm.tree.collapseAll()">Collapse all</a>
+                </span>
+            </h2>
             <div class="loadingSpinner" ng-show="vm.loading"></div>
 
             <!--<pre>{{vm.items | json}}</pre>-->

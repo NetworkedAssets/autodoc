@@ -34,6 +34,19 @@
     box-sizing: border-box;
 }
 
+.doc .javadoc aside > h2 span.expandAllCollapseAll {
+    vertical-align: text-bottom;
+    display: inline-block;
+    float: right;
+    padding-right: 10px;
+}
+
+.doc .javadoc aside > h2 span.expandAllCollapseAll a, .doc .javadoc aside > h2 span.expandAllCollapseAll span {
+    cursor: pointer;
+    font-size: 10pt;
+    vertical-align: middle;
+}
+
 #doc_javadoc_content {
     width: 100%;
     min-height: 300px;
