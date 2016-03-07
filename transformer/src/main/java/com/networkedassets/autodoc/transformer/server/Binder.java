@@ -10,14 +10,13 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvid
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.JsonSettingsPersistor;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SerializingSettingsPersistor;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ObjectsEncryptor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.require.SettingsPersistor;
-import com.networkedassets.autodoc.transformer.util.*;
-
+import com.networkedassets.autodoc.transformer.util.PasswordStoreService;
+import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
