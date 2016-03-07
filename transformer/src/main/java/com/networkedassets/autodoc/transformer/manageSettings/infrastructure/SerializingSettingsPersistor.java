@@ -1,6 +1,8 @@
-package com.networkedassets.autodoc.transformer.util;
+package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
+import com.networkedassets.autodoc.transformer.manageSettings.require.SettingsPersistor;
 import com.networkedassets.autodoc.transformer.settings.Settings;
+import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,16 +11,17 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SealedObject;
 import java.io.*;
 
-public class SettingsPersistor {
+public class SerializingSettingsPersistor implements SettingsPersistor {
 
-    private static Logger log = LoggerFactory.getLogger(SettingsPersistor.class);
+    private static Logger log = LoggerFactory.getLogger(SerializingSettingsPersistor.class);
 
     SettingsEncryptor settingsEncryptor;
 
-    public SettingsPersistor(SettingsEncryptor settingsEncryptor) {
+    public SerializingSettingsPersistor(SettingsEncryptor settingsEncryptor) {
         this.settingsEncryptor = settingsEncryptor;
     }
 
+    @Override
     public boolean saveSettingsToFile(String filename, Settings settings) {
         File settingsFile = new File(filename);
         try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
@@ -41,6 +44,7 @@ public class SettingsPersistor {
         return true;
     }
 
+    @Override
     public Settings loadSettingsFromFile(String filename) {
         Settings loadedSettings = new Settings();
         File settingsFile = new File(filename);

@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import com.networkedassets.autodoc.transformer.manageSettings.require.SettingsPersistor;
 import com.networkedassets.autodoc.transformer.util.*;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;

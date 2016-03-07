@@ -9,14 +9,13 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SerializingSettingsPersistor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
-import com.networkedassets.autodoc.transformer.util.PasswordStoreService;
-import com.networkedassets.autodoc.transformer.util.PropertyHandler;
-import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
+import com.networkedassets.autodoc.transformer.manageSettings.require.SettingsPersistor;
+import com.networkedassets.autodoc.transformer.util.*;
 
-import com.networkedassets.autodoc.transformer.util.SettingsPersistor;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -49,7 +48,7 @@ public class Binder extends AbstractBinder {
 		SettingsEncryptor settingsEncryptor = new SettingsEncryptor(
 				passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
 				passwordService.getProperty(PasswordStoreService.PropertyType.SALT));
-		SettingsPersistor settingsPersistor = new SettingsPersistor(settingsEncryptor);
+		SettingsPersistor settingsPersistor = new SerializingSettingsPersistor(settingsEncryptor);
 
 		SettingsManager settingsManager = new SettingsManager(scheduler, settingsPersistor);
 		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
