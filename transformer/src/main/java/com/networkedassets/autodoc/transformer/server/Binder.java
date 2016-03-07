@@ -10,6 +10,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvid
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SerializingSettingsPersistor;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SettingsEncryptor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;

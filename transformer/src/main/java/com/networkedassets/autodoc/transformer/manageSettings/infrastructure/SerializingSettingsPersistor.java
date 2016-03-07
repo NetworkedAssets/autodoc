@@ -2,7 +2,6 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.manageSettings.require.SettingsPersistor;
 import com.networkedassets.autodoc.transformer.settings.Settings;
-import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

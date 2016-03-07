@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer.util;
+package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import org.slf4j.Logger;

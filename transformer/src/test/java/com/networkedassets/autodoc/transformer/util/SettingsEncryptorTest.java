@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer.util;
 
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SettingsEncryptor;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import junit.framework.Assert;
 import org.junit.Rule;
