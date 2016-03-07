@@ -36,7 +36,7 @@ public class ObjectsEncryptorTest {
         );
 
 
-        SealedObject sealedObject = objectsEncryptor.buildSealedObjectFrom(settings);
+        SealedObject sealedObject = objectsEncryptor.sealObject(settings);
         FileOutputStream fos = new FileOutputStream(settingsFile);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(sealedObject);
@@ -45,6 +45,6 @@ public class ObjectsEncryptorTest {
         ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
         SealedObject sealedObjectRead = (SealedObject) objectInputStream.readObject();
 
-        Assert.assertEquals(CONFLUENCE_URL, ((Settings)objectsEncryptor.buildSettingsObjectFrom(sealedObjectRead)).getConfluenceUrl());
+        Assert.assertEquals(CONFLUENCE_URL, ((Settings)objectsEncryptor.unsealObject(sealedObjectRead)).getConfluenceUrl());
     }
 }

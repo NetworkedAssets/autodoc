@@ -26,7 +26,7 @@ public class SerializingSettingsPersistor implements SettingsPersistor {
         try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 
-            objectOut.writeObject(objectsEncryptor.buildSealedObjectFrom(settings));
+            objectOut.writeObject(objectsEncryptor.sealObject(settings));
 
             log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
@@ -50,7 +50,7 @@ public class SerializingSettingsPersistor implements SettingsPersistor {
         try (FileInputStream fileIn = new FileInputStream(settingsFile);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileIn)) {
             SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
-            loadedSettings = (Settings) objectsEncryptor.buildSettingsObjectFrom(sealedObject);
+            loadedSettings = (Settings) objectsEncryptor.unsealObject(sealedObject);
             log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.warn("Can't load settings from {} - file not found. Creating new default settings...",

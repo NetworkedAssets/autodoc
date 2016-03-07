@@ -56,11 +56,11 @@ public class ObjectsEncryptor {
         }
     }
 
-    public SealedObject buildSealedObjectFrom(Serializable object) throws IOException, IllegalBlockSizeException {
+    public SealedObject sealObject(Serializable object) throws IOException, IllegalBlockSizeException {
         return new SealedObject(object, cipher);
     }
 
-    public Object buildSettingsObjectFrom(SealedObject sealedObject) throws ClassNotFoundException,
+    public Object unsealObject(SealedObject sealedObject) throws ClassNotFoundException,
             BadPaddingException, IllegalBlockSizeException, IOException {
         return sealedObject.getObject(decipher);
     }
