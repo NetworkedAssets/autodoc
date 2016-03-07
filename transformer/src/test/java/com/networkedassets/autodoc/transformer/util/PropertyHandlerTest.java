@@ -31,7 +31,7 @@ public class PropertyHandlerTest {
 		assertEquals(propertyHandler.getValue("jetty.port"), "8050");
 
 		assertEquals(propertyHandler.getValue("jetty.address"), "http://localhost/");
-		assertEquals(propertyHandler.getValue("settings.filename"), "transformerSettings.ser");
+		assertEquals(propertyHandler.getValue("settings.filename"), "transformerSettings.settings");
 	}
 
 	// you need to delete transformer.properties and Transformer.log files after this test manually
