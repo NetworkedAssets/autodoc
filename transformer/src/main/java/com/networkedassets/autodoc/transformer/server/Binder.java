@@ -10,7 +10,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvid
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SerializingSettingsPersistor;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SettingsEncryptor;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ObjectsEncryptor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
@@ -46,10 +46,10 @@ public class Binder extends AbstractBinder {
 
 		PasswordStoreService passwordService = new PasswordStoreService(
 				PropertyHandler.getInstance().getValue("encrypt.password.filepath"));
-		SettingsEncryptor settingsEncryptor = new SettingsEncryptor(
+		ObjectsEncryptor objectsEncryptor = new ObjectsEncryptor(
 				passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
 				passwordService.getProperty(PasswordStoreService.PropertyType.SALT));
-		SettingsPersistor settingsPersistor = new SerializingSettingsPersistor(settingsEncryptor);
+		SettingsPersistor settingsPersistor = new SerializingSettingsPersistor(objectsEncryptor);
 
 		SettingsManager settingsManager = new SettingsManager(scheduler, settingsPersistor);
 		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
@@ -57,7 +57,7 @@ public class Binder extends AbstractBinder {
 		DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
 				codeProvider);
 
-		bind(settingsEncryptor).to(SettingsEncryptor.class);
+		bind(objectsEncryptor).to(ObjectsEncryptor.class);
 		bind(scheduler).to(Scheduler.class);
 		bind(settingsManager).to(SettingsSaver.class);
 		bind(settingsManager).to(SettingsProvider.class);

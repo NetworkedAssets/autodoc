@@ -1,6 +1,6 @@
 package com.networkedassets.autodoc.transformer.util;
 
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SettingsEncryptor;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ObjectsEncryptor;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import junit.framework.Assert;
 import org.junit.Rule;
@@ -15,7 +15,7 @@ import java.io.*;
 /**
  * Created by mtulaza on 2016-02-18.
  */
-public class SettingsEncryptorTest {
+public class ObjectsEncryptorTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -30,13 +30,13 @@ public class SettingsEncryptorTest {
         settings.setConfluenceUrl(CONFLUENCE_URL);
 
         PasswordStoreService passwordService = new PasswordStoreService(tempFolder.getAbsolutePath() + "iamnotpassword.properties");
-        SettingsEncryptor settingsEncryptor = new SettingsEncryptor(
+        ObjectsEncryptor objectsEncryptor = new ObjectsEncryptor(
                 passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
                 passwordService.getProperty(PasswordStoreService.PropertyType.SALT)
         );
 
 
-        SealedObject sealedObject = settingsEncryptor.buildSealedObjectFrom(settings);
+        SealedObject sealedObject = objectsEncryptor.buildSealedObjectFrom(settings);
         FileOutputStream fos = new FileOutputStream(settingsFile);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(sealedObject);
@@ -45,6 +45,6 @@ public class SettingsEncryptorTest {
         ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
         SealedObject sealedObjectRead = (SealedObject) objectInputStream.readObject();
 
-        Assert.assertEquals(CONFLUENCE_URL, settingsEncryptor.buildSettingsObjectFrom(sealedObjectRead).getConfluenceUrl());
+        Assert.assertEquals(CONFLUENCE_URL, ((Settings)objectsEncryptor.buildSettingsObjectFrom(sealedObjectRead)).getConfluenceUrl());
     }
 }

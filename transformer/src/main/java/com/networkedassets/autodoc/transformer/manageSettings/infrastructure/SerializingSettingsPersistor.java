@@ -14,10 +14,10 @@ public class SerializingSettingsPersistor implements SettingsPersistor {
 
     private static Logger log = LoggerFactory.getLogger(SerializingSettingsPersistor.class);
 
-    SettingsEncryptor settingsEncryptor;
+    ObjectsEncryptor objectsEncryptor;
 
-    public SerializingSettingsPersistor(SettingsEncryptor settingsEncryptor) {
-        this.settingsEncryptor = settingsEncryptor;
+    public SerializingSettingsPersistor(ObjectsEncryptor objectsEncryptor) {
+        this.objectsEncryptor = objectsEncryptor;
     }
 
     @Override
@@ -26,7 +26,7 @@ public class SerializingSettingsPersistor implements SettingsPersistor {
         try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
              ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 
-            objectOut.writeObject(settingsEncryptor.buildSealedObjectFrom(settings));
+            objectOut.writeObject(objectsEncryptor.buildSealedObjectFrom(settings));
 
             log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
@@ -50,7 +50,7 @@ public class SerializingSettingsPersistor implements SettingsPersistor {
         try (FileInputStream fileIn = new FileInputStream(settingsFile);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileIn)) {
             SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
-            loadedSettings = settingsEncryptor.buildSettingsObjectFrom(sealedObject);
+            loadedSettings = (Settings) objectsEncryptor.buildSettingsObjectFrom(sealedObject);
             log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
         } catch (FileNotFoundException e) {
             log.warn("Can't load settings from {} - file not found. Creating new default settings...",
