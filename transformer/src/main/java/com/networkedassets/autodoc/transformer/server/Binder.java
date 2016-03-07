@@ -16,6 +16,7 @@ import com.networkedassets.autodoc.transformer.util.PasswordStoreService;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
 
+import com.networkedassets.autodoc.transformer.util.SettingsPersistor;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -48,8 +49,9 @@ public class Binder extends AbstractBinder {
 		SettingsEncryptor settingsEncryptor = new SettingsEncryptor(
 				passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
 				passwordService.getProperty(PasswordStoreService.PropertyType.SALT));
+		SettingsPersistor settingsPersistor = new SettingsPersistor(settingsEncryptor);
 
-		SettingsManager settingsManager = new SettingsManager(scheduler, settingsEncryptor);
+		SettingsManager settingsManager = new SettingsManager(scheduler, settingsPersistor);
 		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
 		GitCodeProvider codeProvider = new GitCodeProvider();
 		DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
