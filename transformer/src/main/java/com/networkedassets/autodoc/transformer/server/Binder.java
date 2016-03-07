@@ -9,6 +9,7 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.JsonSettingsPersistor;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.SerializingSettingsPersistor;
 import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ObjectsEncryptor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
@@ -49,7 +50,7 @@ public class Binder extends AbstractBinder {
 		ObjectsEncryptor objectsEncryptor = new ObjectsEncryptor(
 				passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
 				passwordService.getProperty(PasswordStoreService.PropertyType.SALT));
-		SettingsPersistor settingsPersistor = new SerializingSettingsPersistor(objectsEncryptor);
+		SettingsPersistor settingsPersistor = new JsonSettingsPersistor(objectsEncryptor);
 
 		SettingsManager settingsManager = new SettingsManager(scheduler, settingsPersistor);
 		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
