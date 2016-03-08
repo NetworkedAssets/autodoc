@@ -1,4 +1,6 @@
-
+#doc_structureGraph.loading {
+    visibility: hidden;
+}
 
 #doc_structureGraph .node circle {
     cursor: pointer;

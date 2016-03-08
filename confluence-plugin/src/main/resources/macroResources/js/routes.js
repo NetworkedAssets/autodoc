@@ -28,7 +28,6 @@ angular.module('DoC').config(function($stateProvider, $urlRouterProvider) {
         })
         .state('structureGraph', {
             url: "/structureGraph",
-            displayName: "Structure Graph",
             template: '' +
             '<div class="aui-message aui-message-error" ng-show="error">' +
             '   <p class="title">' +
@@ -36,7 +35,9 @@ angular.module('DoC').config(function($stateProvider, $urlRouterProvider) {
             '   </p>' +
             '   <p>Try reloading the page.</p>' +
             '</div>' +
-            '<div id="doc_structureGraph" ng-hide="error"></div>',
+            '<div id="doc_structureGraphProgressbar" class="aui-progress-indicator" ng-show="loading"><span class="aui-progress-indicator-value"></span></div>'+
+            '<div id="doc_structureGraph" ng-class="{\'loading\': loading}" ng-hide="error"></div>',
+            displayName: "Structure Graph",
             controller: 'StructureGraphCtrl'
         });
 
