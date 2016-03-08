@@ -1,5 +1,6 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
@@ -9,35 +10,26 @@ import java.io.Serializable;
  * Contains settings for transformer configurable from json API (e.g. from
  * Confluence)
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TransformerSettings implements Serializable {
-
 	private static final long serialVersionUID = 2478995810617471316L;
-	// TODO: 19.11.2015 Remove default values and require user to enter them on
-	// first run in frontend
-	private int transformerPort = 8050;
-	private String localhostAddress = "https://localhost:" + transformerPort + "/event";
+	private String address;
 
-	@JsonProperty("transformerPort")
-	public int getTransformerPort() {
-		return transformerPort;
+	@JsonProperty("address")
+	public String getAddress() {
+		return address;
 	}
 
-	public void setTransformerPort(int transformerPort) {
-		this.transformerPort = transformerPort;
+	public void setAddress(String address, int port) {
+		this.address = cutAllSlashes(address) + ":" + port + "/event";
 	}
 
-	@JsonProperty("localhostAddress")
-	public String getLocalhostAddress() {
-		return localhostAddress;
-	}
-
-	public void setLocalhostAddress(String localhostAddress) {
-		this.localhostAddress = localhostAddress;
+	private String cutAllSlashes(String url) {
+		return (url.endsWith("/") || url.endsWith("\\")) ? cutAllSlashes(url.substring(0, url.length() - 1)) : url;
 	}
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("transformerPort", transformerPort)
-				.add("localhostAddress", localhostAddress).toString();
+		return MoreObjects.toStringHelper(this).add("address", address).toString();
 	}
 }

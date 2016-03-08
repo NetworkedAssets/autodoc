@@ -1,0 +1,115 @@
+[doc-class-diagram] {
+    width: 100%;
+    position: relative;
+    cursor: move;
+}
+
+[doc-class-diagram] .loadingSpinner {
+    width: 100%;
+    height: 200px;
+}
+
+[doc-class-diagram] .controls {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-family: sans-serif;
+}
+
+[doc-class-diagram] .controls span {
+    border-radius: 0.5em;
+    display: inline-block;
+    padding: 0.3em;
+    margin: 0.5em;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    cursor: pointer;
+}
+
+[doc-class-diagram] .link-tools .tool-remove,
+[doc-class-diagram] .link-tools .tool-options,
+[doc-class-diagram] .link .marker-arrowheads,
+[doc-class-diagram] .link .connection-wrap {
+    display: none;
+}
+
+[doc-class-diagram] svg {
+    width: 100%;
+    height: 100%;
+}
+
+.node rect,
+.node polygon {
+    color: #494948;
+    /*stroke: #c6d92d;*/
+    stroke-width: 1px;
+}
+
+.node {
+    cursor: pointer;
+}
+
+.node rect.fields {
+    fill: #edf1b3;
+}
+
+.node rect.outer {
+    fill: #e1ea9b;
+}
+
+.edgePath path {
+    stroke: #333;
+    fill: #333;
+    stroke-width: 1.5px;
+}
+
+[doc-class-diagram] svg {
+    min-height: 400px;
+}
+
+[doc-class-diagram] rect.head {
+    fill: #c8da2f;
+    color: #f00;
+    stroke-width: 0;
+}
+
+[doc-class-diagram] text.head {
+    font-weight: bold;
+}
+
+[doc-class-diagram] .abstract {
+    font-style: italic;
+}
+
+[doc-class-diagram] .static {
+    text-decoration: underline;
+}
+
+[doc-class-diagram] g.edgePath path.path {
+    stroke: #999;
+    stroke-width: 3px;
+}
+
+[doc-class-diagram] g.edgePath:hover path.path, [doc-class-diagram] g.edgePath:hover marker polygon {
+    stroke: #06c;
+    stroke-width: 3px;
+}
+
+[doc-class-diagram] svg marker polygon {
+    fill: #fff;
+    stroke: #999;
+    stroke-width: 2;
+    stroke-dasharray: 1, 0;
+}
+
+[doc-class-diagram] svg .edgePath.aggregation marker polygon {
+    fill: #fff;
+}
+
+[doc-class-diagram] svg .edgePath.composition marker polygon {
+    fill: #999;
+}
+
+[doc-class-diagram] svg .edgePath.realization path.path, [doc-class-diagram] svg .edgePath.dependency path.path {
+    stroke-dasharray: 10, 5;
+}

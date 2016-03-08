@@ -1,0 +1,39 @@
+<div class="javadoc">
+    <div class="row">
+        <aside class="doc_tree">
+            <h2>Structure</h2>
+            <div class="loadingSpinner" ng-show="vm.loading"></div>
+
+            <!--<pre>{{vm.items | json}}</pre>-->
+            <form class="aui" ng-hide="vm.loading">
+                <input type="text" ng-model="vm.tree.q" class="text" placeholder="Filter...">
+            </form>
+            <div class="aui-message aui-message-error" ng-show="vm.error">
+                <p class="title">
+                    <strong>An error occurred</strong>
+                </p>
+                <p>Try reloading the page.</p>
+            </div>
+            <div class="doc_tree" treecontrol
+                 tree-model="vm.items"
+                 options="vm.tree.options"
+                 on-selection="vm.tree.onSelection(node)"
+                 selected-node="vm.tree.selectedNode"
+                 filter-expression="vm.tree.q"
+                 expanded-nodes="vm.tree.expandedNodes">
+                <span class="entityType entityType{{node.type|capitalize}}">{{node.type[0]}}</span><!--
+                --><span class="name" doc-qname="node.name" no-tooltip></span>
+            </div>
+        </aside>
+        <div class="javadoc_container">
+            <div ng-hide="$state.includes('javadoc.entity')" id="doc_javadoc_noEntitySelected">
+                <img ng-src="{{vm.resourcesUrl}}/images/logo.png" alt="DoC - Documentation from Code">
+                <form class="aui">
+                    <span class="aui-icon aui-icon-large aui-iconfont-search">Search</span>
+                    <input class="form-control" placeholder="Quick search...">
+                </form>
+            </div>
+            <div ng-show="$state.includes('javadoc.entity')" id="doc_javadoc_main" ui-view></div>
+        </div>
+    </div>
+</div>

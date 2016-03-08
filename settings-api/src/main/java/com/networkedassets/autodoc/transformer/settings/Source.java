@@ -1,10 +1,15 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import com.fasterxml.jackson.annotation.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Represents code source like Stash, Bitbucket, Github and so on
@@ -25,29 +30,40 @@ import java.util.Map;
         "projects"
 })
 public class Source implements Serializable {
-    
-	private static final long serialVersionUID = -6404862914170481264L;
 
-	@JsonIgnore
-    public static int totalId = 1;
+    private static final long serialVersionUID = -6404862914170481264L;
 
+    @JsonView(Views.GetSourcesView.class)
     private int id;
+    @JsonView(Views.GetSourcesView.class)
     private String name;
+    @JsonView(Views.GetSourcesView.class)
     private String url;
+    @JsonView(Views.GetSourcesView.class)
     private SourceType sourceType;
+    @JsonView(Views.GetSourcesView.class)
     private String username;
+    @JsonView(Views.AddSourcePasswordView.class)
     private String password;
+    @JsonView(Views.GetSourcesView.class)
+    private String appLinksId;
+    @JsonView(Views.SourceCorrectView.class)
     private boolean sourceExists;
+    @JsonView(Views.SourceCorrectView.class)
     private boolean credentialsCorrect;
+    @JsonView(Views.SourceCorrectView.class)
     private boolean nameCorrect;
+    @JsonView(Views.SourceCorrectView.class)
     private boolean sourceTypeCorrect;
-    public Map<String, Project> projects = new HashMap<>();
+    @JsonView(Views.GetExpandedSourcesView.class)
+    private Map<String, Project> projects = new HashMap<>();
+
 
     public Source() {
     }
 
     public void addProject(Project p) {
-        projects.put(p.key, p);
+        projects.put(p.getKey(), p);
     }
 
     public boolean isSourceExists() {
@@ -78,6 +94,14 @@ public class Source implements Serializable {
         this.name = name;
     }
 
+    public String getAppLinksId() {
+        return appLinksId;
+    }
+
+    public void setAppLinksId(String appLinksId) {
+        this.appLinksId = appLinksId;
+    }
+
     public String getUrl() {
         return url;
     }
@@ -102,18 +126,6 @@ public class Source implements Serializable {
         return password;
     }
 
-    /**
-     * For jackson serialization. We don't want to share password on every
-     * request so we only return null on REST request
-     *
-     * @return null
-     */
-    @JsonGetter("password")
-    public String getNullPassword() {
-        return null;
-    }
-
-    @JsonSetter("password")
     public void setPassword(String password) {
         this.password = password;
     }
@@ -127,20 +139,20 @@ public class Source implements Serializable {
     }
 
     public void setId(int id) {
-        this.id=id;
+        this.id = id;
     }
-    
-    
+
+
     public int getId() {
         return id;
     }
 
-   
+
     public boolean isNameCorrect() {
         return nameCorrect;
     }
 
-    
+
     public void setNameCorrect(boolean nameCorrect) {
         this.nameCorrect = nameCorrect;
     }
@@ -153,6 +165,7 @@ public class Source implements Serializable {
         this.sourceTypeCorrect = sourceTypeCorrect;
     }
 
+    @JsonView(Views.GetSourcesView.class)
     public boolean isCorrect() {
         return isSourceExists()
                 && isCredentialsCorrect()
@@ -160,10 +173,19 @@ public class Source implements Serializable {
                 && isSourceTypeCorrect();
     }
 
-    public static enum SourceType implements Serializable {
-        STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"), BITBUCKET(
-                "com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+    public Map<String, Project> getProjects() {
+        return projects;
+    }
 
+    public void setProjects(Map<String, Project> projects) {
+        this.projects = projects;
+    }
+
+    public static enum SourceType implements Serializable {
+        STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"),
+        BITBUCKET("com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+
+        @JsonView(Views.InternalView.class)
         private String hookKey;
 
         SourceType(String hookKey) {

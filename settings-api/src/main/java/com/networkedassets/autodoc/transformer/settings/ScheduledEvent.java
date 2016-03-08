@@ -1,106 +1,115 @@
 package com.networkedassets.autodoc.transformer.settings;
 
-import org.quartz.CronScheduleBuilder;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
 
-import static org.quartz.CronScheduleBuilder.cronSchedule;
 
 /**
  * Class representing a scheduled event - an event fired at particular times
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ScheduledEvent implements Serializable {
 
-	private static final long serialVersionUID = -1213178165118904796L;
+    private static final long serialVersionUID = -1213178165118904797L;
+    private boolean periodic;
+    private PeriodType periodType;
+    private int number;
+    private HashMap<String, Object> weekdays;
+    private String time;
 
-	private boolean periodic;
-	private PeriodType periodType;
-	private int number;
-	private HashMap<String, Boolean> weekdays;
-	private Date oneTimeDate;
-	private String time;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+    private Calendar oneTimeDate;
 
-	public void setPeriodic(boolean periodic) {
-		this.periodic = periodic;
-	}
+    public ScheduledEvent() {
+    }
 
-	public void setPeriodType(String periodType) {
-		this.periodType = PeriodType.valueOf(periodType);
-	}
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
-	public void setNumber(int number) {
-		this.number = number;
-	}
+    public boolean isPeriodic() {
+        return periodic;
+    }
 
-	public void setWeekdays(HashMap<String,Boolean> weekdays) {
-		this.weekdays = weekdays;
-	}
+    public void setPeriodic(boolean periodic) {
+        this.periodic = periodic;
+    }
 
-	public void setOneTimeDate(Date oneTimeDate) {
-		this.oneTimeDate = oneTimeDate;
-	}
+    public PeriodType getPeriodType() {
+        return periodType;
+    }
 
-	public void setTime(String time) {
-		this.time = time;
-	}
+    public void setPeriodType(PeriodType periodType) {
+        this.periodType = periodType;
+    }
 
-	public enum PeriodType {
-		DAY ("day"), WEEK("week");
+    public int getNumber() {
+        return number;
+    }
 
-		private final String type;
-		PeriodType(String type){
-			this.type = type;
-		}
-	}
+    public void setNumber(int number) {
+        this.number = number;
+    }
 
-	public ScheduledEvent() {
-	}
+    public HashMap<String, Object> getWeekdays() {
+        return weekdays;
+    }
 
-	public ScheduledEvent(boolean periodic, String periodType, int number,
-						  HashMap<String, Boolean> weekdays, Date oneTimeDate, String time) {
-		setPeriodic(periodic);
-		setPeriodType(periodType);
-		setNumber(number);
-		setWeekdays(weekdays);
-		setOneTimeDate(oneTimeDate);
-		setTime(time);
-	}
+    public void setWeekdays(HashMap<String, Object> weekdays) {
+        this.weekdays = weekdays;
+    }
 
-	public CronScheduleBuilder getCronSchedule(){
-		String[] splitTime = time.split(":");
-		String h = splitTime[0];
-		String min = splitTime[1];
+    public Calendar getOneTimeDate() {
+        return oneTimeDate;
+    }
 
-		return cronSchedule("0 "+min+" "+h+" " + getCronDays());
-	}
+    public void setOneTimeDate(Calendar oneTimeDate) {
+        this.oneTimeDate = oneTimeDate;
+    }
 
-	private String getCronDays() {
-		String date;
-		if(periodic) {
-			if(periodType == PeriodType.WEEK) {
-				String days = "";
-				// Get a set of the entries
-				Set set = weekdays.entrySet();
-				// Get an iterator
-				Iterator i = set.iterator();
-				// Display elements
-				while (i.hasNext()) {
-					Map.Entry me = (Map.Entry) i.next();
-					if ((Boolean) me.getValue())
-						days += ((String) me.getKey()).toUpperCase() + ",";
-				}
-				if (days.isEmpty())
-					days = "*";
-				else
-					days = days.substring(0, days.length() - 1);
+    public String getTime() {
+        return time;
+    }
 
-				date = "* * "+days+" *";
-			} else
-				date = "*/" + number + " * *";
-		}
-		else
-			date = oneTimeDate.getDay()+ " " + oneTimeDate.getMonth() + " * " + oneTimeDate.getYear();
-		return date;
-	}
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    @JsonIgnore
+    public int getDay(){
+        return oneTimeDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    //Calendar returns month counted from 0
+    @JsonIgnore
+    public int getMonth(){
+        return oneTimeDate.get(Calendar.MONTH) + 1;
+    }
+
+    @JsonIgnore
+    public int getYear(){
+        return oneTimeDate.get(Calendar.YEAR);
+    }
+
+    public enum PeriodType {
+        DAY, WEEK
+    }
+
+    @Override
+    public String toString() {
+        return "ScheduledEvent{" +
+                "periodic=" + periodic +
+                ", periodType=" + periodType +
+                ", number=" + number +
+                ", weekdays=" + weekdays +
+                ", oneTimeDate=" + oneTimeDate.getTime() +
+                ", time='" + time + '\'' +
+                '}';
+    }
 }

@@ -1,18 +1,22 @@
 package com.networkedassets.autodoc.transformer.settings;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing a repo in a stash project
+ * Class representing a repo in a Stash  or Bitbucket project
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Repo implements Serializable {
 
 	private static final long serialVersionUID = -8959782122446629856L;
-	public String name = "!!NO_NAME!!";
-	public String slug = "!!NO_NAME!!";
-	public Map<String, Branch> branches;
+	private String name;
+	private String slug;
+	private Map<String, Branch> branches;
 
 	public Repo() {
 		branches = new HashMap<>();
@@ -29,6 +33,33 @@ public class Repo implements Serializable {
 		this.branches = new HashMap<>(otherRepo.branches);
 	}
 
+	
+	
+	public String getSlug() {
+		return slug;
+	}
+
+	public void setSlug(String slug) {
+		this.slug = slug;
+	}
+	
+	public Map<String, Branch> getBranches() {
+		return branches;
+	}
+
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public void setBranches(Map<String, Branch> branches) {
+		this.branches = branches;
+	}
+	
 	public Branch getBranchById(String id) {
 		return branches.get(id);
 	}

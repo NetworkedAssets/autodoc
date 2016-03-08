@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import sun.security.tools.keytool.CertAndKeyGen;
 import sun.security.x509.X500Name;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,8 +29,9 @@ public class Transformer {
 	private static Server jettyServer;
 
 	public static void main(String[] args) throws Exception {
+		checkFilePermissions();
 
-		jettyServer = getServer(Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port", "8050")));
+		jettyServer = getServer(Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port")));
 		try {
 			jettyServer.start();
 			jettyServer.join();
@@ -38,11 +40,25 @@ public class Transformer {
 		}
 	}
 
+	/*
+	 * Checks if user that runs transformer.jar has permissions
+	 * to create and read from configuration files that will be created at runtime
+	 */
+	private static void checkFilePermissions() throws IOException {
+		File file = File.createTempFile("prefix", "suffix", new File("./"));
+		try {
+			if (!file.canRead()) {
+				throw new IOException("You have no read permission, therefore application will not be run..");
+			}
+		} finally {
+			file.delete();
+		}
+	}
+
 	public static Server getServer(int port) {
 		if (jettyServer != null) {
 			return jettyServer;
 		} else {
-
 			Server newJettyServer = new Server();
 			configureSsl(newJettyServer, port);
 
@@ -102,14 +118,14 @@ public class Transformer {
 			NoSuchAlgorithmException, IOException, NoSuchProviderException, InvalidKeyException, SignatureException {
 
 		final int keysize = 1024;
-		final String commonName = "dupa";
-		final String organizationalUnit = "DUPA";
-		final String organization = "dupa";
-		final String city = "dupa";
-		final String state = "dupa";
-		final String country = "DU";
+		final String commonName = "NetworkedAssets Documantation Transformer";
+		final String organizationalUnit = "NetworkedAssets Wroclaw";
+		final String organization = "NetworkedAssets";
+		final String city = "Wroclaw";
+		final String state = "Dolnoslaskie";
+		final String country = "PL";
 		final long validity = 1096; // 3 years
-		final String alias = "dupa";
+		final String alias = "networkedassets";
 		final char[] keyPass = KEY_STORE_PASSWORD.toCharArray();
 
 		KeyStore keyStore = KeyStore.getInstance("JKS");

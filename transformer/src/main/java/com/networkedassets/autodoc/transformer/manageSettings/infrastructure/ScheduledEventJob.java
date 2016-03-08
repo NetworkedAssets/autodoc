@@ -1,43 +1,59 @@
 package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
-import com.networkedassets.autodoc.transformer.handleRepoPush.core.DefaultDocumentationGeneratorFactory;
-import com.networkedassets.autodoc.transformer.handleRepoPush.core.DocumentationFromCodeGenerator;
-import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.ConfluenceDocumentationSender;
-import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.GitCodeProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
-import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
+import com.networkedassets.autodoc.transformer.server.Application;
+import com.networkedassets.autodoc.transformer.settings.Branch;
+import org.quartz.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
+import java.util.Objects;
 
-/**
- * Created by mgilewicz on 2016-01-14.
- */
+@PersistJobDataAfterExecution
+@DisallowConcurrentExecution
 public class ScheduledEventJob implements Job {
+    private static Logger log = LoggerFactory.getLogger(ScheduledEventJob.class);
+
     private String sourceUrl;
     private String projectKey;
     private String repoSlug;
     private String branchId;
+    private String latestCommit;
+    private PushEventProcessor pushEventProcessor;
+    private SettingsProvider settingsProvider;
 
-    private PushEventProcessor eventProcessor;
-
-    @Inject
-    public ScheduledEventJob(PushEventProcessor eventProcessor) {
-        this.eventProcessor = eventProcessor;
+    public ScheduledEventJob() {
+        pushEventProcessor = Objects.requireNonNull(Application.getService(PushEventProcessor.class));
+        settingsProvider = Objects.requireNonNull(Application.getService(SettingsProvider.class));
     }
+
     public void execute(JobExecutionContext context)
             throws JobExecutionException
     {
-        PushEvent event = new PushEvent();
-        event.setBranchId(branchId);
-        event.setProjectKey(projectKey);
-        event.setRepositorySlug(repoSlug);
-        event.setSourceUrl(sourceUrl);
+        boolean firstRun = context.getPreviousFireTime() == null;
 
-        eventProcessor.processEvent(event);
+        Branch branch = settingsProvider.getCurrentSettings()
+                .getSourceByUrl(sourceUrl).getProjectByKey(projectKey)
+                .getRepoBySlug(repoSlug).getBranchById(branchId);
+
+        String latestCommit = branch.getLatestCommit();
+
+        if(firstRun || !latestCommit.equals(this.latestCommit)) {
+            context.getJobDetail().getJobDataMap().put("latestCommit", latestCommit);
+
+            PushEvent event = new PushEvent();
+            event.setBranchId(branchId);
+            event.setProjectKey(projectKey);
+            event.setRepositorySlug(repoSlug);
+            event.setSourceUrl(sourceUrl);
+
+            log.debug("Starting to process {}", this);
+            pushEventProcessor.processEvent(event);
+        } else{
+            log.debug("Aborted processing {}. Nothing changed on the branch since last schedule time.", this);
+        }
     }
 
     public void setSourceUrl(String sourceUrl) {
@@ -54,5 +70,13 @@ public class ScheduledEventJob implements Job {
 
     public void setBranchId(String branchId) {
         this.branchId = branchId;
+    }
+
+    public void setLatestCommit(String latestCommit) { this.latestCommit = latestCommit; }
+
+    @Override
+    public String toString(){
+        return "Scheduled event job for: " +
+            sourceUrl + "/" + projectKey + "/" + repoSlug + "/" + branchId;
     }
 }

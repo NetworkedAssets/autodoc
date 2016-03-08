@@ -3,21 +3,23 @@ package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
-import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.*;
+import com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Repository;
 import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
-import com.networkedassets.autodoc.transformer.settings.*;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Project;
+import com.networkedassets.autodoc.transformer.settings.Repo;
+import com.networkedassets.autodoc.transformer.settings.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Pulls projects info from stash and translates it to SettingsAPI format
  */
-@SuppressWarnings("Duplicates")
 public class AtlassianProjectsProvider implements ProjectsProvider {
 
     private static Logger log = LoggerFactory.getLogger(AtlassianProjectsProvider.class);
@@ -28,57 +30,52 @@ public class AtlassianProjectsProvider implements ProjectsProvider {
 
     public AtlassianProjectsProvider(Source source) throws MalformedURLException {
         this.source = source;
-        stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
+        stashBitbucketClient = ClientFactory.getConfiguredStashBitbucketClient(source);
     }
 
     @Override
     public Map<String, Project> getProjects() {
-        getDataFromStash();
+        fetchDataFromStash();
         return projects;
     }
 
-    private void getDataFromStash() {
 
-        List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Project> sourceProjects
-                = new ArrayList<>();
-
-        //get all projects
+    private void fetchDataFromStash() {
         try {
-            sourceProjects = stashBitbucketClient.getProjects();
-            log.debug("REST projects retrieved from {}", this.source.getUrl());
+            fetchProjects();
+            fetchRepos();
+            fetchBranches();
         } catch (UnirestException e) {
-            e.printStackTrace();
+            log.error("Exception: ", e);
         }
-        sourceProjects.stream().forEach(sourceProject -> {
-            projects.put(sourceProject.getKey(), new Project(sourceProject.getName(), sourceProject.getKey()));
-        });
+    }
 
-        //get repos for projects
-        projects.values().stream().forEach(project -> {
-            try {
-                List<Repository> sourceRepositories = stashBitbucketClient.getRepositoriesForProject(project.key);
-                sourceRepositories.stream().forEach(sourceRepository -> {
-                    project.repos.put(sourceRepository.getSlug(), new Repo(sourceRepository.getName(), sourceRepository.getSlug()));
-                });
-            } catch (UnirestException e) {
-                e.printStackTrace();
+    private void fetchBranches() throws UnirestException {
+        for (Project project : projects.values()) {
+            for (Repo repo : project.getRepos().values()) {
+                stashBitbucketClient.getBranchesforRepository(project.getKey(), repo.getSlug())
+                        .forEach(sourceBranch ->
+                                repo.getBranches().put(
+                                        sourceBranch.getId(),
+                                        new Branch(sourceBranch.getDisplayId(), sourceBranch.getId(), sourceBranch.getLatestCommit())
+                                )
+                        );
             }
-        });
+        }
+    }
 
-        //get branches for repos
-        projects.values().stream().forEach(project -> {
-            project.repos.values().forEach(repo -> {
-                try {
-                    List<com.networkedassets.autodoc.clients.atlassian.atlassianProjectsData.Branch> sourceBranches
-                            = stashBitbucketClient.getBranchesforRepository(project.key, repo.slug);
-                    sourceBranches.forEach(sourceBranch -> {
-                        project.repos.get(repo.slug).branches.put(sourceBranch.getId(),
-                                new Branch(sourceBranch.getDisplayId(), sourceBranch.getId()));
-                    });
-                } catch (UnirestException e) {
-                    e.printStackTrace();
-                }
-            });
-        });
+    private void fetchRepos() throws UnirestException {
+        for (Project project : projects.values()) {
+            List<Repository> sourceRepositories = stashBitbucketClient.getRepositoriesForProject(project.getKey());
+            for (Repository sourceRepository : sourceRepositories) {
+                project.getRepos().put(sourceRepository.getSlug(), new Repo(sourceRepository.getName(), sourceRepository.getSlug()));
+            }
+        }
+    }
+
+    private void fetchProjects() throws UnirestException {
+        stashBitbucketClient.getProjects().forEach(sourceProject ->
+                projects.put(sourceProject.getKey(), new Project(sourceProject.getName(), sourceProject.getKey())));
+        log.debug("REST projects retrieved from {}", this.source.getUrl());
     }
 }

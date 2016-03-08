@@ -1,0 +1,4377 @@
+{
+  "entities": {
+    "com.networkedassets.autodoc.transformer.settings": {
+      "qualified": "com.networkedassets.autodoc.transformer.settings",
+      "com.networkedassets.autodoc.transformer.settings.SettingsForSpace": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace",
+        "method": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.getProjects",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getProjects",
+            "final": false,
+            "comment": "Do not add projects using <code>getProjects().add(...)<\/code>, use {@link SettingsForSpace#addProject(Project)}.\n However, you can remove elements",
+            "included": true,
+            "return": {
+              "qualified": "java.util.Collection",
+              "generic": [
+                {
+                  "qualified": "com.networkedassets.autodoc.transformer.settings.Project"
+                }
+              ]
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.setProjects",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.util.List<com.networkedassets.autodoc.transformer.settings.Project>)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "projects",
+                "type": {
+                  "qualified": "java.util.List",
+                  "generic": [
+                    {
+                      "qualified": "com.networkedassets.autodoc.transformer.settings.Project"
+                    }
+                  ]
+                }
+              }
+            ],
+            "name": "setProjects",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.addProject",
+            "synchronized": false,
+            "static": false,
+            "signature": "(com.networkedassets.autodoc.transformer.settings.Project)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "p",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.settings.Project"
+                }
+              }
+            ],
+            "name": "addProject",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.getProjectByKey",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "key",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "getProjectByKey",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.settings.Project"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.getSpaceKey",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getSpaceKey",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.setSpaceKey",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "spaceKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "setSpaceKey",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.getConfluenceUrl",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getConfluenceUrl",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.setConfluenceUrl",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "confluenceUrl",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "setConfluenceUrl",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.getConfluenceSpace",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getConfluenceSpace",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.setConfluenceSpace",
+            "synchronized": false,
+            "static": false,
+            "signature": "(com.networkedassets.autodoc.transformer.settings.ConfluenceSpace)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "confluenceSpace",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace"
+                }
+              }
+            ],
+            "name": "setConfluenceSpace",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "native": false,
+            "scope": "public",
+            "modifier": [
+              "public"
+            ],
+            "name": "SettingsForSpace",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "interface": [
+          {
+            "qualified": "java.io.Serializable"
+          }
+        ],
+        "serializable": true,
+        "externalizable": false,
+        "field": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.projects",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "projects",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.util.Map",
+              "generic": [
+                {
+                  "qualified": "java.lang.String"
+                },
+                {
+                  "qualified": "com.networkedassets.autodoc.transformer.settings.Project"
+                }
+              ]
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace.confluenceSpace",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "confluenceSpace",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "SettingsForSpace",
+        "comment": "Contains settings for one space",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      },
+      "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace",
+        "method": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace.getSpaceKey",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getSpaceKey",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace.setSpaceKey",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "spaceKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "setSpaceKey",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace.getConfluenceUrl",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getConfluenceUrl",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace.setConfluenceUrl",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "confluenceUrl",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "setConfluenceUrl",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "java.lang.Override",
+                "name": "Override"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace.equals",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.Object)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "o",
+                "type": {
+                  "qualified": "java.lang.Object"
+                }
+              }
+            ],
+            "name": "equals",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "boolean"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "java.lang.Override",
+                "name": "Override"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace.hashCode",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "hashCode",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "int"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "native": false,
+            "scope": "public",
+            "modifier": [
+              "public"
+            ],
+            "name": "ConfluenceSpace",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "interface": [
+          {
+            "qualified": "java.io.Serializable"
+          }
+        ],
+        "serializable": true,
+        "externalizable": false,
+        "field": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace.spaceKey",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "spaceKey",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace.confluenceUrl",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "confluenceUrl",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "ConfluenceSpace",
+        "comment": "Represents a confluence space",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      },
+      "type": "package"
+    },
+    "com.networkedassets.autodoc.configureGui": {
+      "qualified": "com.networkedassets.autodoc.configureGui",
+      "type": "package",
+      "com.networkedassets.autodoc.configureGui.SimplePage.Nesst": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.configureGui.SimplePage.Nest",
+        "method": [
+          {
+            "qualified": "com.networkedassets.autodoc.configureGui.SimplePage.Nest.getTitle",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getTitle",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.configureGui.SimplePage.Nest.getId",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getId",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.configureGui.SimplePage.Nesst",
+            "synchronized": false,
+            "static": false,
+            "signature": "(Page)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "page",
+                "type": {
+                  "qualified": "Page"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "SimplePage.Nesst",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "serializable": false,
+        "externalizable": false,
+        "field": [
+          {
+            "qualified": "com.networkedassets.autodoc.configureGui.SimplePage.title",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final"
+            ],
+            "name": "title",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.configureGui.SimplePage.id",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final"
+            ],
+            "name": "id",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "SimplePage.Nest",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      }
+    },
+    "com.networkedassets.autodoc.transformer.clients.atlassian.api": {
+      "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api",
+      "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient",
+        "method": [
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.createPage",
+            "synchronized": false,
+            "static": false,
+            "signature": "(com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "page",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+                }
+              }
+            ],
+            "name": "createPage",
+            "final": false,
+            "comment": "Creates a new page",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "page description of a page to be created"
+              },
+              {
+                "name": "@return",
+                "text": "a {@link ConfluencePage} object filled with details"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.createPage",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "title",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "spaceKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "contents",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nullable",
+                    "name": "Nullable"
+                  }
+                ],
+                "name": "parentId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "createPage",
+            "final": false,
+            "comment": "Creates a new page",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "title    the title of the page to be posted"
+              },
+              {
+                "name": "@param",
+                "text": "spaceKey the key of the space the page is going to be posted in"
+              },
+              {
+                "name": "@param",
+                "text": "contents contents of the new page"
+              },
+              {
+                "name": "@param",
+                "text": "parentId id of the parent page of the new page; may be null"
+              },
+              {
+                "name": "@return",
+                "text": "a page object filled with page details"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.createJavadocPage",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "spaceKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "repoSlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "branchId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "fullClassName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "contents",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nullable",
+                    "name": "Nullable"
+                  }
+                ],
+                "name": "javadocRootParentId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "createJavadocPage",
+            "final": false,
+            "comment": "Creates javadoc page for a given project/repo/branch in a given space",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "spaceKey            space to create the page in"
+              },
+              {
+                "name": "@param",
+                "text": "projectKey          project's key"
+              },
+              {
+                "name": "@param",
+                "text": "repoSlug            repo's slug"
+              },
+              {
+                "name": "@param",
+                "text": "branchId            branch's id"
+              },
+              {
+                "name": "@param",
+                "text": "fullClassName       full name of the javadoced class (including package)"
+              },
+              {
+                "name": "@param",
+                "text": "contents            javadoc content in Confluence Storage Format"
+              },
+              {
+                "name": "@param",
+                "text": "javadocRootParentId id of the parent of the javadoc root page, may be null"
+              },
+              {
+                "name": "@return",
+                "text": "a representation of the created class"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.putLabel",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "pageId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "labelName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "putLabel",
+            "final": false,
+            "comment": "Puts a label on a page with given id",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "pageId    id of the page that is supposed to be given a label"
+              },
+              {
+                "name": "@param",
+                "text": "labelName label name"
+              },
+              {
+                "name": "@return",
+                "text": "weather the label was put successfully"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "boolean"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.getJavadocPageName",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "repoSlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "branchId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "fullClassName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "getJavadocPageName",
+            "final": false,
+            "comment": "Gets a name for a javadoc page for a given project/repo/branch",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "projectKey    project's key"
+              },
+              {
+                "name": "@param",
+                "text": "repoSlug      repo's slug"
+              },
+              {
+                "name": "@param",
+                "text": "branchId      branch's id"
+              },
+              {
+                "name": "@param",
+                "text": "fullClassName full name of the javadoced class (including package)"
+              },
+              {
+                "name": "@return",
+                "text": "the name of javadoc page"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.getJavadocRootId",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "spaceKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "repoSlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "branchId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nullable",
+                    "name": "Nullable"
+                  }
+                ],
+                "name": "javadocRootParentId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "getJavadocRootId",
+            "final": false,
+            "comment": "Gets the id a javadoc root page for given project/repo/branch in the given space. Creates the page if necessary.",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "spaceKey            space's key"
+              },
+              {
+                "name": "@param",
+                "text": "projectKey          project's key"
+              },
+              {
+                "name": "@param",
+                "text": "repoSlug            repo's slug"
+              },
+              {
+                "name": "@param",
+                "text": "branchId            branch's id"
+              },
+              {
+                "name": "@param",
+                "text": "javadocRootParentId id of the parent of the javadoc root page, may be null;\n                            there is no checking that the existing page is a child of this page"
+              },
+              {
+                "name": "@return",
+                "text": "id of the javadoc root page"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.findPage",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "spaceKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "pageTitle",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "findPage",
+            "final": false,
+            "comment": "Finds a Confluence page with given title, located in given space",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "spaceKey  space to search in"
+              },
+              {
+                "name": "@param",
+                "text": "pageTitle page title to search for"
+              },
+              {
+                "name": "@return",
+                "text": "a representation of a found confluence page on {@link Optional#empty()}"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.util.Optional",
+              "generic": [
+                {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+                }
+              ]
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.removeJavadocPages",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "spaceKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "repoSlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "branchId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "removeJavadocPages",
+            "final": false,
+            "comment": "Removes all javadoc pages related to a given project/repo/branch in a given space",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "spaceKey   key of the space containing the pages to be removed"
+              },
+              {
+                "name": "@param",
+                "text": "projectKey key of the stash project related to the pages to be removed"
+              },
+              {
+                "name": "@param",
+                "text": "repoSlug   slug of the repo related to the pages to be removed"
+              },
+              {
+                "name": "@param",
+                "text": "branchId   id of the branch related to the pages to be removed"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.removePage",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "id",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "removePage",
+            "final": false,
+            "comment": "Removes page with given id",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "id id of the page to be removed"
+              },
+              {
+                "name": "@return",
+                "text": "weather the page has been removed"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "boolean"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.removePage",
+            "synchronized": false,
+            "static": false,
+            "signature": "(com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "page",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+                }
+              }
+            ],
+            "name": "removePage",
+            "final": false,
+            "comment": "Removes given page. The page is only required to have an id.",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "page page to remove"
+              },
+              {
+                "name": "@return",
+                "text": "weather the page has been removed"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "boolean"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.getAll",
+            "synchronized": false,
+            "static": false,
+            "signature": "(com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ContentSearchPage)",
+            "modifier": [
+              "private"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "name": "body",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ContentSearchPage"
+                }
+              }
+            ],
+            "name": "getAll",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.util.List",
+              "generic": [
+                {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+                }
+              ]
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.movePage",
+            "synchronized": false,
+            "static": false,
+            "signature": "(com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "page",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "newParentId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "movePage",
+            "final": false,
+            "comment": "Moves the page to a new parent.",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "page the page to move; has to have title, id, and version set"
+              },
+              {
+                "name": "@param",
+                "text": "newParentId id of the new parent of <code>page<\/code>"
+              },
+              {
+                "name": "@return",
+                "text": "a representation of the moved page"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              },
+              {
+                "name": "@throws",
+                "text": "com.google.common.base.VerifyException when the given page could not be moved"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.mashape.unirest.http.exceptions.UnirestException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient.movePage",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "spaceKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "title",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "newParentId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "movePage",
+            "final": false,
+            "comment": "Searches for page and moves it to the new parent",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "spaceKey page's space's key"
+              },
+              {
+                "name": "@param",
+                "text": "title page's title"
+              },
+              {
+                "name": "@param",
+                "text": "newParentId is of the new parent"
+              },
+              {
+                "name": "@return",
+                "text": "a representation of the moved page or {@link Optional#empty()}"
+              },
+              {
+                "name": "@throws",
+                "text": "UnirestException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.util.Optional",
+              "generic": [
+                {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.confluenceData.ConfluencePage"
+                }
+              ]
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient",
+            "synchronized": false,
+            "static": false,
+            "signature": "(com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "config",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "ConfluenceClient",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "serializable": false,
+        "externalizable": false,
+        "scope": "public",
+        "name": "ConfluenceClient",
+        "included": true,
+        "class": {
+          "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClient"
+        }
+      },
+      "type": "package"
+    },
+    "com.networkedassets.autodoc.transformer.clients.atlassian": {
+      "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian",
+      "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig",
+        "method": [
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig.getBaseUrl",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getBaseUrl",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.net.URL"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nullable",
+                "name": "Nullable"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig.getUsername",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getUsername",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nullable",
+                "name": "Nullable"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig.getPassword",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getPassword",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.net.URL, java.lang.String, java.lang.String)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "baseUrl",
+                "type": {
+                  "qualified": "java.net.URL"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nullable",
+                    "name": "Nullable"
+                  }
+                ],
+                "name": "username",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nullable",
+                    "name": "Nullable"
+                  }
+                ],
+                "name": "password",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "HttpClientConfig",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "serializable": false,
+        "externalizable": false,
+        "field": [
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig.baseUrl",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final"
+            ],
+            "name": "baseUrl",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.net.URL"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nullable",
+                "name": "Nullable"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig.username",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final"
+            ],
+            "name": "username",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nullable",
+                "name": "Nullable"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig.password",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final"
+            ],
+            "name": "password",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "HttpClientConfig",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      },
+      "type": "package"
+    },
+    "com.networkedassets.autodoc.transformer.clients.git": {
+      "qualified": "com.networkedassets.autodoc.transformer.clients.git",
+      "type": "package",
+      "com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig",
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.net.URL, java.lang.String, java.lang.String)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "baseUrl",
+                "type": {
+                  "qualified": "java.net.URL"
+                }
+              },
+              {
+                "name": "username",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "password",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "SCMClientConfig",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "serializable": false,
+        "externalizable": false,
+        "scope": "public",
+        "name": "SCMClientConfig",
+        "included": true,
+        "class": {
+          "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig"
+        }
+      }
+    },
+    "com.networkedassets.autodoc.transformer.clients.git.api": {
+      "qualified": "com.networkedassets.autodoc.transformer.clients.git.api",
+      "com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM",
+        "method": [
+          {
+            "exception": [
+              {
+                "qualified": "org.eclipse.jgit.api.errors.InvalidRemoteException"
+              },
+              {
+                "qualified": "org.eclipse.jgit.api.errors.TransportException"
+              },
+              {
+                "qualified": "org.eclipse.jgit.api.errors.GitAPIException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM.cloneRepository",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.nio.file.Path, java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "localRepoDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "repositorySlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "branchName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "cloneRepository",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM",
+            "synchronized": false,
+            "static": false,
+            "signature": "(com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "config",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "GitStashSCM",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "interface": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.SCM"
+          }
+        ],
+        "serializable": false,
+        "externalizable": false,
+        "field": [
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM.baseUrl",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final"
+            ],
+            "name": "baseUrl",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.net.URL"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nullable",
+                "name": "Nullable"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM.username",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final"
+            ],
+            "name": "username",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nullable",
+                "name": "Nullable"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM.password",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final"
+            ],
+            "name": "password",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "GitStashSCM",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      },
+      "type": "package",
+      "com.networkedassets.autodoc.transformer.clients.git.api.SCM": {
+        "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.SCM",
+        "method": [
+          {
+            "exception": [
+              {
+                "qualified": "java.lang.Exception"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.SCM.cloneRepository",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.nio.file.Path, java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public",
+              "abstract"
+            ],
+            "abstract": true,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "localRepoDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              },
+              {
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "repositorySlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "branchName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "cloneRepository",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          }
+        ],
+        "scope": "public",
+        "modifier": [
+          "public"
+        ],
+        "name": "SCM",
+        "type": "interface",
+        "included": true
+      }
+    },
+    "com.networkedassets.autodoc.transformer.javadoc": {
+      "qualified": "com.networkedassets.autodoc.transformer.javadoc",
+      "com.networkedassets.autodoc.transformer.javadoc.JavadocException": {
+        "exception": true,
+        "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException",
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "native": false,
+            "scope": "public",
+            "modifier": [
+              "public"
+            ],
+            "name": "JavadocException",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "message",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "JavadocException",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.Throwable)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "message",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "cause",
+                "type": {
+                  "qualified": "java.lang.Throwable"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "JavadocException",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.Throwable)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "cause",
+                "type": {
+                  "qualified": "java.lang.Throwable"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "JavadocException",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "exception",
+        "serializable": true,
+        "externalizable": false,
+        "scope": "public",
+        "name": "JavadocException",
+        "comment": "Exception used in Javadoc wrapper",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Exception"
+        }
+      },
+      "type": "package",
+      "com.networkedassets.autodoc.transformer.javadoc.Javadoc": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc",
+        "method": [
+          {
+            "exception": [
+              {
+                "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.fromStashRepo",
+            "synchronized": false,
+            "static": true,
+            "signature": "(com.networkedassets.autodoc.transformer.clients.git.api.SCM, java.nio.file.Path, java.lang.String, java.lang.String, java.lang.String)",
+            "modifier": [
+              "public",
+              "static"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "scmServer",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.SCM"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "localDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "repositorySlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "branchName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "fromStashRepo",
+            "final": false,
+            "comment": "Convinience method for generating javadoc for a project on a SCM repo",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "scmServer      server given project is located on"
+              },
+              {
+                "name": "@param",
+                "text": "localDirectory where the repo should be cloned"
+              },
+              {
+                "name": "@param",
+                "text": "projectKey     stash's project key"
+              },
+              {
+                "name": "@param",
+                "text": "repositorySlug stash's repo slug"
+              },
+              {
+                "name": "@param",
+                "text": "branchName     the name of the branch that is to be cloned"
+              },
+              {
+                "name": "@return",
+                "text": "the location of the javadoc (subdirectory of the localDirectory)"
+              },
+              {
+                "name": "@throws",
+                "text": "JavadocException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.nio.file.Path"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.fromDirectory",
+            "synchronized": false,
+            "static": true,
+            "signature": "(java.nio.file.Path)",
+            "modifier": [
+              "public",
+              "static"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "localDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              }
+            ],
+            "name": "fromDirectory",
+            "final": false,
+            "comment": "Convenience method for generating javadoc for a directory and it's subdirectories recursively",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "localDirectory the directory javadoc should be generated for"
+              },
+              {
+                "name": "@return",
+                "text": "the location of the javadoc (subdirectory of the localDirectory)"
+              },
+              {
+                "name": "@throws",
+                "text": "JavadocException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.nio.file.Path"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException"
+              }
+            ],
+            "annotation": [
+              {
+                "qualified": "javax.annotation.Nonnull",
+                "name": "Nonnull"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.searchJavaFiles",
+            "synchronized": false,
+            "static": true,
+            "signature": "(java.nio.file.Path)",
+            "modifier": [
+              "public",
+              "static"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "localDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              }
+            ],
+            "name": "searchJavaFiles",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.util.List",
+              "generic": [
+                {
+                  "qualified": "java.nio.file.Path"
+                }
+              ]
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.cloneTheRepo",
+            "synchronized": false,
+            "static": true,
+            "signature": "(com.networkedassets.autodoc.transformer.clients.git.api.SCM, java.lang.String, java.lang.String, java.lang.String, java.nio.file.Path)",
+            "modifier": [
+              "private",
+              "static"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "scmServer",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.SCM"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "repositorySlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "branchName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "localDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              }
+            ],
+            "name": "cloneTheRepo",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.createDirectoryIfNecessary",
+            "synchronized": false,
+            "static": true,
+            "signature": "(java.nio.file.Path)",
+            "modifier": [
+              "private",
+              "static"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "localDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              }
+            ],
+            "name": "createDirectoryIfNecessary",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.getJavadocExecutablePath",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getJavadocExecutablePath",
+            "final": false,
+            "tag": [
+              {
+                "name": "@return",
+                "text": "the command that runs javadoc. Default is \"javadoc\" - the javadoc currently in system's PATH"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.setJavadocExecutablePath",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "javadocExecutablePath",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "setJavadocExecutablePath",
+            "final": false,
+            "comment": "Sets the command that should be run in place of javadoc",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "javadocExecutablePath path to the executable"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.generate",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "generate",
+            "final": false,
+            "comment": "Generates the javadoc",
+            "tag": [
+              {
+                "name": "@throws",
+                "text": "JavadocException"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.addFiles",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.Iterable<java.nio.file.Path>)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "javaFiles",
+                "type": {
+                  "qualified": "java.lang.Iterable",
+                  "generic": [
+                    {
+                      "qualified": "java.nio.file.Path"
+                    }
+                  ]
+                }
+              }
+            ],
+            "name": "addFiles",
+            "final": false,
+            "comment": "Adds the files that should be looked at during javadoc's generation",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "javaFiles collection of files to be added"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.addFile",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.nio.file.Path)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "javaFile",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              }
+            ],
+            "name": "addFile",
+            "final": false,
+            "comment": "Adds the file to the list of java source files used to generate javadoc",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "javaFile file that should be added"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.nio.file.Path, java.util.List<java.nio.file.Path>)",
+            "modifier": [
+              "public"
+            ],
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "javadocDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              },
+              {
+                "name": "sourceFiles",
+                "type": {
+                  "qualified": "java.util.List",
+                  "generic": [
+                    {
+                      "qualified": "java.nio.file.Path"
+                    }
+                  ]
+                }
+              }
+            ],
+            "name": "Javadoc",
+            "final": false,
+            "comment": "Main constructor",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "javadocDirectory directory where the docs are going to be located"
+              },
+              {
+                "name": "@param",
+                "text": "sourceFiles      source files for docs generation"
+              }
+            ],
+            "included": true
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.nio.file.Path)",
+            "modifier": [
+              "public"
+            ],
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "javadocDirectory",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              }
+            ],
+            "name": "Javadoc",
+            "final": false,
+            "comment": "Constructor with empty file list",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "javadocDirectory directory where the docs are going to be located"
+              }
+            ],
+            "included": true
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "serializable": false,
+        "externalizable": false,
+        "field": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.sourceFiles",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "sourceFiles",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.util.List",
+              "generic": [
+                {
+                  "qualified": "java.nio.file.Path"
+                }
+              ]
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.javadocDirectory",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "javadocDirectory",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.nio.file.Path"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.javadoc.Javadoc.javadocExecutablePath",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "javadocExecutablePath",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "Javadoc",
+        "comment": "Javadoc wrapper for generating javadoc pages\n TODO: Change all the printlns to proper logging",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      }
+    },
+    "com.networkedassets.autodoc.transformer.utils": {
+      "qualified": "com.networkedassets.autodoc.transformer.utils",
+      "com.networkedassets.autodoc.transformer.utils.HtmlFileReader": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.utils.HtmlFileReader",
+        "method": [
+          {
+            "exception": [
+              {
+                "qualified": "java.io.IOException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.utils.HtmlFileReader.read",
+            "synchronized": false,
+            "static": true,
+            "signature": "(java.nio.file.Path, com.networkedassets.autodoc.transformer.utils.HtmlFileConventer)",
+            "modifier": [
+              "public",
+              "static"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "path",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "converter",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.utils.HtmlFileConventer"
+                }
+              }
+            ],
+            "name": "read",
+            "final": false,
+            "comment": "Attention: the returned stream should be closed when you're done with it",
+            "included": true,
+            "return": {
+              "qualified": "java.util.stream.Stream",
+              "generic": [
+                {
+                  "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile"
+                }
+              ]
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "java.io.IOException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.utils.HtmlFileReader.getTextContent",
+            "synchronized": false,
+            "static": true,
+            "signature": "(java.nio.file.Path, com.networkedassets.autodoc.transformer.utils.HtmlFileConventer)",
+            "modifier": [
+              "private",
+              "static"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "file",
+                "type": {
+                  "qualified": "java.nio.file.Path"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "converter",
+                "type": {
+                  "qualified": "com.networkedassets.autodoc.transformer.utils.HtmlFileConventer"
+                }
+              }
+            ],
+            "name": "getTextContent",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.HtmlFileReader",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "native": false,
+            "scope": "public",
+            "modifier": [
+              "public"
+            ],
+            "name": "HtmlFileReader",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "serializable": false,
+        "externalizable": false,
+        "field": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.HtmlFileReader.log",
+            "static": true,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "static"
+            ],
+            "name": "log",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "org.slf4j.Logger"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "HtmlFileReader",
+        "comment": "Read only javaDoc file with class description",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      },
+      "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter",
+        "method": [
+          {
+            "annotation": [
+              {
+                "qualified": "java.lang.Override",
+                "name": "Override"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter.convert",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "fileContent",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "convert",
+            "final": false,
+            "comment": "Converts javadoc html to a format usable with Atlassian Confluence",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "fileContent\n            text representing html to be converted"
+              },
+              {
+                "name": "@return",
+                "text": "text javadoc page in Atlassian Confluence's storage format"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter.getFileDescription",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "fileContent",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "getFileDescription",
+            "final": false,
+            "comment": "Return package name from javaDoc html",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "fileContent\n            text representing html javadoc to be converted"
+              },
+              {
+                "name": "@return",
+                "text": "package name"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter.getFileName",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "fileContent",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "getFileName",
+            "final": false,
+            "comment": "Return class name from javaDoc html",
+            "tag": [
+              {
+                "name": "@param",
+                "text": "fileContent\n            text representing html javadoc to be converted"
+              },
+              {
+                "name": "@return",
+                "text": "class name"
+              }
+            ],
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter.replaceInnerLinks",
+            "synchronized": false,
+            "static": false,
+            "signature": "(org.jsoup.nodes.Document)",
+            "modifier": [
+              "private"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "doc",
+                "type": {
+                  "qualified": "org.jsoup.nodes.Document"
+                }
+              }
+            ],
+            "name": "replaceInnerLinks",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter.replaceOuterLinks",
+            "synchronized": false,
+            "static": false,
+            "signature": "(org.jsoup.nodes.Document)",
+            "modifier": [
+              "private"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "doc",
+                "type": {
+                  "qualified": "org.jsoup.nodes.Document"
+                }
+              }
+            ],
+            "name": "replaceOuterLinks",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter.replaceListTag",
+            "synchronized": false,
+            "static": false,
+            "signature": "(org.jsoup.nodes.Document)",
+            "modifier": [
+              "private"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "doc",
+                "type": {
+                  "qualified": "org.jsoup.nodes.Document"
+                }
+              }
+            ],
+            "name": "replaceListTag",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "native": false,
+            "scope": "public",
+            "modifier": [
+              "public"
+            ],
+            "name": "CounfluenceFileConverter",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "interface": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.HtmlFileConventer"
+          }
+        ],
+        "serializable": false,
+        "externalizable": false,
+        "field": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter.outerLinkTemplate",
+            "static": true,
+            "constant": "\"<ac:link><ri:page ri:content-title=\\\"%s\\\" /><ac:plain-text-link-body><![CDATA[%s]]><\/ac:plain-text-link<\/ac:link>\"",
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final",
+              "static"
+            ],
+            "name": "outerLinkTemplate",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter.innerLinkTemplate",
+            "static": true,
+            "constant": "\"<ac:link ac:anchor=\\\"%s\\\"><ac:plain-text-link-body><![CDATA[#%s]]><\/ac:plain-text-link-body><\/ac:link>\"",
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private",
+              "final",
+              "static"
+            ],
+            "name": "innerLinkTemplate",
+            "final": true,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "CounfluenceFileConverter",
+        "comment": "Converts javaDoc files to Confluence storage format",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      },
+      "type": "package"
+    },
+    "com.networkedassets.autodoc.transformer": {
+      "qualified": "com.networkedassets.autodoc.transformer",
+      "com.networkedassets.autodoc.transformer.JavaDocGenerator": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+        "method": [
+          {
+            "exception": [
+              {
+                "qualified": "com.networkedassets.autodoc.transformer.javadoc.JavadocException"
+              },
+              {
+                "qualified": "java.io.IOException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.JavaDocGenerator.generateFromStashAndPost",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String, java.util.Collection<com.networkedassets.autodoc.transformer.settings.SettingsForSpace>)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "repoSlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "branchId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "annotation": [
+                  {
+                    "qualified": "javax.annotation.Nonnull",
+                    "name": "Nonnull"
+                  }
+                ],
+                "name": "settingsForInterestedSpaces",
+                "type": {
+                  "qualified": "java.util.Collection",
+                  "generic": [
+                    {
+                      "qualified": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace"
+                    }
+                  ]
+                }
+              }
+            ],
+            "name": "generateFromStashAndPost",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.JavaDocGenerator.groupByUrl",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.util.stream.Stream<com.networkedassets.autodoc.transformer.settings.ConfluenceSpace>)",
+            "modifier": [
+              "private"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "name": "interestedSpaces",
+                "type": {
+                  "qualified": "java.util.stream.Stream",
+                  "generic": [
+                    {
+                      "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace"
+                    }
+                  ]
+                }
+              }
+            ],
+            "name": "groupByUrl",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.util.Set",
+              "generic": [
+                {
+                  "qualified": "java.util.Map.Entry",
+                  "generic": [
+                    {
+                      "qualified": "java.lang.String"
+                    },
+                    {
+                      "qualified": "java.util.List",
+                      "generic": [
+                        {
+                          "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.JavaDocGenerator.removeOldJavadoc",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String, java.util.stream.Stream<com.networkedassets.autodoc.transformer.settings.ConfluenceSpace>)",
+            "modifier": [
+              "private"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "name": "projectKey",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "repoSlug",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "branchId",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "interestedSpaces",
+                "type": {
+                  "qualified": "java.util.stream.Stream",
+                  "generic": [
+                    {
+                      "qualified": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace"
+                    }
+                  ]
+                }
+              }
+            ],
+            "name": "removeOldJavadoc",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.JavaDocGenerator.getConfluenceForUrl",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "private"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "parameter": [
+              {
+                "name": "url",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "getConfluenceForUrl",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient"
+            }
+          },
+          {
+            "exception": [
+              {
+                "qualified": "java.net.MalformedURLException"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.JavaDocGenerator.getSCM",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "private"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "private",
+            "name": "getSCM",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "com.networkedassets.autodoc.transformer.clients.git.api.SCM"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "native": false,
+            "scope": "public",
+            "modifier": [
+              "public"
+            ],
+            "name": "JavaDocGenerator",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "serializable": false,
+        "externalizable": false,
+        "field": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.JavaDocGenerator.log",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "log",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "org.slf4j.Logger"
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "JavaDocGenerator",
+        "comment": "Generates javadoc from provided code",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      },
+      "type": "package"
+    },
+    "com.networkedassets.autodoc.transformer.utils.data": {
+      "qualified": "com.networkedassets.autodoc.transformer.utils.data",
+      "type": "package",
+      "com.networkedassets.autodoc.transformer.utils.data.HtmlFile": {
+        "exception": false,
+        "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile",
+        "method": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.getFileName",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getFileName",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.setFileName",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "fileName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "setFileName",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.getFilePath",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getFilePath",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.setFilePath",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "filePath",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "setFilePath",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.getFileContent",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getFileContent",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.setFileContent",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "fileContent",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "name": "setFileContent",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.getAdditionalProperties",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "getAdditionalProperties",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.util.Map",
+              "generic": [
+                {
+                  "qualified": "java.lang.String"
+                },
+                {
+                  "qualified": "java.lang.Object"
+                }
+              ]
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.setAdditionalProperties",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.util.Map<java.lang.String, java.lang.Object>)",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "additionalProperties",
+                "type": {
+                  "qualified": "java.util.Map",
+                  "generic": [
+                    {
+                      "qualified": "java.lang.String"
+                    },
+                    {
+                      "qualified": "java.lang.Object"
+                    }
+                  ]
+                }
+              }
+            ],
+            "name": "setAdditionalProperties",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "void"
+            }
+          },
+          {
+            "annotation": [
+              {
+                "qualified": "java.lang.Override",
+                "name": "Override"
+              }
+            ],
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.toString",
+            "synchronized": false,
+            "static": false,
+            "signature": "()",
+            "modifier": [
+              "public"
+            ],
+            "abstract": false,
+            "varArgs": false,
+            "native": false,
+            "scope": "public",
+            "name": "toString",
+            "final": false,
+            "included": true,
+            "return": {
+              "qualified": "java.lang.String"
+            }
+          }
+        ],
+        "modifier": [
+          "public"
+        ],
+        "constructor": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String, java.lang.String)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "fileName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "filePath",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "fileContent",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "HtmlFile",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile",
+            "synchronized": false,
+            "static": false,
+            "signature": "(java.lang.String, java.lang.String)",
+            "native": false,
+            "scope": "public",
+            "parameter": [
+              {
+                "name": "fileName",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              },
+              {
+                "name": "filePath",
+                "type": {
+                  "qualified": "java.lang.String"
+                }
+              }
+            ],
+            "modifier": [
+              "public"
+            ],
+            "name": "HtmlFile",
+            "final": false,
+            "included": true,
+            "varArgs": false
+          }
+        ],
+        "abstract": false,
+        "error": false,
+        "type": "class",
+        "serializable": false,
+        "externalizable": false,
+        "field": [
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.fileName",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "fileName",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.filePath",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "filePath",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.fileContent",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "fileContent",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.lang.String"
+            }
+          },
+          {
+            "qualified": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile.additionalProperties",
+            "static": false,
+            "transient": false,
+            "scope": "private",
+            "modifier": [
+              "private"
+            ],
+            "name": "additionalProperties",
+            "final": false,
+            "volatile": false,
+            "type": {
+              "qualified": "java.util.Map",
+              "generic": [
+                {
+                  "qualified": "java.lang.String"
+                },
+                {
+                  "qualified": "java.lang.Object"
+                }
+              ]
+            }
+          }
+        ],
+        "scope": "public",
+        "name": "HtmlFile",
+        "included": true,
+        "class": {
+          "qualified": "java.lang.Object"
+        }
+      }
+    }
+  },
+  "relations": [
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.clients.git.api.GitStashSCM"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.javadoc.JavadocException"
+    },
+    {
+      "source": "com.networkedassets.autodoc.configureGui.SimplePage.Nesst",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.JavaDocGenerator"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.clients.git.api.SCM"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.utils.CounfluenceFileConverter"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.utils.HtmlFileReader"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.clients.atlassian.HttpClientConfig"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.settings.SettingsForSpace"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.clients.git.SCMClientConfig"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.clients.atlassian.api.ConfluenceClient"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.utils.data.HtmlFile"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.javadoc.Javadoc"
+    },
+    {
+      "source": "com.networkedassets.autodoc.transformer.JavaDocGenerator",
+      "type": "dependency",
+      "target": "com.networkedassets.autodoc.transformer.settings.ConfluenceSpace"
+    }
+  ]
+}

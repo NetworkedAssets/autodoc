@@ -4,19 +4,31 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.networkedassets.autodoc.transformer.settings.view.Views;
 
 /**
  * Contains settings of the application
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings implements Serializable {
 
 	private static final long serialVersionUID = 3847560203140549969L;
-	private String confluenceUrl = "http://46.101.240.138:8090/confluence";
-	private String confluenceUsername = "admin";
-	private String confluencePassword = "admin";
+
+	@JsonIgnore
+	public int totalId = 1;
+
+	@JsonView(Views.GetSettingsView.class)
+	private String confluenceUrl;
+	@JsonView(Views.GetSettingsView.class)
 	private TransformerSettings transformerSettings = new TransformerSettings();
+	@JsonView(Views.GetSourcesView.class)
 	private List<Source> sources = new ArrayList<>();
+	@JsonView(Views.GetCredentialsView.class)
+	private Credentials credentials = new Credentials();
 
 	public Source getSourceByUrl(String url) {
 		return sources.stream().filter(source -> source.getUrl().equals(url)).findAny().orElse(null);
@@ -57,21 +69,11 @@ public class Settings implements Serializable {
 		this.confluenceUrl = confluenceUrl;
 	}
 
-	@JsonProperty("confluenceUsername")
-	public String getConfluenceUsername() {
-		return confluenceUsername;
+	public Credentials getCredentials() {
+		return credentials;
 	}
 
-	public void setConfluenceUsername(String confluenceUsername) {
-		this.confluenceUsername = confluenceUsername;
-	}
-
-	@JsonProperty("confluencePassword")
-	public String getConfluencePassword() {
-		return confluencePassword;
-	}
-
-	public void setConfluencePassword(String confluencePassword) {
-		this.confluencePassword = confluencePassword;
+	public void setCredentials(Credentials credentials) {
+		this.credentials = credentials;
 	}
 }

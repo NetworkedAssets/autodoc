@@ -12,9 +12,6 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.nio.file.Path;
 
-/**
- * Created by mrobakowski on 11/13/2015.
- */
 public class UmlGenerator extends JavadocGenerator implements DocumentationGenerator {
 
 	@Override

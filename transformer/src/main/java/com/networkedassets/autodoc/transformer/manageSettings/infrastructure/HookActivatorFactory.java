@@ -6,7 +6,7 @@ import com.networkedassets.autodoc.transformer.settings.Source;
 import java.net.MalformedURLException;
 
 /**
- * Created by kamil on 03.12.2015.
+ * Produces HookActivators basing on source's type and URL
  */
 public class HookActivatorFactory {
 

@@ -14,34 +14,41 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.require.Documentat
 import com.networkedassets.autodoc.transformer.settings.Settings;
 
 public class ConfluenceDocumentationSender implements DocumentationSender {
-	// TODO:Remove confluence when will be rest for settings
-	private static final String confluenceEndpointFormat = "%s/confluence/rest/autodoc/1.0/documentation/%s/%s/%s/%s/%s";
+	
+	private static final String confluenceEndpointFormat = "%s/rest/doc/1.0/documentation/%s/%s/%s/%s/%s";
 
 	private static final Logger log = LoggerFactory.getLogger(PushEventService.class);
 
 	@Override
-	public void send(Documentation documentation, Settings settings) {
+	public boolean send(Documentation documentation, Settings settings) {
 		String url = settings.getConfluenceUrl();
-		if (Strings.isNullOrEmpty(url))
-			return;
+
+		if (Strings.isNullOrEmpty(url)) {
+			log.error("Confluence url isn't set!");
+			return false;
+		}
+
 		url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
 		for (DocumentationPiece docPiece : documentation.getPieces()) {
 			try {
 				Escaper e = UrlEscapers.urlPathSegmentEscaper();
+				String formatted = String.format(confluenceEndpointFormat, url,
+						e.escape(e.escape(documentation.getProject())),
+						e.escape(e.escape(documentation.getRepo())),
+						e.escape(e.escape(documentation.getBranch())),
+						e.escape(e.escape(documentation.getType().toString())),
+						e.escape(e.escape(docPiece.getPieceName())));
+				log.info("Unirest POST TO URL: " + formatted);
 				log.info("Response:{}",
-						Unirest.post(String.format(confluenceEndpointFormat, url,
-								e.escape(e.escape(documentation.getProject())),
-								e.escape(e.escape(documentation.getRepo())),
-								e.escape(e.escape(documentation.getBranch())),
-								e.escape(e.escape(documentation.getType().toString())),
-								e.escape(e.escape(docPiece.getPieceName()))))
-						.basicAuth(settings.getConfluenceUsername(), settings.getConfluencePassword())
+						Unirest.post(formatted)
+						.basicAuth(settings.getCredentials().getConfluenceUsername(), settings.getCredentials().getConfluencePassword())
 						.queryString("pieceType", docPiece.getPieceType()).header("Content-Type", "application/json")
 						.body(docPiece.getContent()).asString().getBody());
 			} catch (UnirestException e) {
 				throw new RuntimeException(e);
 			}
 		}
+        return true;
 	}
 
 }

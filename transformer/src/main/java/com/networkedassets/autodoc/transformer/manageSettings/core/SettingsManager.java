@@ -1,24 +1,26 @@
 package com.networkedassets.autodoc.transformer.manageSettings.core;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.base.Verify;
-import com.google.common.base.VerifyException;
-import com.networkedassets.autodoc.clients.atlassian.api.StashBitbucketClient;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ClientConfigurator;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ProjectsProviderFactory;
-import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ScheduledEventJob;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
-import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
-import com.networkedassets.autodoc.transformer.manageSettings.require.HookActivator;
-import com.networkedassets.autodoc.transformer.manageSettings.require.ProjectsProvider;
-import com.networkedassets.autodoc.transformer.settings.Branch;
-import com.networkedassets.autodoc.transformer.settings.Project;
-import com.networkedassets.autodoc.transformer.settings.Settings;
-import com.networkedassets.autodoc.transformer.settings.Source;
-import com.networkedassets.autodoc.transformer.util.PropertyHandler;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SealedObject;
+import javax.inject.Inject;
+
+import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -26,343 +28,251 @@ import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.util.*;
-
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.TriggerBuilder.newTrigger;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.HookActivatorFactory;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ScheduledEventJob;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.BranchModifier;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.EventScheduler;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SettingsSaver;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceCreator;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceModifier;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.in.SourceRemover;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
+import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
+import com.networkedassets.autodoc.transformer.settings.Branch;
+import com.networkedassets.autodoc.transformer.settings.Credentials;
+import com.networkedassets.autodoc.transformer.settings.Settings;
+import com.networkedassets.autodoc.transformer.settings.Source;
+import com.networkedassets.autodoc.transformer.util.PropertyHandler;
+import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
+import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
+import com.networkedassets.autodoc.transformer.util.SettingsUtils;
 
 /**
  * Handles the settings of the application
  */
 public class SettingsManager implements SettingsProvider, SettingsSaver, SourceProvider, SourceCreator, SourceRemover,
-        SourceModifier, BranchModifier, EventScheduler {
+		SourceModifier, BranchModifier, EventScheduler {
+	private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
 
-    public String settingsFilename;
+	public Scheduler scheduler;
+	private SettingsEncryptor settingsEncryptor;
 
-    @Inject
-    public Scheduler scheduler;
+	private Settings settings = new Settings();
+	public String settingsFilename;
 
-    public Settings getSettings() {
-        return settings;
-    }
+	@Inject
+	public SettingsManager(Scheduler scheduler, SettingsEncryptor settingsEncryptor) {
+		this.scheduler = scheduler;
+		this.settingsEncryptor = settingsEncryptor;
+		settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
 
-    public void setSettings(Settings settings) {
-        this.settings = settings;
-        saveSettingsToFile(settingsFilename);
-    }
+		loadSettingsFromFile(settingsFilename);
 
-    private Settings settings = new Settings();
-    private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
+		settings.getTransformerSettings().setAddress(PropertyHandler.getInstance().getValue("jetty.address"),
+				Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port")));
+		log.info("Address is setup to: " + settings.getTransformerSettings().getAddress());
+		updateAllSourcesAndEnableHooks();
+	}
 
-    public SettingsManager() {
-        settingsFilename = getSettingsFilenameFromProperties();
-        loadSettingsFromFile(settingsFilename);
-        updateSettings(this.settings);
-    }
+	private void updateAllSourcesAndEnableHooks() {
+		this.settings.getSources().forEach(source -> {
+			try {
+				SettingsUtils.updateProjectsFromRemoteSource(source);
+				HookActivatorFactory.getInstance(source, this.settings.getTransformerSettings().getAddress())
+						.enableAllHooks();
+			} catch (MalformedURLException e) {
+				log.error("Source {} has malformed URL. Can't load projects: ", source.toString(), e);
+			}
+		});
+	}
 
-    @Override
-    public Settings getCurrentSettings() {
-        updateSettings(this.settings);
-        return settings;
-    }
+	private boolean saveSettingsToFile(String filename) {
+		File settingsFile = new File(filename);
+		try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
+				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
 
-    private void updateSettings(Settings givenSettings) {
-        // drop sources that aren't in the current settings
-        // (to add source - use special endpoint)
-        givenSettings.getSources().removeIf(s -> settings.getSourceByUrl(s.getUrl()) == null);
+			objectOut.writeObject(settingsEncryptor.buildSealedObjectFrom(settings));
 
-        givenSettings.getSources().forEach(source -> {
-            try {
-                updateProjectsFromRemoteSource(source);
-                HookActivator hookActivator = HookActivatorFactory.getInstance(source,
-                        givenSettings.getTransformerSettings().getLocalhostAddress());
-                hookActivator.enableAllHooks();
-            } catch (MalformedURLException e) {
-                log.error("Source {} has malformed URL. Can't load projects: ", source.toString(), e);
-            }
-        });
+			log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
+		} catch (FileNotFoundException e) {
+			log.error("Can't save settings to {} - file was not found: ", settingsFile.getAbsolutePath(), e);
+			return false;
+		} catch (IOException e) {
+			log.error("Can't save settings to {} - general IO problem: ", settingsFile.getAbsolutePath(), e);
+			return false;
+		} catch (IllegalBlockSizeException e) {
+			log.error("Illegal block size during sealing settings", e);
+			return false;
+		}
 
-        // add sources from current settings that don't appear in givenOnes
-        List<Source> sourcesToAdd = new ArrayList<>();
-        settings.getSources().stream().forEach(source -> {
-            if (givenSettings.getSourceByUrl(source.getUrl()) == null) {
-                sourcesToAdd.add(source);
-            }
-        });
-        givenSettings.getSources().addAll(sourcesToAdd);
-    }
+		return true;
+	}
 
-    private boolean saveSettingsToFile(String filename) {
-        File settingsFile = new File(filename);
-        try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
-             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
-            objectOut.writeObject(settings);
-            log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
-        } catch (FileNotFoundException e) {
-            log.error("Can't save settings to {} - file was not found: ", settingsFile.getAbsolutePath(), e);
-            return false;
-        } catch (IOException e) {
-            log.error("Can't save settings to {} - general IO problem: ", settingsFile.getAbsolutePath(), e);
-            return false;
+	private void loadSettingsFromFile(String filename) {
+		File settingsFile = new File(filename);
+		try (FileInputStream fileIn = new FileInputStream(settingsFile);
+				ObjectInputStream objectInputStream = new ObjectInputStream(fileIn)) {
 
-        }
+			SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
+			settings = settingsEncryptor.buildSettingsObjectFrom(sealedObject);
 
-        return true;
-    }
+			log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
+		} catch (FileNotFoundException e) {
+			log.error("Can't load settings from {} - file not found. Creating new default settings...",
+					settingsFile.getAbsolutePath());
+		} catch (ClassNotFoundException e) {
+			log.error(
+					"Can't load settings from {} - serialization failed, class not found. Creating new default settings...",
+					settingsFile.getAbsolutePath());
+		} catch (IOException e) {
+			log.error("Can't load settings from {}: ", settingsFile.getAbsolutePath(), e);
+		} catch (BadPaddingException e) {
+			log.error("Bad padding during unsealing settings", e);
+		} catch (IllegalBlockSizeException e) {
+			log.error("Illegal block size during unsealing settings", e);
+		}
+	}
 
-    private void loadSettingsFromFile(String filename) {
-        File settingsFile = new File(filename);
-        try (FileInputStream fileIn = new FileInputStream(settingsFile);
-             ObjectInputStream objectIn = new ObjectInputStream(fileIn)) {
-            settings = (Settings) objectIn.readObject();
-            log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
-        } catch (FileNotFoundException e) {
-            log.error("Can't load settings from {} - file not found. Creating new default settings...",
-                    settingsFile.getAbsolutePath());
-        } catch (ClassNotFoundException e) {
-            log.error(
-                    "Can't load settings from {} - serialization failed, class not found. Creating new default settings...",
-                    settingsFile.getAbsolutePath());
-        } catch (IOException e) {
-            log.error("Can't load settings from {}: ", settingsFile.getAbsolutePath(), e);
-        }
-    }
+	@Override
+	public Settings getNotUpdatedSettings() {
+		return getSettings();
+	}
 
-    private String getSettingsFilenameFromProperties() {
+	@Override
+	public Settings getCurrentSettings() {
+		updateAllSourcesAndEnableHooks();
+		return settings;
+	}
 
-        final String defaultFilename = "transformerSettings.ser";
-        PropertyHandler propertyHandler;
-        try {
-            propertyHandler = PropertyHandler.getInstance();
-        } catch (IOException e) {
-            log.error("Couldn't load the properties file", e);
-            return defaultFilename;
-        }
-        return propertyHandler.getValue("settings.filename", defaultFilename);
-    }
+	@Override
+	public boolean setCredentials(Settings settings) {
+		this.settings.setCredentials(new Credentials());
+		this.settings.getCredentials().setConfluencePassword(settings.getCredentials().getConfluencePassword());
+		this.settings.setConfluenceUrl(settings.getConfluenceUrl());
+		this.settings.getCredentials().setConfluenceUsername(settings.getCredentials().getConfluenceUsername());
+		return saveSettingsToFile(settingsFilename);
+	}
 
-    @SuppressWarnings("CodeBlock2Expr")
-    private void updateProjectsFromRemoteSource(@Nonnull Source source) throws MalformedURLException {
-        // Get projects from source
-        ProjectsProvider projectsProvider = ProjectsProviderFactory.getInstance(source);
+	@Override
+	public Optional<Source> getSourceById(int id) {
+		return getCurrentSettings().getSources().stream().filter(source -> source.getId() == id).findFirst();
+	}
 
-        Map<String, Project> sourceProjects = projectsProvider.getProjects();
+	@Override
+	public List<Source> getAllSources() {
+		return getCurrentSettings().getSources();
+	}
 
-        // Delete projects, repos and branches in settings, that don't exist in
-        // stash (anymore)
-        source.projects.values().removeIf(project -> !sourceProjects.containsKey(project.key));
-        source.projects.values().forEach(project -> project.repos.values()
-                .removeIf(repo -> !sourceProjects.get(project.key).repos.containsKey(repo.slug)));
-        source.projects.values()
-                .forEach(project -> project.repos.values()
-                        .forEach(repo -> repo.branches.values()
-                                .removeIf(branch -> !sourceProjects.get(project.key).repos.get(repo.slug).branches
-                                        .containsKey(branch.id))));
+	@Override
+	public Source addSource(Source source) {
+		source.setId(-1);
+		if (Strings.isNullOrEmpty(source.getUsername()) || Strings.isNullOrEmpty(source.getPassword())) {
+			source.setUsername(getSettings().getCredentials().getConfluenceUsername());
+			source.setPassword(getSettings().getCredentials().getConfluencePassword());
+		}
+		SettingsUtils.verifySource(source, settings.getSources());
+		source.setId(getSettings().totalId);
+		if (source.isCorrect()) {
+			getSettings().totalId++;
+			getSettings().getSources().add(source);
+		}
+		saveSettingsToFile(settingsFilename);
+		return source;
+	}
 
-        // Add new branches, repos, and projects from stash
-        sourceProjects.values().forEach(stashProject -> {
-            source.projects.putIfAbsent(stashProject.key, stashProject);
-        });
-        sourceProjects.values().forEach(stashProject -> {
-            stashProject.repos.values().forEach(stashRepo -> {
-                source.getProjectByKey(stashProject.key).repos.putIfAbsent(stashRepo.slug, stashRepo);
-            });
-        });
-        sourceProjects.values().forEach(stashProject -> {
-            stashProject.repos.values().forEach(stashRepo -> {
-                stashRepo.branches.values().forEach(stashBranch -> {
-                    source.getProjectByKey(stashProject.key).getRepoBySlug(stashRepo.slug).branches
-                            .putIfAbsent(stashBranch.id, stashBranch);
-                });
-            });
-        });
+	@Override
+	public boolean removeSource(int sourceId) {
+		boolean removed = getSettings().getSources().removeIf(source -> source.getId() == sourceId);
+		if (removed) {
+			saveSettingsToFile(settingsFilename);
+		}
+		return removed;
+	}
 
-        // Update changed non-indexing data
-        sourceProjects.values().forEach(stashProject -> {
-            Project project = source.getProjectByKey(stashProject.key);
-            if (!project.name.equals(stashProject.name)) {
-                project.name = stashProject.name;
-            }
-        });
-        sourceProjects.values().forEach(stashProject -> {
-            stashProject.repos.values().forEach(stashRepo -> {
-                stashRepo.branches.values().forEach(stashBranch -> {
-                    Branch branch = source.getProjectByKey(stashProject.key).getRepoBySlug(stashRepo.slug)
-                            .getBranchById(stashBranch.id);
-                    if (!branch.displayId.equals(stashBranch.displayId)) {
-                        branch.displayId = stashBranch.displayId;
-                    }
-                });
-            });
-        });
-    }
+	@Override
+	public Source modifySource(Source source) {
+		if (Strings.isNullOrEmpty(source.getPassword())) {
+			SettingsUtils.setCorrectPasswordForSource(source, settings.getSources());
+		}
+		SettingsUtils.verifySource(source, settings.getSources());
+		if (source.isCorrect()) {
+			getSettings().getSources().removeIf(s -> s.getId() == source.getId());
+			getSettings().getSources().add(source);
+			saveSettingsToFile(settingsFilename);
+		}
+		return source;
+	}
 
-    @Override
-    public boolean setConfluenceCredentials(Settings settings) {
+	@Override
+	public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, String branchId, Branch branch) {
+		Preconditions.checkNotNull(projectKey);
+		Preconditions.checkNotNull(repoSlug);
+		Preconditions.checkNotNull(branchId);
+		Preconditions.checkNotNull(branch);
 
-        this.settings.setConfluencePassword(settings.getConfluencePassword());
-        this.settings.setConfluenceUrl(settings.getConfluenceUrl());
-        this.settings.setConfluenceUsername(settings.getConfluenceUsername());
-        return saveSettingsToFile(settingsFilename);
-    }
+		Branch currentBranch;
 
-    @Override
-    public Optional<Source> getSourceById(int id) {
-        return getCurrentSettings().getSources().stream().filter(source -> source.getId() == id).findFirst();
-    }
+		try {
+			currentBranch = getCurrentSettings().getSourceById(sourceId).getProjectByKey(projectKey)
+					.getRepoBySlug(repoSlug).getBranchById(branchId);
+			Verify.verifyNotNull(currentBranch);
+		} catch (NullPointerException | VerifyException e) {
+			// wrong data given
+			return null;
+		}
 
-    @Override
-    public List<Source> getAllSources() {
-        return getCurrentSettings().getSources();
-    }
+		currentBranch.setListenTo(branch.getListenTo());
+		currentBranch.setScheduledEvents(new ArrayList<>(branch.getScheduledEvents()));
+		saveSettingsToFile(settingsFilename);
+		return currentBranch;
+	}
 
-    @Override
-    public Source addSource(Source source) {
-        verifySource(source);
-        if (source.isCorrect()) {
-            source.setId(Source.totalId);
-            Source.totalId++;
-            getSettings().getSources().add(source);
-        }
-        saveSettingsToFile(settingsFilename);
-        return source;
-    }
+	@Override
+	public void scheduleEvents(Branch currentBranch, int sourceId, String projectKey, String repoSlug,
+			String branchId) {
 
-    @Override
-    public boolean removeSource(int sourceId) {
-        boolean removed = getSettings().getSources().removeIf(source -> source.getId() == sourceId);
-        if (removed) {
-            saveSettingsToFile(settingsFilename);
-        }
-        return removed;
-    }
+		Preconditions.checkNotNull(currentBranch);
+		Preconditions.checkNotNull(scheduler);
+		try {
+			scheduler.clear();
 
-    @Override
-    public Source modifySource(Source source) {
-        if (Strings.isNullOrEmpty(source.getPassword())) {
-            setCorrectPasswordForSource(source);
-        }
-        verifySource(source);
-        if (source.isCorrect()) {
-            getSettings().getSources().removeIf(s -> s.getId() == source.getId());
-            getSettings().getSources().add(source);
-            saveSettingsToFile(settingsFilename);
-        }
-        return source;
-    }
+			currentBranch.getScheduledEvents().stream().forEach(event -> {
+				try {
+					JobDetail job = newJob(ScheduledEventJob.class)
+							.usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
+							.usingJobData("projectKey", projectKey).usingJobData("repoSlug", repoSlug)
+							.usingJobData("branchId", branchId)
+							.usingJobData("latestCommit", currentBranch.getLatestCommit()).build();
 
-    private void setCorrectPasswordForSource(Source source) {
-        String previousPassword = this.settings.getSources().stream()
-                .filter(previousSources -> previousSources.getId() == source.getId()).map(Source::getPassword)
-                .findFirst().orElse(null);
-        source.setPassword(previousPassword);
+					Trigger trigger = newTrigger().startNow().withSchedule(ScheduledEventHelper.getCronSchedule(event))
+							.build();
 
-    }
+					log.debug("Scheduled event {} with cron: {}", event.toString(),
+							((CronTrigger) trigger).getCronExpression());
+					log.debug("Scheduled event has latestCommit hash: {}", currentBranch.getLatestCommit());
 
-    /**
-     * Sets verification parameters of the source
-     *
-     * @param source Source that will be checked for all conditions and proper
-     *               flags will be set on it
-     */
-    private void verifySource(Source source) {
-        source.setSourceExists(false);
-        source.setCredentialsCorrect(false);
-        source.setNameCorrect(false);
-        source.setSourceTypeCorrect(false);
+					scheduler.scheduleJob(job, trigger);
+				} catch (SchedulerException e) {
+					e.printStackTrace();
+				}
+			});
 
-        // is name unique and not empty
-        if (!Strings.isNullOrEmpty(source.getName()) && !settings.getSources().stream()
-                .anyMatch(s -> s.getName().equals(source.getName()) && s.getId() != source.getId())) {
-            source.setNameCorrect(true);
-        }
+			scheduler.start();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
 
-        try {
-            // check for connection data correctness
-            StashBitbucketClient stashBitbucketClient = ClientConfigurator.getConfiguredStashBitbucketClient(source);
-            if (stashBitbucketClient.isVerified()) {
-                source.setSourceExists(true);
-                source.setCredentialsCorrect(true);
-            } else if (stashBitbucketClient.doesExist()) {
-                source.setSourceExists(true);
-            }
+	public Settings getSettings() {
+		return settings;
+	}
 
-			/*
-             * check if sourceType matches what lays at the end of given url
-			 * link has to be verified user to get appProperties on bitbucket
-			 * (but not on stash)
-			 */
-            if (source.isCredentialsCorrect() && Objects.nonNull(source.getSourceType())) {
-                Boolean isSourceTypeRight = stashBitbucketClient.getApplicationProperties()
-                        .map(ap -> ap.getDisplayName().equalsIgnoreCase(source.getSourceType().toString()))
-                        .orElse(false);
-                source.setSourceTypeCorrect(isSourceTypeRight);
-            }
-        } catch (MalformedURLException ignored) {
-        }
-    }
-
-    @Override
-    public Branch modifyBranch(int sourceId, String projectKey, String repoSlug, String branchId, Branch branch) {
-        Preconditions.checkNotNull(projectKey);
-        Preconditions.checkNotNull(repoSlug);
-        Preconditions.checkNotNull(branchId);
-        Preconditions.checkNotNull(branch);
-
-        Branch currentBranch;
-
-        try {
-            currentBranch = getCurrentSettings().getSourceById(sourceId).getProjectByKey(projectKey)
-                    .getRepoBySlug(repoSlug).getBranchById(branchId);
-            Verify.verifyNotNull(currentBranch);
-        } catch (NullPointerException | VerifyException e) {
-            // wrong data given
-            return null;
-        }
-
-        currentBranch.setListenTo(branch.getListenTo());
-        currentBranch.scheduledEvents = new ArrayList<>(branch.scheduledEvents);
-
-        saveSettingsToFile(settingsFilename);
-        return currentBranch;
-    }
-
-    public void scheduleEvents(Branch currentBranch, int sourceId,
-                               String projectKey, String repoSlug, String branchId) {
-
-        Preconditions.checkNotNull(currentBranch);
-        Preconditions.checkNotNull(scheduler);
-
-        currentBranch.scheduledEvents.stream().forEach(event -> {
-            try {
-                scheduler.shutdown(true);
-                scheduler.clear();
-                JobDetail job = newJob(ScheduledEventJob.class)
-                        .usingJobData("sourceUrl", getCurrentSettings().getSourceById(sourceId).getUrl())
-                        .usingJobData("projectKey", projectKey)
-                        .usingJobData("repoSlug", repoSlug)
-                        .usingJobData("branchId", branchId)
-                        .build();
-
-                Trigger trigger = newTrigger()
-                        .startNow()
-                        .withSchedule(event.getCronSchedule())
-                        .build();
-
-                scheduler.scheduleJob(job, trigger);
-            } catch (SchedulerException e) {
-                e.printStackTrace();
-            }
-        });
-        try{
-            scheduler.start();
-        } catch (SchedulerException e){
-            e.printStackTrace();
-        }
-
-    }
+	public void setSettings(Settings settings) {
+		this.settings = settings;
+		saveSettingsToFile(settingsFilename);
+	}
 }

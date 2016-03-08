@@ -1,0 +1,169 @@
+<div id="doc_javadoc_content">
+    <div class="loadingSpinner" ng-show="vm.loading"></div>
+    <div class="aui-message aui-message-error" ng-show="vm.error == 404">
+        <p class="title">
+            <strong>Entity not found</strong>
+        </p>
+        <p>Try selecting an entity from the left-hand sidebar</p>
+    </div>
+    <div class="aui-message aui-message-error" ng-show="vm.error == 500">
+        <p class="title">
+            <strong>Unknown error occurred</strong>
+        </p>
+        <p>Try reloading the page.</p>
+    </div>
+    <section class="elem" ng-hide="vm.loading || vm.error">
+        <ol class="aui-nav aui-nav-breadcrumbs" ng-show="vm.packages.length > 0">
+            <li ng-repeat="package in vm.packages" ng-class="{'aui-nav-selected': $last}">
+                <a ng-if="!$last" href="#" ui-sref="javadoc.entity({name:package.qualified})">{{package.name}}</a>
+                <span ng-if="$last">{{package.name}}</span>
+            </li>
+        </ol>
+
+        <h3 class="annotations" ng-show="vm.entity.annotation"><!--
+            --><span class="annotation" ng-repeat="annotation in vm.entity.annotation">@<span doc-qname="annotation"></span>
+            </span>
+        </h3>
+        <span class="modifiers" ng-show="vm.entity.modifiers && vm.entity.modifiers.length">
+            <span ng-repeat="modifier in vm.entity.modifiers" class="modifier {{modifier}}">{{modifier}}</span>
+        </span>
+        <span class="entityType entityType{{vm.entity.type|capitalize}}">{{vm.entity.type}}</span>
+        <h1 class="aui-page-header-main name {{vm.entity.modifiers.join(' ')}}">{{vm.entity.name}}<span ng-if="vm.entity.generic && vm.entity.generic.length" doc-generic="vm.entity.generic"></span></h1>
+
+        <div ng-show="vm.entity.supers.length" class="supers">
+            <span>extends</span>
+            <span ng-repeat="super in vm.entity.supers">
+                <span class="type" doc-qname="super"></span><!--
+                --><span ng-if="!$last" class="comma">, </span>
+            </span>
+        </div>
+
+        <div ng-show="vm.entity.interfaces.length" class="interfaces">
+            <span>implements</span>
+            <span ng-repeat="interface in vm.entity.interfaces">
+                <span class="type" doc-qname="interface"></span><!--
+                --><span ng-if="!$last" class="comma">, </span>
+            </span>
+        </div>
+
+        <p javadoc-tags="vm.entity.comment"></p>
+
+        <div class="classDiagram" ng-if="vm.classDiagramEnabled && vm.entity.type != 'package'">
+            <h2 ng-click="vm.expanded.toggle('classDiagram')" class="collapsible">
+                <span class="aui-icon aui-icon-small aui-iconfont-arrow-{{vm.expanded.classDiagram ? 'up' : 'down'}}">Expand/Collapse</span>
+                UML Diagram
+            </h2>
+            <div doc-class-diagram="vm.entity.qualified" ng-if="vm.expanded.classDiagram"></div>
+        </div>
+
+        <div class="doc_panel elems {{elementGroup.type}}s"
+             ng-repeat="elementGroup in vm.entity.elements"
+             ng-show="elementGroup.elements.length">
+            <pre>{{isObject(elementGroup)}}</pre>
+            <h2 ng-click="vm.expanded.toggle(elementGroup.type+'s')" class="collapsible">
+                <span class="aui-icon aui-icon-small aui-iconfont-arrow-{{vm.expanded[elementGroup.type+'s'] ? 'up' : 'down'}}">Expand/Collapse</span>
+                {{elementGroup.type}}s
+            </h2>
+            <table ng-show="vm.expanded[elementGroup.type+'s']">
+                <tr class="elem {{elementGroup.type}} {{element.modifiers.join(' ')}} ng-class-even: 'even';"
+                    ng-class="{'selected': vm.$stateParams.elementType === elementGroup.type && vm.$stateParams.elementName === element.name}"
+                    ng-repeat="element in elementGroup.elements">
+                    <td>
+                    <span class="modifiers"><!--
+                        --><span ng-repeat="modifier in element.modifiers"
+                                 class="modifier {{modifier}}">{{modifier}}</span><!--
+                    --></span><span ng-if="element.generic" class="generic" doc-generic="vm.entity.generic"></span><!--
+                    --><span class="typeWrapper">
+                        <span class="type" ng-show="element.type" doc-qname="element.type"></span>
+                    </span>
+                    </td>
+                    <td>
+                    <span class="toggle" ng-show="element.details.exist" title="Show/hide details"><span
+                            class="aui-icon aui-icon-small aui-iconfont-arrow-{{element.details.visible?'up':'down'}}"
+                            ng-click="vm.toggleDetails(element)"></span></span>
+                    <span class="annotations" ng-show="element.annotation && element.annotation.length"><!--
+                                --><span class="annotation" ng-repeat="annotation in element.annotation">@<span
+                            doc-qname="annotation"></span>
+                                </span>
+                            </span>
+                        <span class="name">{{element.name}}</span><!--
+                    --><span class="parameters" ng-show="element.parameter"><span class="parenthesis">(</span><!--
+                        --><span ng-repeat-start="parameter in element.parameter" class="parameter"><!--
+                             --><span class="annotations inline"
+                                      ng-show="parameter.annotation && parameter.annotation.length"><!--
+                                    --><span class="annotation" ng-repeat="annotation in parameter.annotation">@<span
+                            doc-qname="annotation"></span>
+                                    </span>
+                                </span>
+                                <span class="type" doc-qname="parameter.type"></span>
+                                <span class="parameterName">{{parameter.name}}</span><!--
+                             --><span ng-if="!$last" class="comma">, </span><!--
+                        --></span><span ng-repeat-end ng-show="1||!$last"> </span><span class="parenthesis">)</span><!--
+                    --></span>
+                    <span class="exceptions" ng-show="element.exception && element.exception.length">
+                        <span class="throws">throws</span>
+                        <span ng-repeat-start="exception in element.exception" doc-qname="exception"
+                              class="type"></span>
+                        <span ng-if="!$last" class="comma" ng-repeat-end>, </span>
+                    </span>
+                        <p class="comment" javadoc-tags="element.comment"></p>
+                        <div class="details" ng-show="element.details.visible">
+                            <div class="content">
+                                <div class="tags" ng-repeat="tag in element.details.tags">
+                                    <h5>{{tag.name}}</h5>
+                                    <p javadoc-tags="tag.text"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+
+        <div class="doc_panel entities elems packages" ng-show="vm.entity.nestedPackages.length > 0">
+            <h3>Packages</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Summary</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="package in vm.entity.nestedPackages" class="elem ng-class-even: 'even';">
+                    <td><span class="name"><a href="#" doc-qname="package.name"></a></span></td>
+                    <td>{{package.comment}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="doc_panel entities elems classes" ng-show="vm.entity.nestedClasses.length > 0">
+            <h3>Classes</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Type & Name</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="clazz in vm.entity.nestedClasses" class="elem ng-class-even: 'even';">
+                        <td>
+                            <span class="entityType entityType{{clazz.type|capitalize}}">{{clazz.type}}</span><br>
+                            <span class="name">
+                                <span class="type" doc-qname="clazz.name"></span>
+                            </span>
+                        </td>
+                        <td>{{clazz.comment}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <pre ng-show="0">{{vm.entity|json}}</pre>
+
+    </section>
+
+</div>

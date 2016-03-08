@@ -1,0 +1,243 @@
+.doc .javadoc_container .loadingSpinner {
+    width: 100%;
+    height: 200px;
+}
+
+.doc .javadoc h1 span.entityType, .doc .javadoc h1 span.modifier {
+    font-size: 0.4em;
+}
+
+.doc .javadoc .supers, .doc .javadoc .interfaces {
+    margin-left: 50px;
+}
+
+.doc .javadoc .elems > table {
+    width: 100%;
+    table-layout: auto;
+}
+
+.doc .javadoc .elems > table td {
+    vertical-align: top;
+    padding: 10px;
+}
+
+.doc .javadoc .elems > table td:first-child {
+    width: 200px;
+}
+
+.doc .javadoc .elems table {
+    border: 2px solid #f5f5f5;
+    border-spacing: 0;
+}
+
+.doc .javadoc .elems .elem {
+    padding: 0.5em;
+    background: #fff;
+}
+
+.doc .javadoc .elems .elem.even {
+    background: #f5f5f5;
+}
+
+.doc .javadoc .elems .elem.selected td {
+    background: #ebf2f9;
+}
+
+.doc .javadoc span.modifier {
+    font-size: 0.9em;
+    line-height: 1.2em;
+    vertical-align: 0.1em;
+}
+
+.doc .javadoc span.generic {
+    margin-right: 0.3em;
+    font-weight: 600;
+}
+
+.doc .javadoc span.modifier,
+.doc .javadoc .javadoc_container span.type {
+    background: #e9e9e9;
+    font-weight: 600;
+    display: inline-block;
+    border-radius: 1em;
+    margin: 0.2em 0;
+    vertical-align: 0;
+    padding: 0 0.75em;
+}
+
+.doc .javadoc span.modifier:not(:first-of-type) {
+    margin: 0 4px;
+}
+
+.doc .javadoc .javadoc_container span.type {
+    background: #e9e9e9;
+    border-radius: 0.2em;
+    cursor: default;
+}
+
+.doc .javadoc span.modifier.public {
+    background: #59afe1;
+    color: #fff;
+}
+
+.doc .javadoc span.modifier.static {
+    background: #f6c342;
+}
+
+.doc .javadoc span.modifier.private {
+    background: #d04437;
+    color: #fff;
+}
+
+.doc .javadoc span.modifier.abstract {
+    background: #f15c75;
+    color: #fff;
+}
+
+.doc .javadoc span.modifier.protected {
+    background: #654982;
+    color: #fff;
+}
+
+.doc .javadoc span.modifier.synchronized {
+    background: #815b3a;
+    color: #fff;
+}
+
+.doc .javadoc .elems .elem span.name, .doc .javadoc .methods .method > span.type, .doc .javadoc .elems .elem span.parameterName {
+    font-size: 1.0em;
+    font-weight: 600;
+}
+
+.doc .javadoc .elems .elem span.name {
+    font-size: 1.2em;
+}
+
+
+.doc .javadoc .elems .elem > span.parameters .parenthesis, .doc .javadoc .elems .elem > span.parameters .comma {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.doc .javadoc .elems .elem span.parameters span.parameter {
+    margin: 0 0.2em;
+    white-space: nowrap;
+}
+
+.doc .javadoc .elems .elem span.parameters span.parameterName {
+    font-weight: 400;
+}
+
+.doc .javadoc .elems .elem span.parameters span.type {
+    background: #e9e9e9;
+}
+
+.doc .javadoc .elem > span {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.doc .javadoc span.modifiers {
+    margin-right: 5px;
+}
+
+.doc .javadoc .elem > span.modifiers {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.doc .javadoc .elem.abstract span.name {
+    font-style: italic;
+}
+
+.doc .javadoc .elem.static span.name {
+    /*text-decoration: underline;*/
+}
+
+.doc .javadoc .elem .toggle {
+    cursor: pointer;
+    float: right;
+}
+
+.doc .javadoc .elem .toggle {
+    border-radius: 0.2em;
+    padding: 0.2em;
+    background: #eee;
+}
+
+.doc .javadoc .elem.even .toggle {
+    background: white;
+}
+
+.doc .javadoc .elem .details {
+    border-radius: 0.2em;
+    padding: 0.5em;
+    margin-top: 0.5em;
+}
+
+.doc .javadoc .name.abstract {
+    font-style: italic;
+}
+
+.doc .javadoc .name.static {
+    /*text-decoration: underline;*/
+}
+
+.doc .javadoc .elem .exceptions {
+    display: block;
+    margin-left: 50px;
+    margin-top: 5px;
+}
+
+.doc .javadoc .elem .exceptions .throws {
+
+}
+
+.doc .javadoc .comment {
+    /*font-style: italic;*/
+}
+
+.doc .javadoc .typeWrapper {
+    /*min-width: 150px;*/
+    display: inline-block;
+}
+
+.doc .javadoc .annotations .annotation {
+    display: block;
+    color: #999999;
+}
+
+.doc .javadoc .annotations.inline .annotation {
+    display: inline-block;
+}
+
+.doc .javadoc h3.annotations {
+    margin-top: 0;
+    font-style: normal;
+    font-weight: normal;
+}
+
+.doc .javadoc span.type.clickable {
+    cursor: pointer;
+    color: #3572b0;
+}
+
+.doc .javadoc span.type.clickable:hover {
+    text-decoration: underline;
+}
+
+.doc .javadoc p {
+    margin: 0;
+}
+
+.doc .javadoc .monospace {
+    font-family: monospace;
+}
+
+.doc .javadoc h2.collapsible {
+    cursor: pointer;
+}
+
+.doc .javadoc h2.collapsible span.aui-icon {
+    vertical-align: 0.4em;
+}
