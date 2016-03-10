@@ -17,18 +17,19 @@ angular.module("DoC")
                     html += '<span doc-qname="\'' + qualified + '\'"></span>';
                     if (generic.wildcard) {
                         var processBound = function(bound, text) {
+                            html += ' ' + text + ' ';
                             bound.forEach(function(bound, j) {
                                 if (j > 0) {
-                                    html += '<span>, </span>';
+                                    html += '<span> &amp; </span>';
                                 }
-                                html += ' ' + text + ' ' + '<span doc-qname="\'' + bound.qualified + '\'"></span>';
+                                html += '<span doc-qname="\'' + bound.qualified + '\'"></span>';
                             });
                         };
 
-                        if (generic.wildcard.extendsBound) {
+                        if (generic.wildcard.extendsBound && generic.wildcard.extendsBound.length) {
                             processBound(generic.wildcard.extendsBound, "extends");
                         }
-                        if (generic.wildcard.superBound) {
+                        if (generic.wildcard.superBound && generic.wildcard.superBound.length) {
                             processBound(generic.wildcard.superBound, "super");
                         }
                     }
