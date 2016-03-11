@@ -20,6 +20,12 @@ angular.module("DoC")
 
                 html += '>{{name}}';
 
+                console.log(scope.varargs);
+
+                if (scope.varargs) {
+                    html += '...';
+                }
+
                 if (isGeneric) {
                     html += '<span doc-generic="source.generic"></span>';
                 }
@@ -41,7 +47,8 @@ angular.module("DoC")
             scope: {
                 source: "=docQname",
                 name: "=",
-                qualified: "="
+                qualified: "=",
+                varargs: "=docVarargs"
             }
         };
     });
