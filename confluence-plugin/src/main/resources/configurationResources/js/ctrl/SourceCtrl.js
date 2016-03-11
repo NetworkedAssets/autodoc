@@ -73,6 +73,9 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
         Source.addFromAppLinks().$promise.then(function() {
             vm.addFromAppLinksSavingState = "ready";
             vm.get();
+        }, function() {
+            vm.addFromAppLinksSavingState = "error";
+            $timeout();
         });
 
     };
