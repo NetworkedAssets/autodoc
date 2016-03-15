@@ -19,8 +19,8 @@
                 <span ng-if="$last">{{package.name}}</span>
             </li>
         </ol>
-        <h3 class="annotations" ng-show="vm.entity.annotation"><!--
-            --><span class="annotation" ng-repeat="annotation in vm.entity.annotation" javadoc-annotation="annotation"></span>
+        <h3 class="annotations" ng-show="vm.entity.annotations"><!--
+            --><span class="annotation" ng-repeat="annotation in vm.entity.annotations" javadoc-annotation="annotation"></span>
         </h3>
         <span class="modifiers" ng-show="vm.entity.modifiers && vm.entity.modifiers.length">
             <span ng-repeat="modifier in vm.entity.modifiers" class="modifier {{modifier}}">{{modifier}}</span>
@@ -66,7 +66,7 @@
                 <tr class="elem {{elementGroup.type}} {{element.modifiers.join(' ')}} ng-class-even: 'even';"
                     ng-class="{'selected': vm.$stateParams.elementType === elementGroup.type && vm.$stateParams.elementName === element.name}"
                     ng-repeat="element in elementGroup.elements">
-                    <td>
+                    <td ng-if="elementGroup.type != 'constant'">
                     <span class="modifiers"><!--
                         --><span ng-repeat="modifier in element.modifiers"
                                  class="modifier {{modifier}}">{{modifier}}</span><!--
@@ -79,15 +79,15 @@
                     <span class="toggle" ng-show="element.details.exist" title="Show/hide details"><span
                             class="aui-icon aui-icon-small aui-iconfont-arrow-{{element.details.visible?'up':'down'}}"
                             ng-click="vm.toggleDetails(element)"></span></span>
-                    <span class="annotations" ng-show="element.annotation && element.annotation.length"><!--
-                                --><span class="annotation" ng-repeat="annotation in element.annotation" javadoc-annotation="annotation"></span>
+                    <span class="annotations" ng-show="element.annotations && element.annotations.length"><!--
+                                --><span class="annotation" ng-repeat="annotation in element.annotations" javadoc-annotation="annotation"></span>
                             </span>
                         <span class="name">{{element.name}}</span><!--
                     --><span class="parameters" ng-show="element.parameter"><span class="parenthesis">(</span><!--
                         --><span ng-repeat-start="parameter in element.parameter" class="parameter"><!--
                              --><span class="annotations inline"
-                                      ng-show="parameter.annotation && parameter.annotation.length"><!--
-                                    --><span class="annotation" ng-repeat="annotation in parameter.annotation" javadoc-annotation="annotation">
+                                      ng-show="parameter.annotations && parameter.annotations.length"><!--
+                                    --><span class="annotation" ng-repeat="annotation in parameter.annotations" javadoc-annotation="annotation">
                                     </span>
                                 </span>
                                 <span class="type" doc-qname="parameter.type" doc-varargs="$last && element.varArgs"></span>
