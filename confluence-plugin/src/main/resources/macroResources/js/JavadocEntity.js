@@ -1,6 +1,7 @@
 function JavadocEntity(object) {
     var entity = this;
 
+    this.annotation = [];
     this.scope = null;
     this.name = null;
     this.comment = null;
@@ -75,6 +76,7 @@ function JavadocEntity(object) {
 
         entity.comment = object.comment;
         entity.generic = object.generic;
+        entity.annotation = object.annotation;
 
         entity.qualified = object.qualified ? object.qualified : object.name;
 

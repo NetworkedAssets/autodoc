@@ -18,9 +18,7 @@ angular.module("DoC")
                     element.addClass("clickable");
                 }
 
-                html += '>{{name}}';
-
-                console.log(scope.varargs);
+                html += '>{{visibleName}}';
 
                 if (scope.varargs) {
                     html += '...';
@@ -42,13 +40,18 @@ angular.module("DoC")
                     });
                 }
 
+                if (!scope.visibleName) {
+                    scope.visibleName = scope.name;
+                }
+
                 $compile(element.contents())(scope);
             },
             scope: {
                 source: "=docQname",
                 name: "=",
                 qualified: "=",
-                varargs: "=docVarargs"
+                varargs: "=docVarargs",
+                visibleName: "=docVisibleName"
             }
         };
     });
