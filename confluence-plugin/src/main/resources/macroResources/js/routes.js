@@ -27,7 +27,6 @@ angular.module('DoC').config(function($stateProvider, $urlRouterProvider) {
             }
         })
         .state('structureGraph', {
-            url: "/structureGraph",
             template: '' +
             '<div class="aui-message aui-message-error" ng-show="error">' +
             '   <p class="title">' +
@@ -35,8 +34,15 @@ angular.module('DoC').config(function($stateProvider, $urlRouterProvider) {
             '   </p>' +
             '   <p>Try reloading the page.</p>' +
             '</div>' +
-            '<div id="doc_structureGraphProgressbar" class="aui-progress-indicator" ng-show="loading"><span class="aui-progress-indicator-value"></span></div>'+
+            '<div id="doc_structureGraphProgressbar" class="aui-progress-indicator" ng-show="loading"><span class="aui-progress-indicator-value"></span></div>' +
+            '<div class="aui-message aui-message-info" id="doc_structureGraphTakesLongerThanUsual" ng-show="loadingTakesLonger">' +
+                '<p class="title">' +
+                    '<strong>It takes longer than usual...</strong>' +
+                '</p>' +
+                '<p>The structure diagram can be much less efficient for large projects.</p>' +
+            '</div>' +
             '<div id="doc_structureGraph" ng-class="{\'loading\': loading}" ng-hide="error"></div>',
+            url: "/structureGraph",
             displayName: "Structure Graph",
             controller: 'StructureGraphCtrl'
         });

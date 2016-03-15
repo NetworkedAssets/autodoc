@@ -69,3 +69,8 @@
     fill: #fff;
     font-weight: 600;
 }
+
+#doc_structureGraphTakesLongerThanUsual {
+    width: 300px;
+    margin: 20px auto;
+}

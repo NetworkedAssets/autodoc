@@ -98,25 +98,32 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
         var alphaMax = alpha = 1;
         var alphaMin = .3;
 
-        function tick(){
+        function tick() {
             force.start();
             force.alpha(alpha);
             force.tick();
             alpha = force.alpha();
             force.stop();
-            if(alpha >= alphaMin) {
-                AJS.progressBars.update("#doc_structureGraphProgressbar", 1-(alpha-alphaMin)/(alphaMax-alphaMin));
+            if (alpha >= alphaMin) {
+                AJS.progressBars.update("#doc_structureGraphProgressbar", 1 - (alpha - alphaMin) / (alphaMax - alphaMin));
                 setTimeout(tick, 0);
             } else {
                 AJS.progressBars.update("#doc_structureGraphProgressbar", 1);
                 setTimeout(function() {
                     $scope.loading = false;
+                    $scope.loadingTakesLonger = false;
                     $timeout();
                 }, 10);
             }
 
         }
+
         $timeout(tick);
+        $timeout(function() {
+            if ($scope.loading) {
+                $scope.loadingTakesLonger = true;
+            }
+        }, 5000);
 
     }
 
