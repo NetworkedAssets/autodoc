@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
-import com.networkedassets.autodoc.integration.IntegrationTest;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Source;
@@ -13,7 +12,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,14 +27,13 @@ import static org.hamcrest.Matchers.*;
 /**
  * Created by mtulaza on 2016-02-26.
  */
-@Category(IntegrationTest.class)
 public class ConfigurationServiceIntegrationTest {
 
     @BeforeClass
     public static void setupRestAssured() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         RestAssured.baseURI = "http://atlas.networkedassets.net";
         RestAssured.basePath = "/confluence/rest/doc/1.0/configuration";
-        RestAssured.authentication = preemptive().basic("admin", "admin");
+        RestAssured.authentication = preemptive().basic("admin", "wYCZsy_Jx8kv.du6");
     }
 
     @Test
@@ -97,6 +94,7 @@ public class ConfigurationServiceIntegrationTest {
         setCredentialsPOST(credentials);
 
         credentials.setConfluenceUsername("admin");
+        credentials.setConfluencePassword("wYCZsy_Jx8kv.du6");
         setCredentialsPOST(credentials);
     }
 
@@ -107,7 +105,7 @@ public class ConfigurationServiceIntegrationTest {
         .when()
                 .post("/credentials")
         .then()
-                .statusCode(204)
+                .statusCode(202)
                 .body(isEmptyString());
     }
 
@@ -239,7 +237,6 @@ public class ConfigurationServiceIntegrationTest {
                 .assertThat().contentType(ContentType.JSON)
                 .statusCode(200)
                 .body("name", equalTo(originalSourceName));
-
     }
 
     private Response sendPUTsetSource(Source source, String testSourceName, int sourceId) {

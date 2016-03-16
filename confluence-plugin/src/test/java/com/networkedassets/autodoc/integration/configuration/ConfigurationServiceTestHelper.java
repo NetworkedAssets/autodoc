@@ -17,6 +17,9 @@ public class ConfigurationServiceTestHelper {
         Source source = HTTPSvalidatedRequest
                 .get("https://atlas.networkedassets.net:8050/sources/" + sourceId)
                 .getBody().as(Source.class);
-        return source.getProjectByKey(projectKey).getRepoBySlug(repoSlug).getBranchById(branchId);
+        return source
+                .getProjectByKey(projectKey)
+                .getRepoBySlug(repoSlug)
+                .getBranchById(branchId);
     }
 }
