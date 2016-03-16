@@ -19,11 +19,7 @@ public class TransformerSettings implements Serializable {
 	public String getAddress() {
 		return address;
 	}
-
-	public void setAddress(String host, int port) {
-		this.address = cutAllSlashes(host) + ":" + port + "/event";
-	}
-
+    
 	public void setAddress(String host, int port, String path) {
 		this.address = cutAllSlashes(host) + ":" + port + ((path != null && !path.isEmpty()) ? "/" + cutAllSlashes(path) : "") + "/event";
 	}
