@@ -81,6 +81,7 @@ public class PropertyHandlerTest {
 		log.info("Testing URI: " + transformerSettings.getAddress());
 	}
 
+	//TODO: jetty. prefix needs to be deleted when branch is merged to move-to-javaee branch
 	@Test
 	public void testCreatingTransformerSettingsObjectWithDataFromDefaultPropertiesFile() {
 		TransformerSettings transformerSettings = new TransformerSettings();
