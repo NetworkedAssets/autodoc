@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,14 @@ public class TransformerSettings implements Serializable {
 
 	public void setAddress(String address, int port) {
 		this.address = cutAllSlashes(address) + ":" + port + "/event";
+	}
+
+	public void setAddress(String address, int port, String path) {
+		String pathNoSlashesAtTheEnd = cutAllSlashes(path);
+		if(!pathNoSlashesAtTheEnd.startsWith("/") || !pathNoSlashesAtTheEnd.startsWith("\\")){
+			pathNoSlashesAtTheEnd = "/" + pathNoSlashesAtTheEnd;
+		}
+		this.address = cutAllSlashes(address) + ":" + port + pathNoSlashesAtTheEnd + "/event";
 	}
 
 	private String cutAllSlashes(String url) {
