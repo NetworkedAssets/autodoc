@@ -83,7 +83,7 @@ public class SettingsServiceIntegrationTest {
         settings.setConfluenceUrl(CONFLUENCE_URL);
 
         TransformerSettings transformerSettings = new TransformerSettings();
-        transformerSettings.setAddress(TRANSFORMER_URL, TRANSFORMER_PORT);
+        transformerSettings.setAddress(TRANSFORMER_URL, TRANSFORMER_PORT, null);
 
         settings.setTransformerSettings(transformerSettings);
         settings.setSources(Lists.newArrayList());
