@@ -4,7 +4,9 @@ import com.google.common.collect.Lists;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.specification.RequestSpecification;
+import com.networkedassets.autodoc.integration.BaseIntegrationTest;
 import com.networkedassets.autodoc.integration.IntegrationTest;
+import com.networkedassets.autodoc.integration.TransformerConstants;
 import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
@@ -18,7 +20,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 
 @Category(IntegrationTest.class)
-public class SettingsServiceIntegrationTest {
+public class SettingsServiceIntegrationTest extends BaseIntegrationTest {
     private final static String CONFLUENCE_URL = "http://atlas.networkedassets.net/confluence";
     private static String TRANSFORMER_URL;
     private static int TRANSFORMER_PORT;
@@ -27,9 +29,9 @@ public class SettingsServiceIntegrationTest {
 
     @BeforeClass
     public static void setupRestAssured() {
-        RestAssured.baseURI = TransformerConstants.getBaseUri();
+        RestAssured.baseURI = TransformerConstants.getHost();
         RestAssured.port =TransformerConstants.getPort();
-        RestAssured.basePath = "/settings";
+        RestAssured.basePath = TransformerConstants.getPath() + "/settings";
 
         TRANSFORMER_URL = cutAllSlashes(PropertyHandler.getInstance().getValue("jetty.address"));
         TRANSFORMER_PORT = Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port"));
@@ -83,7 +85,7 @@ public class SettingsServiceIntegrationTest {
         settings.setConfluenceUrl(CONFLUENCE_URL);
 
         TransformerSettings transformerSettings = new TransformerSettings();
-        transformerSettings.setAddress(TRANSFORMER_URL, TRANSFORMER_PORT);
+        transformerSettings.setAddress(TRANSFORMER_URL, TRANSFORMER_PORT, null);
 
         settings.setTransformerSettings(transformerSettings);
         settings.setSources(Lists.newArrayList());

@@ -268,8 +268,21 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<!-- Plugin excludes classes marked @Category(IntegrationTest.class) from 
-				maven 'test' and 'integration-test' phases -->
+
+			<!--
+				removes "[WARNING] We have a duplicate" warnings when integration-test phase takes place
+				http://stackoverflow.com/questions/8880361/superfluous-warnings-when-using-maven-shade-plugin
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<forceCreation>true</forceCreation>
+				</configuration>
+			</plugin>
+
+			<!-- Plugin excludes classes marked @Category(IntegrationTest.class) from test phases -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -285,6 +298,32 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+
+			<!--
+				Runs integration and unit tests on maven command: (example)
+				mvn integration-test -DtransHost=host.net -DtransPort=8080 -DtransPath=optionalPath
+
+				example of full URI: host.net:8080/optionalPath
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.19.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<includes>
+								<include>**/*IntegrationTest.java</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>

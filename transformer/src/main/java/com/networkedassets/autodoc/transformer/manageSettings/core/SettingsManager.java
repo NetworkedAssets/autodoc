@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.constraint.ProperTime;
 import com.networkedassets.autodoc.transformer.manageSettings.require.SettingsPersistor;
 import com.networkedassets.autodoc.transformer.util.*;
 import org.quartz.CronTrigger;
@@ -60,8 +61,11 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
 		setSettings(settingsPersistor.loadSettingsFromFile(settingsFilename));
 
-		getSettings().getTransformerSettings().setAddress(PropertyHandler.getInstance().getValue("jetty.address"),
-				Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port")));
+		getSettings().getTransformerSettings().setAddress(
+				PropertyHandler.getInstance().getValue("jetty.address"),
+				Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port")),
+				PropertyHandler.getInstance().getValue("jetty.path")
+		);
 		log.info("Address is setup to: " + getSettings().getTransformerSettings().getAddress());
 		updateAllSourcesAndEnableHooks();
 	}

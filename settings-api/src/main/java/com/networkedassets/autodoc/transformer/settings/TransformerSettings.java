@@ -19,14 +19,22 @@ public class TransformerSettings implements Serializable {
 	public String getAddress() {
 		return address;
 	}
-
-	public void setAddress(String address, int port) {
-		this.address = cutAllSlashes(address) + ":" + port + "/event";
+    
+	public void setAddress(String host, int port, String path) {
+		this.address = cutAllSlashes(host) + ":" + port + ((path != null && !path.isEmpty()) ? "/" + cutAllSlashes(path) : "") + "/event";
 	}
 
-	private String cutAllSlashes(String url) {
-		return (url.endsWith("/") || url.endsWith("\\")) ? cutAllSlashes(url.substring(0, url.length() - 1)) : url;
-	}
+    private String cutAllSlashes(String toCut) {
+        return cutPrefixSlashes(cutSuffixSlashes(toCut));
+    }
+
+    private String cutPrefixSlashes(String toCut) {
+        return (toCut.startsWith("/") || toCut.startsWith("\\")) ? cutPrefixSlashes(toCut.substring(1, toCut.length())) : toCut;
+    }
+
+    private String cutSuffixSlashes(String toCut) {
+        return (toCut.endsWith("/") || toCut.endsWith("\\")) ? cutSuffixSlashes(toCut.substring(0, toCut.length() - 1)) : toCut;
+    }
 
 	@Override
 	public String toString() {
