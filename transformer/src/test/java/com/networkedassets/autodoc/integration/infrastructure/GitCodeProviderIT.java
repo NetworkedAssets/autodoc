@@ -1,22 +1,18 @@
-package com.networkedassets.autodoc.transformer.infrastructure;
+package com.networkedassets.autodoc.integration.infrastructure;
 
-import java.io.IOException;
-
-import com.networkedassets.autodoc.integration.IntegrationTest;
+import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.GitCodeProvider;
+import com.networkedassets.autodoc.transformer.settings.Source;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
-import com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure.GitCodeProvider;
-import com.networkedassets.autodoc.transformer.settings.Source;
+import java.io.IOException;
 
-@Category(IntegrationTest.class)
-public class GitCodeProviderIntegrationTest {
+public class GitCodeProviderIT {
 
 	// To do: add some test to clone repository
 
