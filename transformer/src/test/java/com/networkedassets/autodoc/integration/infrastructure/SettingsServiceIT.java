@@ -4,8 +4,7 @@ import com.google.common.collect.Lists;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.specification.RequestSpecification;
-import com.networkedassets.autodoc.integration.BaseIntegrationTest;
-import com.networkedassets.autodoc.integration.IntegrationTest;
+import com.networkedassets.autodoc.integration.BaseIT;
 import com.networkedassets.autodoc.integration.TransformerConstants;
 import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
@@ -13,14 +12,12 @@ import com.networkedassets.autodoc.transformer.settings.TransformerSettings;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 
-@Category(IntegrationTest.class)
-public class SettingsServiceIntegrationTest extends BaseIntegrationTest {
+public class SettingsServiceIT extends BaseIT {
     private final static String CONFLUENCE_URL = "http://atlas.networkedassets.net/confluence";
     private static String TRANSFORMER_URL;
     private static int TRANSFORMER_PORT;
