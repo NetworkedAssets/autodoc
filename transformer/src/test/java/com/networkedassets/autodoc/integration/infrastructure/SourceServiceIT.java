@@ -5,24 +5,20 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.response.ValidatableResponse;
 import com.jayway.restassured.specification.RequestSpecification;
-import com.networkedassets.autodoc.integration.BaseIntegrationTest;
-import com.networkedassets.autodoc.integration.IntegrationTest;
+import com.networkedassets.autodoc.integration.BaseIT;
 import com.networkedassets.autodoc.integration.TransformerConstants;
-import com.networkedassets.autodoc.transformer.server.Transformer;
 import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Source;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import static com.jayway.restassured.RestAssured.*;
+import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-@Category(IntegrationTest.class)
-public class SourceServiceIntegrationTest extends BaseIntegrationTest {
+public class SourceServiceIT extends BaseIT {
 
     private final RequestSpecification HTTPSvalidatedRequest = given()
             .relaxedHTTPSValidation();

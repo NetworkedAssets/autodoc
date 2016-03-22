@@ -2,7 +2,6 @@ package com.networkedassets.autodoc.integration;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,13 +10,12 @@ import static org.hamcrest.Matchers.*;
 /**
  * Created by mtulaza on 2016-03-21.
  */
-@Category(IntegrationTest.class)
-public abstract class BaseIntegrationTest {
-    public static Logger log = LoggerFactory.getLogger(BaseIntegrationTest.class);
+public abstract class BaseIT {
+    public static Logger log = LoggerFactory.getLogger(BaseIT.class);
 
     /**
      * test run before every integration test to ensure
-     * that host, port and path is available
+     * that host, port and path are available
      */
     @BeforeClass
     public static void testPropertiesToRunIntegrationTestsObtained() {
