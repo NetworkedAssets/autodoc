@@ -194,6 +194,7 @@ public class DocumentationService {
             @PathParam("doctype") String docType,
             @PathParam("docPieceName") String docPieceName,
             @QueryParam("pieceType") String pieceType,
+            @QueryParam("versionId") String versionId,
             String content) throws UnsupportedEncodingException {
         String projectDec = URLDecoder.decode(project, "UTF-8");
         String repoDec = URLDecoder.decode(repo, "UTF-8");
@@ -201,10 +202,11 @@ public class DocumentationService {
         String docTypeDec = URLDecoder.decode(docType, "UTF-8");
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
         String pieceTypeDec = URLDecoder.decode(pieceType, "UTF-8");
+        String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
 
         Response response = ao.executeInTransaction(() -> {
             Documentation doc = findOrCreateDocumentation(projectDec, repoDec, branchDec, docTypeDec);
-            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec);
+            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec, versionIdDec);
             piece.setContent(content);
             piece.save();
             doc.save();
@@ -231,15 +233,47 @@ public class DocumentationService {
         });
     }
 
-    public DocumentationPiece findOrCreateDocumentationPiece(Documentation doc, String docPieceName, String pieceType) {
+    public DocumentationPiece findOrCreateDocumentationPiece(Documentation doc, String docPieceName, String pieceType, String versionId) {
         return getDocumentationPiece(doc, docPieceName).orElseGet(() -> {
             DocumentationPiece piece = ao.create(DocumentationPiece.class);
             piece.setDocumentation(doc);
             piece.setPieceName(docPieceName);
             piece.setPieceType(pieceType);
+            piece.setVersionId(versionId);
             piece.save();
 
             return piece;
         });
+    }
+
+    @Path("{project}/{repo}/{branch}/{doctype}")
+    @DELETE
+    public Response deleteRedundantDocumentationPieces(
+            @PathParam("project") String project,
+            @PathParam("repo") String repo,
+            @PathParam("branch") String branch,
+            @PathParam("doctype") String docType,
+            @QueryParam("versionId") final String versionId) throws UnsupportedEncodingException {
+        if(Strings.isNullOrEmpty(versionId)) {
+            Response.status(400).entity("{\"success\":\"false\", \"reason\":\"versionId QueryParam is required\"}");
+        }
+        String projectDec = URLDecoder.decode(project, "UTF-8");
+        String repoDec = URLDecoder.decode(repo, "UTF-8");
+        String branchDec = URLDecoder.decode(branch, "UTF-8");
+        String docTypeDec = URLDecoder.decode(docType, "UTF-8");
+        String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
+
+        Optional<Documentation> documentation = getDocumentation(projectDec, repoDec, branchDec, docTypeDec);
+        documentation.ifPresent(doc -> {
+            List<DocumentationPiece> diffVersionIdDocPieceList = Arrays.asList(
+                    ao.find(DocumentationPiece.class, Query.select().where("DOCUMENTATION_ID = ? AND VERSION_ID <> ?", doc.getID(), versionIdDec)
+            ));
+            diffVersionIdDocPieceList.forEach(docPieceToDelete -> {
+                ao.delete(docPieceToDelete);
+                log.info("DocumentationPiece named: {} with versionId {} deleted", docPieceToDelete.getPieceName(), docPieceToDelete.getVersionId());
+            });
+            // maybe: return Response indicating that documentation was not found?
+        });
+        return Response.ok("{\"success\":\"true\"}").build();
     }
 }
