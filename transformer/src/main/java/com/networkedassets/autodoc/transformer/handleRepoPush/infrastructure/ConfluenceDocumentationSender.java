@@ -1,26 +1,25 @@
 package com.networkedassets.autodoc.transformer.handleRepoPush.infrastructure;
 
-import com.mashape.unirest.request.HttpRequestWithBody;
-import org.apache.commons.lang.RandomStringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Strings;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.HttpRequestWithBody;
 import com.networkedassets.autodoc.transformer.handleRepoPush.Documentation;
 import com.networkedassets.autodoc.transformer.handleRepoPush.DocumentationPiece;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.settings.Settings;
+import org.apache.commons.lang.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfluenceDocumentationSender implements DocumentationSender {
 
 	private static final String confluenceEndpointPostFormat =
-			"{confluenceUrl}/rest/doc/1.0/documentation/{project}/{repo}/{branch}/{docType}/{pieceName}";
+			"/rest/doc/1.0/documentation/{project}/{repo}/{branch}/{docType}/{pieceName}";
 	private static final String confluenceEndpointDeleteFormat =
-			"{confluenceUrl}/rest/doc/1.0/documentation/{project}/{repo}/{branch}/{docType}";
+			"/rest/doc/1.0/documentation/{project}/{repo}/{branch}/{docType}";
 
 	private static final Logger log = LoggerFactory.getLogger(PushEventService.class);
 
@@ -47,8 +46,7 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
 
 		for (DocumentationPiece docPiece : documentation.getPieces()) {
 			try {
-				final HttpRequestWithBody request = Unirest.post(confluenceEndpointPostFormat)
-						.routeParam("confluenceUrl", confluenceUrl)
+				final HttpRequestWithBody request = Unirest.post(confluenceUrl + confluenceEndpointPostFormat)
 						.routeParam("project", escaper.escape(documentation.getProject()))
 						.routeParam("repo", escaper.escape(documentation.getRepo()))
 						.routeParam("branch", escaper.escape(documentation.getBranch()))
@@ -70,8 +68,7 @@ public class ConfluenceDocumentationSender implements DocumentationSender {
 	private void deleteAllRedundantDocumentationPieces(Documentation documentation, String confluenceUrl, String username, String password, String versionId) {
 		Escaper escaper = UrlEscapers.urlPathSegmentEscaper();
 		try {
-			final HttpRequestWithBody request = Unirest.delete(confluenceEndpointDeleteFormat)
-					.routeParam("confluenceUrl", confluenceUrl)
+			final HttpRequestWithBody request = Unirest.delete(confluenceUrl + confluenceEndpointDeleteFormat)
 					.routeParam("project", escaper.escape(documentation.getProject()))
 					.routeParam("repo", escaper.escape(documentation.getRepo()))
 					.routeParam("branch", escaper.escape(documentation.getBranch()))
