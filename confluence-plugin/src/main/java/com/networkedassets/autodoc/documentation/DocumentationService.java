@@ -206,7 +206,8 @@ public class DocumentationService {
 
         Response response = ao.executeInTransaction(() -> {
             Documentation doc = findOrCreateDocumentation(projectDec, repoDec, branchDec, docTypeDec);
-            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec, versionIdDec);
+            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec);
+            piece.setVersionId(versionIdDec);
             piece.setContent(content);
             piece.save();
             doc.save();
@@ -233,13 +234,12 @@ public class DocumentationService {
         });
     }
 
-    public DocumentationPiece findOrCreateDocumentationPiece(Documentation doc, String docPieceName, String pieceType, String versionId) {
+    public DocumentationPiece findOrCreateDocumentationPiece(Documentation doc, String docPieceName, String pieceType) {
         return getDocumentationPiece(doc, docPieceName).orElseGet(() -> {
             DocumentationPiece piece = ao.create(DocumentationPiece.class);
             piece.setDocumentation(doc);
             piece.setPieceName(docPieceName);
             piece.setPieceType(pieceType);
-            piece.setVersionId(versionId);
             piece.save();
 
             return piece;
