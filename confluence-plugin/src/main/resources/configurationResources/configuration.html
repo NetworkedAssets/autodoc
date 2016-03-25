@@ -279,7 +279,6 @@
                                     <p class="title">
                                         <strong>No sources found</strong>
                                     </p>
-                                    <p>Sources will be added automatically after Application Link configuration.</p>
                                 </div>
                                 <div ng-show="vm.sources.length > 0">
                                     <div ng-repeat="source in vm.sources" class="source" ng-class-even="'even'" ng-class-odd="'odd'">
@@ -310,7 +309,7 @@
 
                                     </div>
                                 </div>
-                                <div class="aui-message aui-message-warning" ng-show="vm.addFromAppLinksSavingState=='error'">
+                                <div class="aui-message aui-message-error" ng-show="vm.addFromAppLinksSavingState=='error'">
                                     <p class="title">
                                         <strong>Error</strong>
                                     </p>
