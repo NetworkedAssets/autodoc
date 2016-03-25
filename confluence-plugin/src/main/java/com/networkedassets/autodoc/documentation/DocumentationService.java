@@ -263,6 +263,12 @@ public class DocumentationService {
         String docTypeDec = URLDecoder.decode(docType, "UTF-8");
         String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
 
+        deleteDocumentationPiecesWithOtherVersionId(projectDec, repoDec, branchDec, docTypeDec, versionIdDec);
+        //maybe: return some other response if there was an error when deleting
+        return Response.ok("{\"success\":\"true\"}").build();
+    }
+
+    private void deleteDocumentationPiecesWithOtherVersionId(String projectDec, String repoDec, String branchDec, String docTypeDec, String versionIdDec) {
         Optional<Documentation> documentation = getDocumentation(projectDec, repoDec, branchDec, docTypeDec);
         documentation.ifPresent(doc -> {
             List<DocumentationPiece> diffVersionIdDocPieceList = Arrays.asList(
@@ -272,8 +278,6 @@ public class DocumentationService {
                 ao.delete(docPieceToDelete);
                 log.info("DocumentationPiece named: {} with versionId {} deleted", docPieceToDelete.getPieceName(), docPieceToDelete.getVersionId());
             });
-            // maybe: return Response indicating that documentation was not found?
         });
-        return Response.ok("{\"success\":\"true\"}").build();
     }
 }
