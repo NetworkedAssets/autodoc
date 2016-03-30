@@ -11,11 +11,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class DocumentationDAO {
-    private Logger log = LoggerFactory.getLogger(DocumentationDAO.class);
+public class DocumentationRepository {
+    private Logger log = LoggerFactory.getLogger(DocumentationRepository.class);
     private ActiveObjects ao;
 
-    public DocumentationDAO(ActiveObjects ao) {
+    public DocumentationRepository(ActiveObjects ao) {
         this.ao = ao;
     }
 
@@ -73,6 +73,19 @@ public class DocumentationDAO {
             piece.save();
 
             return piece;
+        });
+    }
+
+    public boolean editOrCreateDocumentationPiece(String content, String projectDec, String repoDec, String branchDec,
+                                               String docTypeDec, String docPieceNameDec, String pieceTypeDec, String versionIdDec) {
+        return ao.executeInTransaction(() -> {
+            Documentation doc = findOrCreateDocumentation(projectDec, repoDec, branchDec, docTypeDec);
+            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec);
+            piece.setVersionId(versionIdDec);
+            piece.setContent(content);
+            piece.save();
+            doc.save();
+            return true;
         });
     }
 

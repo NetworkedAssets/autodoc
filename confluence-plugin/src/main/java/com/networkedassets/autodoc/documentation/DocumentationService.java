@@ -1,6 +1,5 @@
 package com.networkedassets.autodoc.documentation;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.json.jsonorg.JSONException;
 import com.atlassian.json.jsonorg.JSONObject;
@@ -27,18 +26,17 @@ import java.util.stream.Collectors;
 @Produces({MediaType.APPLICATION_JSON})
 public class DocumentationService {
     private final String ERROR_JSON = "{\"success\": false, \"message\": \"Could not find requested documentation!\"}";
-    private DocumentationDAO dao;
+    private DocumentationRepository repository;
     @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(DocumentationService.class);
     private Consumer<DocumentationAdded> documentationActivityPoster;
 
-    public DocumentationService(DocumentationDAO dao, ApplicationProperties applicationProperties, ActivityService activityService) {
-        this.dao = dao;
+    public DocumentationService(DocumentationRepository repository, ApplicationProperties applicationProperties, ActivityService activityService) {
+        this.repository = repository;
         documentationActivityPoster = new Debouncer<>(
                 new DocumentationActivityPoster(applicationProperties, activityService),
                 5000); // 5s
     }
-    ActiveObjects ao;
 
     @Path("{project}/{repo}/{branch}/{doctype}")
     @GET
@@ -54,16 +52,15 @@ public class DocumentationService {
 
         if ("uml".equalsIgnoreCase(doctypeDec))
             return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
-        return ao.executeInTransaction(() ->
-                dao.findDocumentation(projectDec, repoDec, branchDec, doctypeDec)
-                        .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
-                                .join(Arrays.asList(d.getDocumentationPieces())
-                                        .stream()
-                                        .map(dp -> "{\"type\": \"" + dp.getPieceType() + "\","
-                                                + "\"name\": \"" + dp.getPieceName() + "\"}")
-                                        .collect(Collectors.toList()))
-                                + "]}"))
-                        .orElse(Response.status(404).entity(ERROR_JSON))).build();
+        return repository.findDocumentation(projectDec, repoDec, branchDec, doctypeDec)
+                .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
+                        .join(Arrays.asList(d.getDocumentationPieces())
+                                .stream()
+                                .map(dp -> "{\"type\": \"" + dp.getPieceType() + "\","
+                                        + "\"name\": \"" + dp.getPieceName() + "\"}")
+                                .collect(Collectors.toList()))
+                        + "]}"))
+                .orElse(Response.status(404).entity(ERROR_JSON)).build();
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
@@ -80,7 +77,7 @@ public class DocumentationService {
         String doctypeDec = URLDecoder.decode(docType, "UTF-8");
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
 
-        Optional<DocumentationPiece> documentationPiece = dao.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
+        Optional<DocumentationPiece> documentationPiece = repository.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
 
         return documentationPiece.map(this::makeDocPieceJson)
                 .map(n -> Response.ok(n).build())
@@ -103,7 +100,7 @@ public class DocumentationService {
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
         String attributeDec = URLDecoder.decode(attribute, "UTF-8");
 
-        Optional<DocumentationPiece> documentationPiece = dao.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
+        Optional<DocumentationPiece> documentationPiece = repository.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
 
         return documentationPiece.map(docPiece -> makeDocPieceJson(docPiece, attributeDec))
                 .map(n -> Response.ok(n).build())
@@ -140,7 +137,7 @@ public class DocumentationService {
         String queryDec = URLDecoder.decode(query, "UTF-8");
         String doctypeDec = URLDecoder.decode(doctype, "UTF-8");
 
-        List<DocumentationPiece> searchResult = dao.findDocumentationPieceWithQuery(projectDec, repoDec, branchDec, doctypeDec, queryDec);
+        List<DocumentationPiece> searchResult = repository.findDocumentationPieceWithQuery(projectDec, repoDec, branchDec, doctypeDec, queryDec);
 
         final List<String> results = searchResult.stream()
                 .map(dp -> "\"" + dp.getPieceName() + "\"")
@@ -152,7 +149,7 @@ public class DocumentationService {
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response postDocPiece(
+    public Response createDocumentationPiece(
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
@@ -169,21 +166,12 @@ public class DocumentationService {
         String pieceTypeDec = URLDecoder.decode(pieceType, "UTF-8");
         String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
 
-        Response response = ao.executeInTransaction(() -> {
-            Documentation doc = dao.findOrCreateDocumentation(projectDec, repoDec, branchDec, docTypeDec);
-            DocumentationPiece piece = dao.findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec);
-            piece.setVersionId(versionIdDec);
-            piece.setContent(content);
-            piece.save();
-            doc.save();
-
-            return Response.ok("{\"success\": true}").build();
-        });
+        boolean result = repository.editOrCreateDocumentationPiece(content, projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec, pieceTypeDec, versionIdDec);
 
         documentationActivityPoster.accept(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec,
                 docPieceNameDec, AuthenticatedUserThreadLocal.getUsername()));
 
-        return response;
+        return Response.ok("{\"success\": " + result + "}").build();
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}")
@@ -203,7 +191,7 @@ public class DocumentationService {
         String docTypeDec = URLDecoder.decode(docType, "UTF-8");
         String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
 
-        dao.deleteDocumentationPiecesWithOtherVersionId(projectDec, repoDec, branchDec, docTypeDec, versionIdDec);
+        repository.deleteDocumentationPiecesWithOtherVersionId(projectDec, repoDec, branchDec, docTypeDec, versionIdDec);
         //maybe: return some other response if there was an error when deleting
         return Response.ok("{\"success\":\"true\"}").build();
     }
