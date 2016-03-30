@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
 @Produces({MediaType.APPLICATION_JSON})
 public class DocumentationService {
     private final String ERROR_JSON = "{\"success\": false, \"message\": \"Could not find requested documentation!\"}";
-    private DocumentationRepository repository;
+    private DocumentationRepository docRepository;
     @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(DocumentationService.class);
     private Consumer<DocumentationAdded> documentationActivityPoster;
 
-    public DocumentationService(DocumentationRepository repository, ApplicationProperties applicationProperties, ActivityService activityService) {
-        this.repository = repository;
+    public DocumentationService(DocumentationRepository docRepository, ApplicationProperties applicationProperties, ActivityService activityService) {
+        this.docRepository = docRepository;
         documentationActivityPoster = new Debouncer<>(
                 new DocumentationActivityPoster(applicationProperties, activityService),
                 5000); // 5s
@@ -52,10 +52,9 @@ public class DocumentationService {
 
         if ("uml".equalsIgnoreCase(doctypeDec))
             return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
-        return repository.findDocumentation(projectDec, repoDec, branchDec, doctypeDec)
-                .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
-                        .join(Arrays.asList(d.getDocumentationPieces())
-                                .stream()
+        return docRepository.findDocumentation(projectDec, repoDec, branchDec, doctypeDec)
+                .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": ["
+                        + Joiner.on(",").join(Arrays.asList(d.getDocumentationPieces()).stream()
                                 .map(dp -> "{\"type\": \"" + dp.getPieceType() + "\","
                                         + "\"name\": \"" + dp.getPieceName() + "\"}")
                                 .collect(Collectors.toList()))
@@ -77,7 +76,7 @@ public class DocumentationService {
         String doctypeDec = URLDecoder.decode(docType, "UTF-8");
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
 
-        Optional<DocumentationPiece> documentationPiece = repository.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
+        Optional<DocumentationPiece> documentationPiece = docRepository.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
 
         return documentationPiece.map(this::makeDocPieceJson)
                 .map(n -> Response.ok(n).build())
@@ -100,7 +99,7 @@ public class DocumentationService {
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
         String attributeDec = URLDecoder.decode(attribute, "UTF-8");
 
-        Optional<DocumentationPiece> documentationPiece = repository.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
+        Optional<DocumentationPiece> documentationPiece = docRepository.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
 
         return documentationPiece.map(docPiece -> makeDocPieceJson(docPiece, attributeDec))
                 .map(n -> Response.ok(n).build())
@@ -137,7 +136,7 @@ public class DocumentationService {
         String queryDec = URLDecoder.decode(query, "UTF-8");
         String doctypeDec = URLDecoder.decode(doctype, "UTF-8");
 
-        List<DocumentationPiece> searchResult = repository.findDocumentationPieceWithQuery(projectDec, repoDec, branchDec, doctypeDec, queryDec);
+        List<DocumentationPiece> searchResult = docRepository.findDocumentationPieceWithQuery(projectDec, repoDec, branchDec, doctypeDec, queryDec);
 
         final List<String> results = searchResult.stream()
                 .map(dp -> "\"" + dp.getPieceName() + "\"")
@@ -166,7 +165,7 @@ public class DocumentationService {
         String pieceTypeDec = URLDecoder.decode(pieceType, "UTF-8");
         String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
 
-        boolean result = repository.editOrCreateDocumentationPiece(content, projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec, pieceTypeDec, versionIdDec);
+        boolean result = docRepository.updateDocumentationPiece(content, projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec, pieceTypeDec, versionIdDec);
 
         documentationActivityPoster.accept(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec,
                 docPieceNameDec, AuthenticatedUserThreadLocal.getUsername()));
@@ -191,7 +190,7 @@ public class DocumentationService {
         String docTypeDec = URLDecoder.decode(docType, "UTF-8");
         String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
 
-        repository.deleteDocumentationPiecesWithOtherVersionId(projectDec, repoDec, branchDec, docTypeDec, versionIdDec);
+        docRepository.deleteDocumentationPiecesWithOtherVersionId(projectDec, repoDec, branchDec, docTypeDec, versionIdDec);
         //maybe: return some other response if there was an error when deleting
         return Response.ok("{\"success\":\"true\"}").build();
     }

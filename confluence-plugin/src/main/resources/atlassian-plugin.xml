@@ -277,6 +277,7 @@
     </rest>
 
     <component key="docSettingsService" class="com.networkedassets.autodoc.configuration.DocSettingsService" />
+    <component key="docRepository" class="com.networkedassets.autodoc.documentation.DocumentationRepository" />
 
     <!--Active objects-->
     <ao key="ao-module">

@@ -76,13 +76,19 @@ public class DocumentationRepository {
         });
     }
 
-    public boolean editOrCreateDocumentationPiece(String content, String projectDec, String repoDec, String branchDec,
-                                               String docTypeDec, String docPieceNameDec, String pieceTypeDec, String versionIdDec) {
+    /**
+     * Method updates old Documentation and DocumentationPiece
+     * or creates new ones and save them
+     *
+     * @return true if update was successful
+     */
+    public boolean updateDocumentationPiece(String newContent, String project, String repo, String branch,
+                                            String docType, String docPieceName, String pieceType, String versionId) {
         return ao.executeInTransaction(() -> {
-            Documentation doc = findOrCreateDocumentation(projectDec, repoDec, branchDec, docTypeDec);
-            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec);
-            piece.setVersionId(versionIdDec);
-            piece.setContent(content);
+            Documentation doc = findOrCreateDocumentation(project, repo, branch, docType);
+            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceName, pieceType);
+            piece.setVersionId(versionId);
+            piece.setContent(newContent);
             piece.save();
             doc.save();
             return true;
