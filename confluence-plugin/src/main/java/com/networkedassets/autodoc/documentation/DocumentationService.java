@@ -1,6 +1,5 @@
 package com.networkedassets.autodoc.documentation;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.confluence.user.AuthenticatedUserThreadLocal;
 import com.atlassian.json.jsonorg.JSONException;
 import com.atlassian.json.jsonorg.JSONObject;
@@ -9,8 +8,6 @@ import com.atlassian.streams.thirdparty.api.ActivityService;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.networkedassets.autodoc.util.Debouncer;
-import com.networkedassets.util.functional.Optionals;
-import net.java.ao.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +17,6 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -30,14 +26,13 @@ import java.util.stream.Collectors;
 @Produces({MediaType.APPLICATION_JSON})
 public class DocumentationService {
     private final String ERROR_JSON = "{\"success\": false, \"message\": \"Could not find requested documentation!\"}";
-    private ActiveObjects ao;
+    private DocumentationRepository docRepository;
     @SuppressWarnings("unused")
     private Logger log = LoggerFactory.getLogger(DocumentationService.class);
     private Consumer<DocumentationAdded> documentationActivityPoster;
 
-    public DocumentationService(ActiveObjects ao, ApplicationProperties applicationProperties,
-                                ActivityService activityService) {
-        this.ao = ao;
+    public DocumentationService(DocumentationRepository docRepository, ApplicationProperties applicationProperties, ActivityService activityService) {
+        this.docRepository = docRepository;
         documentationActivityPoster = new Debouncer<>(
                 new DocumentationActivityPoster(applicationProperties, activityService),
                 5000); // 5s
@@ -57,16 +52,14 @@ public class DocumentationService {
 
         if ("uml".equalsIgnoreCase(doctypeDec))
             return getDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, "all");
-        return ao.executeInTransaction(() ->
-                getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
-                        .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": [" + Joiner.on(",")
-                                .join(Arrays.asList(d.getDocumentationPieces())
-                                        .stream()
-                                        .map(dp -> "{\"type\": \"" + dp.getPieceType() + "\","
-                                                + "\"name\": \"" + dp.getPieceName() + "\"}")
-                                        .collect(Collectors.toList()))
-                                + "]}"))
-                        .orElse(Response.status(404).entity(ERROR_JSON))).build();
+        return docRepository.findDocumentation(projectDec, repoDec, branchDec, doctypeDec)
+                .map(d -> Response.ok("{\"success\": true, \"documentationPieces\": ["
+                        + Joiner.on(",").join(Arrays.asList(d.getDocumentationPieces()).stream()
+                                .map(dp -> "{\"type\": \"" + dp.getPieceType() + "\","
+                                        + "\"name\": \"" + dp.getPieceName() + "\"}")
+                                .collect(Collectors.toList()))
+                        + "]}"))
+                .orElse(Response.status(404).entity(ERROR_JSON)).build();
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
@@ -83,7 +76,7 @@ public class DocumentationService {
         String doctypeDec = URLDecoder.decode(docType, "UTF-8");
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
 
-        Optional<DocumentationPiece> documentationPiece = findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
+        Optional<DocumentationPiece> documentationPiece = docRepository.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
 
         return documentationPiece.map(this::makeDocPieceJson)
                 .map(n -> Response.ok(n).build())
@@ -106,11 +99,24 @@ public class DocumentationService {
         String docPieceNameDec = URLDecoder.decode(docPieceName, "UTF-8");
         String attributeDec = URLDecoder.decode(attribute, "UTF-8");
 
-        Optional<DocumentationPiece> documentationPiece = findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
+        Optional<DocumentationPiece> documentationPiece = docRepository.findDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, docPieceNameDec);
 
         return documentationPiece.map(docPiece -> makeDocPieceJson(docPiece, attributeDec))
                 .map(n -> Response.ok(n).build())
                 .orElse(Response.status(404).entity(ERROR_JSON).build());
+    }
+
+    private String makeDocPieceJson(DocumentationPiece dp) {
+        return dp.getContent();
+    }
+
+    private String makeDocPieceJson(DocumentationPiece dp, String attribute) {
+        JSONObject jsonObject = new JSONObject(dp.getContent());
+        try {
+            return String.format("{\"%s\": \"%s\"}", attribute, jsonObject.getString(attribute));
+        } catch (JSONException e) {
+            return null;
+        }
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}/search")
@@ -130,7 +136,7 @@ public class DocumentationService {
         String queryDec = URLDecoder.decode(query, "UTF-8");
         String doctypeDec = URLDecoder.decode(doctype, "UTF-8");
 
-        List<DocumentationPiece> searchResult = searchDocumentationPiece(projectDec, repoDec, branchDec, doctypeDec, queryDec);
+        List<DocumentationPiece> searchResult = docRepository.findDocumentationPieceWithQuery(projectDec, repoDec, branchDec, doctypeDec, queryDec);
 
         final List<String> results = searchResult.stream()
                 .map(dp -> "\"" + dp.getPieceName() + "\"")
@@ -139,55 +145,10 @@ public class DocumentationService {
         return Response.ok(String.format("{\"results\": [%s]}", Joiner.on(",").join(results))).build();
     }
 
-    private List<DocumentationPiece> searchDocumentationPiece(String project, String repo, String branch, String doctype, String query) {
-        return ao.executeInTransaction(() ->
-                getDocumentation(project, repo, branch, doctype).map(doc -> {
-                    final String generalizedQuery = "%" + query + "%";
-                    final DocumentationPiece[] documentationPieces = ao.find(DocumentationPiece.class,
-                            Query.select().where("PIECE_TYPE <> 'index' AND PIECE_TYPE <> 'INDEX' AND " +
-                                    "DOCUMENTATION_ID = ? AND CONTENT LIKE ?", doc.getID(), generalizedQuery));
-                    return Arrays.asList(documentationPieces);
-                }).orElse(Collections.emptyList()));
-    }
-
-    private String makeDocPieceJson(DocumentationPiece dp) {
-        return dp.getContent();
-    }
-
-    private String makeDocPieceJson(DocumentationPiece dp, String attribute) {
-        JSONObject jsonObject = new JSONObject(dp.getContent());
-        try {
-            return String.format("{\"%s\": \"%s\"}", attribute, jsonObject.getString(attribute));
-        } catch (JSONException e) {
-            return null;
-        }
-    }
-
-    private Optional<DocumentationPiece> findDocumentationPiece(String projectDec, String repoDec, String branchDec, String doctypeDec, String docPieceNameDec) {
-        return ao.executeInTransaction(() ->
-                getDocumentation(projectDec, repoDec, branchDec, doctypeDec)
-                        .flatMap(d -> getDocumentationPiece(d, docPieceNameDec)));
-    }
-
-    public Optional<Documentation> getDocumentation(String project, String repo, String branch, String documentationType) {
-        Documentation[] documentations = ao.find(Documentation.class, Query.select()
-                .where("PROJECT_KEY = ? AND REPO_SLUG = ? AND BRANCH_NAME = ? AND DOCUMENTATION_TYPE = ?",
-                        project, repo, branch, documentationType));
-
-        return Optionals.fromArrayOfOne(documentations);
-    }
-
-    public Optional<DocumentationPiece> getDocumentationPiece(Documentation doc, String docPieceName) {
-        DocumentationPiece[] pieces = ao.find(DocumentationPiece.class, Query.select()
-                .where("DOCUMENTATION_ID = ? AND PIECE_NAME = ?", doc.getID(), docPieceName));
-
-        return Optionals.fromArrayOfOne(pieces);
-    }
-
     @Path("{project}/{repo}/{branch}/{doctype}/{docPieceName}")
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
-    public Response postDocPiece(
+    public Response createDocumentationPiece(
             @PathParam("project") String project,
             @PathParam("repo") String repo,
             @PathParam("branch") String branch,
@@ -204,46 +165,12 @@ public class DocumentationService {
         String pieceTypeDec = URLDecoder.decode(pieceType, "UTF-8");
         String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
 
-        Response response = ao.executeInTransaction(() -> {
-            Documentation doc = findOrCreateDocumentation(projectDec, repoDec, branchDec, docTypeDec);
-            DocumentationPiece piece = findOrCreateDocumentationPiece(doc, docPieceNameDec, pieceTypeDec);
-            piece.setVersionId(versionIdDec);
-            piece.setContent(content);
-            piece.save();
-            doc.save();
-
-            return Response.ok("{\"success\": true}").build();
-        });
+        boolean result = docRepository.updateDocumentationPiece(content, projectDec, repoDec, branchDec, docTypeDec, docPieceNameDec, pieceTypeDec, versionIdDec);
 
         documentationActivityPoster.accept(new DocumentationAdded(projectDec, repoDec, branchDec, docTypeDec,
                 docPieceNameDec, AuthenticatedUserThreadLocal.getUsername()));
 
-        return response;
-    }
-
-    public Documentation findOrCreateDocumentation(String project, String repo, String branch, String docType) {
-        return getDocumentation(project, repo, branch, docType).orElseGet(() -> {
-            Documentation doc = ao.create(Documentation.class);
-            doc.setProjectKey(project);
-            doc.setRepoSlug(repo);
-            doc.setBranchName(branch);
-            doc.setDocumentationType(docType);
-            doc.save();
-
-            return doc;
-        });
-    }
-
-    public DocumentationPiece findOrCreateDocumentationPiece(Documentation doc, String docPieceName, String pieceType) {
-        return getDocumentationPiece(doc, docPieceName).orElseGet(() -> {
-            DocumentationPiece piece = ao.create(DocumentationPiece.class);
-            piece.setDocumentation(doc);
-            piece.setPieceName(docPieceName);
-            piece.setPieceType(pieceType);
-            piece.save();
-
-            return piece;
-        });
+        return Response.ok("{\"success\": " + result + "}").build();
     }
 
     @Path("{project}/{repo}/{branch}/{doctype}")
@@ -263,21 +190,8 @@ public class DocumentationService {
         String docTypeDec = URLDecoder.decode(docType, "UTF-8");
         String versionIdDec = URLDecoder.decode(versionId, "UTF-8");
 
-        deleteDocumentationPiecesWithOtherVersionId(projectDec, repoDec, branchDec, docTypeDec, versionIdDec);
+        docRepository.deleteDocumentationPiecesWithOtherVersionId(projectDec, repoDec, branchDec, docTypeDec, versionIdDec);
         //maybe: return some other response if there was an error when deleting
         return Response.ok("{\"success\":\"true\"}").build();
-    }
-
-    private void deleteDocumentationPiecesWithOtherVersionId(String projectDec, String repoDec, String branchDec, String docTypeDec, String versionIdDec) {
-        Optional<Documentation> documentation = getDocumentation(projectDec, repoDec, branchDec, docTypeDec);
-        documentation.ifPresent(doc -> {
-            List<DocumentationPiece> diffVersionIdDocPieceList = Arrays.asList(
-                    ao.find(DocumentationPiece.class, Query.select().where("DOCUMENTATION_ID = ? AND VERSION_ID <> ?", doc.getID(), versionIdDec)
-            ));
-            diffVersionIdDocPieceList.forEach(docPieceToDelete -> {
-                ao.delete(docPieceToDelete);
-                log.info("DocumentationPiece named: {} with versionId {} deleted", docPieceToDelete.getPieceName(), docPieceToDelete.getVersionId());
-            });
-        });
     }
 }
