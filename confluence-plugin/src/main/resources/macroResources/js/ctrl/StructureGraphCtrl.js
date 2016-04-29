@@ -1,5 +1,6 @@
 angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $rootScope, $state,
                                                                 $filter, $timeout, $location, javadocEntities) {
+    $scope.loading = true;
     var root;
     var margin = {top: -5, right: -5, bottom: -5, left: -5};
     var width = $(window).width() - margin.left - margin.right,
@@ -45,6 +46,7 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
         });
 
     function update() {
+
         var nodes = flatten(root),
             links = d3.layout.tree().links(nodes);
 
@@ -93,9 +95,35 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
             });
 
 
-        force.start();
-        /* for (var i = 0; i < 1000; ++i) force.tick();
-         force.stop(); // without animation */
+        var alphaMax = alpha = 1;
+        var alphaMin = .3;
+
+        function tick() {
+            force.start();
+            force.alpha(alpha);
+            force.tick();
+            alpha = force.alpha();
+            force.stop();
+            if (alpha >= alphaMin) {
+                AJS.progressBars.update("#doc_structureGraphProgressbar", 1 - (alpha - alphaMin) / (alphaMax - alphaMin));
+                setTimeout(tick, 0);
+            } else {
+                AJS.progressBars.update("#doc_structureGraphProgressbar", 1);
+                setTimeout(function() {
+                    $scope.loading = false;
+                    $scope.loadingTakesLonger = false;
+                    $timeout();
+                }, 10);
+            }
+
+        }
+
+        $timeout(tick);
+        $timeout(function() {
+            if ($scope.loading) {
+                $scope.loadingTakesLonger = true;
+            }
+        }, 5000);
 
     }
 
@@ -138,7 +166,7 @@ angular.module("DoC").controller("StructureGraphCtrl", function($scope, $http, $
 
     function click(d) {
         if (!d3.event.defaultPrevented) {
-            if (d.type === "package") {
+            if (typeof d.type == "undefined" || d.type === "package") {
                 if (d.children) {
                     d._children = d.children;
                     d.children = null;

@@ -1,7 +1,5 @@
 package com.networkedassets.autodoc.integration.documentation;
 
-import com.networkedassets.autodoc.integration.IntegrationTest;
-import groovy.lang.Category;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +11,7 @@ import static com.jayway.restassured.RestAssured.when;
 import static com.jayway.restassured.path.json.JsonPath.from;
 import static org.hamcrest.Matchers.containsString;
 
-@Category(IntegrationTest.class)
-public class GetTest extends DocumentationServiceIntegrationTest {
+public class GetIntegrationTest extends DocumentationServiceIntegrationTest {
 
     @Before
     public void setUp() throws Exception {

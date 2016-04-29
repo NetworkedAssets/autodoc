@@ -9,13 +9,14 @@ import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEve
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
 import com.networkedassets.autodoc.transformer.handleRepoPush.require.DocumentationSender;
 import com.networkedassets.autodoc.transformer.manageSettings.core.SettingsManager;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.JsonSettingsPersistor;
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.ObjectsEncryptor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.in.*;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SourceProvider;
+import com.networkedassets.autodoc.transformer.manageSettings.require.SettingsPersistor;
 import com.networkedassets.autodoc.transformer.util.PasswordStoreService;
 import com.networkedassets.autodoc.transformer.util.PropertyHandler;
-import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
-
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -45,17 +46,18 @@ public class Binder extends AbstractBinder {
 
 		PasswordStoreService passwordService = new PasswordStoreService(
 				PropertyHandler.getInstance().getValue("encrypt.password.filepath"));
-		SettingsEncryptor settingsEncryptor = new SettingsEncryptor(
+		ObjectsEncryptor objectsEncryptor = new ObjectsEncryptor(
 				passwordService.getProperty(PasswordStoreService.PropertyType.PASSWORD),
 				passwordService.getProperty(PasswordStoreService.PropertyType.SALT));
+		SettingsPersistor settingsPersistor = new JsonSettingsPersistor(objectsEncryptor);
 
-		SettingsManager settingsManager = new SettingsManager(scheduler, settingsEncryptor);
+		SettingsManager settingsManager = new SettingsManager(scheduler, settingsPersistor);
 		ConfluenceDocumentationSender sender = new ConfluenceDocumentationSender();
 		GitCodeProvider codeProvider = new GitCodeProvider();
 		DocumentationFromCodeGenerator docGen = new DocumentationFromCodeGenerator(settingsManager, docFactory, sender,
 				codeProvider);
 
-		bind(settingsEncryptor).to(SettingsEncryptor.class);
+		bind(objectsEncryptor).to(ObjectsEncryptor.class);
 		bind(scheduler).to(Scheduler.class);
 		bind(settingsManager).to(SettingsSaver.class);
 		bind(settingsManager).to(SettingsProvider.class);

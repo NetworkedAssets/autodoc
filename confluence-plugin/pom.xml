@@ -4,11 +4,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>confluence-plugin</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.4.4</version>
 	<parent>
 		<groupId>com.networkedassets.autodoc</groupId>
 		<artifactId>autodoc-parent</artifactId>
-		<version>1.0</version>
+		<version>0.4.4</version>
 	</parent>
 	<organization>
 		<name>NetworkedAssets Sp. z o.o</name>
@@ -21,8 +21,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
+			<version>4.12</version>
 		</dependency>
 		<dependency>
 			<groupId>com.atlassian.confluence</groupId>
@@ -181,34 +180,16 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<!-- Plugin excludes classes marked @Category(IntegrationTest.class) from
-				maven 'test' and 'integration-test' phases -->
+			<!-- Integration tests need to have name ending with 'IntegrationTest' -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19</version>
-				<executions>
-					<execution>
-						<id>default-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>test</goal>
-						</goals>
-						<configuration>
-							<excludedGroups>com.networkedassets.autodoc.integration.IntegrationTest</excludedGroups>
-						</configuration>
-					</execution>
-					<execution>
-						<id>integration-tests</id>
-						<phase>integration-test</phase>
-						<goals>
-							<goal>test</goal>
-						</goals>
-						<configuration>
-							<excludedGroups>com.networkedassets.autodoc.integration.IntegrationTest</excludedGroups>
-						</configuration>
-					</execution>
-				</executions>
+				<configuration>
+					<excludes>
+						<exclude>**/*IntegrationTest.java</exclude>
+					</excludes>
+				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>

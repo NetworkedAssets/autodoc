@@ -204,6 +204,9 @@ angular.module("DoC").factory('javadocEntities', function($rootScope, $http, $q,
         },
         isReady: function() {
             return ready;
+        },
+        asMap: function() {
+            return map;
         }
     };
     javadocEntities.clear();

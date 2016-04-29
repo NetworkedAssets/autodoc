@@ -20,6 +20,7 @@ angular.module("DoC").controller("JavadocEntityCtrl", function($scope, $http, $s
     vm.expanded = {
         classDiagram: vm.$stateParams.elementType === "classDiagram",
         fields: true,
+        constants: true,
         constructors: true,
         methods: true,
         toggle: function(item) {

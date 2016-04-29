@@ -1,6 +1,7 @@
 function JavadocEntity(object) {
     var entity = this;
 
+    this.annotations = [];
     this.scope = null;
     this.name = null;
     this.comment = null;
@@ -41,6 +42,10 @@ function JavadocEntity(object) {
                 elements: (typeof object.constructor == "object") ? object.constructor : []
             },
             {
+                type: "constant",
+                elements: angular.isArray(object.constant) ? object.constant : []
+            },
+            {
                 type: "field",
                 elements: object.field ? object.field : []
             },
@@ -61,6 +66,8 @@ function JavadocEntity(object) {
                         element.parameter = [];
                     }
 
+                    element.annotations = element.annotation;
+                    delete element.annotation;
                     element.modifiers = parseModifiers(element);
                     element.details = parseDetails(element);
                 });
@@ -75,6 +82,7 @@ function JavadocEntity(object) {
 
         entity.comment = object.comment;
         entity.generic = object.generic;
+        entity.annotations = object.annotations;
 
         entity.qualified = object.qualified ? object.qualified : object.name;
 

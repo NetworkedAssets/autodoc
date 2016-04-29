@@ -1,4 +1,4 @@
-package com.networkedassets.autodoc.transformer.util;
+package com.networkedassets.autodoc.transformer.manageSettings.infrastructure;
 
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import org.slf4j.Logger;
@@ -8,6 +8,7 @@ import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -17,9 +18,9 @@ import java.security.spec.KeySpec;
     Class responsible for encrypting and decrypting
     settings object to file
  */
-public class SettingsEncryptor {
-    private static Logger log = LoggerFactory.getLogger(SettingsEncryptor.class);
-    private final String TRANSFORMATION = "AES";
+public class ObjectsEncryptor {
+    private static Logger log = LoggerFactory.getLogger(ObjectsEncryptor.class);
+    private static final String TRANSFORMATION = "AES";
 
     private Cipher cipher;
     private Cipher decipher;
@@ -27,7 +28,7 @@ public class SettingsEncryptor {
     private char[] passwordBytes;
     private byte[] saltBytes;
 
-    public SettingsEncryptor(String password, String salt) {
+    public ObjectsEncryptor(String password, String salt) {
         this.passwordBytes = password.toCharArray();
         this.saltBytes = salt.getBytes();
 
@@ -55,13 +56,13 @@ public class SettingsEncryptor {
         }
     }
 
-    public SealedObject buildSealedObjectFrom(Settings settings) throws IOException, IllegalBlockSizeException {
-        return new SealedObject(settings, cipher);
+    public SealedObject sealObject(Serializable object) throws IOException, IllegalBlockSizeException {
+        return new SealedObject(object, cipher);
     }
 
-    public Settings buildSettingsObjectFrom(SealedObject sealedObject) throws ClassNotFoundException,
+    public Object unsealObject(SealedObject sealedObject) throws ClassNotFoundException,
             BadPaddingException, IllegalBlockSizeException, IOException {
-        return (Settings) sealedObject.getObject(decipher);
+        return sealedObject.getObject(decipher);
     }
 
 }

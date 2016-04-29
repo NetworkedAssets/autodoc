@@ -208,13 +208,9 @@
                                             <span class="button-spinner spin small" ng-show="spaceTools.savingState=='saving'"></span>
                                             <button class="aui-button" ng-click="spaceTools.revert();" ng-disabled="spaceTools.form.$pristine">Revert</button>
                                         </div>
-                                    </form>
+                                    </div>
+                                </form>
                             </div>
-                            </div>
-                            <!--<aui-select2 doc-options="content.sources" placeholder="Placeholder"></aui-select2>-->
-
-                            <pre ng-show="0">{{spaceTools | json}}</pre>
-
                         </div>
                     </div>
                 </div>
@@ -284,7 +280,6 @@
                                     <p class="title">
                                         <strong>No sources found</strong>
                                     </p>
-                                    <p>Sources will be added automatically after Application Link configuration.</p>
                                 </div>
                                 <div ng-show="vm.sources.length > 0">
                                     <div ng-repeat="source in vm.sources" class="source" ng-class-even="'even'" ng-class-odd="'odd'">
@@ -314,6 +309,12 @@
                                         </div>
 
                                     </div>
+                                </div>
+                                <div class="aui-message aui-message-error" ng-show="vm.addFromAppLinksSavingState=='error'">
+                                    <p class="title">
+                                        <strong>Error</strong>
+                                    </p>
+                                    <p>Check Application Links configuration.</p>
                                 </div>
                                 <div class="addFromAppLinksCntr">
                                     <button class="aui-button aui-button-primary" ng-disabled="vm.addFromAppLinksSavingState=='saving'" ng-click="vm.addFromAppLinks()">{{(vm.sources.length > 0)?'Update':'Add'}} from Application Links</button>

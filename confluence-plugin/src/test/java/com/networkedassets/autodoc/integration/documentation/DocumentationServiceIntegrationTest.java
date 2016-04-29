@@ -22,7 +22,7 @@ public class DocumentationServiceIntegrationTest {
     public static void setupRestAssured() {
         RestAssured.baseURI = "http://atlas.networkedassets.net";
         RestAssured.basePath = "/confluence/rest/doc/1.0/documentation";
-        RestAssured.authentication = preemptive().basic("admin", "admin");
+        RestAssured.authentication = preemptive().basic("admin", "wYCZsy_Jx8kv.du6");
     }
 
     protected Response postDocumentationPiece() {

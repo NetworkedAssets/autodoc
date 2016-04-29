@@ -3,23 +3,16 @@ package com.networkedassets.autodoc.transformer.manageSettings.core;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.SealedObject;
 import javax.inject.Inject;
 
+import com.networkedassets.autodoc.transformer.manageSettings.infrastructure.constraint.ProperTime;
+import com.networkedassets.autodoc.transformer.manageSettings.require.SettingsPersistor;
+import com.networkedassets.autodoc.transformer.util.*;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -46,10 +39,6 @@ import com.networkedassets.autodoc.transformer.settings.Branch;
 import com.networkedassets.autodoc.transformer.settings.Credentials;
 import com.networkedassets.autodoc.transformer.settings.Settings;
 import com.networkedassets.autodoc.transformer.settings.Source;
-import com.networkedassets.autodoc.transformer.util.PropertyHandler;
-import com.networkedassets.autodoc.transformer.util.ScheduledEventHelper;
-import com.networkedassets.autodoc.transformer.util.SettingsEncryptor;
-import com.networkedassets.autodoc.transformer.util.SettingsUtils;
 
 /**
  * Handles the settings of the application
@@ -59,22 +48,25 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 	private static Logger log = LoggerFactory.getLogger(SettingsManager.class);
 
 	public Scheduler scheduler;
-	private SettingsEncryptor settingsEncryptor;
+	private SettingsPersistor settingsPersistor;
 
 	private Settings settings = new Settings();
 	public String settingsFilename;
 
 	@Inject
-	public SettingsManager(Scheduler scheduler, SettingsEncryptor settingsEncryptor) {
+	public SettingsManager(Scheduler scheduler, SettingsPersistor settingsPersistor) {
 		this.scheduler = scheduler;
-		this.settingsEncryptor = settingsEncryptor;
+		this.settingsPersistor = settingsPersistor;
 		settingsFilename = SettingsUtils.getSettingsFilenameFromProperties();
 
-		loadSettingsFromFile(settingsFilename);
+		setSettings(settingsPersistor.loadSettingsFromFile(settingsFilename));
 
-		settings.getTransformerSettings().setAddress(PropertyHandler.getInstance().getValue("jetty.address"),
-				Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port")));
-		log.info("Address is setup to: " + settings.getTransformerSettings().getAddress());
+		getSettings().getTransformerSettings().setAddress(
+				PropertyHandler.getInstance().getValue("jetty.address"),
+				Integer.parseInt(PropertyHandler.getInstance().getValue("jetty.port")),
+				PropertyHandler.getInstance().getValue("jetty.path")
+		);
+		log.info("Address is setup to: " + getSettings().getTransformerSettings().getAddress());
 		updateAllSourcesAndEnableHooks();
 	}
 
@@ -88,53 +80,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 				log.error("Source {} has malformed URL. Can't load projects: ", source.toString(), e);
 			}
 		});
-	}
-
-	private boolean saveSettingsToFile(String filename) {
-		File settingsFile = new File(filename);
-		try (FileOutputStream fileOut = new FileOutputStream(settingsFile);
-				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut)) {
-
-			objectOut.writeObject(settingsEncryptor.buildSealedObjectFrom(settings));
-
-			log.debug("Settings saved to {}", settingsFile.getAbsolutePath());
-		} catch (FileNotFoundException e) {
-			log.error("Can't save settings to {} - file was not found: ", settingsFile.getAbsolutePath(), e);
-			return false;
-		} catch (IOException e) {
-			log.error("Can't save settings to {} - general IO problem: ", settingsFile.getAbsolutePath(), e);
-			return false;
-		} catch (IllegalBlockSizeException e) {
-			log.error("Illegal block size during sealing settings", e);
-			return false;
-		}
-
-		return true;
-	}
-
-	private void loadSettingsFromFile(String filename) {
-		File settingsFile = new File(filename);
-		try (FileInputStream fileIn = new FileInputStream(settingsFile);
-				ObjectInputStream objectInputStream = new ObjectInputStream(fileIn)) {
-
-			SealedObject sealedObject = (SealedObject) objectInputStream.readObject();
-			settings = settingsEncryptor.buildSettingsObjectFrom(sealedObject);
-
-			log.debug("Settings loaded from {}", settingsFile.getAbsolutePath());
-		} catch (FileNotFoundException e) {
-			log.error("Can't load settings from {} - file not found. Creating new default settings...",
-					settingsFile.getAbsolutePath());
-		} catch (ClassNotFoundException e) {
-			log.error(
-					"Can't load settings from {} - serialization failed, class not found. Creating new default settings...",
-					settingsFile.getAbsolutePath());
-		} catch (IOException e) {
-			log.error("Can't load settings from {}: ", settingsFile.getAbsolutePath(), e);
-		} catch (BadPaddingException e) {
-			log.error("Bad padding during unsealing settings", e);
-		} catch (IllegalBlockSizeException e) {
-			log.error("Illegal block size during unsealing settings", e);
-		}
 	}
 
 	@Override
@@ -154,7 +99,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 		this.settings.getCredentials().setConfluencePassword(settings.getCredentials().getConfluencePassword());
 		this.settings.setConfluenceUrl(settings.getConfluenceUrl());
 		this.settings.getCredentials().setConfluenceUsername(settings.getCredentials().getConfluenceUsername());
-		return saveSettingsToFile(settingsFilename);
+		return settingsPersistor.saveSettingsToFile(settingsFilename, getSettings());
 	}
 
 	@Override
@@ -180,7 +125,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 			getSettings().totalId++;
 			getSettings().getSources().add(source);
 		}
-		saveSettingsToFile(settingsFilename);
+		settingsPersistor.saveSettingsToFile(settingsFilename, getSettings());
 		return source;
 	}
 
@@ -188,7 +133,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 	public boolean removeSource(int sourceId) {
 		boolean removed = getSettings().getSources().removeIf(source -> source.getId() == sourceId);
 		if (removed) {
-			saveSettingsToFile(settingsFilename);
+			settingsPersistor.saveSettingsToFile(settingsFilename, getSettings());
 		}
 		return removed;
 	}
@@ -202,7 +147,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 		if (source.isCorrect()) {
 			getSettings().getSources().removeIf(s -> s.getId() == source.getId());
 			getSettings().getSources().add(source);
-			saveSettingsToFile(settingsFilename);
+			settingsPersistor.saveSettingsToFile(settingsFilename, getSettings());
 		}
 		return source;
 	}
@@ -227,7 +172,7 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
 		currentBranch.setListenTo(branch.getListenTo());
 		currentBranch.setScheduledEvents(new ArrayList<>(branch.getScheduledEvents()));
-		saveSettingsToFile(settingsFilename);
+		settingsPersistor.saveSettingsToFile(settingsFilename, getSettings());
 		return currentBranch;
 	}
 
@@ -273,6 +218,6 @@ public class SettingsManager implements SettingsProvider, SettingsSaver, SourceP
 
 	public void setSettings(Settings settings) {
 		this.settings = settings;
-		saveSettingsToFile(settingsFilename);
+		settingsPersistor.saveSettingsToFile(settingsFilename, getSettings());
 	}
 }

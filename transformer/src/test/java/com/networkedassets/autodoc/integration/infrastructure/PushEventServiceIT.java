@@ -3,24 +3,24 @@ package com.networkedassets.autodoc.integration.infrastructure;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.specification.RequestSpecification;
-import com.networkedassets.autodoc.integration.IntegrationTest;
+import com.networkedassets.autodoc.integration.BaseIT;
+import com.networkedassets.autodoc.integration.TransformerConstants;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 
-@Category(IntegrationTest.class)
-public class PushEventServiceIntegrationTest {
+public class PushEventServiceIT extends BaseIT {
     private final RequestSpecification HTTPSvalidatedRequest = given()
             .relaxedHTTPSValidation();
 
     @BeforeClass
     public static void setupRestAssured() {
-        RestAssured.baseURI = TransformerConstants.getBaseUri();
+        RestAssured.baseURI = TransformerConstants.getHost();
         RestAssured.port = TransformerConstants.getPort();
+        RestAssured.baseURI = TransformerConstants.getPath();
     }
 
     @Test

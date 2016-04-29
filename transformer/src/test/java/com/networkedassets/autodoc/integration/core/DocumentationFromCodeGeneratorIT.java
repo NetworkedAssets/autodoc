@@ -1,20 +1,16 @@
 package com.networkedassets.autodoc.integration.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networkedassets.autodoc.integration.IntegrationTest;
-import com.networkedassets.autodoc.transformer.handleRepoPush.Code;
+import com.networkedassets.autodoc.integration.BaseIT;
 import com.networkedassets.autodoc.transformer.handleRepoPush.PushEvent;
-import com.networkedassets.autodoc.transformer.handleRepoPush.core.JavadocGenerator;
-import com.networkedassets.autodoc.transformer.handleRepoPush.require.CodeProvider;
+import com.networkedassets.autodoc.transformer.handleRepoPush.provide.in.PushEventProcessor;
 import com.networkedassets.autodoc.transformer.manageSettings.provide.out.SettingsProvider;
 import com.networkedassets.autodoc.transformer.server.Binder;
-import com.networkedassets.autodoc.transformer.settings.Source;
 import org.eclipse.jgit.util.StringUtils;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -22,18 +18,11 @@ import java.io.IOException;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-@Category(IntegrationTest.class)
-public class JavadocGeneratorIntegrationTest {
+public class DocumentationFromCodeGeneratorIT extends BaseIT {
     @Inject
-    private CodeProvider gitCodeProvider;
+    private PushEventProcessor documentationFromCodeGenerator;
     @Inject
     private SettingsProvider settingsProvider;
-
-    @Before
-    public void supplyInjections() {
-        ServiceLocator serviceLocator = ServiceLocatorUtilities.bind(new Binder());
-        serviceLocator.inject(this);
-    }
 
     private final String JSON_REQUEST = "{\n" +
             "\"sourceUrl\" : \"http://46.101.240.138:7990\",\n" +
@@ -47,14 +36,33 @@ public class JavadocGeneratorIntegrationTest {
         return mapper.readValue(JSON_REQUEST, PushEvent.class);
     }
 
-    @Test
-    public void testInjectionsNotNull() {
-        assertNotNull(settingsProvider);
-        assertNotNull(gitCodeProvider);
+    /**
+     * method that injects this test class into ServiceLocator pool of services
+     */
+    @Before
+    public void injectBefore() {
+        ServiceLocator serviceLocator = ServiceLocatorUtilities.bind(new Binder());
+        serviceLocator.inject(this);
     }
 
     @Test
-    public void testGenerateFromCode() throws IOException {
+    public void testInjectionNotNull() {
+        assertNotNull(documentationFromCodeGenerator);
+        assertNotNull(settingsProvider);
+    }
+
+    @Test
+    public void testConvertJSONtoObject() throws IOException {
+        assertNotNull(createPushEventInstanceFromJSON());
+    }
+
+    @Test
+    public void testDocumentationFromCodeGenerator() throws IOException {
+        documentationFromCodeGenerator.processEvent(createPushEventInstanceFromJSON());
+    }
+
+    @Test
+    public void testBranchFromJSONIsFound() throws IOException {
         PushEvent pushEvent = createPushEventInstanceFromJSON();
         final String sourceUrl = pushEvent.getSourceUrl();
         final String projectKey = pushEvent.getProjectKey();
@@ -62,17 +70,12 @@ public class JavadocGeneratorIntegrationTest {
         final String branchId = pushEvent.getBranchId();
         assertFalse(StringUtils.isEmptyOrNull(sourceUrl));
 
-        Source source = settingsProvider.getCurrentSettings().getSourceByUrl(sourceUrl);
-        Code code = gitCodeProvider.getCode(source, projectKey, repoSlug, branchId);
-        JavadocGenerator generator = new JavadocGenerator();
-
-        assertNotNull(generator.generateFrom(code));
-    }
-
-    @Test (expected = NullPointerException.class)
-    public void testGenerateFromCodeGivenNullThrowsNullPointerException() throws IOException {
-        JavadocGenerator generator = new JavadocGenerator();
-
-        generator.generateFrom(null);
+        // is found
+        assertNotNull(settingsProvider.getCurrentSettings()
+                .getSourceByUrl(sourceUrl)
+                .getProjectByKey(projectKey)
+                .getRepoBySlug(repoSlug)
+                .getBranchById(branchId)
+        );
     }
 }

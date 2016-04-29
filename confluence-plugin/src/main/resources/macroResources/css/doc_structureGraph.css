@@ -1,4 +1,6 @@
-
+#doc_structureGraph.loading {
+    visibility: hidden;
+}
 
 #doc_structureGraph .node circle {
     cursor: pointer;
@@ -66,4 +68,9 @@
     text-anchor: middle;
     fill: #fff;
     font-weight: 600;
+}
+
+#doc_structureGraphTakesLongerThanUsual {
+    width: 300px;
+    margin: 20px auto;
 }

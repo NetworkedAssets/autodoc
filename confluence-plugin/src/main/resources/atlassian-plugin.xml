@@ -87,6 +87,8 @@
                   location="macroResources/js/dirs/javadocInheritDocTag.js"/>
         <resource type="download" name="js/dirs/docClassDiagram.js"
                   location="macroResources/js/dirs/docClassDiagram.js"/>
+        <resource type="download" name="js/dirs/javadocAnnotation.js"
+                  location="macroResources/js/dirs/javadocAnnotation.js" />
 
         <resource type="download" name="js/services/urlService.js"
                   location="macroResources/js/services/urlService.js"/>
@@ -275,6 +277,7 @@
     </rest>
 
     <component key="docSettingsService" class="com.networkedassets.autodoc.configuration.DocSettingsService" />
+    <component key="docRepository" class="com.networkedassets.autodoc.documentation.DocumentationRepository" />
 
     <!--Active objects-->
     <ao key="ao-module">

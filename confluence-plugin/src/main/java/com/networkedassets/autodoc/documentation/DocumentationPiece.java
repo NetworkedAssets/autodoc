@@ -20,4 +20,11 @@ public interface DocumentationPiece extends Entity {
 
     Documentation getDocumentation();
     void setDocumentation(Documentation doc);
+
+    /**
+     * Used to determine if the class needs to be deleted
+     * after code update or not
+     */
+    String getVersionId();
+    void setVersionId(String versionId);
 }

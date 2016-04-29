@@ -22,24 +22,7 @@ angular.module("DoC")
                 vm.error = true;
             });
 
-
         vm.items = [];
-        vm.toggleItem = function(item) {
-            item.expanded = !item.expanded;
-        };
-
-        vm.expandItem = function(item) {
-            item.expanded = true;
-        };
-
-        vm.isExpanded = function(item) {
-            var active = false;
-            if (typeof $state.params.name == "string") {
-                active = $state.params.name.match(item.name) !== null;
-            }
-
-            return (active) || item.expanded;
-        };
 
         vm.tree = {
             q: "",
@@ -73,6 +56,29 @@ angular.module("DoC")
                         return a;
                     }, []);
                 }
+            },
+            expandAll: function(level) {
+                if (!level) {
+                    level = 1;
+                }
+                var arr = [];
+                angular.forEach(javadocEntities.asMap(), function(item) {
+                    if (item.children && item.level === level) {
+                        arr.push(item);
+                    }
+                });
+                if (level === 1) {
+                    vm.tree.expandedNodes = [];
+                }
+                if (arr.length) {
+                    vm.tree.expandedNodes = vm.tree.expandedNodes.concat(arr);
+                    $timeout(function() {
+                        vm.tree.expandAll(level+1);
+                    });
+                }
+            },
+            collapseAll: function() {
+                vm.tree.expandedNodes.length = 0;// clear list
             },
             options: {
                 nodeChildren: "children",
