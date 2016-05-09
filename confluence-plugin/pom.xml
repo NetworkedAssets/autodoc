@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>settings-api</artifactId>
-			<version>1.0</version>
+			<version>0.4.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -116,7 +116,7 @@
 		<dependency>
 			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>clients</artifactId>
-			<version>1.0</version>
+			<version>0.4.4</version>
 		</dependency>
 
 		<!--Licensing API -->
