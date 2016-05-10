@@ -32,6 +32,7 @@ By default properties look like this:
 ```
 jetty.port=8050
 jetty.address=http://localhost/
+jetty.port=
 ```
 
 You can change them by creating **transformer.properties** file next to the **transformer.jar** and add properties you want to override.
