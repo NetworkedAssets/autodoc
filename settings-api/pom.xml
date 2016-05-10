@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.networkedassets.autodoc</groupId>
             <artifactId>functional-utils</artifactId>
-            <version>1.0</version>
+            <version>0.4.4</version>
         </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>
