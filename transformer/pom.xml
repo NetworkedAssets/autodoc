@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>transformer</artifactId>
-	<version>0.4.4</version>
+	<version>0.4.5</version>
 	<packaging>jar</packaging>
 
 	<name>transformer</name>
@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>com.networkedassets.autodoc</groupId>
 		<artifactId>autodoc-parent</artifactId>
-		<version>0.4.4</version>
+		<version>0.4.5</version>
 	</parent>
 
 	<properties>
@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>settings-api</artifactId>
-			<version>0.4.4</version>
+			<version>0.4.5</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mashape.unirest</groupId>
@@ -155,7 +155,7 @@
 		<dependency>
 			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>clients</artifactId>
-			<version>0.4.4</version>
+			<version>0.4.5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

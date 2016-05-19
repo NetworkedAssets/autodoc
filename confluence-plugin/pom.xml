@@ -4,11 +4,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>confluence-plugin</artifactId>
-	<version>0.4.4</version>
+	<version>0.4.5</version>
 	<parent>
 		<groupId>com.networkedassets.autodoc</groupId>
 		<artifactId>autodoc-parent</artifactId>
-		<version>0.4.4</version>
+		<version>0.4.5</version>
 	</parent>
 	<organization>
 		<name>NetworkedAssets Sp. z o.o</name>
@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>settings-api</artifactId>
-			<version>0.4.4</version>
+			<version>0.4.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -116,7 +116,7 @@
 		<dependency>
 			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>clients</artifactId>
-			<version>0.4.4</version>
+			<version>0.4.5</version>
 		</dependency>
 
 		<!--Licensing API -->

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>autodoc-parent</artifactId>
         <groupId>com.networkedassets.autodoc</groupId>
-        <version>0.4.4</version>
+        <version>0.4.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.networkedassets.autodoc</groupId>
             <artifactId>functional-utils</artifactId>
-            <version>0.4.4</version>
+            <version>0.4.5</version>
         </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>
