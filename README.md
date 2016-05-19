@@ -1,4 +1,4 @@
-# ![](https://github.com/networkedassets/transformer/src/main/resources/images/trans_logo.png "Transformer")<a href="http://www.networkedassets.com/"><img style="float: right;" src="http://www.networkedassets.com/wordpress/wp-content/uploads/2013/03/NA_logo_header.png" height="79"></a>
+# ![](https://github.com/networkedassets/transformer/src/main/resources/images/transformer_logo.png "Transformer")<a href="http://www.networkedassets.com/"><img style="float: right;" src="http://www.networkedassets.com/wordpress/wp-content/uploads/2013/03/NA_logo_header.png" height="79"></a>
 
 Java application used by [NetworkedAssets's](http://www.networkedassets.com/) [Documentation from Code Plugin](http://condoc.networkedassets.com/) for Atlassian Confluence.
 
@@ -32,6 +32,7 @@ By default properties look like this:
 ```
 jetty.port=8050
 jetty.address=http://localhost/
+jetty.port=
 ```
 
 You can change them by creating **transformer.properties** file next to the **transformer.jar** and add properties you want to override.

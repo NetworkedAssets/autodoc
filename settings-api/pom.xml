@@ -5,12 +5,24 @@
     <parent>
         <artifactId>autodoc-parent</artifactId>
         <groupId>com.networkedassets.autodoc</groupId>
-        <version>1.0</version>
+        <version>0.4.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>settings-api</artifactId>
     <dependencies>
+        <!-- Tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>2.8.0</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -21,7 +33,7 @@
         <dependency>
             <groupId>com.networkedassets.autodoc</groupId>
             <artifactId>functional-utils</artifactId>
-            <version>1.0</version>
+            <version>0.4.5</version>
         </dependency>
         <dependency>
             <groupId>com.mashape.unirest</groupId>

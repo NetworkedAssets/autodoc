@@ -182,8 +182,8 @@ public class Source implements Serializable {
     }
 
     public static enum SourceType implements Serializable {
-        STASH("com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener"),
-        BITBUCKET("com.networkedassets.atlassian.plugins.bitbucket-postReceive-hook-plugin:postReceiveHookListener");
+        STASH("com.networkedassets.atlasian.plugins.repo-event-notifier-for-stash:postReceiveHookListener"),
+        BITBUCKET("com.networkedassets.atlassian.plugins.repo-event-notifier-for-bitbucket-server:postReceiveHookListener");
 
         @JsonView(Views.InternalView.class)
         private String hookKey;

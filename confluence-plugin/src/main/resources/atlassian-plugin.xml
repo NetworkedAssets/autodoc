@@ -12,7 +12,7 @@
 		<param name="vendor-icon">images/vendorIcon.png</param>
         <param name="configure.url">/admin/plugins/autodoc/config.action</param>
         <!--Licensing-->
-        <param name="atlassian-licensing-enabled">true</param>
+        <param name="atlassian-licensing-enabled">false</param>
     </plugin-info>
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="autodoc_confluence"/>
@@ -277,6 +277,7 @@
     </rest>
 
     <component key="docSettingsService" class="com.networkedassets.autodoc.configuration.DocSettingsService" />
+    <component key="docRepository" class="com.networkedassets.autodoc.documentation.DocumentationRepository" />
 
     <!--Active objects-->
     <ao key="ao-module">

@@ -13,7 +13,7 @@ angular.module("DoC").factory("urlService",function(macroParams) {
             if (AJS.params && AJS.params.baseUrl) {
                 return AJS.params.baseUrl;
             } else {
-                return "http://atlas.networkedassets.net/confluence";
+                return "http://atlassian-na-dev-01.networkedassets.local/confluence";
             }
         },
         getRestUrl: function() {

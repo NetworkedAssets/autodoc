@@ -7,7 +7,7 @@
     <groupId>com.networkedassets.autodoc</groupId>
     <artifactId>autodoc-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>0.4.5</version>
     <name>Autodoc Parent</name>
 
     <modules>
