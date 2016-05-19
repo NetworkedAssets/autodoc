@@ -2,6 +2,7 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
     var vm = this;
     vm.loading = true;
     vm.addFromAppLinksSavingState = "ready";
+    vm.transformerConnectionError = false;
 
     var Source = $resource(
         urlService.getRestUrlWithParams("sources") + ":id",
@@ -88,5 +89,9 @@ angular.module("DoC_Config").controller("SourceCtrl", function ($rootScope, $res
             vm.loading = false;
             vm.noCredentials = true;
         }
+    });
+
+    $rootScope.$on("ConfluenceCredentials.transformerConnectionError",function(event) {
+        vm.transformerConnectionError = true;
     });
 });

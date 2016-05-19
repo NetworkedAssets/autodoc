@@ -7,10 +7,14 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
             method: "GET",
             transformResponse: function(data) {
                 data = JSON.parse(data);
-                return {
-                    username: data.confluenceUsername,
-                    password: null
-                };
+                if (!data.error) {
+                    return {
+                        username: data.confluenceUsername,
+                        password: null
+                    };
+                } else {
+                    return data;
+                }
             }
         },
         update: {
@@ -31,13 +35,29 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
             cc.get();
         },function(response) {
             cc.savingState = "dirty";
+            cc.handleResponse(response);
             if (response.status == "401") {
-                cc.error = false;
                 cc.credentialsCorrect = false;
-            } else {
-                cc.error = true;
             }
         });
+    };
+
+    cc.handleResponse = function(response) {
+        console.log(response);
+        if (response.status == 500) {
+            console.log(response.data);
+            if (response.data && response.data.error && response.data.error.match(/Connect to.*failed/)) {
+                cc.transformerConnectionError = true;
+                cc.error = true;
+                $rootScope.$broadcast("ConfluenceCredentials.transformerConnectionError");
+            } else {
+                cc.transformerConnectionError = false;
+                cc.error = true;
+            }
+        } else {
+            cc.error = false;
+            cc.transformerConnectionError = false;
+        }
     };
 
     cc.revert = function() {
@@ -54,9 +74,9 @@ angular.module("DoC_Config").controller("ConfluenceCredentialsCtrl",function($sc
             cc.credentialsCorrect = true;
             $rootScope.$broadcast("ConfluenceCredentials.ready",cc.credentials.username);
             $timeout();
-        },function() {
+        },function(response) {
             cc.loading = false;
-            cc.error = true;
+            cc.handleResponse(response);
         });
     };
 

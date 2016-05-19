@@ -227,12 +227,18 @@
             <div>
                 <div class="table">
                     <div class="table-cell" ng-controller="ConfluenceCredentialsCtrl as cc">
-                        <h3>Confluence credentials</h3>
-                        <div class="aui-message aui-message-error" ng-show="cc.error">
+                        <h3 ng-hide="cc.error">Confluence credentials</h3>
+                        <div class="aui-message aui-message-error" ng-show="cc.error && !cc.transformerConnectionError">
                             <p class="title">
                                 <strong>Unknown error occurred</strong>
                             </p>
                             <p>Try refreshing the page.</p>
+                        </div>
+                        <div class="aui-message aui-message-error" ng-show="cc.transformerConnectionError">
+                            <p class="title">
+                                <strong>Cannot connect to Transformer</strong>
+                            </p>
+                            <p>Check if Transformer is installed and running. If you need help, visit <a href="http://condoc.networkedassets.com" target="_blank">our site</a> for more information.</p>
                         </div>
                         <form class="aui" ng-hide="cc.loading || cc.error">
                             <fieldset>
@@ -258,7 +264,7 @@
                         </form>
                         <div ng-show="cc.loading" class="spin block"></div>
                     </div>
-                    <div class="table-cell" ng-controller="SourceCtrl as vm">
+                    <div class="table-cell" ng-controller="SourceCtrl as vm" ng-hide="vm.transformerConnectionError">
                         <h3>Source configuration</h3>
                         <div ng-hide="vm.loading">
                             <div ng-show="vm.noCredentials">
@@ -269,7 +275,7 @@
                                     <p>You must provide correct credentials.</p>
                                 </div>
                             </div>
-                            <div class="aui-message aui-message-error" ng-show="cc.error">
+                            <div class="aui-message aui-message-error" ng-show="cc.error && !cc.transformerConnectionError">
                                 <p class="title">
                                     <strong>Unknown error occurred</strong>
                                 </p>
