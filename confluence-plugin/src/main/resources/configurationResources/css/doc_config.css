@@ -98,7 +98,7 @@ span.doc_config-branch-menu-option.listened span.indicator {
     font-size: 12px;
 }
 
-#doc_config-admin div.aui-message-warning {
+#doc_config-admin div.aui-message-warning, #doc_config-admin div.aui-message-error {
     display: inline-block;
 }
 
