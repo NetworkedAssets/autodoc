@@ -4,6 +4,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import com.networkedassets.autodoc.clients.atlassian.HttpClientConfig;
 import com.networkedassets.autodoc.clients.atlassian.atlassianHookData.HookSettings;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.MalformedURLException;
@@ -11,12 +12,13 @@ import java.net.URL;
 
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 public class StashBitbucketClientTest {
 	private final String PROJECT_KEY = "TP";
 	private final String PROJECT_SLUG = "lol";
 	private final String PROJECT_HOOK_KEY = "com.networkedassets.atlasian.plugins.stash-postReceive-hook-plugin:postReceiveHookListener";
-	private final String CONFLUENCE_URL = "http://46.101.240.138:7990";
-	private final String CONFLUENCE_USERNAME = "kcala";
+	private final String CONFLUENCE_URL = "http://172.30.10.52/stash";
+	private final String CONFLUENCE_USERNAME = "admin";
 	private final String CONFLUENCE_PASSWORD = "admin";
 
 	private StashBitbucketClient client;

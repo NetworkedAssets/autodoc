@@ -27,7 +27,7 @@ angular.module("DoC_Config").factory("urlService",function() {
             if (this.isLocal()) {
                 return AJS.params.baseUrl;
             } else {
-                return "http://atlas.networkedassets.net/confluence";
+                return "http://atlassian-na-dev-01.networkedassets.local/confluence";
             }
         },
         encodeComponent: function(string) {

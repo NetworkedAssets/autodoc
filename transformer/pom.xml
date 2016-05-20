@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>transformer</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.4.5</version>
 	<packaging>jar</packaging>
 
 	<name>transformer</name>
@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>com.networkedassets.autodoc</groupId>
 		<artifactId>autodoc-parent</artifactId>
-		<version>1.0</version>
+		<version>0.4.5</version>
 	</parent>
 
 	<properties>
@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>settings-api</artifactId>
-			<version>1.0</version>
+			<version>0.4.5</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mashape.unirest</groupId>
@@ -155,7 +155,7 @@
 		<dependency>
 			<groupId>com.networkedassets.autodoc</groupId>
 			<artifactId>clients</artifactId>
-			<version>1.0</version>
+			<version>0.4.5</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -199,7 +199,6 @@
 				</configuration>
 			</plugin>
 
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -211,11 +210,8 @@
 					</formats>
 				</configuration>
 			</plugin>
-
 		</plugins>
 	</reporting>
-
-
 
 	<build>
 		<plugins>
@@ -270,10 +266,6 @@
 				</configuration>
 			</plugin>
 
-			<!--
-				removes "[WARNING] We have a duplicate" warnings when integration-test phase takes place
-				http://stackoverflow.com/questions/8880361/superfluous-warnings-when-using-maven-shade-plugin
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -312,20 +304,6 @@
 				<version>2.19</version>
 				<configuration>
 					<skipTests>false</skipTests>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>pitest-maven</artifactId>
-				<version>1.1.7</version>
-				<configuration>
-					<targetClasses>
-						<param>com.networkedassets.autodoc.transformer.util.PropertyHandler</param>
-					</targetClasses>
-					<targetTests>
-						<param>com.networkedassets.autodoc.transformer.util.PropertyHandlerTest</param>
-					</targetTests>
 				</configuration>
 			</plugin>
 		</plugins>
