@@ -1,4 +1,4 @@
-# ![](https://github.com/networkedassets/transformer/src/main/resources/images/transformer_logo.png "Transformer")<a href="http://www.networkedassets.com/"><img style="float: right;" src="http://www.networkedassets.com/wordpress/wp-content/uploads/2013/03/NA_logo_header.png" height="79"></a>
+# ![](https://raw.githubusercontent.com/NetworkedAssets/autodoc/master/transformer/src/main/resources/images/transformer_logo.png "Transformer")<a href="http://www.networkedassets.com/"><img style="float: right;" src="http://www.networkedassets.com/wordpress/wp-content/uploads/2013/03/NA_logo_header.png" height="79"></a>
 
 Java application used by [NetworkedAssets's](http://www.networkedassets.com/) [Documentation from Code Plugin](http://condoc.networkedassets.com/) for Atlassian Confluence.
 
